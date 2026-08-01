@@ -1,0 +1,1608 @@
+// X.Office — Prisma schema (Postgres, live persistence).
+// Every tenant-owned table carries tenantId and is scoped by (tenantId, ...).
+// Prisma 7: connection URL lives in prisma.config.ts; client uses a pg driver adapter.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Tenant registry anchor. SHARED / platform-plane table (NOT tenant-RLS): it
+/// must stay readable cross-tenant by the platform, so it is NEVER added to the
+/// RLS table set. `id` is the immutable FK value referenced by ~53 RLS tables
+/// (e.g. `tenant-xtech`) — do NOT rename it. The registry columns below extend
+/// this row into the Platform Tenant Registry (T001–T010 fixed; customers ≥T011).
+model Tenant {
+  id        String   @id @default(cuid())
+  slug      String   @unique // e.g. "xtech"
+  name      String
+  createdAt DateTime @default(now())
+
+  // ---- Platform Tenant Registry (additive; shared/no-RLS) -----------------
+  tenantNo    Int?     @unique // immutable, never reused; 1=xtech, 2..10 demo, >=11 customer
+  tenantCode  String?  @unique // derived from tenantNo, e.g. "T001" (^T[0-9]{3,6}$)
+  tenantKey   String?  @unique // friendly key, e.g. "xtech"
+  tenantClass String? // PLATFORM_OWNER_REFERENCE_CUSTOMER | VERTICAL_DEMO | CUSTOMER | SYSTEM
+  industry    String?
+  status      String   @default("ACTIVE") // ACTIVE | PLANNED | SUSPENDED | CLOSED
+  planId      String?
+  blueprintId String?
+  // Tenant Lifecycle — DEMO ↔ LIVE (additive). DEMO = trải nghiệm, có thể
+  // reset-demo về baseline; LIVE = chính thức (đã go-live, clear demo data).
+  // Default DEMO for VERTICAL_DEMO + CUSTOMER; T001/SYSTEM stay NULL (exempt).
+  mode        String? // DEMO | LIVE | null(exempt)
+  updatedAt   DateTime @updatedAt @default(now())
+
+  workflows Workflow[]
+  instances WorkflowInstance[]
+  tasks     ApprovalTask[]
+  events    WorkflowEvent[]
+  auditLogs AuditLog[]
+}
+
+/// Editable workflow (the "working copy"). Immutable snapshots live in WorkflowVersion.
+model Workflow {
+  id            String   @id @default(cuid())
+  tenantId      String
+  code          String
+  name          String
+  description   String?
+  ownerRoleCode String?
+  // Editable working copy of the full DSL (source for the next publish).
+  workingDefinition Json
+  schemaVersion String   @default("1.0")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tenant   Tenant            @relation(fields: [tenantId], references: [id])
+  versions WorkflowVersion[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+}
+
+/// Immutable published snapshot. version increments per workflow; never updated.
+model WorkflowVersion {
+  id           String   @id @default(cuid())
+  workflowId   String
+  version      Int
+  checksum     String
+  publishedAt  DateTime
+  // MVP: keep the full DSL + compiled plan as JSON on the version.
+  definition   Json
+  compiledPlan Json?
+
+  workflow  Workflow           @relation(fields: [workflowId], references: [id])
+  nodes     WorkflowNode[]
+  edges     WorkflowEdge[]
+  instances WorkflowInstance[]
+
+  @@unique([workflowId, version])
+  @@index([workflowId])
+}
+
+/// Normalized node of a published version (optional for MVP; JSON is source of truth).
+model WorkflowNode {
+  id        String @id @default(cuid())
+  versionId String
+  nodeKey   String // node id within the definition (e.g. "mgr")
+  type      String
+  name      String
+  config    Json
+  posX      Float?
+  posY      Float?
+
+  version         WorkflowVersion @relation(fields: [versionId], references: [id])
+  outgoingEdges   WorkflowEdge[]  @relation("EdgeSource")
+  incomingEdges   WorkflowEdge[]  @relation("EdgeTarget")
+
+  @@unique([versionId, nodeKey])
+  @@index([versionId])
+}
+
+model WorkflowEdge {
+  id        String  @id @default(cuid())
+  versionId String
+  edgeKey   String
+  sourceId  String
+  targetId  String
+  label     String?
+
+  version WorkflowVersion @relation(fields: [versionId], references: [id])
+  source  WorkflowNode    @relation("EdgeSource", fields: [sourceId], references: [id])
+  target  WorkflowNode    @relation("EdgeTarget", fields: [targetId], references: [id])
+
+  @@unique([versionId, edgeKey])
+  @@index([versionId])
+}
+
+model WorkflowInstance {
+  id            String         @id @default(cuid())
+  tenantId      String
+  workflowCode  String
+  versionId     String?
+  instanceCode  String
+  title         String
+  requesterEmail String
+  variables     Json
+  status        InstanceStatus @default(running)
+  currentNodeId String?
+  // Multi-token engine state (additive). A multiset of node ids where tokens
+  // currently rest: human stops (approval/humanTask) and tokens parked at a
+  // parallelJoin waiting for sibling branches. Null / [currentNodeId] for linear
+  // (single-token) instances — behavior is unchanged. currentNodeId stays as the
+  // primary token for backward compatibility.
+  activeNodes   Json?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  tenant  Tenant           @relation(fields: [tenantId], references: [id])
+  version WorkflowVersion? @relation(fields: [versionId], references: [id])
+  tasks   ApprovalTask[]
+  events  WorkflowEvent[]
+  commands ConnectorCommand[]
+
+  @@unique([tenantId, instanceCode])
+  @@index([tenantId, status])
+}
+
+/// A delegated connector command produced when the engine crosses a serviceCall
+/// node. Payload is resolved data-driven from config.mappings + connector-catalog.
+/// A mock adapter simulates the target system; no real external call is made.
+model ConnectorCommand {
+  id            String   @id @default(cuid())
+  tenantId      String
+  instanceId    String
+  nodeId        String
+  connectorCode String
+  actionCode    String
+  payload       Json
+  status        String   @default("pending") // pending | success | failed | manual_pending | manual_completed
+  result        Json?
+  // SourceReference to the record the target system created (additive, nullable).
+  sourceRef     Json?
+  error         String?
+  attempts      Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  instance WorkflowInstance @relation(fields: [instanceId], references: [id])
+
+  @@index([tenantId, instanceId])
+}
+
+/// ExternalExecution — the boundary record for a serviceCall (External Action) node.
+/// When the engine crosses a serviceCall whose connector is NOT live (finerp / HR /
+/// e-sign), it does NOT fabricate an ERP document. Instead it creates ONE of these in
+/// mode=MANUAL_TASK/status=pending and PARKS the instance. The responsible person later
+/// enters the REAL reference code produced in the target system; only then is a
+/// SourceReference built (from the entered code — never from a fake id) and the token
+/// advances. Tenant-scoped (no FK, matches CommandLog / Delegation).
+model ExternalExecution {
+  id              String    @id @default(cuid())
+  tenantId        String
+  instanceCode    String
+  nodeId          String
+  connectorCode   String
+  actionCode      String
+  // MANUAL_TASK | WAITING_FOR_CONNECTOR | AUTO
+  mode            String    @default("MANUAL_TASK")
+  // pending | reference_entered | completed | failed
+  status          String    @default("pending")
+  // Resolved mapping payload (data-driven from config.mappings + connector-catalog).
+  payload         Json
+  // REAL reference code entered by the responsible person (e.g. the MR no. FinERP issued).
+  referenceCode   String?
+  referenceSystem String?
+  enteredBy       String?
+  enteredAt       DateTime?
+  // SourceReference built from the entered reference (pointer, not a copy). Null until entered.
+  sourceRef       Json?
+  note            String?
+  createdAt       DateTime  @default(now())
+
+  @@index([tenantId, instanceCode])
+  @@index([tenantId, status])
+}
+
+model ApprovalTask {
+  id           String     @id @default(cuid())
+  tenantId     String
+  instanceId   String
+  nodeId       String
+  nodeName     String
+  assigneeRole String
+  // Resolved recipient (from role-bindings). Null = still a role queue (no user mapped).
+  assigneeUserId String?
+  status       TaskStatus @default(open)
+  slaHours     Float?
+  createdAt    DateTime   @default(now())
+  actedAt      DateTime?
+  actorId      String?
+  // Person who actually acted on behalf of the assignee (valid delegation).
+  onBehalfOf   String?
+  // Operational-layer flags (SLA worker). Additive; default off.
+  reminded     Boolean    @default(false)
+  escalated    Boolean    @default(false)
+  escalatedAt  DateTime?
+
+  tenant   Tenant           @relation(fields: [tenantId], references: [id])
+  instance WorkflowInstance @relation(fields: [instanceId], references: [id])
+
+  @@index([tenantId, status])
+}
+
+/// Delegation of authority: toUserId may act on behalf of fromUserId within
+/// [fromAt, toAt]. Operational layer; tenant-scoped (no FK, matches CommandLog).
+model Delegation {
+  id         String   @id @default(cuid())
+  tenantId   String
+  fromUserId String
+  toUserId   String
+  fromAt     DateTime
+  toAt       DateTime
+  reason     String?
+  createdAt  DateTime @default(now())
+
+  @@index([tenantId, toUserId])
+  @@index([tenantId, fromUserId])
+}
+
+/// In-app notification / dispatch record. channelHint 'xspace_card' is a mock
+/// hint only (no real Mattermost push). Tenant + user scoped.
+model Notification {
+  id           String    @id @default(cuid())
+  tenantId     String
+  userId       String
+  type         String
+  title        String
+  body         String?
+  sourceSystem String?
+  sourceType   String?
+  sourceId     String?
+  deepLink     String?
+  channelHint  String    @default("in_app") // in_app | xspace_card
+  createdAt    DateTime  @default(now())
+  readAt       DateTime?
+
+  @@index([tenantId, userId])
+  @@index([tenantId, userId, readAt])
+}
+
+/// Append-only runtime event stream (token movement, service calls, timers).
+model WorkflowEvent {
+  id         String   @id @default(cuid())
+  tenantId   String
+  instanceId String
+  type       String
+  payload    Json
+  at         DateTime @default(now())
+
+  tenant   Tenant           @relation(fields: [tenantId], references: [id])
+  instance WorkflowInstance @relation(fields: [instanceId], references: [id])
+
+  @@index([tenantId, instanceId])
+}
+
+/// Append-only audit log (who did what, when) — never updated or deleted.
+model AuditLog {
+  id           String   @id @default(cuid())
+  tenantId     String
+  at           DateTime @default(now())
+  actorId      String
+  instanceCode String
+  action       String
+  detail       String
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, instanceCode])
+}
+
+/// UnifiedWorkItem — READ MODEL / projection (APR-06). Fully REBUILDABLE and
+/// idempotent: rows are derived from source-of-record tables (currently open
+/// ApprovalTask rows). This table is NEVER written to directly by business
+/// commands — it is repopulated by rebuildProjection(tenantId). Designed open so
+/// future sources (FinERP / HR / Mattermost) can feed it without a schema change.
+model UnifiedWorkItem {
+  id                     String   @id @default(cuid())
+  tenantId               String
+  type                   String
+  title                  String
+  status                 String
+  priority               String
+  assignedTo             String?
+  dueAt                  DateTime?
+  // SourceReference (source-reference.ts): pointer to the owning record, no copy.
+  sourceSystem           String
+  sourceType             String
+  sourceId               String
+  sourceVersion          String?
+  deepLink               String?
+  ownerSystem            String
+  allowedActionsSnapshot Json
+  updatedAt              DateTime @default(now())
+
+  @@unique([tenantId, sourceSystem, sourceType, sourceId])
+  @@index([tenantId])
+}
+
+/// CommandLog — idempotency ledger for write commands (CommandEnvelope, ADR-SOR-002).
+/// One row per (tenantId, idempotencyKey). Replaying a command with the same key
+/// returns the stored result instead of producing duplicate side effects.
+model CommandLog {
+  id             String   @id @default(cuid())
+  tenantId       String
+  commandType    String
+  idempotencyKey String
+  correlationId  String
+  actorId        String
+  resultRef      String? // primary id of the produced record (instanceCode / taskId)
+  result         Json // stored response payload replayed on duplicate keys
+  createdAt      DateTime @default(now())
+
+  @@unique([tenantId, idempotencyKey])
+  @@index([tenantId, commandType])
+}
+
+/// Membership — a user's belonging to a tenant, with tenant-scoped roles.
+/// SHARED identity primitive (not owned by XOffice). Seeded from the existing
+/// users; carries NO credential/password/secret (auth is delegated to the IdP;
+/// dev login is passwordless). One row per (tenantId, userId); a user may have
+/// several memberships (multi-tenant) — the session picks one as the active tenant.
+model Membership {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String
+  roles     String[] @default([])
+  status    String   @default("active") // active | suspended
+  createdAt DateTime @default(now())
+
+  @@unique([tenantId, userId])
+  @@index([userId])
+}
+
+// ===========================================================================
+// IDENTITY / ORGANIZATION CORE  (shared platform domain, module src/identity)
+// ---------------------------------------------------------------------------
+// SHARED across XHub / X.Space / XOffice — NOT owned by XOffice. Additive.
+// Every table below is tenant-scoped (carries tenantId) and MUST be added to
+// scripts/rls-setup.mjs + scripts/rls-test.mjs. NO credential/password/secret
+// is ever stored here (auth is delegated to the IdP). Email is an ATTRIBUTE,
+// never a key: PersonProfile.id (opaque UUID) is the immutable identity key.
+// ===========================================================================
+
+/// PersonProfile — the immutable person identity in the Org Core. `id` is an
+/// opaque UUID key (email is only an attribute). `externalIdRefs` links to
+/// source systems (legacy user id, HRIS employee no.) for STANDALONE→FEDERATED.
+model PersonProfile {
+  id             String   @id @default(uuid())
+  tenantId       String
+  fullName       String
+  email          String?
+  phone          String? // contact phone (e.g. "09xx xxx xxx")
+  avatarUrl      String? // inline SVG data-URI or external image URL (optional)
+  status         String   @default("active") // active | suspended | left
+  externalIdRefs Json? // e.g. { "userId": "user-tuan", "hrisEmployeeNo": null }
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([tenantId, id])
+  @@index([tenantId])
+  @@index([tenantId, email])
+}
+
+/// OrgUnit — a node in the organization tree (department / team / legal entity).
+model OrgUnit {
+  id        String   @id @default(cuid())
+  tenantId  String
+  code      String
+  name      String
+  parentId  String? // self-reference (tree); resolved in code, no FK for portability
+  type      String   @default("DEPARTMENT") // DEPARTMENT | TEAM | LEGAL_ENTITY | DIVISION
+  createdAt DateTime @default(now())
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, parentId])
+}
+
+/// Position — a role seat inside an OrgUnit. holderPersonId is the current
+/// occupant (nullable = vacant). reportsToPositionId powers DIRECT_MANAGER /
+/// ORG_UNIT_HEAD selectors. isHead marks the head-of-unit seat.
+model Position {
+  id                  String   @id @default(cuid())
+  tenantId            String
+  code                String
+  title               String
+  orgUnitId           String
+  holderPersonId      String?
+  reportsToPositionId String?
+  isHead              Boolean  @default(false)
+  createdAt           DateTime @default(now())
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, orgUnitId])
+  @@index([tenantId, holderPersonId])
+}
+
+/// PositionAssignment — HISTORY of who holds (PRIMARY) or acts (ACTING) a
+/// Position over time, each with an effective window (PH-01 / NX-013). This is
+/// the source of truth for the holder timeline + acting assignments.
+/// Position.holderPersonId stays as the CURRENT primary holder cache (kept in
+/// sync with the active PRIMARY assignment) so org-chart / role resolution that
+/// read holderPersonId are unaffected. ACTING never changes holderPersonId.
+model PositionAssignment {
+  id            String    @id @default(cuid())
+  tenantId      String
+  positionId    String
+  personId      String
+  kind          String // PRIMARY | ACTING
+  effectiveFrom DateTime
+  effectiveTo   DateTime?
+  reason        String?
+  createdBy     String?
+  createdAt     DateTime  @default(now())
+
+  @@index([tenantId, positionId])
+}
+
+/// Group — a named set of people (processing queue / committee). memberPersonIds
+/// is a denormalized list of PersonProfile ids (GROUP selector reads it).
+model Group {
+  id              String   @id @default(cuid())
+  tenantId        String
+  code            String
+  name            String
+  memberPersonIds String[] @default([])
+  createdAt       DateTime @default(now())
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+}
+
+/// RoleBinding — binds a roleCode to a subject (USER / POSITION / GROUP /
+/// ORG_UNIT) within a scope and effective window. Replaces the flat
+/// role-bindings.json (subject was always an implicit user). Backward-compat:
+/// the flat file stays the source for XOffice's legacy resolveAssignee.
+model RoleBinding {
+  id            String    @id @default(cuid())
+  tenantId      String
+  subjectType   String // USER | POSITION | GROUP | ORG_UNIT
+  subjectId     String
+  roleCode      String
+  scope         Json      @default("{}") // { orgUnitId?, all?: true, ... }
+  effectiveFrom DateTime?
+  effectiveTo   DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([tenantId])
+  @@index([tenantId, roleCode])
+  @@index([tenantId, subjectType, subjectId])
+}
+
+/// PermissionPolicy — RBAC grant for a roleCode: the permissions it confers,
+/// plus an optional ABAC `condition` (e.g. { maxAmount }). A published policy
+/// version is immutable; edits create a new row/version.
+model PermissionPolicy {
+  id          String   @id @default(cuid())
+  tenantId    String
+  roleCode    String
+  permissions String[] @default([]) // e.g. ["request.approve", "workflow.read"]
+  condition   Json? // optional ABAC condition, e.g. { "maxAmount": 200000000 }
+  version     Int      @default(1)
+  createdAt   DateTime @default(now())
+
+  @@unique([tenantId, roleCode, version])
+  @@index([tenantId, roleCode])
+}
+
+/// DataScope — ABAC narrowing for a subject (person / position / role): which
+/// org units / legal entities / classifications it may act within.
+model DataScope {
+  id          String   @id @default(cuid())
+  tenantId    String
+  subjectType String // USER | POSITION | ROLE
+  subjectId   String
+  scope       Json     @default("{}") // { orgUnits?: [], legalEntities?: [], classification?: [] }
+  createdAt   DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([tenantId, subjectType, subjectId])
+}
+
+/// AssignmentResolution — immutable snapshot of one assignee-resolution run
+/// (docs/03). Captures selector input, candidate persons, chosen person, and
+/// the org/policy versions at resolve time. Append-only audit artifact.
+model AssignmentResolution {
+  id                   String   @id @default(cuid())
+  tenantId             String
+  workflowInstanceCode String
+  nodeId               String
+  selector             Json // { selectorType, ...params }
+  candidates           Json     @default("[]") // [{ personId, fullName, via }]
+  resolvedPersonId     String?
+  policyVersion        String   @default("1")
+  orgVersion           String   @default("1")
+  choicePolicy         String   @default("SINGLE") // SINGLE | MULTIPLE | QUEUE
+  fallbackApplied      Boolean  @default(false)
+  reason               String?
+  snapshotAt           DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([tenantId, workflowInstanceCode])
+}
+
+// ===========================================================================
+// TENANT CONTROL PLANE + APPLICATION PROVISIONING  (module src/controlplane)
+// ---------------------------------------------------------------------------
+// Delegated provisioning model. Identity (PersonProfile) is the ONLY source of
+// user truth — an application never holds a master user, only a binding (a
+// pointer to its external account). Enabling an app for a tenant or binding a
+// person to an app emits a ProvisioningCommand into an OUTBOX that a MOCK app
+// adapter executes (no real accounts are ever created). The SourceReference on
+// a completed command/binding is built from the adapter's REAL returned id —
+// never fabricated. AppRoleMapping rows are immutable per version.
+//
+// ApplicationDefinition is the PLATFORM catalog: it is NOT tenant-scoped (no
+// tenantId, no RLS). Every OTHER table below carries tenantId and MUST be added
+// to scripts/rls-setup.mjs + scripts/rls-test.mjs.
+// ===========================================================================
+
+/// Platform application catalog (x1 / x2 / xweb / xoffice / …). Loaded from
+/// seed-data/controlplane/application-catalog.json under bypass. NOT
+/// tenant-scoped — shared across all tenants.
+model ApplicationDefinition {
+  code             String   @id // e.g. "x1" | "x2" | "xweb" | "xoffice"
+  name             String
+  ownerSystem      String
+  provisioningMode String   @default("MOCK") // NATIVE | MOCK | MANUAL | UNCONFIGURED
+  capabilities     String[] @default([]) // from catalog "supports"
+  userSoR          String   @default("XHUB_IDENTITY_CORE")
+  deepLink         String?
+  notes            String?
+  createdAt        DateTime @default(now())
+}
+
+/// A tenant's opt-in to an application. status enabled/disabled; config is a
+/// free-form per-tenant Json (e.g. team codes, base url). Tenant-scoped.
+model TenantApplicationInstance {
+  id              String   @id @default(cuid())
+  tenantId        String
+  applicationCode String
+  status          String   @default("enabled") // enabled | disabled
+  config          Json     @default("{}")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([tenantId, applicationCode])
+  @@index([tenantId])
+}
+
+/// The link between an identity person (PersonProfile UUID) and their account
+/// in an application. NOT a master user — a pointer. externalAccountId is the
+/// REAL id returned by the (mock) adapter. Tenant-scoped.
+model AppAccountBinding {
+  id                 String    @id @default(cuid())
+  tenantId           String
+  personId           String // PersonProfile UUID (identity is the source of truth)
+  applicationCode    String
+  externalAccountId  String?
+  externalUsername   String?
+  status             String    @default("pending") // pending | active | suspended | conflict | failed
+  roleMappingVersion Int?
+  lastSyncedAt       DateTime?
+  sourceVersion      String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@unique([tenantId, personId, applicationCode])
+  @@index([tenantId])
+  @@index([tenantId, applicationCode])
+}
+
+/// Immutable mapping xhubRoleCode → appRole for an application. A published
+/// version is never updated; edits create a new (…, version) row. Tenant-scoped.
+model AppRoleMapping {
+  id              String   @id @default(cuid())
+  tenantId        String
+  applicationCode String
+  xhubRoleCode    String
+  appRole         String
+  version         Int      @default(1)
+  createdAt       DateTime @default(now())
+
+  @@unique([tenantId, applicationCode, xhubRoleCode, version])
+  @@index([tenantId, applicationCode])
+}
+
+/// Provisioning OUTBOX command (reuses the ConnectorCommand + CommandLog
+/// idempotency pattern). One row per (tenantId, idempotencyKey). Executed by a
+/// MOCK adapter; result + sourceRef are the adapter's real output. Tenant-scoped.
+model ProvisioningCommand {
+  id              String   @id @default(cuid())
+  tenantId        String
+  personId        String
+  applicationCode String
+  action          String // create_account | update_roles | suspend
+  payload         Json
+  status          String   @default("pending") // pending | sent | completed | failed | conflict
+  attempts        Int      @default(0)
+  correlationId   String
+  idempotencyKey  String
+  result          Json?
+  // SourceReference to the account the (mock) target created — from its real id.
+  sourceRef       Json?
+  error           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  conflicts ProvisioningConflict[]
+
+  @@unique([tenantId, idempotencyKey])
+  @@index([tenantId, status])
+  @@index([tenantId, personId, applicationCode])
+}
+
+/// A conflict detected while provisioning (e.g. the account already exists /
+/// the person is already bound). Feeds the conflict center. Tenant-scoped.
+model ProvisioningConflict {
+  id        String   @id @default(cuid())
+  tenantId  String
+  commandId String
+  reason    String
+  detail    Json     @default("{}")
+  resolved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  command ProvisioningCommand @relation(fields: [commandId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, resolved])
+}
+
+// ===========================================================================
+// SHARED MASTER DATA HUB (MDM) + TENANT OVERLAY + INGESTION  (module src/mdm)
+// ---------------------------------------------------------------------------
+// XHub is the System of Record for SHARED master data only (projects, geography,
+// organizations per SYSTEM_OWNERSHIP_MATRIX). It NEVER re-masters FinERP/HR/app
+// operational data. Ingestion NEVER writes straight into a canonical master:
+// data flows staging → normalize → matching → duplicate review → commit. Fuzzy
+// matches are only PROPOSED (DuplicatePair, pending) — a human resolves them;
+// there is no auto-merge.
+//
+// MasterRecord is the PLATFORM shared/canonical master (like ApplicationDefinition
+// it is NOT force-RLS): a shared record (tenantId = null) is visible to every
+// tenant, a TENANT_PRIVATE record carries tenantId; visibility is enforced in
+// code by the `visibility` field. Geography/shared masters are therefore NOT
+// duplicated per tenant — tenants layer a TenantMasterOverlay instead.
+//
+// SourceRecord / ImportJob / DuplicatePair / TenantMasterOverlay ARE tenant-
+// scoped (carry tenantId) and MUST be in scripts/rls-setup.mjs + rls-test.mjs.
+// ===========================================================================
+
+/// Canonical master record (shared platform data). tenantId null = shared with
+/// all tenants; set = TENANT_PRIVATE. Never edited directly by a tenant once
+/// ACTIVE — tenants use a TenantMasterOverlay. version is immutable per publish
+/// (a new publish bumps version). Created as DRAFT proposal, ACTIVE only after
+/// human review + commit (never straight from import).
+model MasterRecord {
+  id              String   @id @default(cuid())
+  tenantId        String? // null = shared/global master; set = tenant-private
+  domain          String // PROJECT | GEOGRAPHY | ORG | ...
+  canonicalKey    String? // rule-based match key (slug|province|district)
+  canonicalFields Json     @default("{}")
+  aliases         String[] @default([])
+  visibility      String   @default("SHARED_WITH_VISIBILITY") // GLOBAL | SHARED_WITH_VISIBILITY | TENANT_PRIVATE | RESTRICTED
+  status          String   @default("DRAFT") // DRAFT | ACTIVE | MERGED | RETIRED
+  qualityScore    Float?
+  version         Int      @default(1)
+  mergedIntoId    String? // set when status=MERGED (points to the surviving master)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  sourceRecords SourceRecord[]
+
+  @@index([domain, status])
+  @@index([domain, canonicalKey])
+}
+
+/// Immutable lineage: one row per source-system record ingested. Tenant-scoped.
+/// Idempotent on (tenantId, sourceSystem, sourceId). matchStatus tracks its path
+/// through the pipeline; masterRecordId links to the canonical it fed.
+model SourceRecord {
+  id             String   @id @default(cuid())
+  tenantId       String
+  sourceSystem   String // e.g. X2BMS
+  sourceId       String // source-system record id (e.g. X2P-000001)
+  domain         String   @default("PROJECT")
+  raw            Json // immutable raw payload as received
+  rawHash        String? // hash of the raw payload (lineage)
+  normalized     Json? // canonical staging fields after normalize
+  matchStatus    String   @default("unmatched") // unmatched | matched | duplicate
+  matchScore     Float?
+  masterRecordId String?
+  importJobId    String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  masterRecord MasterRecord? @relation(fields: [masterRecordId], references: [id])
+  importJob    ImportJob     @relation(fields: [importJobId], references: [id])
+
+  @@unique([tenantId, sourceSystem, sourceId])
+  @@index([tenantId])
+  @@index([tenantId, importJobId])
+}
+
+/// Tenant customization layered on a shared MasterRecord (internal name, tags,
+/// owner, private notes). NEVER touches the canonical master. Tenant-scoped.
+model TenantMasterOverlay {
+  id                    String   @id @default(cuid())
+  tenantId              String
+  masterRecordId        String
+  overlayFields         Json     @default("{}")
+  privateTags           String[] @default([])
+  ownerUserId           String?
+  visibilityWithinTenant String  @default("ALL") // ALL | SCOPED | PRIVATE
+  version               Int      @default(1)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@unique([tenantId, masterRecordId])
+  @@index([tenantId])
+}
+
+/// One ingestion run. stage advances staging → normalized → matched → reviewed
+/// → committed. counts is a free-form Json of pipeline metrics. Tenant-scoped.
+model ImportJob {
+  id           String   @id @default(cuid())
+  tenantId     String
+  sourceSystem String
+  domain       String   @default("PROJECT")
+  stage        String   @default("staging") // staging | normalized | matched | reviewed | committed
+  counts       Json     @default("{}")
+  createdBy    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sourceRecords SourceRecord[]
+
+  @@index([tenantId])
+}
+
+/// A suspected-duplicate proposal (rule/fuzzy). NEVER auto-merged — a human
+/// resolves it (merge → fold into candidate master; keep_separate → own master).
+/// Tenant-scoped.
+model DuplicatePair {
+  id                String   @id @default(cuid())
+  tenantId          String
+  sourceRecordId    String // the incoming record suspected to be a duplicate
+  candidateMasterId String? // the master it may duplicate (DRAFT primary of its group)
+  importJobId       String?
+  score             Float // similarity score 0..1 (proposal only)
+  reason            String?
+  decision          String   @default("pending") // pending | merge | keep_separate
+  resolvedBy        String?
+  resolvedAt        DateTime?
+  createdAt         DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([tenantId, decision])
+}
+
+// ===========================================================================
+// PER-TENANT LOGICAL BACKUP / RESTORE  (module src/backup)  — Mục 6
+// ---------------------------------------------------------------------------
+// One tenant's logical data is exported to an encrypted bundle (AES-256-GCM)
+// with a manifest (row counts + content checksum + outbox watermark). Restore
+// is sandbox / dry-run first: decrypt + verify checksum, remap identity ids,
+// and load into a SANDBOX tenant — never a blind overwrite of the live tenant.
+//
+// Both tables are tenant-scoped (carry tenantId) and MUST be in
+// scripts/rls-setup.mjs + scripts/rls-test.mjs. The manifest NEVER stores a
+// secret/credential and NEVER stores the encryption key (location only).
+// ===========================================================================
+
+/// A logical backup run for ONE tenant. manifest carries per-table row counts,
+/// the content checksum, excludedData + reasons, and the encryption metadata
+/// (algorithm + key reference — never the key itself). location points at the
+/// per-tenant folder holding the encrypted bundle.
+model BackupJob {
+  id              String    @id @default(cuid())
+  tenantId        String
+  status          String    @default("running") // running | completed | failed
+  kind            String    @default("LOGICAL_TENANT") // LOGICAL_TENANT
+  manifest        Json      @default("{}")
+  checksum        String?
+  outboxWatermark Json?     // { provisioningCommandCount, maxId, maxCreatedAt }
+  byteSize        Int?
+  location        String?
+  error           String?
+  createdAt       DateTime  @default(now())
+  finishedAt      DateTime?
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+}
+
+/// A restore run. mode dry-run validates only (no writes); sandbox loads the
+/// bundle into targetTenantId (default `<tenantId>:restore-sandbox`) after
+/// checksum verify + identity remap. report captures counts + remap summary.
+model RestoreJob {
+  id              String    @id @default(cuid())
+  tenantId        String
+  status          String    @default("running") // running | completed | failed
+  kind            String    @default("FULL_REPLACE_TENANT")
+  mode            String    @default("dry-run") // dry-run | sandbox
+  sourceBackupId  String
+  targetTenantId  String?
+  manifest        Json      @default("{}")
+  checksum        String?
+  outboxWatermark Json?
+  byteSize        Int?
+  location        String?
+  report          Json      @default("{}")
+  error           String?
+  createdAt       DateTime  @default(now())
+  finishedAt      DateTime?
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+}
+
+/// Per-tenant periodic backup SCHEDULE + retention policy (PH-04 backup ops /
+/// SaaS non-negotiable #11). SHARED platform-plane config (like Tenant): a
+/// platform operator manages every tenant's schedule from one table, keyed by a
+/// UNIQUE tenantId. NOT RLS-scoped (never added to rls-setup) — all access is
+/// via prisma.withBypass. The BACKUPS THEMSELVES stay tenant-scoped (BackupJob).
+/// lastStatus/lastError + a queryable `alert` flag surface a failed scheduled run.
+model BackupSchedule {
+  id              String    @id @default(cuid())
+  tenantId        String    @unique
+  enabled         Boolean   @default(true)
+  frequency       String    @default("DAILY") // DAILY | WEEKLY | MONTHLY
+  hourUtc         Int       @default(19) // 19:00 UTC = 02:00 Asia/Bangkok
+  dayOfWeek       Int? // 0..6 (WEEKLY), 0=Sunday
+  dayOfMonth      Int? // 1..28 (MONTHLY)
+  retentionDays   Int       @default(35)
+  retentionWeeks  Int       @default(12)
+  retentionMonths Int       @default(12)
+  lastRunAt       DateTime?
+  lastStatus      String? // completed | FAILED
+  lastError       String?
+  alert           Boolean   @default(false) // true when the last scheduled run FAILED
+  nextRunAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt @default(now())
+}
+
+/// ==== Records / Document model (Mục 8a) =====================================
+/// A tenant-owned document (record). currentVersionId points at the latest
+/// DocumentVersion. subjectType/subjectId is the polymorphic link to the thing
+/// the document is about (e.g. an instanceCode, a personId) — a pointer, no copy.
+/// NEVER stores a secret: version metadata is secret-scanned on write.
+model RecordDocument {
+  id               String   @id @default(cuid())
+  tenantId         String
+  kind             String   @default("GENERIC") // GENERIC | CONTRACT | ATTACHMENT | ...
+  title            String
+  ownerId          String?
+  subjectType      String? // polymorphic subject (e.g. WorkflowInstance, PersonProfile)
+  subjectId        String?
+  currentVersionId String?
+  tags             String[] @default([])
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  versions DocumentVersion[]
+
+  @@index([tenantId])
+  @@index([tenantId, kind])
+  @@index([tenantId, subjectType, subjectId])
+}
+
+/// IMMUTABLE, append-only version of a RecordDocument. A new version increments
+/// versionNo; existing versions are never mutated. contentHash is sha256 over the
+/// stored bytes (used for dedup); storageKey is the object-storage path
+/// (storage/documents/<tenantId>/<documentId>/<versionNo>). No secret is stored.
+model DocumentVersion {
+  id          String   @id @default(cuid())
+  tenantId    String
+  documentId  String
+  versionNo   Int
+  contentHash String // sha256 hex of the content bytes
+  byteSize    Int
+  mimeType    String   @default("application/octet-stream")
+  storageKey  String
+  createdBy   String?
+  createdAt   DateTime @default(now())
+
+  document RecordDocument @relation(fields: [documentId], references: [id])
+
+  @@unique([documentId, versionNo])
+  @@index([tenantId])
+  @@index([tenantId, documentId])
+  @@index([tenantId, contentHash])
+}
+
+/// ==== Webhook inbound dedupe (Mục 8b) =======================================
+/// One row per received inbound event, deduped by (tenantId, source, externalId).
+/// signatureValid records the HMAC check outcome. NO signing secret is persisted
+/// — only the boolean result of verifying it.
+model WebhookEvent {
+  id           String    @id @default(cuid())
+  tenantId     String
+  source       String
+  externalId   String
+  eventType    String?
+  payload      Json      @default("{}")
+  signatureValid Boolean @default(false)
+  status       String    @default("received") // received | processed | failed
+  error        String?
+  receivedAt   DateTime  @default(now())
+  processedAt  DateTime?
+
+  @@unique([tenantId, source, externalId])
+  @@index([tenantId])
+  @@index([tenantId, status])
+}
+
+/// ==== Transactional Outbox (Mục 8b) =========================================
+/// An outbound event written in the SAME transaction as the domain change that
+/// produced it (no dual-write). A scheduler dispatches pending rows with retry +
+/// exponential backoff, marking sent/failed. attempts caps retries.
+model OutboxEvent {
+  id            String    @id @default(cuid())
+  tenantId      String
+  aggregateType String
+  aggregateId   String
+  eventType     String
+  payload       Json      @default("{}")
+  status        String    @default("pending") // pending | sent | failed
+  attempts      Int       @default(0)
+  maxAttempts   Int       @default(5)
+  nextAttemptAt DateTime?
+  lastError     String?
+  createdAt     DateTime  @default(now())
+  sentAt        DateTime?
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([status, nextAttemptAt])
+}
+
+// ===========================================================================
+// INTERNAL AUTH — credentials + one-time tokens (PH-00b, module src/auth)
+// ---------------------------------------------------------------------------
+// INTERNAL auth only (no live IdP). Passwords are HASHED (argon2) and stored
+// here — NEVER in the repo/seed and NEVER in plaintext. One-time INVITE/RESET
+// tokens are stored only as a sha256 HASH (raw token is surfaced once via the
+// API response, never emailed for .local accounts). Both tables carry tenantId
+// and are RLS-protected (added to scripts/rls-setup.mjs + rls-test.mjs).
+// ===========================================================================
+
+/// UserCredential — a user's INTERNAL password (argon2 hash). One per
+/// (tenantId, userId). Set at activation/reset only; never seeded. userId is the
+/// account/session id; personId links to the PersonProfile identity.
+model UserCredential {
+  id           String   @id @default(cuid())
+  tenantId     String
+  userId       String
+  personId     String
+  passwordHash String // argon2 hash — NEVER plaintext
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@index([tenantId, personId])
+}
+
+/// AuthToken — single-use INVITE or RESET token. Only the sha256 HASH of the
+/// raw token is stored; the raw value is returned to the admin/user once and
+/// never persisted. Consumed by setting usedAt (single-use).
+model AuthToken {
+  id        String    @id @default(cuid())
+  tenantId  String
+  personId  String
+  kind      String // INVITE | RESET
+  tokenHash String // sha256(rawToken) — NEVER the raw token
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdBy String
+  createdAt DateTime  @default(now())
+
+  @@index([tenantId])
+  @@index([tenantId, personId])
+  @@index([tokenHash])
+}
+
+/// ==== Electronic-office Request module (PH-02a — NX-020..024) ==============
+/// A Request is the human-facing request record that rides ON TOP of the
+/// existing workflow engine. It carries an explicit request-level state machine
+/// (DRAFT → SUBMITTED → (WAITING_SUPPLEMENT ⇄ RESUBMITTED) → APPROVED | REJECTED,
+/// plus WITHDRAWN / CANCELLED and post-approval EXECUTING → DONE). On submit it
+/// links a workflowInstance (workflowInstanceId) resolved by the engine's
+/// assignment resolver — the approver is NEVER hardcoded. Attachments reuse
+/// RecordDocument (subjectType='Request'); comments + events live in dedicated
+/// tables. Tenant-scoped, RLS + FORCE (added to rls-setup + rls-test).
+model Request {
+  id                 String   @id @default(cuid())
+  tenantId           String
+  code               String // human code e.g. RQ-2026-0001
+  kind               String   @default("GENERIC") // legacy alias of procedureCode
+  procedureCode      String
+  procedureName      String?
+  title              String
+  summary            String?
+  requesterId        String
+  orgUnitId          String?
+  amount             Float?
+  currency           String?  @default("VND")
+  state              String   @default("DRAFT")
+  workflowInstanceId String?
+  approverId         String? // resolved approver (person/user id) or null = role queue
+  approverRole       String?
+  payload            Json     @default("{}")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  comments RequestComment[]
+  events   RequestEvent[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, state])
+  @@index([tenantId, requesterId])
+}
+
+/// A comment on a Request (with optional @mentions). Author is 3-tier capable via
+/// authorId; mentions is an array of user/person ids referenced in the body.
+model RequestComment {
+  id        String   @id @default(cuid())
+  tenantId  String
+  requestId String
+  authorId  String
+  body      String
+  mentions  String[] @default([])
+  createdAt DateTime @default(now())
+
+  request Request @relation(fields: [requestId], references: [id])
+
+  @@index([tenantId, requestId])
+}
+
+/// Append-only audit timeline for a Request: state transitions + actions
+/// (submit / approve / reject / request-supplement / resubmit / withdraw /
+/// cancel / execute / evidence / comment / attachment). data holds the diff.
+model RequestEvent {
+  id        String   @id @default(cuid())
+  tenantId  String
+  requestId String
+  type      String
+  actorId   String
+  data      Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  request Request @relation(fields: [requestId], references: [id])
+
+  @@index([tenantId, requestId])
+}
+
+/// Directive / Decision / Commitment (PH-02b — NX-025). An executive-issued
+/// directive with an explicit lifecycle (directives.fsm.ts) riding on top of the
+/// shared engine. The audience (ORG_UNIT|POSITION|USER|GROUP) is resolved into
+/// per-assignee DirectiveAssignment (Commitment) rows via the shared
+/// AssignmentResolver / Org Core — NEVER a hardcoded assignee. Evidence reuses
+/// RecordDocument (subjectType='Directive'). SLA via dueAt + overdue compute.
+model Directive {
+  id           String    @id @default(cuid())
+  tenantId     String
+  code         String // human code e.g. DIR-2026-001
+  title        String
+  body         String?
+  issuerId     String // EXECUTIVE who issued (session userId)
+  audienceType String    @default("ORG_UNIT") // ORG_UNIT|POSITION|USER|GROUP
+  audienceId   String?
+  priority     String    @default("NORMAL") // LOW|NORMAL|HIGH|URGENT
+  dueAt        DateTime?
+  state        String    @default("DRAFT")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  assignments DirectiveAssignment[]
+  events      DirectiveEvent[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, state])
+  @@index([tenantId, issuerId])
+}
+
+/// Per-assignee Commitment against a Directive. Own lifecycle:
+/// ASSIGNED → ACKNOWLEDGED → IN_PROGRESS → SUBMITTED → ACCEPTED | RETURNED (⇄).
+model DirectiveAssignment {
+  id          String    @id @default(cuid())
+  tenantId    String
+  directiveId String
+  assigneeId  String // resolved person/user id (via resolver, never hardcoded)
+  state       String    @default("ASSIGNED")
+  committedAt DateTime?
+  dueAt       DateTime?
+  progress    Int? // 0..100
+  note        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  directive Directive @relation(fields: [directiveId], references: [id])
+
+  @@index([tenantId, directiveId])
+  @@index([tenantId, assigneeId])
+}
+
+/// Append-only timeline for a Directive + its commitments (issue / acknowledge /
+/// start / submit / accept / return / complete / cancel / evidence). data = diff.
+model DirectiveEvent {
+  id          String   @id @default(cuid())
+  tenantId    String
+  directiveId String
+  type        String
+  actorId     String
+  data        Json     @default("{}")
+  createdAt   DateTime @default(now())
+
+  directive Directive @relation(fields: [directiveId], references: [id])
+
+  @@index([tenantId, directiveId])
+}
+
+/// Internal Service Desk / Ticket module (PH-02c — NX-026). A catalog of
+/// requestable services (ServiceCatalogItem) carries a default SLA; a Ticket is
+/// raised against a catalog item (or free category), runs the tickets.fsm.ts
+/// lifecycle (NEW → TRIAGED → ASSIGNED → IN_PROGRESS ⇄ PENDING_REQUESTER →
+/// RESOLVED → CLOSED, plus CANCELLED), and computes slaDueAt from the catalog
+/// defaultSlaHours. Assignment routes an agent via the shared AssignmentResolver
+/// (queue by SERVICE_DESK_AGENT role) — NEVER a hardcoded assignee. Attachments
+/// reuse RecordDocument (subjectType='Ticket'). CSAT (1..5) captured on
+/// RESOLVED/CLOSED by the requester.
+model ServiceCatalogItem {
+  id              String   @id @default(cuid())
+  tenantId        String
+  code            String // human code e.g. ACCESS, DEVICE
+  name            String
+  category        String
+  defaultSlaHours Int      @default(24)
+  description     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([tenantId, code])
+  @@index([tenantId, category])
+}
+
+/// An internal support ticket. requesterId raises it; assigneeId (resolved via
+/// AssignmentResolver queue, never hardcoded) works it. slaDueAt derived from the
+/// linked catalog item's defaultSlaHours. csatScore/csatComment captured on
+/// resolution by the requester.
+model Ticket {
+  id            String    @id @default(cuid())
+  tenantId      String
+  code          String // human code e.g. IT-2026-0001
+  title         String
+  description   String?
+  requesterId   String
+  catalogItemId String?
+  category      String
+  priority      String    @default("MEDIUM") // LOW|MEDIUM|HIGH|URGENT
+  state         String    @default("NEW")
+  assigneeId    String?
+  orgUnitId     String? // queue / owning org unit
+  slaDueAt      DateTime?
+  resolvedAt    DateTime?
+  csatScore     Int? // 1..5
+  csatComment   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  events TicketEvent[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, state])
+  @@index([tenantId, requesterId])
+  @@index([tenantId, assigneeId])
+}
+
+/// Append-only timeline for a Ticket: state transitions + comments (public /
+/// private notes) + assignment + CSAT + attachments. data holds the diff.
+model TicketEvent {
+  id        String   @id @default(cuid())
+  tenantId  String
+  ticketId  String
+  type      String
+  actorId   String
+  data      Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id])
+
+  @@index([tenantId, ticketId])
+}
+
+/// A bookable resource — a meeting ROOM, a shared ASSET (projector kit), a
+/// VEHICLE, etc. Managed by a manager (booking.manage); any employee books it.
+model BookableResource {
+  id        String   @id @default(cuid())
+  tenantId  String
+  code      String // human code e.g. ROOM-8F
+  name      String
+  type      String // ROOM|ASSET|VEHICLE|...
+  capacity  Int?
+  location  String?
+  orgUnitId String? // owning org unit
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings Booking[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, type])
+}
+
+/// A resource booking. requesterId reserves [startAt,endAt) on a resource. A
+/// booking that overlaps an existing ACTIVE booking (REQUESTED/APPROVED/
+/// CHECKED_IN) for the SAME resource is a conflict (409). Lifecycle in
+/// bookings.fsm.ts: REQUESTED → APPROVED → (CHECKED_IN → CHECKED_OUT | NO_SHOW),
+/// plus REJECTED / CANCELLED. Attachments reuse RecordDocument (subjectType=Booking).
+model Booking {
+  id           String    @id @default(cuid())
+  tenantId     String
+  code         String // human code e.g. BOOK-2026-0001
+  resourceId   String
+  requesterId  String
+  title        String
+  purpose      String?
+  startAt      DateTime
+  endAt        DateTime
+  state        String    @default("REQUESTED")
+  attendees    Int?
+  checkedInAt  DateTime?
+  checkedOutAt DateTime?
+  noShow       Boolean   @default(false)
+  orgUnitId    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  resource BookableResource @relation(fields: [resourceId], references: [id])
+  events   BookingEvent[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, state])
+  @@index([tenantId, resourceId])
+  @@index([tenantId, requesterId])
+}
+
+/// Append-only timeline for a Booking: state transitions + check-in/out +
+/// no-show + comments + attachments. data holds the diff.
+model BookingEvent {
+  id        String   @id @default(cuid())
+  tenantId  String
+  bookingId String
+  type      String
+  actorId   String
+  data      Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@index([tenantId, bookingId])
+}
+
+/// Internal Announcement / read-acknowledgement module (PH-02e — NX-028). A
+/// COMM_ADMIN drafts an Announcement, targets an AUDIENCE (ALL | ORG_UNIT |
+/// POSITION | GROUP | USER via the shared AssignmentResolver / identity — never
+/// hardcoded), and publishes it: the audience is resolved into one
+/// AnnouncementReceipt per recipient. Recipients mark readAt (and acknowledgedAt
+/// when requireAck). The author sees a read/ack report (delivered/read/acked
+/// counts + per-user list) and can send a mock reminder to un-acknowledged
+/// recipients. Lifecycle in announcements.fsm.ts: DRAFT → PUBLISHED → (ARCHIVED),
+/// plus CANCELLED. Attachments reuse RecordDocument (subjectType='Announcement').
+model Announcement {
+  id           String    @id @default(cuid())
+  tenantId     String
+  code         String // human code e.g. ANN-2026-001
+  title        String
+  body         String?
+  authorId     String // COMM_ADMIN who authored (session userId)
+  audienceType String    @default("ALL") // ALL|ORG_UNIT|POSITION|GROUP|USER
+  audienceId   String?
+  priority     String    @default("NORMAL") // LOW|NORMAL|HIGH|URGENT
+  requireAck   Boolean   @default(false)
+  publishAt    DateTime?
+  expireAt     DateTime?
+  state        String    @default("DRAFT")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  receipts AnnouncementReceipt[]
+  events   AnnouncementEvent[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, state])
+  @@index([tenantId, authorId])
+}
+
+/// Per-recipient delivery + read-acknowledgement receipt for an Announcement.
+/// userId holds the resolved recipient (a person id from the resolver; matched
+/// against the session user id OR the person id when a recipient acts).
+model AnnouncementReceipt {
+  id             String    @id @default(cuid())
+  tenantId       String
+  announcementId String
+  userId         String
+  deliveredAt    DateTime  @default(now())
+  readAt         DateTime?
+  acknowledgedAt DateTime?
+  remindedAt     DateTime?
+  remindCount    Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  announcement Announcement @relation(fields: [announcementId], references: [id])
+
+  @@unique([announcementId, userId])
+  @@index([tenantId, announcementId])
+  @@index([tenantId, userId])
+}
+
+/// Append-only timeline for an Announcement: create / publish (audience resolved)
+/// / read / acknowledge / remind / archive / cancel / attachment. data = diff.
+model AnnouncementEvent {
+  id             String   @id @default(cuid())
+  tenantId       String
+  announcementId String
+  type           String
+  actorId        String
+  data           Json     @default("{}")
+  createdAt      DateTime @default(now())
+
+  announcement Announcement @relation(fields: [announcementId], references: [id])
+
+  @@index([tenantId, announcementId])
+}
+
+enum InstanceStatus {
+  running
+  completed
+  rejected
+}
+
+enum TaskStatus {
+  open
+  approved
+  rejected
+}
+
+// -----------------------------------------------------------------------------
+// Tenant Launch Factory (SaaS step 3 — E4). SHARED / platform-plane tables (like
+// Tenant): NO tenantId column, NO RLS — a launch orchestrates provisioning ACROSS
+// the platform boundary (registry + control-plane + backup), so it lives on the
+// platform plane and is read/written under withBypass. The per-tenant WRITES a
+// launch performs (identity/seed/backup) still go through withTenant(target) and
+// stay RLS-scoped. Reuses the ProvisioningCommand outbox shape (status/attempts/
+// idempotencyKey/result/error) at the granularity of a launch STEP.
+// -----------------------------------------------------------------------------
+model TenantLaunch {
+  id             String    @id @default(cuid())
+  targetTenantId String
+  targetTenantNo Int?
+  blueprintId    String?
+  seedPackId     String?
+  status         String    @default("QUEUED") // QUEUED | RUNNING | COMPLETED | FAILED
+  currentStepKey String?
+  request        Json      @default("{}")
+  createdBy      String?
+  createdAt      DateTime  @default(now())
+  finishedAt     DateTime?
+
+  steps TenantLaunchStep[]
+
+  @@index([targetTenantId])
+  @@index([status])
+}
+
+model TenantLaunchStep {
+  id             String    @id @default(cuid())
+  launchId       String
+  stepKey        String
+  seq            Int
+  status         String    @default("PENDING") // PENDING | RUNNING | DONE | FAILED | SKIPPED
+  idempotencyKey String // fixed per (launch, step): "<launchId>:<stepKey>"
+  result         Json?
+  error          String?
+  attempts       Int       @default(0)
+  startedAt      DateTime?
+  finishedAt     DateTime?
+
+  launch TenantLaunch @relation(fields: [launchId], references: [id], onDelete: Cascade)
+
+  @@unique([launchId, stepKey])
+  @@index([launchId])
+}
+
+/// Blueprint = a versioned/immutable "operating template" for one vertical
+/// (apps enabled + roles + org template + workflows + menu entitlement). SHARED /
+/// platform-plane (NO tenantId, NO RLS) like Tenant/TenantLaunch. A PUBLISHED
+/// (code, version) pair is IMMUTABLE — an edit becomes a NEW version and the old
+/// one is SUPERSEDED (mirrors WorkflowVersion / AppRoleMapping version rows).
+model Blueprint {
+  id              String    @id @default(cuid())
+  code            String // e.g. "BP-RE-002"
+  name            String
+  industry        String? // maps to Tenant.tenantClass / industry
+  version         Int       @default(1)
+  status          String    @default("DRAFT") // DRAFT | PUBLISHED | SUPERSEDED | RETIRED
+  inheritsCode    String? // base blueprint this vertical inherits (BP-BASE-ENTERPRISE)
+  appsEnabled     String[]  @default([]) // application codes to enable via control-plane
+  roleSet         Json      @default("[]") // [{ roleCode, appRole?, ... }]
+  orgTemplate     Json      @default("{}") // org units to ensure for the tenant
+  workflowSet     Json      @default("[]") // workflow definition keys
+  menuEntitlement Json      @default("{}") // menu / entitlement flags
+  compatiblePlans String[]  @default([])
+  checksum        String
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@unique([code, version])
+  @@index([code])
+  @@index([status])
+}
+
+/// SeedPack = versioned/immutable demo/operational data (NO secret). SHARED /
+/// platform-plane. `datasets` is a manifest of idempotent per-model row sets
+/// applied parameterized by tenantId. On PUBLISH the datasets are scanned by
+/// assertNoSecretFields() and rejected if any secret-like field is present
+/// (non-negotiable #10). A PUBLISHED (code, version) pair is IMMUTABLE.
+model SeedPack {
+  id            String    @id @default(cuid())
+  code          String // e.g. "SP-RE-DEMO" / "SP-XTECH-OPS"
+  name          String
+  version       Int       @default(1)
+  status        String    @default("DRAFT") // DRAFT | PUBLISHED | SUPERSEDED | RETIRED
+  blueprintCode String? // blueprint this pack targets (optional)
+  dependencies  String[]  @default([]) // other seed pack codes applied first
+  datasets      Json      @default("[]") // [{ model, idField?, prefixId?, rows: [...] }]
+  checksum      String
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@unique([code, version])
+  @@index([code])
+  @@index([status])
+}
+
+/// SubscriptionPlan = the commercial plan catalog (T011 customer readiness).
+/// SHARED / platform-plane (NO tenantId, NO RLS) like Blueprint/SeedPack —
+/// accessed exclusively via withBypass. A tenant references a plan by
+/// `Tenant.planId` == `SubscriptionPlan.code`. `appsAllowed` may contain "*"
+/// (all apps — used by the design-partner / demo plans so existing tenants are
+/// never retro-broken). `limits` carries maxUsers/maxProjects/storageGb;
+/// `featureFlags` carries boolean capability gates (ai/advancedBackup/sharedMdm).
+/// `customerTenantMinNo` (11 for real customer plans) blocks assigning a
+/// customer plan to a reserved tenant (<=10). Enforcement is DEFAULT-SAFE: a
+/// tenant whose planId is null or unknown is treated as UNLIMITED (no gate).
+model SubscriptionPlan {
+  id                  String   @id @default(cuid())
+  code                String   @unique // e.g. STARTER | PROFESSIONAL | ENTERPRISE
+  name                String
+  tier                String   @default("CUSTOM") // STARTER | PROFESSIONAL | ENTERPRISE | DEMO | DESIGN_PARTNER
+  appsAllowed         String[] @default([]) // application codes, or ["*"] for all
+  featureFlags        Json     @default("{}") // { ai: true, advancedBackup: true, ... }
+  limits              Json     @default("{}") // { maxUsers, maxProjects, storageGb }
+  priceRef            String? // external billing/price reference (optional)
+  billingEnabled      Boolean  @default(false) // true only for real customer plans
+  customerTenantMinNo Int? // min tenantNo a customer plan may be assigned to (11)
+  status              String   @default("ACTIVE") // ACTIVE | RETIRED
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt @default(now())
+
+  @@index([tier])
+  @@index([status])
+}
+
+/// Go-Live checklist TEMPLATE (Tenant Lifecycle). SHARED / platform-plane (NO
+/// tenantId, NO RLS) — versioned/immutable like Blueprint, accessed via
+/// withBypass. Keyed by blueprint/industry (a generic template + optional
+/// per-industry). `steps` is the ordered sequential checklist:
+/// [{ order, key, title, guidance, suggestedRole, templateRef?, required }].
+model GoLiveChecklistTemplate {
+  id        String   @id @default(cuid())
+  code      String // e.g. GOLIVE-GENERIC / GOLIVE-RE
+  name      String
+  version   Int      @default(1)
+  status    String   @default("PUBLISHED") // DRAFT | PUBLISHED | SUPERSEDED
+  scope     String   @default("GENERIC") // GENERIC | blueprintCode | industry key
+  blueprintCode String? // optional per-blueprint binding
+  steps     Json     @default("[]")
+  checksum  String   @default("")
+  publishedAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@unique([code, version])
+  @@index([code])
+  @@index([scope])
+}
+
+/// Per-tenant Go-Live PROGRESS (Tenant Lifecycle). SHARED / platform-plane
+/// config keyed by a UNIQUE tenantId (like BackupSchedule) — a platform operator
+/// drives each tenant's go-live from one table via withBypass. NOT RLS-scoped
+/// (the actual CLEARED business data stays tenant-scoped in its own RLS tables).
+/// `steps` mirrors the template's steps with per-step status/assignee/note:
+/// [{ key, status(TODO|DONE), assigneeId?, note?, at? }].
+model TenantGoLive {
+  id            String   @id @default(cuid())
+  tenantId      String   @unique
+  templateCode  String
+  templateVersion Int
+  steps         Json     @default("[]")
+  status        String   @default("IN_PROGRESS") // IN_PROGRESS | READY | LIVE
+  activatedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt @default(now())
+
+  @@index([status])
+}
+
+/// -----------------------------------------------------------------------------
+/// Solution Delivery Workspace (SaaS step 5 — E2). The THIRD workspace type,
+/// owned by T001 (X-TECH) as solution provider. TENANT-SCOPED under T001
+/// (tenantId, RLS + FORCE like every other tenant table). An Engagement is one
+/// customer delivery project of X-TECH. It REFERENCES other modules by id (no
+/// dual-write): attachments via RecordDocument(subjectType='Engagement'),
+/// requests/tickets/directives by subject reference, and — at GO_LIVE — the
+/// customer tenant provisioning via TenantLaunch (launchId). It NEVER writes the
+/// customer tenant's business rows.
+model Engagement {
+  id               String   @id @default(cuid())
+  tenantId         String // always T001 (tenant-xtech) — the delivery owner
+  code             String // human code e.g. ENG-2026-0001
+  customerName     String
+  prospectTenantNo Int? // target tenantNo once allocated (registry-owned)
+  targetTenantId   String? // customer tenant id once known (reference only)
+  industry         String?
+  blueprintCode    String? // chosen blueprint for the eventual launch
+  seedPackCode     String? // chosen seed pack for the eventual launch
+  stage            String   @default("LEAD") // see engagements.fsm.ts
+  status           String   @default("OPEN") // OPEN | WON | LIVE | ON_HOLD | LOST
+  ownerId          String // X-TECH delivery owner (userId)
+  value            Float? // deal value (optional)
+  notes            String?
+  launchId         String? // TenantLaunch reference set at "Khởi chạy tenant khách"
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  events EngagementEvent[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, stage])
+  @@index([tenantId, status])
+  @@index([tenantId, ownerId])
+}
+
+/// Append-only lifecycle timeline for an Engagement: stage transitions, comments,
+/// attachments, launch-trigger. data holds the diff. Every row also writes an
+/// AuditLog (see EngagementsService) for TC-018 traceability.
+model EngagementEvent {
+  id           String   @id @default(cuid())
+  tenantId     String
+  engagementId String
+  type         String
+  actorId      String
+  data         Json     @default("{}")
+  createdAt    DateTime @default(now())
+
+  engagement Engagement @relation(fields: [engagementId], references: [id])
+
+  @@index([tenantId, engagementId])
+}

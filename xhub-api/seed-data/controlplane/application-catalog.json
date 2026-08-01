@@ -1,0 +1,73 @@
+{
+  "_note": "Platform application catalog for the Tenant Control Plane. The x1/x2/xweb entries are the member apps the Hub deep-links (src/xhub/config/member-apps.ts); the remaining entries mirror the handoff data/application-catalog.json (platform systems). ownerSystem/capabilities are grounded in those sources — no ERP system is fabricated. provisioningMode MOCK means the mock app adapter simulates account creation (no real account).",
+  "applications": [
+    {
+      "code": "x1",
+      "name": "Meyland",
+      "ownerSystem": "X1_MEYLAND",
+      "provisioningMode": "MOCK",
+      "capabilities": ["CREATE", "UPDATE", "SUSPEND", "ROLE_SYNC"],
+      "userSoR": "XHUB_IDENTITY_CORE",
+      "deepLink": "https://x1.local",
+      "notes": "ERP bất động sản — web ERP (rổ hàng) và app khách hàng. Staff dùng XHub identity."
+    },
+    {
+      "code": "x2",
+      "name": "X2-BMS",
+      "ownerSystem": "XBUILDING",
+      "provisioningMode": "MOCK",
+      "capabilities": ["CREATE_STAFF", "UPDATE", "SUSPEND", "ROLE_SYNC", "PROJECT_ASSIGNMENT"],
+      "userSoR": "XHUB_IDENTITY_CORE",
+      "deepLink": "https://x2.fino.vn",
+      "notes": "SaaS vận hành chung cư. Staff dùng XHub identity; resident có thể là domain riêng."
+    },
+    {
+      "code": "xweb",
+      "name": "X Web Platform",
+      "ownerSystem": "XWEB",
+      "provisioningMode": "MOCK",
+      "capabilities": ["CREATE", "UPDATE", "SUSPEND", "ROLE_SYNC"],
+      "userSoR": "XHUB_IDENTITY_CORE",
+      "deepLink": "https://xweb.local",
+      "notes": "Multi-site content — Next.js + Payload CMS. App-local role mapping."
+    },
+    {
+      "code": "xoffice",
+      "name": "X.Office",
+      "ownerSystem": "XHUB",
+      "provisioningMode": "NATIVE",
+      "capabilities": ["CREATE", "UPDATE", "SUSPEND", "ROLE_SYNC"],
+      "userSoR": "XHUB_IDENTITY_CORE",
+      "deepLink": null,
+      "notes": "Không cần connector ngoài (native)."
+    },
+    {
+      "code": "xspace",
+      "name": "X.Space / Mattermost",
+      "ownerSystem": "MATTERMOST",
+      "provisioningMode": "MOCK",
+      "capabilities": ["CREATE", "UPDATE", "DEACTIVATE", "TEAM_CHANNEL_MEMBERSHIP", "ROLE_SYNC"],
+      "userSoR": "XHUB_IDENTITY_CORE",
+      "deepLink": null,
+      "notes": "REST/SCIM-like adapter; Mattermost giữ app-local user state."
+    },
+    {
+      "code": "finerp",
+      "name": "FinERP / ERPNext",
+      "ownerSystem": "FINERP",
+      "provisioningMode": "MANUAL",
+      "capabilities": ["CREATE_USER", "DISABLE_USER", "ROLE_MAPPING", "EMPLOYEE_LINK"],
+      "userSoR": "XHUB_IDENTITY_CORE",
+      "deepLink": null,
+      "notes": "Chưa nối live; cần mapping User/Employee/Role."
+    }
+  ],
+  "roleMappings": [
+    { "applicationCode": "x1", "xhubRoleCode": "ROLE_CFO", "appRole": "finance_admin", "version": 1 },
+    { "applicationCode": "x1", "xhubRoleCode": "ROLE_SALES_MANAGER", "appRole": "sales_manager", "version": 1 },
+    { "applicationCode": "x2", "xhubRoleCode": "ROLE_ADMIN_MANAGER", "appRole": "building_operator", "version": 1 },
+    { "applicationCode": "x2", "xhubRoleCode": "ROLE_CEO", "appRole": "org_admin", "version": 1 },
+    { "applicationCode": "xweb", "xhubRoleCode": "ROLE_SALES_MANAGER", "appRole": "editor", "version": 1 },
+    { "applicationCode": "xweb", "xhubRoleCode": "ROLE_CEO", "appRole": "admin", "version": 1 }
+  ]
+}

@@ -1,0 +1,70 @@
+import {
+  HomeIcon,
+  InboxStackIcon,
+  ChatBubbleLeftRightIcon,
+  CheckCircleIcon,
+  ClipboardDocumentCheckIcon,
+  RectangleGroupIcon,
+  Squares2X2Icon,
+  ShareIcon,
+  SparklesIcon,
+  Cog6ToothIcon,
+  ChartBarIcon,
+  PresentationChartLineIcon,
+  UserCircleIcon,
+  HashtagIcon,
+  UserGroupIcon,
+  PaperAirplaneIcon,
+  FolderIcon,
+  ListBulletIcon,
+  BellIcon,
+  BuildingOffice2Icon,
+  BriefcaseIcon,
+  BookOpenIcon,
+  BeakerIcon,
+  AcademicCapIcon,
+  MegaphoneIcon,
+  LifebuoyIcon,
+  CalendarDaysIcon,
+  SpeakerWaveIcon,
+} from "@heroicons/react/24/outline";
+import { ComponentType, SVGProps } from "react";
+
+// Complete Heroicons set covering every nav key (segments + context).
+// (Tailux's own icon set lacks icons for several XHub items, so we use
+// Heroicons for the menu; the sidebar toggle keeps Tailux's original icon.)
+export const navigationIcons: Record<
+  string,
+  ComponentType<SVGProps<SVGSVGElement>>
+> = {
+  // level-1 segments
+  home: HomeIcon,
+  inbox: InboxStackIcon,
+  space: ChatBubbleLeftRightIcon,
+  work: CheckCircleIcon,
+  approvals: ClipboardDocumentCheckIcon,
+  projects: RectangleGroupIcon,
+  apps: Squares2X2Icon,
+  office: ShareIcon,
+  ai: SparklesIcon,
+  settings: Cog6ToothIcon,
+  // context / module icons
+  chart: ChartBarIcon,
+  sales: PresentationChartLineIcon,
+  me: UserCircleIcon,
+  channel: HashtagIcon,
+  customer: UserGroupIcon,
+  dm: PaperAirplaneIcon,
+  folder: FolderIcon,
+  list: ListBulletIcon,
+  bell: BellIcon,
+  business: BuildingOffice2Icon,
+  briefcase: BriefcaseIcon,
+  docs: BookOpenIcon,
+  test: BeakerIcon,
+  guide: AcademicCapIcon,
+  directive: MegaphoneIcon,
+  lifebuoy: LifebuoyIcon,
+  calendar: CalendarDaysIcon,
+  announce: SpeakerWaveIcon,
+};

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "channel-executive",
+    "tenantId": "tenant-xtech",
+    "slug": "ban-dieu-hanh",
+    "name": "Ban điều hành",
+    "section": "my_channels",
+    "type": "public",
+    "purpose": "Chỉ đạo, quyết định và điều hành cấp công ty.",
+    "projectId": null,
+    "customerId": null
+  },
+  {
+    "id": "channel-sales",
+    "tenantId": "tenant-xtech",
+    "slug": "kinh-doanh",
+    "name": "Kinh doanh",
+    "section": "my_channels",
+    "type": "public",
+    "purpose": "Trao đổi pipeline, khách hàng và hợp đồng.",
+    "projectId": null,
+    "customerId": null
+  },
+  {
+    "id": "channel-product",
+    "tenantId": "tenant-xtech",
+    "slug": "san-pham",
+    "name": "Sản phẩm",
+    "section": "my_channels",
+    "type": "public",
+    "purpose": "Trao đổi roadmap và phản hồi sản phẩm.",
+    "projectId": null,
+    "customerId": null
+  },
+  {
+    "id": "channel-support",
+    "tenantId": "tenant-xtech",
+    "slug": "ho-tro-khach-hang",
+    "name": "Hỗ trợ khách hàng",
+    "section": "my_channels",
+    "type": "public",
+    "purpose": "Điều phối ticket và yêu cầu hỗ trợ.",
+    "projectId": null,
+    "customerId": null
+  },
+  {
+    "id": "channel-finerp-mp",
+    "tenantId": "tenant-xtech",
+    "slug": "trien-khai-finerp-minh-phat",
+    "name": "Triển khai FinERP Minh Phát",
+    "section": "projects",
+    "type": "private",
+    "purpose": "Trao đổi, cập nhật tiến độ và phối hợp triển khai FinERP cho Công ty Minh Phát.",
+    "projectId": "project-finerp-minhphat",
+    "customerId": "customer-minhphat"
+  },
+  {
+    "id": "channel-xhub-mvp",
+    "tenantId": "tenant-xtech",
+    "slug": "xhub-mvp",
+    "name": "XHub MVP",
+    "section": "projects",
+    "type": "private",
+    "purpose": "Thiết kế và phát triển XHub MVP.",
+    "projectId": "project-xhub-mvp",
+    "customerId": null
+  },
+  {
+    "id": "channel-xbooking-upgrade",
+    "tenantId": "tenant-xtech",
+    "slug": "nang-cap-xbooking",
+    "name": "Nâng cấp XBooking",
+    "section": "projects",
+    "type": "private",
+    "purpose": "Nâng cấp XBooking và triển khai UAT.",
+    "projectId": "project-xbooking-upgrade",
+    "customerId": null
+  },
+  {
+    "id": "channel-customer-mp",
+    "tenantId": "tenant-xtech",
+    "slug": "kh-minh-phat",
+    "name": "Khách hàng Minh Phát",
+    "section": "customers",
+    "type": "private",
+    "purpose": "Customer 360 và phối hợp chăm sóc Công ty Minh Phát.",
+    "projectId": "project-finerp-minhphat",
+    "customerId": "customer-minhphat"
+  },
+  {
+    "id": "channel-customer-hungtin",
+    "tenantId": "tenant-xtech",
+    "slug": "kh-hung-tin",
+    "name": "Khách hàng Hưng Tín",
+    "section": "customers",
+    "type": "private",
+    "purpose": "Theo dõi cơ hội và trao đổi với Hưng Tín.",
+    "projectId": null,
+    "customerId": "customer-hungtin"
+  },
+  {
+    "id": "channel-customer-celadon",
+    "tenantId": "tenant-xtech",
+    "slug": "kh-celadon",
+    "name": "Khách hàng Celadon",
+    "section": "customers",
+    "type": "private",
+    "purpose": "Theo dõi hợp đồng XBuilding Celadon.",
+    "projectId": null,
+    "customerId": "customer-celadon"
+  }
+]

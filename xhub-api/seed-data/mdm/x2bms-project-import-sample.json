@@ -1,0 +1,29 @@
+[
+  {
+    "sourceKey": "x2bms-projects",
+    "sourceRecordId": "X2P-000001",
+    "rawName": "Khu đô thị mẫu X Riverside",
+    "normalizedName": "X Riverside",
+    "developerName": "Công ty Cổ phần Đầu tư X",
+    "province": "Hà Nội",
+    "district": "Nam Từ Liêm",
+    "address": "Đường Mẫu, Nam Từ Liêm, Hà Nội",
+    "projectType": "KHU_DO_THI",
+    "visibility": "SHARED_WITH_VISIBILITY",
+    "qualityScore": 86
+  },
+  {
+    "sourceKey": "x2bms-projects",
+    "sourceRecordId": "X2P-000002",
+    "rawName": "Chung cư X Riverside",
+    "normalizedName": "X Riverside",
+    "developerName": "CTCP Đầu tư X",
+    "province": "Hà Nội",
+    "district": "Nam Từ Liêm",
+    "address": "Nam Từ Liêm, Hà Nội",
+    "projectType": "CHUNG_CU",
+    "visibility": "SHARED_WITH_VISIBILITY",
+    "qualityScore": 73,
+    "duplicateCandidateOf": "X2P-000001"
+  }
+]

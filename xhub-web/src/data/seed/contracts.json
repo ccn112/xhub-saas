@@ -1,0 +1,44 @@
+[
+  {
+    "id": "contract-mp-finerp",
+    "tenantId": "tenant-xtech",
+    "code": "HDTV-2026-119",
+    "customerId": "customer-minhphat",
+    "name": "Hợp đồng tư vấn triển khai FinERP",
+    "value": 120000000,
+    "currency": "VND",
+    "signedDate": "2026-08-05",
+    "effectiveFrom": "2026-08-05",
+    "effectiveTo": "2026-12-31",
+    "status": "active",
+    "ownerId": "user-thuha"
+  },
+  {
+    "id": "contract-celadon-xbuilding",
+    "tenantId": "tenant-xtech",
+    "code": "HD-2026-0683",
+    "customerId": "customer-celadon",
+    "name": "Hợp đồng XBuilding - Celadon Riverside",
+    "value": 450000000,
+    "currency": "VND",
+    "signedDate": "2025-09-01",
+    "effectiveFrom": "2025-09-01",
+    "effectiveTo": "2026-08-31",
+    "status": "renewal_due",
+    "ownerId": "user-thuylinh"
+  },
+  {
+    "id": "contract-hungtin-finerp",
+    "tenantId": "tenant-xtech",
+    "code": "HD-2026-0512",
+    "customerId": "customer-hungtin",
+    "name": "Thỏa thuận tư vấn FinERP",
+    "value": 320000000,
+    "currency": "VND",
+    "signedDate": "2026-06-15",
+    "effectiveFrom": "2026-06-15",
+    "effectiveTo": "2026-12-31",
+    "status": "active",
+    "ownerId": "user-hainam"
+  }
+]

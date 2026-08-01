@@ -1,0 +1,30 @@
+[
+  {
+    "id": "react-001",
+    "tenantId": "tenant-xtech",
+    "messageId": "msg-mp-001",
+    "userId": "user-nam",
+    "emoji": "👍"
+  },
+  {
+    "id": "react-002",
+    "tenantId": "tenant-xtech",
+    "messageId": "msg-mp-001",
+    "userId": "user-anhkhoa",
+    "emoji": "✅"
+  },
+  {
+    "id": "react-003",
+    "tenantId": "tenant-xtech",
+    "messageId": "msg-thread-001",
+    "userId": "user-thuha",
+    "emoji": "👍"
+  },
+  {
+    "id": "react-004",
+    "tenantId": "tenant-xtech",
+    "messageId": "msg-thread-008",
+    "userId": "user-nam",
+    "emoji": "❤️"
+  }
+]

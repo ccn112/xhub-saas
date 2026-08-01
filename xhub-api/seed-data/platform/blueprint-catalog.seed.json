@@ -1,0 +1,2398 @@
+{
+  "_note": "Blueprint & Seed Pack catalog (SaaS step 4 — E5). SHARED / platform-plane rows (Blueprint / SeedPack, NO tenantId, NO RLS). Grounded on docs/saas/BLUEPRINT_SEED_PACK_PLAN.md (catalog tables §1). A published (code,version) is IMMUTABLE (mirrors WorkflowVersion). SeedPack.datasets carry NO secret (assertNoSecretFields on publish). appsEnabled uses only known ApplicationDefinition codes (x1/x2/xweb/xoffice/xspace/finerp). Idempotent: upsert-by (code,version); publishing an already-published pair is a no-op. SP-XTECH-OPS holds the position-history data moved OUT of identity.service.ts boot seed.",
+  "publish": true,
+  "blueprints": [
+    {
+      "code": "BP-BASE-ENTERPRISE",
+      "name": "Base Enterprise",
+      "industry": "SHARED",
+      "version": 1,
+      "inheritsCode": null,
+      "appsEnabled": [
+        "x1"
+      ],
+      "roleSet": [
+        {
+          "roleCode": "TENANT_ADMIN"
+        },
+        {
+          "roleCode": "OFFICE_MANAGER"
+        },
+        {
+          "roleCode": "STAFF"
+        }
+      ],
+      "orgTemplate": {
+        "units": [
+          {
+            "code": "ROOT",
+            "name": "Trụ sở chính",
+            "type": "LEGAL_ENTITY",
+            "parentCode": null
+          }
+        ]
+      },
+      "workflowSet": [
+        "approval-basic"
+      ],
+      "menuEntitlement": {
+        "modules": [
+          "org",
+          "roles",
+          "approval",
+          "ticket",
+          "booking",
+          "records",
+          "backup"
+        ]
+      },
+      "compatiblePlans": [
+        "FREE",
+        "PRO",
+        "ENTERPRISE"
+      ]
+    },
+    {
+      "code": "BP-TECH-001",
+      "name": "Technology Solution Provider",
+      "industry": "TECHNOLOGY_SOLUTION_PROVIDER",
+      "version": 1,
+      "inheritsCode": "BP-BASE-ENTERPRISE",
+      "appsEnabled": [
+        "x1",
+        "x2",
+        "xweb"
+      ],
+      "roleSet": [
+        {
+          "roleCode": "SALES_MANAGER"
+        },
+        {
+          "roleCode": "DELIVERY_MANAGER"
+        },
+        {
+          "roleCode": "SUPPORT_AGENT"
+        }
+      ],
+      "orgTemplate": {
+        "units": [
+          {
+            "code": "SALES",
+            "name": "Phòng Kinh doanh",
+            "type": "DEPARTMENT",
+            "parentCode": "ROOT"
+          },
+          {
+            "code": "DELIVERY",
+            "name": "Phòng Triển khai",
+            "type": "DEPARTMENT",
+            "parentCode": "ROOT"
+          }
+        ]
+      },
+      "workflowSet": [
+        "approval-basic",
+        "delivery-signoff"
+      ],
+      "menuEntitlement": {
+        "modules": [
+          "org",
+          "roles",
+          "approval",
+          "ticket",
+          "booking",
+          "records",
+          "backup",
+          "sales",
+          "delivery",
+          "support",
+          "customer-success"
+        ]
+      },
+      "compatiblePlans": [
+        "PRO",
+        "ENTERPRISE"
+      ]
+    },
+    {
+      "code": "BP-RE-002",
+      "name": "Real Estate Developer",
+      "industry": "REAL_ESTATE_DEVELOPER",
+      "version": 1,
+      "inheritsCode": "BP-BASE-ENTERPRISE",
+      "appsEnabled": [
+        "x1",
+        "x2"
+      ],
+      "roleSet": [
+        {
+          "roleCode": "PROJECT_MANAGER"
+        },
+        {
+          "roleCode": "SALES_MANAGER"
+        }
+      ],
+      "orgTemplate": {
+        "units": [
+          {
+            "code": "PROJECT",
+            "name": "Ban Dự án",
+            "type": "DEPARTMENT",
+            "parentCode": "ROOT"
+          },
+          {
+            "code": "SALES",
+            "name": "Phòng Kinh doanh",
+            "type": "DEPARTMENT",
+            "parentCode": "ROOT"
+          }
+        ]
+      },
+      "workflowSet": [
+        "approval-basic"
+      ],
+      "menuEntitlement": {
+        "modules": [
+          "org",
+          "roles",
+          "approval",
+          "ticket",
+          "booking",
+          "records",
+          "backup",
+          "developer",
+          "project",
+          "sales",
+          "living-ops"
+        ]
+      },
+      "compatiblePlans": [
+        "PRO",
+        "ENTERPRISE"
+      ]
+    },
+    {
+      "code": "BP-RE-002",
+      "name": "Real Estate Developer",
+      "industry": "REAL_ESTATE_DEVELOPER",
+      "version": 2,
+      "inheritsCode": "BP-BASE-ENTERPRISE",
+      "_note": "v2 — richer real-estate operating shell for the T002 demo. Apps x1 (ERP/rổ hàng-cart = XBooking proxy) + x2 (BMS resident/operations = XBuilding proxy). XBuilding/XBooking do NOT exist as dedicated modules yet — the living/operations + booking demo is proxied via the EXISTING bookings/tickets/announcements modules + Shared MDM (records). Full org template per T002 plan §4.",
+      "appsEnabled": [
+        "x1",
+        "x2"
+      ],
+      "roleSet": [
+        {
+          "roleCode": "TENANT_ADMIN"
+        },
+        {
+          "roleCode": "PROJECT_MANAGER"
+        },
+        {
+          "roleCode": "SALES_MANAGER"
+        },
+        {
+          "roleCode": "OPERATIONS_MANAGER"
+        },
+        {
+          "roleCode": "RESIDENT_CARE"
+        },
+        {
+          "roleCode": "FINANCE_MANAGER"
+        }
+      ],
+      "orgTemplate": {
+        "units": [
+          {
+            "code": "BDH",
+            "name": "Ban Điều hành",
+            "type": "DIVISION",
+            "parentCode": "ROOT"
+          },
+          {
+            "code": "SALES",
+            "name": "Phòng Kinh doanh / Bán hàng",
+            "type": "DEPARTMENT",
+            "parentCode": "ROOT"
+          },
+          {
+            "code": "PROJECT",
+            "name": "Ban Dự án",
+            "type": "DEPARTMENT",
+            "parentCode": "ROOT"
+          },
+          {
+            "code": "OPS",
+            "name": "Vận hành / Ban Quản lý",
+            "type": "DEPARTMENT",
+            "parentCode": "ROOT"
+          },
+          {
+            "code": "FINANCE",
+            "name": "Phòng Tài chính",
+            "type": "DEPARTMENT",
+            "parentCode": "ROOT"
+          }
+        ]
+      },
+      "workflowSet": [
+        "approval-basic"
+      ],
+      "menuEntitlement": {
+        "modules": [
+          "org",
+          "roles",
+          "approval",
+          "ticket",
+          "booking",
+          "records",
+          "backup",
+          "developer",
+          "project",
+          "sales",
+          "living-ops",
+          "operations"
+        ]
+      },
+      "compatiblePlans": [
+        "PRO",
+        "ENTERPRISE"
+      ]
+    },
+    {
+      "code": "BP-MFG-003",
+      "name": "Manufacturing Enterprise",
+      "industry": "MANUFACTURING",
+      "version": 1,
+      "inheritsCode": "BP-BASE-ENTERPRISE",
+      "appsEnabled": [
+        "x1"
+      ],
+      "roleSet": [],
+      "orgTemplate": {},
+      "workflowSet": [
+        "approval-basic"
+      ],
+      "menuEntitlement": {
+        "modules": [
+          "org",
+          "roles",
+          "approval",
+          "purchase",
+          "maintenance",
+          "quality",
+          "asset",
+          "inventory"
+        ]
+      },
+      "compatiblePlans": [
+        "ENTERPRISE"
+      ]
+    },
+    {
+      "code": "BP-DIST-004",
+      "name": "Distribution & Retail",
+      "industry": "DISTRIBUTION_RETAIL",
+      "version": 1,
+      "inheritsCode": "BP-BASE-ENTERPRISE",
+      "appsEnabled": [
+        "x1"
+      ],
+      "roleSet": [],
+      "orgTemplate": {},
+      "workflowSet": [
+        "approval-basic"
+      ],
+      "menuEntitlement": {
+        "modules": [
+          "org",
+          "roles",
+          "approval",
+          "crm",
+          "discount",
+          "inventory",
+          "delivery",
+          "customer-service"
+        ]
+      },
+      "compatiblePlans": [
+        "PRO",
+        "ENTERPRISE"
+      ]
+    },
+    {
+      "code": "BP-CONST-005",
+      "name": "Construction Contractor",
+      "industry": "CONSTRUCTION",
+      "version": 1,
+      "inheritsCode": "BP-BASE-ENTERPRISE",
+      "appsEnabled": [
+        "x1"
+      ],
+      "roleSet": [],
+      "orgTemplate": {},
+      "workflowSet": [
+        "approval-basic"
+      ],
+      "menuEntitlement": {
+        "modules": [
+          "org",
+          "roles",
+          "approval",
+          "project",
+          "submittal",
+          "material",
+          "subcontractor",
+          "acceptance"
+        ]
+      },
+      "compatiblePlans": [
+        "ENTERPRISE"
+      ]
+    },
+    {
+      "code": "BP-HOSP-006",
+      "name": "Hospitality Services",
+      "industry": "HOSPITALITY",
+      "version": 1,
+      "inheritsCode": "BP-BASE-ENTERPRISE",
+      "appsEnabled": [
+        "x1"
+      ],
+      "roleSet": [],
+      "orgTemplate": {},
+      "workflowSet": [
+        "approval-basic"
+      ],
+      "menuEntitlement": {
+        "modules": [
+          "org",
+          "roles",
+          "approval",
+          "service-ops",
+          "shifts",
+          "assets",
+          "quality"
+        ]
+      },
+      "compatiblePlans": [
+        "PRO",
+        "ENTERPRISE"
+      ]
+    },
+    {
+      "code": "BP-EDU-007",
+      "name": "Education Organization",
+      "industry": "EDUCATION",
+      "version": 1,
+      "inheritsCode": "BP-BASE-ENTERPRISE",
+      "appsEnabled": [
+        "x1"
+      ],
+      "roleSet": [],
+      "orgTemplate": {},
+      "workflowSet": [
+        "approval-basic"
+      ],
+      "menuEntitlement": {
+        "modules": [
+          "org",
+          "roles",
+          "approval",
+          "admission",
+          "training",
+          "schedule",
+          "learner-care"
+        ]
+      },
+      "compatiblePlans": [
+        "PRO",
+        "ENTERPRISE"
+      ]
+    },
+    {
+      "code": "BP-HC-008",
+      "name": "Healthcare Administration",
+      "industry": "HEALTHCARE",
+      "version": 1,
+      "inheritsCode": "BP-BASE-ENTERPRISE",
+      "appsEnabled": [
+        "x1"
+      ],
+      "roleSet": [],
+      "orgTemplate": {},
+      "workflowSet": [
+        "approval-basic"
+      ],
+      "menuEntitlement": {
+        "modules": [
+          "org",
+          "roles",
+          "approval",
+          "administration",
+          "shifts",
+          "access",
+          "asset",
+          "records"
+        ]
+      },
+      "compatiblePlans": [
+        "ENTERPRISE"
+      ]
+    },
+    {
+      "code": "BP-LOG-009",
+      "name": "Logistics & Transport",
+      "industry": "LOGISTICS",
+      "version": 1,
+      "inheritsCode": "BP-BASE-ENTERPRISE",
+      "appsEnabled": [
+        "x1"
+      ],
+      "roleSet": [],
+      "orgTemplate": {},
+      "workflowSet": [
+        "approval-basic"
+      ],
+      "menuEntitlement": {
+        "modules": [
+          "org",
+          "roles",
+          "approval",
+          "dispatch",
+          "fleet",
+          "resource",
+          "ticket",
+          "erp"
+        ]
+      },
+      "compatiblePlans": [
+        "ENTERPRISE"
+      ]
+    },
+    {
+      "code": "BP-PS-010",
+      "name": "Professional Services",
+      "industry": "PROFESSIONAL_SERVICES",
+      "version": 1,
+      "inheritsCode": "BP-BASE-ENTERPRISE",
+      "appsEnabled": [
+        "x1"
+      ],
+      "roleSet": [],
+      "orgTemplate": {},
+      "workflowSet": [
+        "approval-basic"
+      ],
+      "menuEntitlement": {
+        "modules": [
+          "org",
+          "roles",
+          "approval",
+          "crm",
+          "consulting-projects",
+          "records",
+          "customer-success"
+        ]
+      },
+      "compatiblePlans": [
+        "PRO",
+        "ENTERPRISE"
+      ]
+    }
+  ],
+  "seedPacks": [
+    {
+      "code": "SP-BASE-ORG",
+      "name": "Base Org (units, positions, roles, scopes)",
+      "version": 1,
+      "blueprintCode": "BP-BASE-ENTERPRISE",
+      "dependencies": [],
+      "datasets": [
+        {
+          "model": "orgUnit",
+          "prefixId": true,
+          "rows": [
+            {
+              "id": "seed-org-sales",
+              "code": "SEED-SALES",
+              "name": "Phòng Kinh doanh (demo)",
+              "type": "DEPARTMENT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "SP-BASE-OFFICE",
+      "name": "Base Office (procedures, forms, SLA, notifications)",
+      "version": 1,
+      "blueprintCode": "BP-BASE-ENTERPRISE",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "datasets": []
+    },
+    {
+      "code": "SP-BASE-RECORDS",
+      "name": "Base Records (classification, retention, document types)",
+      "version": 1,
+      "blueprintCode": "BP-BASE-ENTERPRISE",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "datasets": []
+    },
+    {
+      "code": "SP-BASE-BACKUP",
+      "name": "Base Backup (policy, retention, restore approval)",
+      "version": 1,
+      "blueprintCode": "BP-BASE-ENTERPRISE",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "datasets": []
+    },
+    {
+      "code": "SP-XTECH-OPS",
+      "name": "X-TECH Operations (org history, workflows, ops data — T001)",
+      "version": 1,
+      "blueprintCode": "BP-TECH-001",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "_note": "Position holder/acting HISTORY (PH-01 / NX-013) — moved OUT of identity.service.ts boot seed. Fixed ids (prefixId=false) applied to tenant-xtech only; idempotent by id, does NOT alter current holders.",
+      "datasets": [
+        {
+          "model": "positionAssignment",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "pa-sales-past",
+              "positionId": "pos-sales-head",
+              "personId": "usr-admin-head",
+              "kind": "PRIMARY",
+              "effectiveFrom": "2026-01-01T00:00:00.000Z",
+              "effectiveTo": "2026-06-30T23:59:59.000Z",
+              "reason": "Phụ trách tạm trước khi bổ nhiệm chính thức",
+              "createdBy": "seed"
+            },
+            {
+              "id": "pa-sales-current",
+              "positionId": "pos-sales-head",
+              "personId": "usr-sales-head",
+              "kind": "PRIMARY",
+              "effectiveFrom": "2026-07-01T00:00:00.000Z",
+              "effectiveTo": null,
+              "reason": "Bổ nhiệm chính thức",
+              "createdBy": "seed"
+            },
+            {
+              "id": "pa-tech-current",
+              "positionId": "pos-tech-head",
+              "personId": "usr-tech-head",
+              "kind": "PRIMARY",
+              "effectiveFrom": "2026-05-01T00:00:00.000Z",
+              "effectiveTo": null,
+              "reason": "Bổ nhiệm chính thức",
+              "createdBy": "seed"
+            },
+            {
+              "id": "pa-tech-acting",
+              "positionId": "pos-tech-head",
+              "personId": "usr-it-support",
+              "kind": "ACTING",
+              "effectiveFrom": "2026-07-25T00:00:00.000Z",
+              "effectiveTo": "2026-08-25T23:59:59.000Z",
+              "reason": "Tạm quyền khi trưởng phòng đi công tác",
+              "createdBy": "seed"
+            },
+            {
+              "id": "pa-cfo-current",
+              "positionId": "pos-cfo",
+              "personId": "usr-cfo",
+              "kind": "PRIMARY",
+              "effectiveFrom": "2026-01-01T00:00:00.000Z",
+              "effectiveTo": null,
+              "reason": "Bổ nhiệm chính thức",
+              "createdBy": "seed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "SP-RE-DEMO",
+      "name": "Real Estate Demo Data",
+      "version": 1,
+      "blueprintCode": "BP-RE-002",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "datasets": []
+    },
+    {
+      "code": "SP-RE-DEMO",
+      "name": "Real Estate Demo Data",
+      "version": 2,
+      "blueprintCode": "BP-RE-002",
+      "dependencies": [
+        "SP-BASE-ORG",
+        "SP-BASE-OFFICE",
+        "SP-BASE-RECORDS",
+        "SP-BASE-BACKUP"
+      ],
+      "_note": "v2 — SYNTHETIC real-estate demo data (NO real personal data, NO plaintext secret). Inherits the Base Enterprise pack (org/office/records/backup). ids namespaced t002-re-* (prefixId=false, tenant-fixed to the RE demo). People carry externalIdRefs.synthetic=true and @demo.local emails (a real-data marker scan asserts none are real). Living/operations + sales/booking proxied via the existing bookings/tickets/announcements modules + generic people (residents-as-people).",
+      "datasets": [
+        {
+          "model": "personProfile",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t002-re-agent-01",
+              "fullName": "Nhân viên Kinh doanh Demo 01",
+              "email": "agent01@demo.local",
+              "phone": "0900 000 001",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "sales_agent"
+              }
+            },
+            {
+              "id": "t002-re-agent-02",
+              "fullName": "Nhân viên Kinh doanh Demo 02",
+              "email": "agent02@demo.local",
+              "phone": "0900 000 002",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "sales_agent"
+              }
+            },
+            {
+              "id": "t002-re-ops-01",
+              "fullName": "Nhân viên Vận hành Demo 01",
+              "email": "ops01@demo.local",
+              "phone": "0900 000 010",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "operations"
+              }
+            },
+            {
+              "id": "t002-re-resident-01",
+              "fullName": "Cư dân Demo A",
+              "email": "residentA@demo.local",
+              "phone": "0900 000 101",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "resident"
+              }
+            },
+            {
+              "id": "t002-re-resident-02",
+              "fullName": "Cư dân Demo B",
+              "email": "residentB@demo.local",
+              "phone": "0900 000 102",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "resident"
+              }
+            }
+          ]
+        },
+        {
+          "model": "bookableResource",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t002-re-unit-a1201",
+              "code": "A-12-01",
+              "name": "Căn hộ A-12-01 (2PN)",
+              "type": "UNIT",
+              "location": "Toà A - Tầng 12",
+              "active": true
+            },
+            {
+              "id": "t002-re-unit-a1202",
+              "code": "A-12-02",
+              "name": "Căn hộ A-12-02 (3PN)",
+              "type": "UNIT",
+              "location": "Toà A - Tầng 12",
+              "active": true
+            },
+            {
+              "id": "t002-re-unit-b0805",
+              "code": "B-08-05",
+              "name": "Căn hộ B-08-05 (2PN)",
+              "type": "UNIT",
+              "location": "Toà B - Tầng 8",
+              "active": true
+            }
+          ]
+        },
+        {
+          "model": "booking",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t002-re-book-0001",
+              "code": "GIU-CHO-2026-0001",
+              "resourceId": "t002-re-unit-a1201",
+              "requesterId": "t002-re-agent-01",
+              "title": "Giữ chỗ căn A-12-01",
+              "purpose": "Khách đặt cọc giữ chỗ",
+              "startAt": "2026-07-01T09:00:00.000Z",
+              "endAt": "2026-07-15T09:00:00.000Z",
+              "state": "CONFIRMED"
+            },
+            {
+              "id": "t002-re-book-0002",
+              "code": "GIU-CHO-2026-0002",
+              "resourceId": "t002-re-unit-b0805",
+              "requesterId": "t002-re-agent-02",
+              "title": "Giữ chỗ căn B-08-05",
+              "purpose": "Khách quan tâm",
+              "startAt": "2026-07-10T09:00:00.000Z",
+              "endAt": "2026-07-24T09:00:00.000Z",
+              "state": "REQUESTED"
+            }
+          ]
+        },
+        {
+          "model": "ticket",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t002-re-tkt-0001",
+              "code": "VH-2026-0001",
+              "title": "Yêu cầu sửa điện căn A-12-01",
+              "description": "Cư dân báo mất điện phòng khách",
+              "requesterId": "t002-re-resident-01",
+              "category": "VAN_HANH",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            },
+            {
+              "id": "t002-re-tkt-0002",
+              "code": "VH-2026-0002",
+              "title": "Phản ánh tiếng ồn tầng 8",
+              "description": "Cư dân phản ánh thi công ngoài giờ",
+              "requesterId": "t002-re-resident-02",
+              "category": "VAN_HANH",
+              "priority": "LOW",
+              "state": "NEW"
+            }
+          ]
+        },
+        {
+          "model": "announcement",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t002-re-ann-0001",
+              "code": "TB-2026-001",
+              "title": "Lịch bảo trì thang máy Toà A",
+              "body": "Thang máy Toà A bảo trì định kỳ ngày 05/08.",
+              "authorId": "tenant-realestate-demo-admin",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED"
+            },
+            {
+              "id": "t002-re-ann-0002",
+              "code": "TB-2026-002",
+              "title": "Thông báo phí dịch vụ Quý 3",
+              "body": "Phí dịch vụ Quý 3 áp dụng từ 01/07.",
+              "authorId": "tenant-realestate-demo-admin",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "SP-MFG-DEMO",
+      "name": "Manufacturing Demo Data",
+      "version": 1,
+      "blueprintCode": "BP-MFG-003",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "datasets": []
+    },
+    {
+      "code": "SP-MFG-DEMO",
+      "name": "Manufacturing Demo Data",
+      "version": 2,
+      "blueprintCode": "BP-MFG-003",
+      "dependencies": [
+        "SP-BASE-ORG",
+        "SP-BASE-OFFICE",
+        "SP-BASE-RECORDS",
+        "SP-BASE-BACKUP"
+      ],
+      "datasets": [
+        {
+          "model": "personProfile",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t003-mfg-emp-01",
+              "fullName": "Nhân sự Demo production_planner 01",
+              "email": "t003-mfg-production_planner-01@demo.local",
+              "phone": "0300 000 001",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "production_planner"
+              }
+            },
+            {
+              "id": "t003-mfg-emp-02",
+              "fullName": "Nhân sự Demo maintenance_tech 02",
+              "email": "t003-mfg-maintenance_tech-02@demo.local",
+              "phone": "0300 000 002",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "maintenance_tech"
+              }
+            },
+            {
+              "id": "t003-mfg-emp-03",
+              "fullName": "Nhân sự Demo quality_inspector 03",
+              "email": "t003-mfg-quality_inspector-03@demo.local",
+              "phone": "0300 000 003",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "quality_inspector"
+              }
+            },
+            {
+              "id": "t003-mfg-emp-04",
+              "fullName": "Nhân sự Demo warehouse_staff 04",
+              "email": "t003-mfg-warehouse_staff-04@demo.local",
+              "phone": "0300 000 004",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "warehouse_staff"
+              }
+            },
+            {
+              "id": "t003-mfg-emp-05",
+              "fullName": "Nhân sự Demo plant_supervisor 05",
+              "email": "t003-mfg-plant_supervisor-05@demo.local",
+              "phone": "0300 000 005",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "plant_supervisor"
+              }
+            }
+          ]
+        },
+        {
+          "model": "bookableResource",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t003-mfg-res-1",
+              "code": "MFG-LINE-01",
+              "name": "Dây chuyền lắp ráp 01",
+              "type": "ASSET",
+              "location": "Dây chuyền lắp ráp 01",
+              "active": true
+            },
+            {
+              "id": "t003-mfg-res-2",
+              "code": "MFG-CNC-07",
+              "name": "Máy CNC 07",
+              "type": "ASSET",
+              "location": "Máy CNC 07",
+              "active": true
+            },
+            {
+              "id": "t003-mfg-res-3",
+              "code": "MFG-FORK-02",
+              "name": "Xe nâng kho 02",
+              "type": "ASSET",
+              "location": "Xe nâng kho 02",
+              "active": true
+            }
+          ]
+        },
+        {
+          "model": "booking",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t003-mfg-book-1",
+              "code": "BOOK-2026-31",
+              "resourceId": "t003-mfg-res-1",
+              "requesterId": "t003-mfg-emp-01",
+              "title": "Đặt Dây chuyền lắp ráp 01",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-01T02:00:00.000Z",
+              "endAt": "2026-07-01T04:00:00.000Z",
+              "state": "APPROVED"
+            },
+            {
+              "id": "t003-mfg-book-2",
+              "code": "BOOK-2026-32",
+              "resourceId": "t003-mfg-res-2",
+              "requesterId": "t003-mfg-emp-01",
+              "title": "Đặt Máy CNC 07",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-02T02:00:00.000Z",
+              "endAt": "2026-07-02T04:00:00.000Z",
+              "state": "REQUESTED"
+            }
+          ]
+        },
+        {
+          "model": "ticket",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t003-mfg-tkt-1",
+              "code": "PM-2026-001",
+              "title": "Bảo trì định kỳ dây chuyền 01",
+              "description": "Bảo trì định kỳ dây chuyền 01",
+              "requesterId": "t003-mfg-emp-01",
+              "category": "MAINTENANCE",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            },
+            {
+              "id": "t003-mfg-tkt-2",
+              "code": "QA-2026-002",
+              "title": "Sự cố chất lượng lô SX-0231",
+              "description": "Sự cố chất lượng lô SX-0231",
+              "requesterId": "t003-mfg-emp-01",
+              "category": "QUALITY",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            }
+          ]
+        },
+        {
+          "model": "announcement",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t003-mfg-ann-1",
+              "code": "TB-2026-31",
+              "title": "An toàn lao động ca đêm",
+              "body": "Nhắc quy định PPE khu vực xưởng",
+              "authorId": "t003-mfg-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            },
+            {
+              "id": "t003-mfg-ann-2",
+              "code": "TB-2026-32",
+              "title": "Kế hoạch sản xuất tuần",
+              "body": "Lịch chạy dây chuyền tuần này",
+              "authorId": "t003-mfg-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "SP-DIST-DEMO",
+      "name": "Distribution Demo Data",
+      "version": 1,
+      "blueprintCode": "BP-DIST-004",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "datasets": []
+    },
+    {
+      "code": "SP-DIST-DEMO",
+      "name": "Distribution & Retail Demo Data",
+      "version": 2,
+      "blueprintCode": "BP-DIST-004",
+      "dependencies": [
+        "SP-BASE-ORG",
+        "SP-BASE-OFFICE",
+        "SP-BASE-RECORDS",
+        "SP-BASE-BACKUP"
+      ],
+      "datasets": [
+        {
+          "model": "personProfile",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t004-dist-emp-01",
+              "fullName": "Nhân sự Demo sales_rep 01",
+              "email": "t004-dist-sales_rep-01@demo.local",
+              "phone": "0400 000 001",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "sales_rep"
+              }
+            },
+            {
+              "id": "t004-dist-emp-02",
+              "fullName": "Nhân sự Demo inventory_clerk 02",
+              "email": "t004-dist-inventory_clerk-02@demo.local",
+              "phone": "0400 000 002",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "inventory_clerk"
+              }
+            },
+            {
+              "id": "t004-dist-emp-03",
+              "fullName": "Nhân sự Demo delivery_driver 03",
+              "email": "t004-dist-delivery_driver-03@demo.local",
+              "phone": "0400 000 003",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "delivery_driver"
+              }
+            },
+            {
+              "id": "t004-dist-emp-04",
+              "fullName": "Nhân sự Demo store_manager 04",
+              "email": "t004-dist-store_manager-04@demo.local",
+              "phone": "0400 000 004",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "store_manager"
+              }
+            },
+            {
+              "id": "t004-dist-emp-05",
+              "fullName": "Nhân sự Demo purchasing_staff 05",
+              "email": "t004-dist-purchasing_staff-05@demo.local",
+              "phone": "0400 000 005",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "purchasing_staff"
+              }
+            }
+          ]
+        },
+        {
+          "model": "bookableResource",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t004-dist-res-1",
+              "code": "DIST-VAN-01",
+              "name": "Xe tải giao hàng 01",
+              "type": "VEHICLE",
+              "location": "Xe tải giao hàng 01",
+              "active": true
+            },
+            {
+              "id": "t004-dist-res-2",
+              "code": "DIST-VAN-02",
+              "name": "Xe tải giao hàng 02",
+              "type": "VEHICLE",
+              "location": "Xe tải giao hàng 02",
+              "active": true
+            },
+            {
+              "id": "t004-dist-res-3",
+              "code": "DIST-DOCK-A",
+              "name": "Bến xuất hàng A",
+              "type": "VEHICLE",
+              "location": "Bến xuất hàng A",
+              "active": true
+            }
+          ]
+        },
+        {
+          "model": "booking",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t004-dist-book-1",
+              "code": "BOOK-2026-41",
+              "resourceId": "t004-dist-res-1",
+              "requesterId": "t004-dist-emp-01",
+              "title": "Đặt Xe tải giao hàng 01",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-01T02:00:00.000Z",
+              "endAt": "2026-07-01T04:00:00.000Z",
+              "state": "APPROVED"
+            },
+            {
+              "id": "t004-dist-book-2",
+              "code": "BOOK-2026-42",
+              "resourceId": "t004-dist-res-2",
+              "requesterId": "t004-dist-emp-01",
+              "title": "Đặt Xe tải giao hàng 02",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-02T02:00:00.000Z",
+              "endAt": "2026-07-02T04:00:00.000Z",
+              "state": "REQUESTED"
+            }
+          ]
+        },
+        {
+          "model": "ticket",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t004-dist-tkt-1",
+              "code": "ORD-2026-001",
+              "title": "Thiếu hàng đơn PO-2026-118",
+              "description": "Thiếu hàng đơn PO-2026-118",
+              "requesterId": "t004-dist-emp-01",
+              "category": "ORDER",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            },
+            {
+              "id": "t004-dist-tkt-2",
+              "code": "STK-2026-002",
+              "title": "Điều chỉnh tồn kho chi nhánh 2",
+              "description": "Điều chỉnh tồn kho chi nhánh 2",
+              "requesterId": "t004-dist-emp-01",
+              "category": "INVENTORY",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            }
+          ]
+        },
+        {
+          "model": "announcement",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t004-dist-ann-1",
+              "code": "TB-2026-41",
+              "title": "Chương trình khuyến mãi Q3",
+              "body": "Áp dụng bảng giá mới toàn hệ thống",
+              "authorId": "t004-dist-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            },
+            {
+              "id": "t004-dist-ann-2",
+              "code": "TB-2026-42",
+              "title": "Lịch giao hàng lễ",
+              "body": "Điều chỉnh tuyến giao dịp lễ",
+              "authorId": "t004-dist-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "SP-CONST-DEMO",
+      "name": "Construction Demo Data",
+      "version": 1,
+      "blueprintCode": "BP-CONST-005",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "datasets": []
+    },
+    {
+      "code": "SP-CONST-DEMO",
+      "name": "Construction Contractor Demo Data",
+      "version": 2,
+      "blueprintCode": "BP-CONST-005",
+      "dependencies": [
+        "SP-BASE-ORG",
+        "SP-BASE-OFFICE",
+        "SP-BASE-RECORDS",
+        "SP-BASE-BACKUP"
+      ],
+      "datasets": [
+        {
+          "model": "personProfile",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t005-const-emp-01",
+              "fullName": "Nhân sự Demo project_engineer 01",
+              "email": "t005-const-project_engineer-01@demo.local",
+              "phone": "0500 000 001",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "project_engineer"
+              }
+            },
+            {
+              "id": "t005-const-emp-02",
+              "fullName": "Nhân sự Demo site_supervisor 02",
+              "email": "t005-const-site_supervisor-02@demo.local",
+              "phone": "0500 000 002",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "site_supervisor"
+              }
+            },
+            {
+              "id": "t005-const-emp-03",
+              "fullName": "Nhân sự Demo qs_estimator 03",
+              "email": "t005-const-qs_estimator-03@demo.local",
+              "phone": "0500 000 003",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "qs_estimator"
+              }
+            },
+            {
+              "id": "t005-const-emp-04",
+              "fullName": "Nhân sự Demo safety_officer 04",
+              "email": "t005-const-safety_officer-04@demo.local",
+              "phone": "0500 000 004",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "safety_officer"
+              }
+            },
+            {
+              "id": "t005-const-emp-05",
+              "fullName": "Nhân sự Demo procurement_staff 05",
+              "email": "t005-const-procurement_staff-05@demo.local",
+              "phone": "0500 000 005",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "procurement_staff"
+              }
+            }
+          ]
+        },
+        {
+          "model": "bookableResource",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t005-const-res-1",
+              "code": "CON-CRANE-01",
+              "name": "Cẩu tháp 01",
+              "type": "ASSET",
+              "location": "Cẩu tháp 01",
+              "active": true
+            },
+            {
+              "id": "t005-const-res-2",
+              "code": "CON-MIX-03",
+              "name": "Máy trộn bê tông 03",
+              "type": "ASSET",
+              "location": "Máy trộn bê tông 03",
+              "active": true
+            },
+            {
+              "id": "t005-const-res-3",
+              "code": "CON-SITE-B",
+              "name": "Kho công trường B",
+              "type": "ASSET",
+              "location": "Kho công trường B",
+              "active": true
+            }
+          ]
+        },
+        {
+          "model": "booking",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t005-const-book-1",
+              "code": "BOOK-2026-51",
+              "resourceId": "t005-const-res-1",
+              "requesterId": "t005-const-emp-01",
+              "title": "Đặt Cẩu tháp 01",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-01T02:00:00.000Z",
+              "endAt": "2026-07-01T04:00:00.000Z",
+              "state": "APPROVED"
+            },
+            {
+              "id": "t005-const-book-2",
+              "code": "BOOK-2026-52",
+              "resourceId": "t005-const-res-2",
+              "requesterId": "t005-const-emp-01",
+              "title": "Đặt Máy trộn bê tông 03",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-02T02:00:00.000Z",
+              "endAt": "2026-07-02T04:00:00.000Z",
+              "state": "REQUESTED"
+            }
+          ]
+        },
+        {
+          "model": "ticket",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t005-const-tkt-1",
+              "code": "SUB-2026-001",
+              "title": "Duyệt shop drawing kết cấu tầng 5",
+              "description": "Duyệt shop drawing kết cấu tầng 5",
+              "requesterId": "t005-const-emp-01",
+              "category": "SUBMITTAL",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            },
+            {
+              "id": "t005-const-tkt-2",
+              "code": "MAT-2026-002",
+              "title": "Yêu cầu vật tư thép D16",
+              "description": "Yêu cầu vật tư thép D16",
+              "requesterId": "t005-const-emp-01",
+              "category": "MATERIAL",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            }
+          ]
+        },
+        {
+          "model": "announcement",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t005-const-ann-1",
+              "code": "TB-2026-51",
+              "title": "Họp an toàn công trường",
+              "body": "Toolbox meeting đầu ca sáng thứ 2",
+              "authorId": "t005-const-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            },
+            {
+              "id": "t005-const-ann-2",
+              "code": "TB-2026-52",
+              "title": "Tiến độ nghiệm thu",
+              "body": "Kế hoạch nghiệm thu phần thô",
+              "authorId": "t005-const-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "SP-HOSP-DEMO",
+      "name": "Hospitality Demo Data",
+      "version": 1,
+      "blueprintCode": "BP-HOSP-006",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "datasets": []
+    },
+    {
+      "code": "SP-HOSP-DEMO",
+      "name": "Hospitality & Services Demo Data",
+      "version": 2,
+      "blueprintCode": "BP-HOSP-006",
+      "dependencies": [
+        "SP-BASE-ORG",
+        "SP-BASE-OFFICE",
+        "SP-BASE-RECORDS",
+        "SP-BASE-BACKUP"
+      ],
+      "datasets": [
+        {
+          "model": "personProfile",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t006-hosp-emp-01",
+              "fullName": "Nhân sự Demo front_desk 01",
+              "email": "t006-hosp-front_desk-01@demo.local",
+              "phone": "0600 000 001",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "front_desk"
+              }
+            },
+            {
+              "id": "t006-hosp-emp-02",
+              "fullName": "Nhân sự Demo housekeeping 02",
+              "email": "t006-hosp-housekeeping-02@demo.local",
+              "phone": "0600 000 002",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "housekeeping"
+              }
+            },
+            {
+              "id": "t006-hosp-emp-03",
+              "fullName": "Nhân sự Demo fnb_staff 03",
+              "email": "t006-hosp-fnb_staff-03@demo.local",
+              "phone": "0600 000 003",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "fnb_staff"
+              }
+            },
+            {
+              "id": "t006-hosp-emp-04",
+              "fullName": "Nhân sự Demo concierge 04",
+              "email": "t006-hosp-concierge-04@demo.local",
+              "phone": "0600 000 004",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "concierge"
+              }
+            },
+            {
+              "id": "t006-hosp-emp-05",
+              "fullName": "Nhân sự Demo duty_manager 05",
+              "email": "t006-hosp-duty_manager-05@demo.local",
+              "phone": "0600 000 005",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "duty_manager"
+              }
+            }
+          ]
+        },
+        {
+          "model": "bookableResource",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t006-hosp-res-1",
+              "code": "HOSP-RM-201",
+              "name": "Phòng 201 Deluxe",
+              "type": "ROOM",
+              "location": "Phòng 201 Deluxe",
+              "active": true
+            },
+            {
+              "id": "t006-hosp-res-2",
+              "code": "HOSP-RM-305",
+              "name": "Phòng 305 Suite",
+              "type": "ROOM",
+              "location": "Phòng 305 Suite",
+              "active": true
+            },
+            {
+              "id": "t006-hosp-res-3",
+              "code": "HOSP-HALL-A",
+              "name": "Sảnh sự kiện A",
+              "type": "ROOM",
+              "location": "Sảnh sự kiện A",
+              "active": true
+            }
+          ]
+        },
+        {
+          "model": "booking",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t006-hosp-book-1",
+              "code": "BOOK-2026-61",
+              "resourceId": "t006-hosp-res-1",
+              "requesterId": "t006-hosp-emp-01",
+              "title": "Đặt Phòng 201 Deluxe",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-01T02:00:00.000Z",
+              "endAt": "2026-07-01T04:00:00.000Z",
+              "state": "APPROVED"
+            },
+            {
+              "id": "t006-hosp-book-2",
+              "code": "BOOK-2026-62",
+              "resourceId": "t006-hosp-res-2",
+              "requesterId": "t006-hosp-emp-01",
+              "title": "Đặt Phòng 305 Suite",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-02T02:00:00.000Z",
+              "endAt": "2026-07-02T04:00:00.000Z",
+              "state": "REQUESTED"
+            }
+          ]
+        },
+        {
+          "model": "ticket",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t006-hosp-tkt-1",
+              "code": "HK-2026-001",
+              "title": "Yêu cầu dọn phòng 305",
+              "description": "Yêu cầu dọn phòng 305",
+              "requesterId": "t006-hosp-emp-01",
+              "category": "HOUSEKEEPING",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            },
+            {
+              "id": "t006-hosp-tkt-2",
+              "code": "GS-2026-002",
+              "title": "Phản hồi dịch vụ khách phòng 201",
+              "description": "Phản hồi dịch vụ khách phòng 201",
+              "requesterId": "t006-hosp-emp-01",
+              "category": "GUEST_SERVICE",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            }
+          ]
+        },
+        {
+          "model": "announcement",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t006-hosp-ann-1",
+              "code": "TB-2026-61",
+              "title": "Tiêu chuẩn phục vụ mới",
+              "body": "Cập nhật SOP đón khách",
+              "authorId": "t006-hosp-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            },
+            {
+              "id": "t006-hosp-ann-2",
+              "code": "TB-2026-62",
+              "title": "Lịch trực lễ tân tuần",
+              "body": "Phân ca lễ tân và buồng phòng",
+              "authorId": "t006-hosp-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "SP-EDU-DEMO",
+      "name": "Education Demo Data",
+      "version": 1,
+      "blueprintCode": "BP-EDU-007",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "datasets": []
+    },
+    {
+      "code": "SP-EDU-DEMO",
+      "name": "Education Organization Demo Data",
+      "version": 2,
+      "blueprintCode": "BP-EDU-007",
+      "dependencies": [
+        "SP-BASE-ORG",
+        "SP-BASE-OFFICE",
+        "SP-BASE-RECORDS",
+        "SP-BASE-BACKUP"
+      ],
+      "datasets": [
+        {
+          "model": "personProfile",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t007-edu-emp-01",
+              "fullName": "Nhân sự Demo teacher 01",
+              "email": "t007-edu-teacher-01@demo.local",
+              "phone": "0700 000 001",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "teacher"
+              }
+            },
+            {
+              "id": "t007-edu-emp-02",
+              "fullName": "Nhân sự Demo academic_admin 02",
+              "email": "t007-edu-academic_admin-02@demo.local",
+              "phone": "0700 000 002",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "academic_admin"
+              }
+            },
+            {
+              "id": "t007-edu-emp-03",
+              "fullName": "Nhân sự Demo librarian 03",
+              "email": "t007-edu-librarian-03@demo.local",
+              "phone": "0700 000 003",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "librarian"
+              }
+            },
+            {
+              "id": "t007-edu-emp-04",
+              "fullName": "Nhân sự Demo it_support 04",
+              "email": "t007-edu-it_support-04@demo.local",
+              "phone": "0700 000 004",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "it_support"
+              }
+            },
+            {
+              "id": "t007-edu-emp-05",
+              "fullName": "Nhân sự Demo principal 05",
+              "email": "t007-edu-principal-05@demo.local",
+              "phone": "0700 000 005",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "principal"
+              }
+            }
+          ]
+        },
+        {
+          "model": "bookableResource",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t007-edu-res-1",
+              "code": "EDU-RM-A101",
+              "name": "Phòng học A101",
+              "type": "ROOM",
+              "location": "Phòng học A101",
+              "active": true
+            },
+            {
+              "id": "t007-edu-res-2",
+              "code": "EDU-LAB-CS",
+              "name": "Phòng máy tính",
+              "type": "ROOM",
+              "location": "Phòng máy tính",
+              "active": true
+            },
+            {
+              "id": "t007-edu-res-3",
+              "code": "EDU-HALL-1",
+              "name": "Hội trường 1",
+              "type": "ROOM",
+              "location": "Hội trường 1",
+              "active": true
+            }
+          ]
+        },
+        {
+          "model": "booking",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t007-edu-book-1",
+              "code": "BOOK-2026-71",
+              "resourceId": "t007-edu-res-1",
+              "requesterId": "t007-edu-emp-01",
+              "title": "Đặt Phòng học A101",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-01T02:00:00.000Z",
+              "endAt": "2026-07-01T04:00:00.000Z",
+              "state": "APPROVED"
+            },
+            {
+              "id": "t007-edu-book-2",
+              "code": "BOOK-2026-72",
+              "resourceId": "t007-edu-res-2",
+              "requesterId": "t007-edu-emp-01",
+              "title": "Đặt Phòng máy tính",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-02T02:00:00.000Z",
+              "endAt": "2026-07-02T04:00:00.000Z",
+              "state": "REQUESTED"
+            }
+          ]
+        },
+        {
+          "model": "ticket",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t007-edu-tkt-1",
+              "code": "FAC-2026-001",
+              "title": "Sửa máy chiếu phòng A101",
+              "description": "Sửa máy chiếu phòng A101",
+              "requesterId": "t007-edu-emp-01",
+              "category": "FACILITY",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            },
+            {
+              "id": "t007-edu-tkt-2",
+              "code": "ADM-2026-002",
+              "title": "Cấp tài khoản học viên khoá mới",
+              "description": "Cấp tài khoản học viên khoá mới",
+              "requesterId": "t007-edu-emp-01",
+              "category": "ADMIN",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            }
+          ]
+        },
+        {
+          "model": "announcement",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t007-edu-ann-1",
+              "code": "TB-2026-71",
+              "title": "Lịch thi cuối kỳ",
+              "body": "Thông báo lịch thi và phòng thi",
+              "authorId": "t007-edu-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            },
+            {
+              "id": "t007-edu-ann-2",
+              "code": "TB-2026-72",
+              "title": "Quy chế học vụ",
+              "body": "Cập nhật quy định điểm danh",
+              "authorId": "t007-edu-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "SP-HC-DEMO",
+      "name": "Healthcare Demo Data",
+      "version": 1,
+      "blueprintCode": "BP-HC-008",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "datasets": []
+    },
+    {
+      "code": "SP-HC-DEMO",
+      "name": "Healthcare Administration Demo Data (no PHI)",
+      "version": 2,
+      "blueprintCode": "BP-HC-008",
+      "dependencies": [
+        "SP-BASE-ORG",
+        "SP-BASE-OFFICE",
+        "SP-BASE-RECORDS",
+        "SP-BASE-BACKUP"
+      ],
+      "datasets": [
+        {
+          "model": "personProfile",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t008-hc-emp-01",
+              "fullName": "Nhân sự Demo ops_admin 01",
+              "email": "t008-hc-ops_admin-01@demo.local",
+              "phone": "0800 000 001",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "ops_admin"
+              }
+            },
+            {
+              "id": "t008-hc-emp-02",
+              "fullName": "Nhân sự Demo facility_manager 02",
+              "email": "t008-hc-facility_manager-02@demo.local",
+              "phone": "0800 000 002",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "facility_manager"
+              }
+            },
+            {
+              "id": "t008-hc-emp-03",
+              "fullName": "Nhân sự Demo roster_coordinator 03",
+              "email": "t008-hc-roster_coordinator-03@demo.local",
+              "phone": "0800 000 003",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "roster_coordinator"
+              }
+            },
+            {
+              "id": "t008-hc-emp-04",
+              "fullName": "Nhân sự Demo asset_officer 04",
+              "email": "t008-hc-asset_officer-04@demo.local",
+              "phone": "0800 000 004",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "asset_officer"
+              }
+            },
+            {
+              "id": "t008-hc-emp-05",
+              "fullName": "Nhân sự Demo department_lead 05",
+              "email": "t008-hc-department_lead-05@demo.local",
+              "phone": "0800 000 005",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "department_lead"
+              }
+            }
+          ]
+        },
+        {
+          "model": "bookableResource",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t008-hc-res-1",
+              "code": "HC-DUTY-A",
+              "name": "Phòng trực khoa A",
+              "type": "ROOM",
+              "location": "Phòng trực khoa A",
+              "active": true
+            },
+            {
+              "id": "t008-hc-res-2",
+              "code": "HC-MEET-1",
+              "name": "Phòng họp giao ban",
+              "type": "ROOM",
+              "location": "Phòng họp giao ban",
+              "active": true
+            },
+            {
+              "id": "t008-hc-res-3",
+              "code": "HC-STORE-1",
+              "name": "Kho vật tư hành chính",
+              "type": "ROOM",
+              "location": "Kho vật tư hành chính",
+              "active": true
+            }
+          ]
+        },
+        {
+          "model": "booking",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t008-hc-book-1",
+              "code": "BOOK-2026-81",
+              "resourceId": "t008-hc-res-1",
+              "requesterId": "t008-hc-emp-01",
+              "title": "Đặt Phòng trực khoa A",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-01T02:00:00.000Z",
+              "endAt": "2026-07-01T04:00:00.000Z",
+              "state": "APPROVED"
+            },
+            {
+              "id": "t008-hc-book-2",
+              "code": "BOOK-2026-82",
+              "resourceId": "t008-hc-res-2",
+              "requesterId": "t008-hc-emp-01",
+              "title": "Đặt Phòng họp giao ban",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-02T02:00:00.000Z",
+              "endAt": "2026-07-02T04:00:00.000Z",
+              "state": "REQUESTED"
+            }
+          ]
+        },
+        {
+          "model": "ticket",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t008-hc-tkt-1",
+              "code": "FAC-2026-001",
+              "title": "Bảo trì điều hoà phòng trực khoa A",
+              "description": "Bảo trì điều hoà phòng trực khoa A",
+              "requesterId": "t008-hc-emp-01",
+              "category": "FACILITY",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            },
+            {
+              "id": "t008-hc-tkt-2",
+              "code": "AST-2026-002",
+              "title": "Kiểm kê tài sản hành chính Q3",
+              "description": "Kiểm kê tài sản hành chính Q3",
+              "requesterId": "t008-hc-emp-01",
+              "category": "ASSET",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            }
+          ]
+        },
+        {
+          "model": "announcement",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t008-hc-ann-1",
+              "code": "TB-2026-81",
+              "title": "Lịch trực khoa tuần",
+              "body": "Phân ca trực hành chính các khoa",
+              "authorId": "t008-hc-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            },
+            {
+              "id": "t008-hc-ann-2",
+              "code": "TB-2026-82",
+              "title": "Quy định cấp quyền hệ thống",
+              "body": "Rà soát quyền truy cập nội bộ",
+              "authorId": "t008-hc-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "SP-LOG-DEMO",
+      "name": "Logistics Demo Data",
+      "version": 1,
+      "blueprintCode": "BP-LOG-009",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "datasets": []
+    },
+    {
+      "code": "SP-LOG-DEMO",
+      "name": "Logistics & Transport Demo Data",
+      "version": 2,
+      "blueprintCode": "BP-LOG-009",
+      "dependencies": [
+        "SP-BASE-ORG",
+        "SP-BASE-OFFICE",
+        "SP-BASE-RECORDS",
+        "SP-BASE-BACKUP"
+      ],
+      "datasets": [
+        {
+          "model": "personProfile",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t009-log-emp-01",
+              "fullName": "Nhân sự Demo dispatcher 01",
+              "email": "t009-log-dispatcher-01@demo.local",
+              "phone": "0900 000 001",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "dispatcher"
+              }
+            },
+            {
+              "id": "t009-log-emp-02",
+              "fullName": "Nhân sự Demo driver 02",
+              "email": "t009-log-driver-02@demo.local",
+              "phone": "0900 000 002",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "driver"
+              }
+            },
+            {
+              "id": "t009-log-emp-03",
+              "fullName": "Nhân sự Demo warehouse_op 03",
+              "email": "t009-log-warehouse_op-03@demo.local",
+              "phone": "0900 000 003",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "warehouse_op"
+              }
+            },
+            {
+              "id": "t009-log-emp-04",
+              "fullName": "Nhân sự Demo fleet_manager 04",
+              "email": "t009-log-fleet_manager-04@demo.local",
+              "phone": "0900 000 004",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "fleet_manager"
+              }
+            },
+            {
+              "id": "t009-log-emp-05",
+              "fullName": "Nhân sự Demo ops_planner 05",
+              "email": "t009-log-ops_planner-05@demo.local",
+              "phone": "0900 000 005",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "ops_planner"
+              }
+            }
+          ]
+        },
+        {
+          "model": "bookableResource",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t009-log-res-1",
+              "code": "LOG-TRK-11",
+              "name": "Đầu kéo 11",
+              "type": "VEHICLE",
+              "location": "Đầu kéo 11",
+              "active": true
+            },
+            {
+              "id": "t009-log-res-2",
+              "code": "LOG-TRK-12",
+              "name": "Đầu kéo 12",
+              "type": "VEHICLE",
+              "location": "Đầu kéo 12",
+              "active": true
+            },
+            {
+              "id": "t009-log-res-3",
+              "code": "LOG-DOCK-3",
+              "name": "Cửa xuất hàng 3",
+              "type": "VEHICLE",
+              "location": "Cửa xuất hàng 3",
+              "active": true
+            }
+          ]
+        },
+        {
+          "model": "booking",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t009-log-book-1",
+              "code": "BOOK-2026-91",
+              "resourceId": "t009-log-res-1",
+              "requesterId": "t009-log-emp-01",
+              "title": "Đặt Đầu kéo 11",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-01T02:00:00.000Z",
+              "endAt": "2026-07-01T04:00:00.000Z",
+              "state": "APPROVED"
+            },
+            {
+              "id": "t009-log-book-2",
+              "code": "BOOK-2026-92",
+              "resourceId": "t009-log-res-2",
+              "requesterId": "t009-log-emp-01",
+              "title": "Đặt Đầu kéo 12",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-02T02:00:00.000Z",
+              "endAt": "2026-07-02T04:00:00.000Z",
+              "state": "REQUESTED"
+            }
+          ]
+        },
+        {
+          "model": "ticket",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t009-log-tkt-1",
+              "code": "RTE-2026-001",
+              "title": "Điều chỉnh tuyến giao HN-HP",
+              "description": "Điều chỉnh tuyến giao HN-HP",
+              "requesterId": "t009-log-emp-01",
+              "category": "ROUTE",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            },
+            {
+              "id": "t009-log-tkt-2",
+              "code": "FLT-2026-002",
+              "title": "Bảo dưỡng đầu kéo 11",
+              "description": "Bảo dưỡng đầu kéo 11",
+              "requesterId": "t009-log-emp-01",
+              "category": "FLEET",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            }
+          ]
+        },
+        {
+          "model": "announcement",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t009-log-ann-1",
+              "code": "TB-2026-91",
+              "title": "Quy định an toàn vận tải",
+              "body": "Nhắc thời gian lái xe liên tục",
+              "authorId": "t009-log-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            },
+            {
+              "id": "t009-log-ann-2",
+              "code": "TB-2026-92",
+              "title": "Kế hoạch điều xe tuần",
+              "body": "Phân bổ tuyến và tài xế",
+              "authorId": "t009-log-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "SP-PS-DEMO",
+      "name": "Professional Services Demo Data",
+      "version": 1,
+      "blueprintCode": "BP-PS-010",
+      "dependencies": [
+        "SP-BASE-ORG"
+      ],
+      "datasets": []
+    },
+    {
+      "code": "SP-PS-DEMO",
+      "name": "Professional Services Demo Data",
+      "version": 2,
+      "blueprintCode": "BP-PS-010",
+      "dependencies": [
+        "SP-BASE-ORG",
+        "SP-BASE-OFFICE",
+        "SP-BASE-RECORDS",
+        "SP-BASE-BACKUP"
+      ],
+      "datasets": [
+        {
+          "model": "personProfile",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t010-ps-emp-01",
+              "fullName": "Nhân sự Demo consultant 01",
+              "email": "t010-ps-consultant-01@demo.local",
+              "phone": "01000 000 001",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "consultant"
+              }
+            },
+            {
+              "id": "t010-ps-emp-02",
+              "fullName": "Nhân sự Demo engagement_lead 02",
+              "email": "t010-ps-engagement_lead-02@demo.local",
+              "phone": "01000 000 002",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "engagement_lead"
+              }
+            },
+            {
+              "id": "t010-ps-emp-03",
+              "fullName": "Nhân sự Demo analyst 03",
+              "email": "t010-ps-analyst-03@demo.local",
+              "phone": "01000 000 003",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "analyst"
+              }
+            },
+            {
+              "id": "t010-ps-emp-04",
+              "fullName": "Nhân sự Demo billing_admin 04",
+              "email": "t010-ps-billing_admin-04@demo.local",
+              "phone": "01000 000 004",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "billing_admin"
+              }
+            },
+            {
+              "id": "t010-ps-emp-05",
+              "fullName": "Nhân sự Demo partner 05",
+              "email": "t010-ps-partner-05@demo.local",
+              "phone": "01000 000 005",
+              "status": "active",
+              "externalIdRefs": {
+                "synthetic": true,
+                "role": "partner"
+              }
+            }
+          ]
+        },
+        {
+          "model": "bookableResource",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t010-ps-res-1",
+              "code": "PS-RM-1",
+              "name": "Phòng họp khách hàng 1",
+              "type": "ROOM",
+              "location": "Phòng họp khách hàng 1",
+              "active": true
+            },
+            {
+              "id": "t010-ps-res-2",
+              "code": "PS-RM-2",
+              "name": "Phòng họp nội bộ 2",
+              "type": "ROOM",
+              "location": "Phòng họp nội bộ 2",
+              "active": true
+            },
+            {
+              "id": "t010-ps-res-3",
+              "code": "PS-WAR-1",
+              "name": "Phòng lưu hồ sơ",
+              "type": "ROOM",
+              "location": "Phòng lưu hồ sơ",
+              "active": true
+            }
+          ]
+        },
+        {
+          "model": "booking",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t010-ps-book-1",
+              "code": "BOOK-2026-101",
+              "resourceId": "t010-ps-res-1",
+              "requesterId": "t010-ps-emp-01",
+              "title": "Đặt Phòng họp khách hàng 1",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-01T02:00:00.000Z",
+              "endAt": "2026-07-01T04:00:00.000Z",
+              "state": "APPROVED"
+            },
+            {
+              "id": "t010-ps-book-2",
+              "code": "BOOK-2026-102",
+              "resourceId": "t010-ps-res-2",
+              "requesterId": "t010-ps-emp-01",
+              "title": "Đặt Phòng họp nội bộ 2",
+              "purpose": "Lịch dùng demo",
+              "startAt": "2026-07-02T02:00:00.000Z",
+              "endAt": "2026-07-02T04:00:00.000Z",
+              "state": "REQUESTED"
+            }
+          ]
+        },
+        {
+          "model": "ticket",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t010-ps-tkt-1",
+              "code": "CLI-2026-001",
+              "title": "Yêu cầu tư vấn khách hàng ABC",
+              "description": "Yêu cầu tư vấn khách hàng ABC",
+              "requesterId": "t010-ps-emp-01",
+              "category": "CLIENT",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            },
+            {
+              "id": "t010-ps-tkt-2",
+              "code": "DOC-2026-002",
+              "title": "Chuẩn bị hồ sơ dự án XYZ",
+              "description": "Chuẩn bị hồ sơ dự án XYZ",
+              "requesterId": "t010-ps-emp-01",
+              "category": "DELIVERY",
+              "priority": "MEDIUM",
+              "state": "NEW"
+            }
+          ]
+        },
+        {
+          "model": "announcement",
+          "prefixId": false,
+          "rows": [
+            {
+              "id": "t010-ps-ann-1",
+              "code": "TB-2026-101",
+              "title": "Chuẩn phương pháp luận",
+              "body": "Cập nhật khung tư vấn chuẩn",
+              "authorId": "t010-ps-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            },
+            {
+              "id": "t010-ps-ann-2",
+              "code": "TB-2026-102",
+              "title": "Lịch phân bổ nhân sự",
+              "body": "Kế hoạch staffing các dự án",
+              "authorId": "t010-ps-emp-01",
+              "audienceType": "ALL",
+              "priority": "NORMAL",
+              "state": "PUBLISHED",
+              "publishAt": "2026-07-01T00:00:00.000Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

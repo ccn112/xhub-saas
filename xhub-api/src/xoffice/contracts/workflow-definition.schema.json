@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xhub.vn/schemas/xoffice/workflow-definition-1.0.json",
+  "title": "XOffice Workflow Definition",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "metadata",
+    "nodes",
+    "edges",
+    "presentation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "code",
+        "name",
+        "tenantSlug"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "tenantSlug": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "ownerRoleCode": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    },
+    "variables": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "forms": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "presentation": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "name",
+        "config"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "start",
+            "end",
+            "approval",
+            "humanTask",
+            "form",
+            "condition",
+            "parallelSplit",
+            "parallelJoin",
+            "timer",
+            "notification",
+            "serviceCall",
+            "subflow",
+            "aiAssist"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object"
+        },
+        "position": {
+          "type": "object",
+          "required": [
+            "x",
+            "y"
+          ],
+          "properties": {
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "edge": {
+      "type": "object",
+      "required": [
+        "id",
+        "source",
+        "target"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "sourceHandle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "targetHandle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "condition": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

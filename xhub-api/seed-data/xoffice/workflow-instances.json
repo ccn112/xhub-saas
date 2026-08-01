@@ -1,0 +1,52 @@
+[
+  {
+    "tenantSlug": "xtech",
+    "workflowCode": "PILOT-01",
+    "instanceCode": "REQ-2026-0087",
+    "title": "Đề nghị mua server phục vụ XHub",
+    "requesterEmail": "tran.thuha@xtech.com.vn",
+    "variables": {
+      "request": {
+        "title": "Mua máy chủ triển khai XHub",
+        "amount": 250000000,
+        "purpose": "Môi trường production pilot",
+        "business_justification": "Phục vụ triển khai XHub và X.Space",
+        "department": "Hành chính"
+      }
+    },
+    "status": "running",
+    "currentNodeId": "IT"
+  },
+  {
+    "tenantSlug": "xtech",
+    "workflowCode": "PILOT-09",
+    "instanceCode": "BOOK-2026-0112",
+    "title": "Họp demo FinERP với Minh Phát",
+    "requesterEmail": "nguyen.hainam@xtech.com.vn",
+    "variables": {
+      "request": {
+        "subject": "Demo FinERP giai đoạn 1",
+        "roomCode": "ROOM-BOD",
+        "attendeeCount": 12
+      }
+    },
+    "status": "running",
+    "currentNodeId": "ADMIN"
+  },
+  {
+    "tenantSlug": "xtech",
+    "workflowCode": "PILOT-10",
+    "instanceCode": "IT-2026-1258",
+    "title": "Không truy cập được FinERP",
+    "requesterEmail": "le.minhanh@xtech.com.vn",
+    "variables": {
+      "request": {
+        "subject": "Lỗi đăng nhập FinERP",
+        "description": "Sau khi đổi mật khẩu không đăng nhập được",
+        "impact": "Một người"
+      }
+    },
+    "status": "running",
+    "currentNodeId": "INVESTIGATE"
+  }
+]

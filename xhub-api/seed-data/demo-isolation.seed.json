@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "snapshotAt": "2026-08-08T09:30:00+07:00",
+    "schemaVersion": "1.0.0",
+    "tenantId": "tenant-demo-isolation"
+  },
+  "users": [
+    {
+      "id": "iso-user-1",
+      "tenantId": "tenant-demo-isolation",
+      "name": "MUST_NOT_LEAK User",
+      "email": "must-not-leak@example.invalid"
+    }
+  ],
+  "customers": [
+    {
+      "id": "iso-customer-1",
+      "tenantId": "tenant-demo-isolation",
+      "name": "MUST_NOT_LEAK Customer",
+      "status": "active"
+    }
+  ],
+  "channels": [
+    {
+      "id": "iso-channel-1",
+      "tenantId": "tenant-demo-isolation",
+      "slug": "must-not-leak",
+      "name": "MUST_NOT_LEAK Channel"
+    }
+  ],
+  "messages": [
+    {
+      "id": "iso-msg-1",
+      "tenantId": "tenant-demo-isolation",
+      "channelId": "iso-channel-1",
+      "senderId": "iso-user-1",
+      "content": "MUST_NOT_LEAK — dữ liệu này không được xuất hiện trong tenant xtech.",
+      "sentAt": "2026-08-08T09:30:00+07:00"
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+[
+  {
+    "id": "msg-mp-001",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "user-thuha",
+    "sentAt": "2026-08-08T09:15:00+07:00",
+    "content": "Chào team, mình đã chốt lịch demo với anh Nam vào ngày 08/08 lúc 10:00. Mọi người xác nhận giúp mình để gửi lịch calendar nhé @channel.",
+    "type": "text",
+    "threadId": null
+  },
+  {
+    "id": "msg-mp-002",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "user-nam",
+    "sentAt": "2026-08-08T09:17:00+07:00",
+    "content": "Đã xác nhận. Mình sẽ sắp xếp tham dự đầy đủ.",
+    "type": "text",
+    "threadId": null
+  },
+  {
+    "id": "msg-mp-003",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "user-anhkhoa",
+    "sentAt": "2026-08-08T09:20:00+07:00",
+    "content": "@Trần Thu Hà team mình vui lòng cập nhật proposal theo các góp ý lần trước nhé. Đặc biệt bổ sung phần lộ trình triển khai và chi phí duy trì.",
+    "type": "text",
+    "threadId": "thread-proposal-mp"
+  },
+  {
+    "id": "msg-mp-004",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "system",
+    "sentAt": "2026-08-08T09:22:00+07:00",
+    "content": "Công việc Cập nhật proposal Minh Phát đã được liên kết.",
+    "type": "task_card",
+    "linkedEntity": {
+      "type": "task",
+      "id": "task-proposal-mp"
+    },
+    "threadId": null
+  },
+  {
+    "id": "msg-mp-005",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "system",
+    "sentAt": "2026-08-08T09:25:00+07:00",
+    "content": "Đề nghị thanh toán hợp đồng tư vấn 120.000.000 VND đang chờ phê duyệt.",
+    "type": "approval_card",
+    "linkedEntity": {
+      "type": "approval",
+      "id": "approval-payment-mp-02"
+    },
+    "threadId": null
+  },
+  {
+    "id": "msg-mp-006",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "user-thuha",
+    "sentAt": "2026-08-08T09:28:00+07:00",
+    "content": "Đã tải lên đề cương demo để mọi người tham khảo.",
+    "type": "file",
+    "documentIds": [
+      "doc-demo-outline"
+    ],
+    "threadId": "thread-proposal-mp"
+  },
+  {
+    "id": "msg-mp-007",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "xai",
+    "sentAt": "2026-08-08T09:30:00+07:00",
+    "content": "Mình đã tạo công việc “Cập nhật proposal Minh Phát” từ tin nhắn của Phạm Anh Khoa.",
+    "type": "ai",
+    "linkedEntity": {
+      "type": "task",
+      "id": "task-proposal-mp"
+    },
+    "threadId": null
+  },
+  {
+    "id": "msg-thread-001",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "user-anhkhoa",
+    "sentAt": "2026-08-07T09:20:00+07:00",
+    "content": "@Trần Thu Hà team mình đã cập nhật. File mới ở đây.",
+    "type": "file",
+    "documentIds": [
+      "doc-demo-outline"
+    ],
+    "threadId": "thread-proposal-mp"
+  },
+  {
+    "id": "msg-thread-002",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "user-nam",
+    "sentAt": "2026-08-07T09:28:00+07:00",
+    "content": "Mình đã cập nhật phần chi phí duy trì và SLA, đồng thời bổ sung phương án Cloud và On-prem.",
+    "type": "file",
+    "documentIds": [
+      "doc-finerp-quote"
+    ],
+    "threadId": "thread-proposal-mp"
+  },
+  {
+    "id": "msg-thread-003",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "user-leminhduc",
+    "sentAt": "2026-08-07T09:33:00+07:00",
+    "content": "Góp ý thêm: phần lộ trình triển khai nên chia theo 3 giai đoạn rõ hơn: khảo sát, triển khai và go-live.",
+    "type": "text",
+    "threadId": "thread-proposal-mp"
+  },
+  {
+    "id": "msg-thread-004",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "user-thuha",
+    "sentAt": "2026-08-07T09:36:00+07:00",
+    "content": "@Lê Minh Đức chuẩn, mình đã cập nhật trong slide 7–9.",
+    "type": "text",
+    "threadId": "thread-proposal-mp"
+  },
+  {
+    "id": "msg-thread-005",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "xai",
+    "sentAt": "2026-08-07T09:40:00+07:00",
+    "content": "Đã tóm tắt những thay đổi chính trong file đề cương demo.",
+    "type": "ai",
+    "threadId": "thread-proposal-mp"
+  },
+  {
+    "id": "msg-thread-006",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "user-anhkhoa",
+    "sentAt": "2026-08-07T09:42:00+07:00",
+    "content": "Đã liên kết công việc Rà soát & chốt proposal Minh Phát.",
+    "type": "task_card",
+    "linkedEntity": {
+      "type": "task",
+      "id": "task-review-brd-finance"
+    },
+    "threadId": "thread-proposal-mp"
+  },
+  {
+    "id": "msg-thread-007",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "user-nam",
+    "sentAt": "2026-08-07T09:50:00+07:00",
+    "content": "Đã rà soát xong. Chỉ còn phần outline demo, sẽ gửi trong chiều nay.",
+    "type": "text",
+    "threadId": "thread-proposal-mp"
+  },
+  {
+    "id": "msg-thread-008",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "senderId": "user-thuha",
+    "sentAt": "2026-08-07T10:02:00+07:00",
+    "content": "Cảm ơn team. Chiều nay 15:00 mình họp nhanh 15 phút để chốt cuối cùng.",
+    "type": "text",
+    "threadId": "thread-proposal-mp"
+  },
+  {
+    "id": "msg-customer-mp-001",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-mp",
+    "senderId": "user-thuha",
+    "sentAt": "2026-08-08T09:25:00+07:00",
+    "content": "Đề nghị thanh toán đợt 2 theo hợp đồng HDTV-2026-119 cho Công ty Minh Phát.",
+    "type": "file",
+    "documentIds": [
+      "doc-payment-request"
+    ],
+    "threadId": "thread-customer-payment"
+  }
+]

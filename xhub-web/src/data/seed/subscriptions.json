@@ -1,0 +1,22 @@
+[
+  {
+    "id": "sub-xtech-xhub",
+    "tenantId": "tenant-xtech",
+    "productId": "product-xhub",
+    "plan": "Enterprise Pilot",
+    "status": "active",
+    "userLimit": 500,
+    "startDate": "2026-07-01",
+    "renewalDate": "2027-07-01"
+  },
+  {
+    "id": "sub-xtech-xspace",
+    "tenantId": "tenant-xtech",
+    "productId": "product-xspace",
+    "plan": "Enterprise Pilot",
+    "status": "active",
+    "userLimit": 500,
+    "startDate": "2026-07-01",
+    "renewalDate": "2027-07-01"
+  }
+]

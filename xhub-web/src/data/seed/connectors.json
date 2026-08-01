@@ -1,0 +1,38 @@
+[
+  {
+    "id": "connector-erpnext",
+    "tenantId": "tenant-xtech",
+    "name": "ERPNext Connector",
+    "status": "healthy",
+    "lastSyncAt": "2026-08-08T09:20:00+07:00",
+    "latencyMs": 180,
+    "errorRate": 0.001
+  },
+  {
+    "id": "connector-mattermost",
+    "tenantId": "tenant-xtech",
+    "name": "Mattermost Connector",
+    "status": "healthy",
+    "lastSyncAt": "2026-08-08T09:29:00+07:00",
+    "latencyMs": 95,
+    "errorRate": 0.0005
+  },
+  {
+    "id": "connector-webhook",
+    "tenantId": "tenant-xtech",
+    "name": "Webhook Gateway",
+    "status": "warning",
+    "lastSyncAt": "2026-08-08T09:10:00+07:00",
+    "latencyMs": 460,
+    "errorRate": 0.035
+  },
+  {
+    "id": "connector-email",
+    "tenantId": "tenant-xtech",
+    "name": "Email Service",
+    "status": "healthy",
+    "lastSyncAt": "2026-08-08T09:25:00+07:00",
+    "latencyMs": 220,
+    "errorRate": 0.002
+  }
+]

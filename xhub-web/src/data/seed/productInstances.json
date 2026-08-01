@@ -1,0 +1,40 @@
+[
+  {
+    "id": "instance-xtech-xhub",
+    "tenantId": "tenant-xtech",
+    "productId": "product-xhub",
+    "name": "XHub X-TECH",
+    "status": "healthy",
+    "users": 156,
+    "domain": "hub.x-tech.com.vn"
+  },
+  {
+    "id": "instance-xtech-xspace",
+    "tenantId": "tenant-xtech",
+    "productId": "product-xspace",
+    "name": "X.Space X-TECH",
+    "status": "healthy",
+    "users": 128,
+    "domain": "space.x-tech.com.vn"
+  },
+  {
+    "id": "instance-mp-finerp",
+    "tenantId": "tenant-xtech",
+    "customerId": "customer-minhphat",
+    "productId": "product-finerp",
+    "name": "FinERP Minh Phát",
+    "status": "implementing",
+    "users": 82,
+    "domain": "minhphat.finerp.vn"
+  },
+  {
+    "id": "instance-celadon-xbuilding",
+    "tenantId": "tenant-xtech",
+    "customerId": "customer-celadon",
+    "productId": "product-xbuilding",
+    "name": "XBuilding Celadon Riverside",
+    "status": "healthy",
+    "users": 96,
+    "domain": "celadon.xbuilding.vn"
+  }
+]

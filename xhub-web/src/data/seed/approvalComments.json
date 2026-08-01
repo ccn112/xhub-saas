@@ -1,0 +1,26 @@
+[
+  {
+    "id": "apcomment-001",
+    "tenantId": "tenant-xtech",
+    "approvalId": "approval-payment-mp-02",
+    "authorId": "user-thuha",
+    "createdAt": "2026-08-08T09:20:00+07:00",
+    "content": "Kính gửi anh Nam, đề nghị xem xét và phê duyệt thanh toán đợt 2 theo hồ sơ đính kèm."
+  },
+  {
+    "id": "apcomment-002",
+    "tenantId": "tenant-xtech",
+    "approvalId": "approval-payment-mp-02",
+    "authorId": "user-nam",
+    "createdAt": "2026-08-08T11:50:00+07:00",
+    "content": "Đề nghị bổ sung xác nhận nghiệm thu hạng mục Cấu hình hệ thống."
+  },
+  {
+    "id": "apcomment-003",
+    "tenantId": "tenant-xtech",
+    "approvalId": "approval-payment-mp-02",
+    "authorId": "user-minhanh",
+    "createdAt": "2026-08-08T12:05:00+07:00",
+    "content": "Đã cập nhật biên bản nghiệm thu hạng mục Cấu hình hệ thống."
+  }
+]

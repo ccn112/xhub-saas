@@ -1,0 +1,44 @@
+[
+  {
+    "id": "kpi-exec-202608",
+    "tenantId": "tenant-xtech",
+    "scope": "company",
+    "scopeId": "org-xtech",
+    "period": "2026-08",
+    "metrics": {
+      "monthlyRevenue": 18600000000,
+      "receivables": 6200000000,
+      "pendingApprovals": 23,
+      "activeProjects": 12,
+      "overdueTasks": 12,
+      "contractsExpiring": 3
+    }
+  },
+  {
+    "id": "kpi-sales-202608",
+    "tenantId": "tenant-xtech",
+    "scope": "department",
+    "scopeId": "dept-sales",
+    "period": "2026-08",
+    "metrics": {
+      "salesRevenue": 6800000000,
+      "openOpportunities": 42,
+      "winRate": 0.28,
+      "contractsAwaitingSignature": 7,
+      "pipeline": 6800000000
+    }
+  },
+  {
+    "id": "kpi-user-nam-week32",
+    "tenantId": "tenant-xtech",
+    "scope": "user",
+    "scopeId": "user-nam",
+    "period": "2026-W32",
+    "metrics": {
+      "tasksToday": 7,
+      "overdueTasks": 2,
+      "approvalsToRespond": 1,
+      "meetingsToday": 4
+    }
+  }
+]

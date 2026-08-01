@@ -1,0 +1,42 @@
+{
+  "code": "XH-05",
+  "set": "xhub",
+  "name": "Chi tiết yêu cầu thanh toán",
+  "route": "/hub/inbox/wi-payment-mp-02",
+  "persona": "Người phê duyệt",
+  "image": "reference-images/xhub/05-chi-tiet-yeu-cau-thanh-toan.png",
+  "seedRefs": [
+    "wi-payment-mp-02",
+    "approval-payment-mp-02",
+    "approvalSteps",
+    "paymentItems",
+    "documents"
+  ],
+  "purpose": "Xem bằng chứng, luồng xử lý, rủi ro và hành động phê duyệt.",
+  "sections": [
+    "Request header",
+    "Request facts",
+    "Payment items table",
+    "Attachments",
+    "Workflow stepper",
+    "Participants",
+    "Discussion log",
+    "AI summary",
+    "Risk panel",
+    "Sticky approval actions"
+  ],
+  "states": {
+    "loading": "Skeleton giữ nguyên chiều cao card/table; không dùng spinner toàn trang.",
+    "empty": "Giải thích trạng thái trống và có một CTA rõ ràng.",
+    "error": "Hiển thị error boundary theo vùng, mã lỗi, nút thử lại và link hỗ trợ.",
+    "permission": "Ẩn hành động không được phép; khi route bị chặn hiển thị 403 có lý do và cách yêu cầu quyền."
+  },
+  "implementationRules": [
+    "Không hardcode dữ liệu hiển thị trong component.",
+    "Đọc dữ liệu qua typed repository/service; mock API dùng seed canonical.",
+    "Ảnh là visual reference; seed canonical là nguồn sự thật cho nội dung và số liệu.",
+    "Giữ tenantId trong mọi query và mutation.",
+    "Mọi action tài chính hoặc quyền cần xác nhận rõ ràng và audit log.",
+    "Bảo đảm keyboard navigation, focus visible, contrast WCAG AA."
+  ]
+}

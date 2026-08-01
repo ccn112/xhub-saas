@@ -1,0 +1,34 @@
+[
+  {
+    "id": "intev-001",
+    "tenantId": "tenant-xtech",
+    "connectorId": "connector-mattermost",
+    "type": "sync.success",
+    "summary": "Đồng bộ channel và message thành công",
+    "occurredAt": "2026-08-08T09:29:00+07:00"
+  },
+  {
+    "id": "intev-002",
+    "tenantId": "tenant-xtech",
+    "connectorId": "connector-erpnext",
+    "type": "sync.success",
+    "summary": "Đồng bộ Work Item và Approval thành công",
+    "occurredAt": "2026-08-08T09:20:00+07:00"
+  },
+  {
+    "id": "intev-003",
+    "tenantId": "tenant-xtech",
+    "connectorId": "connector-webhook",
+    "type": "delivery.warning",
+    "summary": "Webhook Gateway có 3,5% lỗi trong 15 phút gần nhất",
+    "occurredAt": "2026-08-08T09:10:00+07:00"
+  },
+  {
+    "id": "intev-004",
+    "tenantId": "tenant-xtech",
+    "connectorId": "connector-email",
+    "type": "delivery.success",
+    "summary": "Email Service đã gửi 42 thông báo",
+    "occurredAt": "2026-08-08T09:25:00+07:00"
+  }
+]

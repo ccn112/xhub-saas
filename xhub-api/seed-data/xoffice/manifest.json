@@ -1,0 +1,13 @@
+{
+  "version": "2026.07.29.1",
+  "tenantResolution": "natural-key",
+  "files": [
+    "node-catalog.json",
+    "workflow-definitions.json",
+    "form-definitions.json",
+    "ai-assistance-scenarios.json",
+    "role-bindings.json",
+    "workflow-instances.json"
+  ],
+  "canonicalNow": "2026-08-08T09:30:00+07:00"
+}

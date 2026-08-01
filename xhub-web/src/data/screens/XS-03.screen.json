@@ -1,0 +1,46 @@
+{
+  "code": "XS-03",
+  "set": "xspace",
+  "name": "Channel dự án",
+  "route": "/space/channels/trien-khai-finerp-minh-phat/overview",
+  "persona": "Nhóm dự án",
+  "image": "reference-images/xspace/03-channel-du-an.png",
+  "seedRefs": [
+    "project-finerp-minhphat",
+    "milestones",
+    "workstreams",
+    "tasks",
+    "documents",
+    "decisions"
+  ],
+  "purpose": "Project workspace ngay trong channel.",
+  "sections": [
+    "Channel project tabs",
+    "Project summary",
+    "KPI cards",
+    "Milestone",
+    "Attention tasks",
+    "Risks",
+    "Workload",
+    "Workstream progress",
+    "Latest updates",
+    "Related channels",
+    "Documents",
+    "Decisions",
+    "AI summary"
+  ],
+  "states": {
+    "loading": "Skeleton giữ nguyên chiều cao card/table; không dùng spinner toàn trang.",
+    "empty": "Giải thích trạng thái trống và có một CTA rõ ràng.",
+    "error": "Hiển thị error boundary theo vùng, mã lỗi, nút thử lại và link hỗ trợ.",
+    "permission": "Ẩn hành động không được phép; khi route bị chặn hiển thị 403 có lý do và cách yêu cầu quyền."
+  },
+  "implementationRules": [
+    "Không hardcode dữ liệu hiển thị trong component.",
+    "Đọc dữ liệu qua typed repository/service; mock API dùng seed canonical.",
+    "Ảnh là visual reference; seed canonical là nguồn sự thật cho nội dung và số liệu.",
+    "Giữ tenantId trong mọi query và mutation.",
+    "Mọi action tài chính hoặc quyền cần xác nhận rõ ràng và audit log.",
+    "Bảo đảm keyboard navigation, focus visible, contrast WCAG AA."
+  ]
+}

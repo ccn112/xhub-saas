@@ -1,0 +1,20 @@
+[
+  {
+    "id": "directive-week31",
+    "tenantId": "tenant-xtech",
+    "title": "Chỉ đạo tuần 31 của Ban điều hành",
+    "issuedBy": "user-tuan",
+    "ownerId": "user-anhkhoa",
+    "projectId": "project-finerp-minhphat",
+    "dueDate": "2026-08-15",
+    "status": "in_progress",
+    "progress": 68,
+    "objective": "Triển khai Golive FinERP cho Minh Phát đúng kế hoạch, đảm bảo vận hành ổn định và nghiệm thu thành công.",
+    "taskIds": [
+      "task-uat-accounting",
+      "task-master-data",
+      "task-key-user-training",
+      "task-cr12"
+    ]
+  }
+]

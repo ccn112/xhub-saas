@@ -1,0 +1,32 @@
+[
+  {
+    "id": "wfh-001",
+    "tenantId": "tenant-xtech",
+    "instanceId": "wf-demo-0087",
+    "step": "init",
+    "status": "completed",
+    "actorId": "user-thuha",
+    "at": "2026-08-08T08:45:00+07:00",
+    "note": "Khởi tạo yêu cầu demo."
+  },
+  {
+    "id": "wfh-002",
+    "tenantId": "tenant-xtech",
+    "instanceId": "wf-demo-0087",
+    "step": "assign",
+    "status": "completed",
+    "actorId": "user-thuha",
+    "at": "2026-08-08T09:00:00+07:00",
+    "note": "Phân công Phạm Anh Khoa phụ trách."
+  },
+  {
+    "id": "wfh-003",
+    "tenantId": "tenant-xtech",
+    "instanceId": "wf-demo-0087",
+    "step": "prepare",
+    "status": "in_progress",
+    "actorId": "user-anhkhoa",
+    "at": "2026-08-08T09:20:00+07:00",
+    "note": "Đã cập nhật tài liệu nghiệp vụ chuẩn bị demo."
+  }
+]

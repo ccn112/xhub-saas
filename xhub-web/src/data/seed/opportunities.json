@@ -1,0 +1,59 @@
+[
+  {
+    "id": "opp-minhphat-finerp",
+    "tenantId": "tenant-xtech",
+    "customerId": "customer-minhphat",
+    "name": "FinERP Enterprise - Minh Phát",
+    "stage": "implementation",
+    "amount": 1200000000,
+    "probability": 0.8,
+    "ownerId": "user-minhquan",
+    "expectedCloseDate": "2026-09-30",
+    "products": [
+      "product-finerp",
+      "product-xspace"
+    ]
+  },
+  {
+    "id": "opp-hungtin-finerp",
+    "tenantId": "tenant-xtech",
+    "customerId": "customer-hungtin",
+    "name": "FinERP - Hưng Tín",
+    "stage": "proposal",
+    "amount": 1000000000,
+    "probability": 0.55,
+    "ownerId": "user-hainam",
+    "expectedCloseDate": "2026-08-31",
+    "products": [
+      "product-finerp"
+    ]
+  },
+  {
+    "id": "opp-celadon-xbuilding",
+    "tenantId": "tenant-xtech",
+    "customerId": "customer-celadon",
+    "name": "Gia hạn XBuilding - Celadon Riverside",
+    "stage": "negotiation",
+    "amount": 900000000,
+    "probability": 0.72,
+    "ownerId": "user-thuylinh",
+    "expectedCloseDate": "2026-08-20",
+    "products": [
+      "product-xbuilding"
+    ]
+  },
+  {
+    "id": "opp-hoabinh-finerp",
+    "tenantId": "tenant-xtech",
+    "customerId": "customer-hoabinh",
+    "name": "FinERP - Nhà máy Hòa Bình",
+    "stage": "consulting",
+    "amount": 800000000,
+    "probability": 0.42,
+    "ownerId": "user-hoanglong",
+    "expectedCloseDate": "2026-09-15",
+    "products": [
+      "product-finerp"
+    ]
+  }
+]

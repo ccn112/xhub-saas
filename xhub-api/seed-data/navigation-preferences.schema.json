@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xhub.vn/schemas/navigation-preferences.schema.json",
+  "title": "XHub User Navigation Preference",
+  "type": "object",
+  "required": ["tenantId", "userId", "navigationMode", "theme"],
+  "properties": {
+    "tenantId": { "type": "string", "minLength": 1 },
+    "userId": { "type": "string", "minLength": 1 },
+    "navigationMode": {
+      "type": "string",
+      "enum": ["rail-context", "expanded"]
+    },
+    "sidebarCollapsed": { "type": "boolean", "default": false },
+    "theme": {
+      "type": "string",
+      "enum": ["system", "light", "dark"]
+    },
+    "density": {
+      "type": "string",
+      "enum": ["comfortable", "compact"],
+      "default": "comfortable"
+    },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

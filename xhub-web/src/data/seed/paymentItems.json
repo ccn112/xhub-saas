@@ -1,0 +1,34 @@
+[
+  {
+    "id": "payitem-1",
+    "tenantId": "tenant-xtech",
+    "approvalId": "approval-payment-mp-02",
+    "name": "Khảo sát & Phân tích yêu cầu",
+    "completion": 100,
+    "value": 30000000
+  },
+  {
+    "id": "payitem-2",
+    "tenantId": "tenant-xtech",
+    "approvalId": "approval-payment-mp-02",
+    "name": "Thiết kế giải pháp & Tài liệu",
+    "completion": 100,
+    "value": 30000000
+  },
+  {
+    "id": "payitem-3",
+    "tenantId": "tenant-xtech",
+    "approvalId": "approval-payment-mp-02",
+    "name": "Cấu hình hệ thống",
+    "completion": 80,
+    "value": 40000000
+  },
+  {
+    "id": "payitem-4",
+    "tenantId": "tenant-xtech",
+    "approvalId": "approval-payment-mp-02",
+    "name": "Đào tạo & Chuyển giao",
+    "completion": 0,
+    "value": 20000000
+  }
+]

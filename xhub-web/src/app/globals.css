@@ -1,0 +1,108 @@
+/* XHub / X.Space — Tailux design system + brand overrides.
+   Tailux styles/ define @theme tokens, .btn/.card/.badge component classes,
+   layouts and the dark variant. We layer brand fonts + primary color on top. */
+@import "../styles/index.css";
+
+@theme {
+  /* Body = Inter (Tailux default); headings = Plus Jakarta Sans (handoff tokens). */
+  --font-sans:
+    var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-heading:
+    var(--font-jakarta), "Plus Jakarta Sans", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand primary = blue600 #1769E0 (handoff design-tokens) instead of indigo. */
+  --color-primary-50: #eaf2fd;
+  --color-primary-100: #d0e2fb;
+  --color-primary-200: #a6c8f6;
+  --color-primary-300: #74a7f1;
+  --color-primary-400: #4189ea;
+  --color-primary-500: #2d7ff9;
+  --color-primary-600: #1769e0;
+  --color-primary-700: #1254b4;
+  --color-primary-800: #0f47a0;
+  --color-primary-900: #0b3170;
+  --color-primary-950: #071c3f;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-heading);
+}
+
+/* A11y: Tailux sets `outline: none` on every element, which removes the
+   keyboard focus indicator. Restore a visible ring for keyboard focus only
+   (:focus-visible), so mouse clicks stay clean but Tab navigation is clear. */
+@layer base {
+  :where(a, button, [role="button"], input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-primary-600) !important;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/* ── Sơ đồ nhân sự (staff org chart) — static CSS hierarchical tree ──────────
+   Nested <ul>/<li> with centered connector lines, so it renders identically on
+   screen and in print (React Flow canvases do not print to PDF cleanly). */
+.org-tree, .org-tree ul {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 1.25rem;
+}
+.org-tree ul { padding-top: 1.5rem; }
+.org-tree li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 1.5rem;
+}
+.org-tree > li { padding-top: 0; }
+/* vertical line up from each node to the horizontal connector */
+.org-tree li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 1.5rem;
+  border-left: 1px solid var(--color-gray-300, #cbd5e1);
+}
+.org-tree > li::before { display: none; }
+/* horizontal connector across a set of siblings */
+.org-tree ul::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 220px);
+  border-top: 1px solid var(--color-gray-300, #cbd5e1);
+}
+/* single child: no horizontal bar needed */
+.org-tree ul:has(> li:only-child)::before { display: none; }
+:where(.dark) .org-tree li::before,
+:where(.dark) .org-tree ul::before { border-color: var(--color-dark-500, #475569); }
+
+/* ── Print / Export PDF ──────────────────────────────────────────────────────
+   When printing the org chart we hide all app chrome and show only the marked
+   subtree. Toggled by adding `.org-printing` to <html> just before print. */
+@media print {
+  .org-printing body * { visibility: hidden !important; }
+  .org-printing .org-print-root,
+  .org-printing .org-print-root * { visibility: visible !important; }
+  .org-printing .org-print-root {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: 0 !important;
+  }
+  /* elements explicitly excluded from print (toolbars, action bars, side panels) */
+  .org-print-hide { display: none !important; }
+  .org-tree-scroll { overflow: visible !important; }
+  @page { size: landscape; margin: 12mm; }
+}

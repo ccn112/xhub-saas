@@ -1,0 +1,46 @@
+[
+  {
+    "id": "event-daily-standup",
+    "tenantId": "tenant-xtech",
+    "title": "Daily Standup X-TECH",
+    "start": "2026-08-08T09:00:00+07:00",
+    "end": "2026-08-08T09:30:00+07:00",
+    "type": "internal",
+    "channelId": "channel-xhub-mvp",
+    "participantIds": [
+      "user-nam",
+      "user-thuha",
+      "user-anhkhoa",
+      "user-minhanh"
+    ]
+  },
+  {
+    "id": "event-demo-mp",
+    "tenantId": "tenant-xtech",
+    "title": "Demo FinERP - Minh Phát",
+    "start": "2026-08-08T10:00:00+07:00",
+    "end": "2026-08-08T11:30:00+07:00",
+    "type": "customer",
+    "channelId": "channel-finerp-mp",
+    "customerId": "customer-minhphat",
+    "participantIds": [
+      "user-nam",
+      "user-thuha",
+      "user-anhkhoa"
+    ]
+  },
+  {
+    "id": "event-plan-review",
+    "tenantId": "tenant-xtech",
+    "title": "Rà soát kế hoạch triển khai",
+    "start": "2026-08-08T15:00:00+07:00",
+    "end": "2026-08-08T15:30:00+07:00",
+    "type": "project",
+    "channelId": "channel-finerp-mp",
+    "participantIds": [
+      "user-tuan",
+      "user-anhkhoa",
+      "user-thuha"
+    ]
+  }
+]

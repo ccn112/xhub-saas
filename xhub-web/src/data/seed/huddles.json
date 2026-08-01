@@ -1,0 +1,33 @@
+[
+  {
+    "id": "huddle-demo-mp",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "title": "Họp nhanh: Demo & proposal Minh Phát",
+    "status": "live",
+    "startedAt": "2026-08-08T09:23:00+07:00",
+    "participantIds": [
+      "user-nam",
+      "user-thuha",
+      "user-anhkhoa",
+      "user-minhanh"
+    ],
+    "files": [
+      "doc-demo-outline",
+      "doc-finerp-quote"
+    ],
+    "notes": [
+      "Chốt lịch demo với Minh Phát vào 08/08 lúc 10:00.",
+      "Proposal đã bổ sung phạm vi tích hợp và lộ trình triển khai.",
+      "Cần xác nhận dữ liệu khách hàng để chuẩn bị môi trường demo."
+    ],
+    "decisionIds": [
+      "decision-demo-mp",
+      "decision-proposal-structure"
+    ],
+    "actionTaskIds": [
+      "task-proposal-mp",
+      "task-master-data"
+    ]
+  }
+]

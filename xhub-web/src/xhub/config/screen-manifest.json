@@ -1,0 +1,325 @@
+[
+  {
+    "code": "XH-01",
+    "set": "xhub",
+    "name": "Tổng quan điều hành",
+    "route": "/hub/home/executive",
+    "persona": "Lãnh đạo",
+    "image": "reference-images/xhub/01-tong-quan-dieu-hanh.png",
+    "seedRefs": [
+      "kpi-exec-202608",
+      "projects",
+      "approvals",
+      "calendarEvents",
+      "revenueSeries",
+      "revenueByProduct"
+    ],
+    "purpose": "Cho lãnh đạo thấy sức khỏe doanh nghiệp, cảnh báo và việc cần quyết định."
+  },
+  {
+    "code": "XH-02",
+    "set": "xhub",
+    "name": "Bảng điều hành kinh doanh",
+    "route": "/hub/home/sales",
+    "persona": "Trưởng phòng Kinh doanh",
+    "image": "reference-images/xhub/02-bang-dieu-hanh-kinh-doanh.png",
+    "seedRefs": [
+      "kpi-sales-202608",
+      "opportunities",
+      "customers",
+      "users",
+      "approvals"
+    ],
+    "purpose": "Điều hành pipeline, đội ngũ và hành động bán hàng trong ngày."
+  },
+  {
+    "code": "XH-03",
+    "set": "xhub",
+    "name": "Không gian làm việc của tôi",
+    "route": "/hub/home/me",
+    "persona": "Nhân viên",
+    "image": "reference-images/xhub/03-khong-gian-lam-viec-cua-toi.png",
+    "seedRefs": [
+      "kpi-user-nam-week32",
+      "tasks",
+      "notifications",
+      "calendarEvents",
+      "documents"
+    ],
+    "purpose": "Tập trung việc cá nhân, lịch, thông báo và gợi ý AI."
+  },
+  {
+    "code": "XH-04",
+    "set": "xhub",
+    "name": "Hộp việc hợp nhất",
+    "route": "/hub/inbox",
+    "persona": "Mọi người dùng",
+    "image": "reference-images/xhub/04-hop-viec-hop-nhat.png",
+    "seedRefs": [
+      "workItems",
+      "users",
+      "approvals",
+      "tasks",
+      "tickets"
+    ],
+    "purpose": "Một inbox duy nhất cho công việc, phê duyệt, khách hàng, dự án và trao đổi."
+  },
+  {
+    "code": "XH-05",
+    "set": "xhub",
+    "name": "Chi tiết yêu cầu thanh toán",
+    "route": "/hub/inbox/wi-payment-mp-02",
+    "persona": "Người phê duyệt",
+    "image": "reference-images/xhub/05-chi-tiet-yeu-cau-thanh-toan.png",
+    "seedRefs": [
+      "wi-payment-mp-02",
+      "approval-payment-mp-02",
+      "approvalSteps",
+      "paymentItems",
+      "documents"
+    ],
+    "purpose": "Xem bằng chứng, luồng xử lý, rủi ro và hành động phê duyệt."
+  },
+  {
+    "code": "XH-06",
+    "set": "xhub",
+    "name": "Trao đổi gắn ngữ cảnh",
+    "route": "/space/channels/trien-khai-finerp-minh-phat",
+    "persona": "Nhóm dự án",
+    "image": "reference-images/xhub/06-trao-doi-gan-ngu-canh.png",
+    "seedRefs": [
+      "channel-finerp-mp",
+      "messages",
+      "tasks",
+      "approval-payment-mp-02",
+      "documents"
+    ],
+    "purpose": "Chứng minh chat và nghiệp vụ nằm trong cùng một luồng làm việc."
+  },
+  {
+    "code": "XH-07",
+    "set": "xhub",
+    "name": "Công việc và chỉ đạo",
+    "route": "/hub/work",
+    "persona": "Lãnh đạo / Quản lý",
+    "image": "reference-images/xhub/07-cong-viec-va-chi-dao.png",
+    "seedRefs": [
+      "tasks",
+      "directive-week31",
+      "projects",
+      "users",
+      "decisions"
+    ],
+    "purpose": "Theo dõi công việc, chỉ đạo, quyết định và cam kết thực hiện."
+  },
+  {
+    "code": "XH-08",
+    "set": "xhub",
+    "name": "Trung tâm phê duyệt",
+    "route": "/hub/approvals",
+    "persona": "Người phê duyệt",
+    "image": "reference-images/xhub/08-trung-tam-phe-duyet.png",
+    "seedRefs": [
+      "approvals",
+      "approvalSteps",
+      "users",
+      "organizations"
+    ],
+    "purpose": "Danh sách phê duyệt, SLA, workflow và kiểm tra nhanh bằng AI."
+  },
+  {
+    "code": "XH-09",
+    "set": "xhub",
+    "name": "Tổng quan dự án",
+    "route": "/hub/projects/project-finerp-minhphat",
+    "persona": "PM / Ban điều hành",
+    "image": "reference-images/xhub/09-tong-quan-du-an.png",
+    "seedRefs": [
+      "project-finerp-minhphat",
+      "milestones",
+      "workstreams",
+      "tasks",
+      "documents",
+      "calendarEvents"
+    ],
+    "purpose": "Project 360 với tiến độ, milestone, rủi ro, workload và lịch."
+  },
+  {
+    "code": "XH-10",
+    "set": "xhub",
+    "name": "Danh mục ứng dụng",
+    "route": "/hub/apps",
+    "persona": "Người dùng / Quản trị",
+    "image": "reference-images/xhub/10-danh-muc-ung-dung.png",
+    "seedRefs": [
+      "appCatalog",
+      "connectors",
+      "productInstances",
+      "products"
+    ],
+    "purpose": "Khám phá, mở và quản trị ứng dụng, connector và health."
+  },
+  {
+    "code": "XS-01",
+    "set": "xspace",
+    "name": "Trang chủ X.Space",
+    "route": "/space/home",
+    "persona": "Nhân viên tri thức",
+    "image": "reference-images/xspace/01-trang-chu-xspace.png",
+    "seedRefs": [
+      "notifications",
+      "workItems",
+      "threads",
+      "directMessages",
+      "calendarEvents",
+      "documents",
+      "decisions"
+    ],
+    "purpose": "Trang bắt đầu hằng ngày cho unread, mention, thread, DM, meeting và recap."
+  },
+  {
+    "code": "XS-02",
+    "set": "xspace",
+    "name": "Channel tiêu chuẩn",
+    "route": "/space/channels/trien-khai-finerp-minh-phat",
+    "persona": "Nhóm dự án",
+    "image": "reference-images/xspace/02-channel-tieu-chuan.png",
+    "seedRefs": [
+      "channel-finerp-mp",
+      "messages",
+      "tasks",
+      "approval-payment-mp-02",
+      "documents",
+      "decision-demo-mp"
+    ],
+    "purpose": "Hội thoại chính cùng card nghiệp vụ và context panel."
+  },
+  {
+    "code": "XS-03",
+    "set": "xspace",
+    "name": "Channel dự án",
+    "route": "/space/channels/trien-khai-finerp-minh-phat/overview",
+    "persona": "Nhóm dự án",
+    "image": "reference-images/xspace/03-channel-du-an.png",
+    "seedRefs": [
+      "project-finerp-minhphat",
+      "milestones",
+      "workstreams",
+      "tasks",
+      "documents",
+      "decisions"
+    ],
+    "purpose": "Project workspace ngay trong channel."
+  },
+  {
+    "code": "XS-04",
+    "set": "xspace",
+    "name": "Channel khách hàng",
+    "route": "/space/channels/kh-minh-phat/customer",
+    "persona": "Sales / CSKH",
+    "image": "reference-images/xspace/04-channel-khach-hang.png",
+    "seedRefs": [
+      "customer-minhphat",
+      "contacts",
+      "opp-minhphat-finerp",
+      "contract-mp-finerp",
+      "tickets",
+      "documents"
+    ],
+    "purpose": "Customer 360 và phối hợp bán hàng, triển khai, hỗ trợ."
+  },
+  {
+    "code": "XS-05",
+    "set": "xspace",
+    "name": "Thread chi tiết",
+    "route": "/space/channels/trien-khai-finerp-minh-phat/threads/thread-proposal-mp",
+    "persona": "Nhóm dự án",
+    "image": "reference-images/xspace/05-thread-chi-tiet.png",
+    "seedRefs": [
+      "thread-proposal-mp",
+      "messages",
+      "documents",
+      "decision-proposal-structure",
+      "tasks"
+    ],
+    "purpose": "Thảo luận sâu, file, quyết định, công việc và tóm tắt AI."
+  },
+  {
+    "code": "XS-06",
+    "set": "xspace",
+    "name": "Tin nhắn trực tiếp",
+    "route": "/space/dm/user-thuha",
+    "persona": "Nhân viên",
+    "image": "reference-images/xspace/06-tin-nhan-truc-tiep.png",
+    "seedRefs": [
+      "directMessages",
+      "user-thuha",
+      "tasks",
+      "documents",
+      "calendarEvents"
+    ],
+    "purpose": "DM cá nhân có ngữ cảnh người liên hệ, việc và lịch."
+  },
+  {
+    "code": "XS-07",
+    "set": "xspace",
+    "name": "Trang channel",
+    "route": "/space/channels/trien-khai-finerp-minh-phat/page",
+    "persona": "Nhóm dự án",
+    "image": "reference-images/xspace/07-trang-channel.png",
+    "seedRefs": [
+      "page-finerp-mp",
+      "projects",
+      "milestones",
+      "tasks",
+      "documents"
+    ],
+    "purpose": "Không gian thông tin có cấu trúc để onboarding và điều phối."
+  },
+  {
+    "code": "XS-08",
+    "set": "xspace",
+    "name": "Danh sách cộng tác",
+    "route": "/space/channels/xhub-mvp/lists/list-week32",
+    "persona": "Nhóm cộng tác",
+    "image": "reference-images/xspace/08-danh-sach-cong-tac.png",
+    "seedRefs": [
+      "list-week32",
+      "tasks",
+      "users",
+      "documents"
+    ],
+    "purpose": "Danh sách nhẹ trong channel, có thể nâng thành work item."
+  },
+  {
+    "code": "XS-09",
+    "set": "xspace",
+    "name": "Họp nhanh",
+    "route": "/space/channels/trien-khai-finerp-minh-phat/huddles/huddle-demo-mp",
+    "persona": "Nhóm dự án",
+    "image": "reference-images/xspace/09-hop-nhanh.png",
+    "seedRefs": [
+      "huddle-demo-mp",
+      "users",
+      "documents",
+      "decisions",
+      "tasks"
+    ],
+    "purpose": "Cuộc họp nhanh, ghi chú, biên bản AI và việc phát sinh."
+  },
+  {
+    "code": "XS-10",
+    "set": "xspace",
+    "name": "Workflow trong channel",
+    "route": "/space/channels/trien-khai-finerp-minh-phat/workflows/workflow-customer-demo",
+    "persona": "Nhóm dự án / Sales",
+    "image": "reference-images/xspace/10-workflow-trong-channel.png",
+    "seedRefs": [
+      "workflow-customer-demo",
+      "workflowInstances",
+      "customers",
+      "documents"
+    ],
+    "purpose": "Chạy và theo dõi workflow có SLA ngay trong không gian cộng tác."
+  }
+]

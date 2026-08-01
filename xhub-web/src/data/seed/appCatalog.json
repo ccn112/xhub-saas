@@ -1,0 +1,109 @@
+[
+  {
+    "id": "app-xbooking",
+    "tenantId": "tenant-xtech",
+    "productId": "product-xbooking",
+    "name": "XBooking",
+    "description": "Quản lý đặt phòng, lịch hẹn và tài nguyên doanh nghiệp.",
+    "status": "active",
+    "users": 128,
+    "instances": 1,
+    "launchMode": "embedded"
+  },
+  {
+    "id": "app-xbuilding",
+    "tenantId": "tenant-xtech",
+    "productId": "product-xbuilding",
+    "name": "XBuilding",
+    "description": "Quản lý bất động sản, hợp đồng và khách hàng.",
+    "status": "active",
+    "users": 96,
+    "instances": 12,
+    "launchMode": "sso"
+  },
+  {
+    "id": "app-finerp",
+    "tenantId": "tenant-xtech",
+    "productId": "product-finerp",
+    "name": "FinERP",
+    "description": "Quản trị tài chính, kế toán và vận hành doanh nghiệp.",
+    "status": "active",
+    "users": 82,
+    "instances": 8,
+    "launchMode": "embedded"
+  },
+  {
+    "id": "app-xai",
+    "tenantId": "tenant-xtech",
+    "productId": "product-xai",
+    "name": "X.AI",
+    "description": "Trợ lý AI cho phân tích dữ liệu và gợi ý thông minh.",
+    "status": "active",
+    "users": 156,
+    "instances": 1,
+    "launchMode": "native"
+  },
+  {
+    "id": "app-xspace",
+    "tenantId": "tenant-xtech",
+    "productId": "product-xspace",
+    "name": "X.Space",
+    "description": "Không gian cộng tác, trao đổi và quản lý tri thức.",
+    "status": "active",
+    "users": 128,
+    "instances": 1,
+    "launchMode": "native"
+  },
+  {
+    "id": "app-erpnext-connector",
+    "tenantId": "tenant-xtech",
+    "name": "ERPNext Connector",
+    "description": "Kết nối và đồng bộ dữ liệu với ERPNext.",
+    "status": "connected",
+    "users": 0,
+    "instances": 1,
+    "launchMode": "config"
+  },
+  {
+    "id": "app-mattermost-connector",
+    "tenantId": "tenant-xtech",
+    "name": "Mattermost Connector",
+    "description": "Kết nối channel, message và realtime với Mattermost.",
+    "status": "connected",
+    "users": 0,
+    "instances": 1,
+    "launchMode": "config"
+  },
+  {
+    "id": "app-digital-signature",
+    "tenantId": "tenant-xtech",
+    "name": "Ký số",
+    "description": "Ký số tài liệu và quản lý chứng thư số.",
+    "status": "active",
+    "users": 42,
+    "instances": 1,
+    "monthlyUsage": 356,
+    "launchMode": "embedded"
+  },
+  {
+    "id": "app-einvoice",
+    "tenantId": "tenant-xtech",
+    "name": "Hóa đơn điện tử",
+    "description": "Phát hành và quản lý hóa đơn điện tử.",
+    "status": "active",
+    "users": 38,
+    "instances": 1,
+    "monthlyUsage": 1248,
+    "launchMode": "embedded"
+  },
+  {
+    "id": "app-bi",
+    "tenantId": "tenant-xtech",
+    "name": "BI Dashboard",
+    "description": "Phân tích dữ liệu và báo cáo trực quan.",
+    "status": "recommended",
+    "users": 25,
+    "instances": 1,
+    "launchMode": "native"
+  }
+]

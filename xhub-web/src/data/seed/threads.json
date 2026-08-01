@@ -1,0 +1,47 @@
+[
+  {
+    "id": "thread-proposal-mp",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "parentMessageId": "msg-mp-003",
+    "title": "Cập nhật proposal Minh Phát",
+    "createdBy": "user-thuha",
+    "createdAt": "2026-08-07T09:15:00+07:00",
+    "participantIds": [
+      "user-thuha",
+      "user-anhkhoa",
+      "user-nam",
+      "user-leminhduc"
+    ],
+    "followerIds": [
+      "user-thuha",
+      "user-anhkhoa",
+      "user-nam",
+      "user-tuan",
+      "user-minhanh",
+      "user-minhquan"
+    ],
+    "replyCount": 8,
+    "status": "active"
+  },
+  {
+    "id": "thread-customer-payment",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-mp",
+    "parentMessageId": "msg-customer-mp-001",
+    "title": "Thanh toán đợt 2 Minh Phát",
+    "createdBy": "user-thuha",
+    "createdAt": "2026-08-08T09:25:00+07:00",
+    "participantIds": [
+      "user-thuha",
+      "user-minhanh"
+    ],
+    "followerIds": [
+      "user-thuha",
+      "user-minhanh",
+      "user-nam"
+    ],
+    "replyCount": 2,
+    "status": "active"
+  }
+]

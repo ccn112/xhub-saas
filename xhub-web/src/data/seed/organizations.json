@@ -1,0 +1,82 @@
+[
+  {
+    "id": "org-xtech",
+    "tenantId": "tenant-xtech",
+    "code": "XTECH",
+    "name": "X-TECH",
+    "type": "company",
+    "parentId": null
+  },
+  {
+    "id": "dept-exec",
+    "tenantId": "tenant-xtech",
+    "code": "BDH",
+    "name": "Ban Điều hành",
+    "type": "department",
+    "parentId": "org-xtech"
+  },
+  {
+    "id": "dept-sales",
+    "tenantId": "tenant-xtech",
+    "code": "KD",
+    "name": "Phòng Kinh doanh",
+    "type": "department",
+    "parentId": "org-xtech"
+  },
+  {
+    "id": "dept-finance",
+    "tenantId": "tenant-xtech",
+    "code": "TC",
+    "name": "Phòng Tài chính",
+    "type": "department",
+    "parentId": "org-xtech"
+  },
+  {
+    "id": "dept-erp",
+    "tenantId": "tenant-xtech",
+    "code": "ERP",
+    "name": "Phòng Triển khai ERP",
+    "type": "department",
+    "parentId": "org-xtech"
+  },
+  {
+    "id": "dept-tech",
+    "tenantId": "tenant-xtech",
+    "code": "CN",
+    "name": "Phòng Công nghệ",
+    "type": "department",
+    "parentId": "org-xtech"
+  },
+  {
+    "id": "dept-product",
+    "tenantId": "tenant-xtech",
+    "code": "SP",
+    "name": "Phòng Sản phẩm",
+    "type": "department",
+    "parentId": "org-xtech"
+  },
+  {
+    "id": "dept-cs",
+    "tenantId": "tenant-xtech",
+    "code": "CSKH",
+    "name": "Phòng Hỗ trợ khách hàng",
+    "type": "department",
+    "parentId": "org-xtech"
+  },
+  {
+    "id": "dept-hr",
+    "tenantId": "tenant-xtech",
+    "code": "NS",
+    "name": "Phòng Nhân sự",
+    "type": "department",
+    "parentId": "org-xtech"
+  },
+  {
+    "id": "dept-pmo",
+    "tenantId": "tenant-xtech",
+    "code": "PMO",
+    "name": "Văn phòng Dự án",
+    "type": "department",
+    "parentId": "org-xtech"
+  }
+]

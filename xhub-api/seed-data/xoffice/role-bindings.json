@@ -1,0 +1,45 @@
+[
+  {
+    "tenantSlug": "xtech",
+    "code": "ROLE_PROCESS_ADMIN",
+    "name": "Quản trị quy trình"
+  },
+  {
+    "tenantSlug": "xtech",
+    "code": "ROLE_WORKFLOW_REVIEWER",
+    "name": "Người kiểm duyệt quy trình"
+  },
+  {
+    "tenantSlug": "xtech",
+    "code": "ROLE_CEO",
+    "name": "Tổng Giám đốc",
+    "userEmail": "tran.manhtuan@xtech.com.vn"
+  },
+  {
+    "tenantSlug": "xtech",
+    "code": "ROLE_CFO",
+    "name": "Giám đốc Tài chính",
+    "userEmail": "nguyen.hoainam@xtech.com.vn"
+  },
+  {
+    "tenantSlug": "xtech",
+    "code": "ROLE_IT_MANAGER",
+    "name": "Trưởng phòng Công nghệ",
+    "userEmail": "pham.anhkhoa@xtech.com.vn"
+  },
+  {
+    "tenantSlug": "xtech",
+    "code": "ROLE_IT_SUPPORT",
+    "name": "Hỗ trợ CNTT"
+  },
+  {
+    "tenantSlug": "xtech",
+    "code": "ROLE_ADMIN_MANAGER",
+    "name": "Trưởng phòng Hành chính"
+  },
+  {
+    "tenantSlug": "demo-isolation",
+    "code": "ROLE_SECRET",
+    "name": "MUST_NOT_LEAK"
+  }
+]

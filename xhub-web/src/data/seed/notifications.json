@@ -1,0 +1,32 @@
+[
+  {
+    "id": "notif-001",
+    "tenantId": "tenant-xtech",
+    "userId": "user-nam",
+    "type": "mention",
+    "title": "Trần Thu Hà đã nhắc đến bạn",
+    "body": "Trong #trien-khai-finerp-minh-phat",
+    "createdAt": "2026-08-08T09:15:00+07:00",
+    "read": false
+  },
+  {
+    "id": "notif-002",
+    "tenantId": "tenant-xtech",
+    "userId": "user-nam",
+    "type": "approval",
+    "title": "Có hồ sơ cần phê duyệt",
+    "body": "Đề nghị thanh toán 120.000.000 VND",
+    "createdAt": "2026-08-08T09:25:00+07:00",
+    "read": false
+  },
+  {
+    "id": "notif-003",
+    "tenantId": "tenant-xtech",
+    "userId": "user-thuha",
+    "type": "task",
+    "title": "Phạm Anh Khoa giao việc cho bạn",
+    "body": "Cập nhật proposal Minh Phát",
+    "createdAt": "2026-08-08T09:20:00+07:00",
+    "read": false
+  }
+]

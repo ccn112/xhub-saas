@@ -1,0 +1,28 @@
+{
+  "_note": "PLATFORM role namespace (SAAS-004 — step 2). SEPARATE from the 16 tenant roles: every platform-operator role code is PREFIXED `PLT_` so it can NEVER collide with the tenant super-admin `PLATFORM_ADMIN` (['*'], held by usr-cfo/usr-ceo for tests). Platform roles grant ONLY `platform.*` codes — never `*` and never tenant business codes (tenant.*/request.*/...), so a platform operator does not gain tenant business-data access. Seeded as PermissionPolicy rows under the SYSTEM tenant `tenant-platform` (tenantNo NULL → excluded from the commercial registry list). Source: handoff data/PLATFORM_ROLE_CATALOG.csv + PLATFORM_SCREEN_CATALOG.csv + PLATFORM_MENU.csv. Idempotent: PermissionPolicy upsert-by (tenantId, roleCode, version); persons/bindings upsert-by id. ADDITIVE: the tenant PLATFORM_ADMIN=['*'] policy is untouched.",
+  "systemTenant": { "id": "tenant-platform", "slug": "platform", "name": "XHub Platform (system)" },
+  "version": 1,
+  "roles": [
+    { "roleCode": "PLT_PLATFORM_OWNER", "name": "Chủ nền tảng", "permissions": ["platform.*"] },
+    { "roleCode": "PLT_PLATFORM_ADMIN", "name": "Quản trị nền tảng", "permissions": ["platform.tenant.read", "platform.tenant.manage", "platform.app.read", "platform.app.manage", "platform.connector.read", "platform.connector.manage", "platform.master-data.read", "platform.master-data.manage", "platform.release.read", "platform.release.manage", "platform.health.read", "platform.backup.read", "platform.backup.manage"] },
+    { "roleCode": "PLT_TENANT_LAUNCH_MANAGER", "name": "Quản lý khởi tạo tenant", "permissions": ["platform.tenant.read", "platform.tenant.manage", "platform.launch.read", "platform.launch.manage", "platform.seed-pack.read", "platform.blueprint.read", "platform.health.read"] },
+    { "roleCode": "PLT_PLATFORM_OPERATIONS", "name": "Vận hành nền tảng", "permissions": ["platform.health.read", "platform.usage.read", "platform.backup.read", "platform.backup.manage", "platform.job.manage", "platform.connector.read", "platform.release.read"] },
+    { "roleCode": "PLT_PLATFORM_SECURITY", "name": "An toàn nền tảng", "permissions": ["platform.audit.read", "platform.support.read", "platform.support.manage", "platform.backup.read", "platform.security.manage"] },
+    { "roleCode": "PLT_BILLING_ADMIN", "name": "Quản trị thuê bao", "permissions": ["platform.plan.read", "platform.plan.manage", "platform.usage.read"] },
+    { "roleCode": "PLT_BLUEPRINT_MANAGER", "name": "Quản trị blueprint", "permissions": ["platform.blueprint.read", "platform.blueprint.manage", "platform.seed-pack.read", "platform.seed-pack.manage", "platform.app.read", "platform.master-data.read"] },
+    { "roleCode": "PLT_SOLUTION_DELIVERY_MANAGER", "name": "Quản lý triển khai", "permissions": ["platform.blueprint.read", "platform.support.read", "platform.launch.read", "platform.tenant.read"] },
+    { "roleCode": "PLT_CUSTOMER_SUCCESS_MANAGER", "name": "Customer Success", "permissions": ["platform.health.read", "platform.usage.read", "platform.support.read", "platform.tenant.read"] },
+    { "roleCode": "PLT_PLATFORM_AUDITOR", "name": "Kiểm toán nền tảng", "permissions": ["platform.audit.read", "platform.tenant.read"] }
+  ],
+  "_persons_note": "usr-plt-ops is a DEDICATED clean platform operator (only a PLT_ role, NO tenant role) so the permission-separation test is deterministic regardless of whether seed:accounts ran.",
+  "persons": [
+    { "id": "usr-plt-ops", "fullName": "Vận hành nền tảng XHub", "email": "platform.ops@xhub.local" },
+    { "id": "usr-plt-blueprint", "fullName": "Quản trị Blueprint XHub", "email": "platform.blueprint@xhub.local" }
+  ],
+  "userBindings": [
+    { "id": "rb-plt-ops", "subjectId": "usr-plt-ops", "roleCode": "PLT_PLATFORM_ADMIN" },
+    { "id": "rb-plt-platform-admin", "subjectId": "usr-platform-admin", "roleCode": "PLT_PLATFORM_ADMIN" },
+    { "id": "rb-plt-tenant-admin", "subjectId": "usr-tenant-admin", "roleCode": "PLT_TENANT_LAUNCH_MANAGER" },
+    { "id": "rb-plt-blueprint", "subjectId": "usr-plt-blueprint", "roleCode": "PLT_BLUEPRINT_MANAGER" }
+  ]
+}

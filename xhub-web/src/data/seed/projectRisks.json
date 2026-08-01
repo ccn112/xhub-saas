@@ -1,0 +1,57 @@
+[
+  {
+    "id": "risk-mp-inventory-data",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "title": "Dữ liệu tồn kho lịch sử chưa đồng nhất",
+    "severity": "high",
+    "status": "open",
+    "ownerId": "user-vantung",
+    "dueDate": "2026-08-10",
+    "impact": "Ảnh hưởng kế hoạch migrate và UAT."
+  },
+  {
+    "id": "risk-mp-cr12",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "title": "Phụ thuộc xử lý CR-12 từ khách hàng chậm phản hồi",
+    "severity": "high",
+    "status": "open",
+    "ownerId": "user-anhkhoa",
+    "dueDate": "2026-08-13",
+    "impact": "Có thể làm chậm kế hoạch cut-over."
+  },
+  {
+    "id": "risk-mp-test-data",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "title": "Tiến độ UAT bị ảnh hưởng bởi dữ liệu test",
+    "severity": "medium",
+    "status": "monitoring",
+    "ownerId": "user-minhduc",
+    "dueDate": "2026-08-12",
+    "impact": "Giảm phạm vi test đợt 1."
+  },
+  {
+    "id": "risk-mp-wms",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "title": "Tích hợp WMS bên thứ ba chưa ổn định",
+    "severity": "medium",
+    "status": "monitoring",
+    "ownerId": "user-nam",
+    "dueDate": "2026-08-15",
+    "impact": "Ảnh hưởng đồng bộ tồn kho."
+  },
+  {
+    "id": "risk-mp-keyuser",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "title": "Nguồn lực key user cuối tuần chưa đảm bảo",
+    "severity": "medium",
+    "status": "open",
+    "ownerId": "user-thihuong",
+    "dueDate": "2026-08-09",
+    "impact": "Ảnh hưởng đào tạo và UAT."
+  }
+]

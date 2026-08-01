@@ -1,0 +1,114 @@
+[
+  {
+    "id": "ai-exec-recap",
+    "tenantId": "tenant-xtech",
+    "scopeType": "dashboard",
+    "scopeId": "XH-01",
+    "generatedAt": "2026-08-08T09:30:00+07:00",
+    "title": "Tóm tắt nhanh từ X.AI",
+    "bullets": [
+      "Doanh thu tháng 8 tăng 12,4% so với tháng trước, chủ yếu từ XBooking.",
+      "Công nợ cần thu tăng 8,7%, tập trung ở nhóm khách hàng dự án.",
+      "5 dự án có nguy cơ chậm tiến độ, cần ưu tiên nguồn lực.",
+      "12 công việc quá hạn, trong đó 3 việc quá hạn trên 7 ngày."
+    ],
+    "sourceIds": [
+      "kpi-exec-202608",
+      "project-finerp-minhphat"
+    ]
+  },
+  {
+    "id": "ai-sales-recap",
+    "tenantId": "tenant-xtech",
+    "scopeType": "dashboard",
+    "scopeId": "XH-02",
+    "generatedAt": "2026-08-08T09:30:00+07:00",
+    "title": "Tóm tắt kinh doanh",
+    "bullets": [
+      "Doanh số tháng đạt 6,8 tỷ.",
+      "Tỷ lệ chốt đạt 28%.",
+      "Có 7 hợp đồng đang chờ ký.",
+      "Ưu tiên đẩy nhanh cơ hội Minh Phát và Celadon."
+    ],
+    "sourceIds": [
+      "kpi-sales-202608",
+      "opp-minhphat-finerp"
+    ]
+  },
+  {
+    "id": "ai-channel-recap",
+    "tenantId": "tenant-xtech",
+    "scopeType": "channel",
+    "scopeId": "channel-finerp-mp",
+    "generatedAt": "2026-08-08T09:30:00+07:00",
+    "title": "Tóm tắt channel",
+    "bullets": [
+      "Đã chốt lịch demo lúc 10:00 ngày 08/08.",
+      "Proposal đang được cập nhật theo feedback.",
+      "Đề nghị thanh toán 120.000.000 VND đang chờ duyệt.",
+      "Đã chia sẻ đề cương demo và báo giá v2."
+    ],
+    "sourceIds": [
+      "msg-mp-001",
+      "task-proposal-mp",
+      "approval-payment-mp-02",
+      "doc-demo-outline"
+    ]
+  },
+  {
+    "id": "ai-thread-recap",
+    "tenantId": "tenant-xtech",
+    "scopeType": "thread",
+    "scopeId": "thread-proposal-mp",
+    "generatedAt": "2026-08-07T10:05:00+07:00",
+    "title": "Tóm tắt thread",
+    "bullets": [
+      "Proposal đã bổ sung lộ trình 3 giai đoạn.",
+      "Có 2 phương án triển khai Cloud và On-prem.",
+      "Nguyễn Hoài Nam phụ trách rà soát cuối.",
+      "Họp chốt lúc 15:00."
+    ],
+    "sourceIds": [
+      "thread-proposal-mp",
+      "decision-proposal-structure"
+    ]
+  },
+  {
+    "id": "ai-project-recap",
+    "tenantId": "tenant-xtech",
+    "scopeType": "project",
+    "scopeId": "project-finerp-minhphat",
+    "generatedAt": "2026-08-08T09:30:00+07:00",
+    "title": "Tóm tắt dự án",
+    "bullets": [
+      "Tiến độ tổng 68%, đang đúng kế hoạch.",
+      "UAT là giai đoạn tiếp theo, cần tập trung dữ liệu test.",
+      "Có 3 rủi ro cao cần xử lý trong tuần.",
+      "Ưu tiên CR-12 và kế hoạch UAT."
+    ],
+    "sourceIds": [
+      "project-finerp-minhphat",
+      "risk-mp-cr12",
+      "risk-mp-test-data"
+    ]
+  },
+  {
+    "id": "ai-customer-recap",
+    "tenantId": "tenant-xtech",
+    "scopeType": "customer",
+    "scopeId": "customer-minhphat",
+    "generatedAt": "2026-08-08T09:30:00+07:00",
+    "title": "Tóm tắt khách hàng",
+    "bullets": [
+      "Khách hàng ưu tiên nhóm A, ngành sản xuất.",
+      "Đã ký hợp đồng và đang triển khai.",
+      "Mức hài lòng 4,3/5.",
+      "Có thể giới thiệu thêm X.Space."
+    ],
+    "sourceIds": [
+      "customer-minhphat",
+      "contract-mp-finerp",
+      "opp-minhphat-finerp"
+    ]
+  }
+]

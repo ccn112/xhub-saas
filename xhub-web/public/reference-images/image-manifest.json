@@ -1,0 +1,122 @@
+[
+  {
+    "set": "xhub",
+    "file": "reference-images/xhub/01-tong-quan-dieu-hanh.png",
+    "bytes": 1350590,
+    "sha256": "66bc4ea9d5f970de7e3ec23fead220167ef670d3b50626409a310178657acb33"
+  },
+  {
+    "set": "xhub",
+    "file": "reference-images/xhub/02-bang-dieu-hanh-kinh-doanh.png",
+    "bytes": 1385515,
+    "sha256": "49b87f20596c26d33561d28b5344eb4da9f20a6bb4375920c5785cd40496a3a8"
+  },
+  {
+    "set": "xhub",
+    "file": "reference-images/xhub/03-khong-gian-lam-viec-cua-toi.png",
+    "bytes": 1455588,
+    "sha256": "84fe933b3e6dd1504b610aaf14deec1cd47526944be23c15da2f3e72b7a9703c"
+  },
+  {
+    "set": "xhub",
+    "file": "reference-images/xhub/04-hop-viec-hop-nhat.png",
+    "bytes": 1488602,
+    "sha256": "717b4fff0f43fb269a00a2e8a4730a7c17b9339de2ba81752557b3e79e87f8d2"
+  },
+  {
+    "set": "xhub",
+    "file": "reference-images/xhub/05-chi-tiet-yeu-cau-thanh-toan.png",
+    "bytes": 1545856,
+    "sha256": "95b144daae7d714edd015e69976589119dacff917b3ac02b82230e88c620f3c4"
+  },
+  {
+    "set": "xhub",
+    "file": "reference-images/xhub/06-trao-doi-gan-ngu-canh.png",
+    "bytes": 1528025,
+    "sha256": "c61ce3556afb7a19f784e0a011c51c21ea5d6fab6b308f3de5e57e986d10ffef"
+  },
+  {
+    "set": "xhub",
+    "file": "reference-images/xhub/07-cong-viec-va-chi-dao.png",
+    "bytes": 1559560,
+    "sha256": "70eb304212f4bc4c685e0390ea026b185577006a5765bc3090150fd47d438636"
+  },
+  {
+    "set": "xhub",
+    "file": "reference-images/xhub/08-trung-tam-phe-duyet.png",
+    "bytes": 1506207,
+    "sha256": "ea0c5321af8c78a2d3b2f20365dc31f10714ccf2aef8225f534b309d35634dcc"
+  },
+  {
+    "set": "xhub",
+    "file": "reference-images/xhub/09-tong-quan-du-an.png",
+    "bytes": 1530723,
+    "sha256": "9131c2bedc0b2c99cad4eb158664fe582d0dad2893175a7173aa12bf0df59e4e"
+  },
+  {
+    "set": "xhub",
+    "file": "reference-images/xhub/10-danh-muc-ung-dung.png",
+    "bytes": 1415281,
+    "sha256": "06a1c7dae30e9264a02043188ef3c9d203e151bc0d44283001f63eba2bca05e1"
+  },
+  {
+    "set": "xspace",
+    "file": "reference-images/xspace/01-trang-chu-xspace.png",
+    "bytes": 1487247,
+    "sha256": "eda687c4d3207d126cfc3ff8c6e5ed06c0ad8efb39a9b179c2ca5321475c675b"
+  },
+  {
+    "set": "xspace",
+    "file": "reference-images/xspace/02-channel-tieu-chuan.png",
+    "bytes": 1489160,
+    "sha256": "eb610cee549f37c34436ba60807c5ae9816c926844550487c9c7ae3c1a88220a"
+  },
+  {
+    "set": "xspace",
+    "file": "reference-images/xspace/03-channel-du-an.png",
+    "bytes": 1596402,
+    "sha256": "1682a6c78edb5cbd2e797ff4db22f7bc1955e96cd8df594b945a41b75babe329"
+  },
+  {
+    "set": "xspace",
+    "file": "reference-images/xspace/04-channel-khach-hang.png",
+    "bytes": 1529876,
+    "sha256": "e1414f277ee4a076c410589f4fb52ee18a2711c8d2e4b15bb6133301ffd7c4ea"
+  },
+  {
+    "set": "xspace",
+    "file": "reference-images/xspace/05-thread-chi-tiet.png",
+    "bytes": 1618028,
+    "sha256": "cee3af7f0b385381c2c5f9eba5ecaf3c8cf109e75735f060e4891440748d795b"
+  },
+  {
+    "set": "xspace",
+    "file": "reference-images/xspace/06-tin-nhan-truc-tiep.png",
+    "bytes": 1681707,
+    "sha256": "aed3cb4cc0f9e58c67bb9f8e5b8d74bb74295c591c71d148ec9f77b9899e2c37"
+  },
+  {
+    "set": "xspace",
+    "file": "reference-images/xspace/07-trang-channel.png",
+    "bytes": 1699014,
+    "sha256": "428e08b190187a6c7cf8e327340019c34271a7774eeff32d1d2dc3409834885c"
+  },
+  {
+    "set": "xspace",
+    "file": "reference-images/xspace/08-danh-sach-cong-tac.png",
+    "bytes": 1530185,
+    "sha256": "578298a39d5caa246b3c55f00d3ab4b6164be81658f41365a61f4026f497f1e0"
+  },
+  {
+    "set": "xspace",
+    "file": "reference-images/xspace/09-hop-nhanh.png",
+    "bytes": 1588655,
+    "sha256": "f8deb792a71460386de09fdf3d66efd428b5c0b64d7f7a7dfd0151f576684fe6"
+  },
+  {
+    "set": "xspace",
+    "file": "reference-images/xspace/10-workflow-trong-channel.png",
+    "bytes": 1599511,
+    "sha256": "6b5e1e2faf98aea324b7c27c6134d3b4d3c72ddf7b62bf9a011ba886f8a59f39"
+  }
+]

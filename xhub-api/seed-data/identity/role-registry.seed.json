@@ -1,0 +1,31 @@
+{
+  "_note": "Canonical role registry (16 roles) for the XHub Internal Pilot — mirrors handoff data/ROLE_CATALOG.csv. SINGLE source of truth: roleCode -> {name, permissions[], condition?, dataScope}. Seeded as PermissionPolicy rows (version 1) under tenant-xtech via scripts/role-registry-seed.mjs (upsert-by (tenantId, roleCode, version), RLS-bypass). ADDITIVE: coexists with the legacy ROLE_* policies from xtech-identity-org.seed.json; PLATFORM_ADMIN is the canonical super-admin (grants ['*']).",
+  "tenant": { "id": "tenant-xtech", "slug": "xtech", "name": "X-TECH" },
+  "version": 1,
+  "roles": [
+    { "roleCode": "PLATFORM_ADMIN", "name": "Quản trị nền tảng", "permissions": ["*", "platform.tenant.read", "platform.tenant.manage"], "dataScope": "ALL" },
+    { "roleCode": "TENANT_ADMIN", "name": "Quản trị tenant", "permissions": ["tenant.*", "membership.*", "application.*"], "dataScope": "TENANT" },
+    { "roleCode": "ORG_ADMIN", "name": "Quản trị tổ chức", "permissions": ["org.*", "position.*", "delegation.*"], "dataScope": "TENANT" },
+    { "roleCode": "SECURITY_ADMIN", "name": "Quản trị bảo mật", "permissions": ["role.*", "permission.*", "scope.*", "authz.simulate"], "dataScope": "TENANT" },
+    { "roleCode": "WORKFLOW_ADMIN", "name": "Quản trị quy trình", "permissions": ["workflow.*", "form.*", "assignment.simulate"], "dataScope": "TENANT" },
+    { "roleCode": "BACKUP_ADMIN", "name": "Quản trị sao lưu", "permissions": ["backup.*", "restore.request", "restore.sandbox"], "dataScope": "TENANT" },
+    { "roleCode": "AUDITOR", "name": "Kiểm toán", "permissions": ["audit.read", "backup.read", "permission.read"], "dataScope": "TENANT" },
+    { "roleCode": "DATA_STEWARD", "name": "Quản lý dữ liệu chủ", "permissions": ["mdm.*", "import.*", "quality.*"], "dataScope": "TENANT" },
+    { "roleCode": "RECORDS_MANAGER", "name": "Quản lý hồ sơ", "permissions": ["records.*", "document.publish", "retention.manage"], "dataScope": "TENANT" },
+    { "roleCode": "COMM_ADMIN", "name": "Quản trị truyền thông", "permissions": ["announcement.*"], "dataScope": "TENANT" },
+    { "roleCode": "SERVICE_DESK_MANAGER", "name": "Quản lý Service Desk", "permissions": ["ticket.manage", "service_catalog.*", "sla.*"], "dataScope": "TENANT" },
+    { "roleCode": "SERVICE_DESK_AGENT", "name": "Nhân viên Service Desk", "permissions": ["ticket.read", "assign.self", "ticket.resolve"], "dataScope": "SELF" },
+    { "roleCode": "EXECUTIVE", "name": "Ban điều hành", "permissions": ["dashboard.executive", "directive.*", "request.approve"], "dataScope": "TENANT" },
+    { "roleCode": "CFO", "name": "Giám đốc Tài chính", "permissions": ["payment.approve", "purchase.approve", "report.finance"], "condition": { "maxAmount": 5000000000 }, "dataScope": "TENANT" },
+    { "roleCode": "DEPARTMENT_HEAD", "name": "Trưởng bộ phận", "permissions": ["request.approve", "task.assign", "directive.receive"], "dataScope": "ORG_UNIT" },
+    { "roleCode": "EMPLOYEE", "name": "Nhân viên", "permissions": ["request.create", "task.self", "document.read"], "dataScope": "SELF" },
+    { "roleCode": "SOLUTION_DELIVERY_MANAGER", "name": "Quản lý triển khai giải pháp (T001)", "permissions": ["delivery.read", "delivery.manage"], "dataScope": "TENANT" }
+  ],
+  "_userBindings_note": "USER RoleBindings the seeder ensures so the test admin (user-nam -> usr-cfo) and CEO keep passing every gated endpoint under enforcement via PLATFORM_ADMIN ['*']. Canonical replacement for the legacy ROLE_PLATFORM_ADMIN USER bindings; both coexist this step.",
+  "userBindings": [
+    { "id": "rb-platform-admin-canonical-cfo", "subjectType": "USER", "subjectId": "usr-cfo", "roleCode": "PLATFORM_ADMIN", "scope": { "all": true } },
+    { "id": "rb-platform-admin-canonical-ceo", "subjectType": "USER", "subjectId": "usr-ceo", "roleCode": "PLATFORM_ADMIN", "scope": { "all": true } },
+    { "id": "rb-service-desk-agent-infra", "subjectType": "USER", "subjectId": "usr-it-support", "roleCode": "SERVICE_DESK_AGENT", "scope": { "orgUnitId": "ou-tech" } },
+    { "id": "rb-solution-delivery-mgr", "subjectType": "USER", "subjectId": "usr-delivery-mgr", "roleCode": "SOLUTION_DELIVERY_MANAGER", "scope": { "tenant": true } }
+  ]
+}

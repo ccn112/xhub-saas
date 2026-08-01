@@ -1,0 +1,32 @@
+[
+  {
+    "id": "apstep-mp-1",
+    "tenantId": "tenant-xtech",
+    "approvalId": "approval-payment-mp-02",
+    "step": 1,
+    "name": "Trưởng phòng",
+    "assigneeId": "user-minhanh",
+    "status": "approved",
+    "actedAt": "2026-08-08T09:12:00+07:00"
+  },
+  {
+    "id": "apstep-mp-2",
+    "tenantId": "tenant-xtech",
+    "approvalId": "approval-payment-mp-02",
+    "step": 2,
+    "name": "Giám đốc điều hành",
+    "assigneeId": "user-nam",
+    "status": "pending",
+    "actedAt": null
+  },
+  {
+    "id": "apstep-mp-3",
+    "tenantId": "tenant-xtech",
+    "approvalId": "approval-payment-mp-02",
+    "step": 3,
+    "name": "Tổng giám đốc",
+    "assigneeId": "user-tuan",
+    "status": "pending",
+    "actedAt": null
+  }
+]

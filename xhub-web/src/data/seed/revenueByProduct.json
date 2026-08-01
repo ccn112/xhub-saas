@@ -1,0 +1,32 @@
+[
+  {
+    "tenantId": "tenant-xtech",
+    "period": "2026-08",
+    "productId": "product-xbooking",
+    "value": 7500000000
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "period": "2026-08",
+    "productId": "product-xbuilding",
+    "value": 5100000000
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "period": "2026-08",
+    "productId": "product-finerp",
+    "value": 3200000000
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "period": "2026-08",
+    "productId": "product-xai",
+    "value": 1600000000
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "period": "2026-08",
+    "productId": "product-xspace",
+    "value": 1200000000
+  }
+]

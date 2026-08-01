@@ -1,0 +1,35 @@
+[
+  {
+    "id": "decision-demo-mp",
+    "tenantId": "tenant-xtech",
+    "title": "Chốt lịch demo FinERP với Minh Phát",
+    "channelId": "channel-finerp-mp",
+    "projectId": "project-finerp-minhphat",
+    "decidedAt": "2026-08-03T10:02:00+07:00",
+    "decidedBy": "user-thuha",
+    "content": "Demo chính thức ngày 08/08/2026 lúc 10:00–11:30 tại Microsoft Teams; khách mời gồm anh Nam và chị Hà phía Minh Phát.",
+    "status": "active"
+  },
+  {
+    "id": "decision-proposal-structure",
+    "tenantId": "tenant-xtech",
+    "title": "Chốt cấu trúc proposal và lộ trình demo",
+    "channelId": "channel-finerp-mp",
+    "projectId": "project-finerp-minhphat",
+    "decidedAt": "2026-08-07T10:02:00+07:00",
+    "decidedBy": "user-thuha",
+    "content": "Thống nhất cấu trúc 3 giai đoạn và trình bày 02 phương án Cloud và On-prem.",
+    "status": "active"
+  },
+  {
+    "id": "decision-uat-plan",
+    "tenantId": "tenant-xtech",
+    "title": "Phê duyệt kế hoạch triển khai UAT đợt 1",
+    "channelId": "channel-executive",
+    "projectId": "project-finerp-minhphat",
+    "decidedAt": "2026-08-02T16:00:00+07:00",
+    "decidedBy": "user-tuan",
+    "content": "UAT đợt 1 bắt đầu ngày 05/09/2026, ưu tiên Tài chính, Mua hàng và Kho.",
+    "status": "active"
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xhub.vn/schemas/xoffice/connector-mapping-1.0.json",
+  "title": "ConnectorMapping",
+  "description": "Bảng mapping data-driven cho node serviceCall: workflow variable path -> target field của connector action. Lưu ở config.mapping của node, KHÔNG hardcode.",
+  "type": "object",
+  "required": ["connectorCode", "actionCode", "mappings"],
+  "properties": {
+    "connectorCode": { "type": "string" },
+    "actionCode": { "type": "string" },
+    "mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["target", "source"],
+        "properties": {
+          "target": { "type": "string", "description": "key của targetField trong connector-catalog" },
+          "source": { "type": "string", "description": "đường dẫn biến trong instance.variables, vd 'request.amount'" },
+          "required": { "type": "boolean", "default": false },
+          "transform": { "enum": ["none", "toNumber", "toString", "join", "constant"], "default": "none" },
+          "constant": { "description": "giá trị cố định khi transform=constant" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "retry": { "type": "object", "properties": { "maxAttempts": { "type": "integer" } } }
+  }
+}

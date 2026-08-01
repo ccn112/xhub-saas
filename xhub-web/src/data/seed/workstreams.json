@@ -1,0 +1,47 @@
+[
+  {
+    "id": "ws-mp-pm",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "name": "Quản trị & Hệ thống",
+    "ownerId": "user-tuan",
+    "progress": 70,
+    "status": "in_progress"
+  },
+  {
+    "id": "ws-mp-finance",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "name": "Tài chính - Kế toán",
+    "ownerId": "user-anhkhoa",
+    "progress": 80,
+    "status": "in_progress"
+  },
+  {
+    "id": "ws-mp-procurement",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "name": "Mua hàng - Kho",
+    "ownerId": "user-thuha",
+    "progress": 65,
+    "status": "in_progress"
+  },
+  {
+    "id": "ws-mp-sales",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "name": "Bán hàng - CRM",
+    "ownerId": "user-leminhduc",
+    "progress": 60,
+    "status": "in_progress"
+  },
+  {
+    "id": "ws-mp-bi",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "name": "Báo cáo & BI",
+    "ownerId": "user-vantung",
+    "progress": 40,
+    "status": "in_progress"
+  }
+]

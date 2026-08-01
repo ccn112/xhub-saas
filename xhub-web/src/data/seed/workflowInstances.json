@@ -1,0 +1,76 @@
+[
+  {
+    "id": "wf-demo-0087",
+    "tenantId": "tenant-xtech",
+    "workflowId": "workflow-customer-demo",
+    "code": "REQ-2026-0087",
+    "customerId": "customer-anphat",
+    "title": "Demo FinERP cho Ban Giám đốc",
+    "currentStep": "prepare",
+    "status": "in_progress",
+    "ownerId": "user-anhkhoa",
+    "slaHours": 72,
+    "dueAt": "2026-08-10T17:00:00+07:00",
+    "formData": {
+      "goal": "Giới thiệu giải pháp FinERP và quy trình triển khai",
+      "demoAt": "2026-08-12T10:00:00+07:00",
+      "format": "Online - Google Meet",
+      "scope": [
+        "Tài chính",
+        "Kho",
+        "Mua hàng",
+        "Báo cáo quản trị"
+      ],
+      "supporterIds": [
+        "user-thuha",
+        "user-nam"
+      ],
+      "documentIds": [
+        "doc-proposal-mp",
+        "doc-demo-outline"
+      ]
+    }
+  },
+  {
+    "id": "wf-demo-0086",
+    "tenantId": "tenant-xtech",
+    "workflowId": "workflow-customer-demo",
+    "code": "REQ-2026-0086",
+    "customerId": "customer-hungtin",
+    "title": "Demo phân hệ Kế toán - Kho",
+    "currentStep": "assign",
+    "status": "in_progress",
+    "ownerId": "user-nam",
+    "slaHours": 72,
+    "dueAt": "2026-08-11T17:00:00+07:00",
+    "formData": {}
+  },
+  {
+    "id": "wf-demo-0085",
+    "tenantId": "tenant-xtech",
+    "workflowId": "workflow-customer-demo",
+    "code": "REQ-2026-0085",
+    "customerId": "customer-celadon",
+    "title": "Demo tổng thể FinERP",
+    "currentStep": "confirm",
+    "status": "overdue",
+    "ownerId": "user-thuha",
+    "slaHours": 72,
+    "dueAt": "2026-08-07T17:00:00+07:00",
+    "formData": {}
+  },
+  {
+    "id": "wf-demo-0084",
+    "tenantId": "tenant-xtech",
+    "workflowId": "workflow-customer-demo",
+    "code": "REQ-2026-0084",
+    "customerId": "customer-tanbinh",
+    "title": "Demo phân hệ CRM",
+    "currentStep": "approve",
+    "status": "in_progress",
+    "ownerId": "user-anhkhoa",
+    "slaHours": 72,
+    "dueAt": "2026-08-12T17:00:00+07:00",
+    "formData": {}
+  }
+]

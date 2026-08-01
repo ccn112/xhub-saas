@@ -1,0 +1,31 @@
+[
+  {
+    "id": "tenant-xtech",
+    "slug": "xtech",
+    "name": "X-TECH",
+    "legalName": "Công ty Cổ phần Công nghệ X-TECH",
+    "timezone": "Asia/Bangkok",
+    "locale": "vi-VN",
+    "currency": "VND",
+    "status": "active",
+    "isDesignPartner": true,
+    "isFirstTenant": true,
+    "branding": {
+      "productName": "XHub",
+      "workspaceName": "X.Space",
+      "primaryColor": "#1769E0",
+      "logoAsset": "/assets/brand/xhub-logo.svg"
+    },
+    "features": [
+      "xhub",
+      "xspace",
+      "approvals",
+      "projects",
+      "crm",
+      "documents",
+      "ai",
+      "app-catalog",
+      "workflows"
+    ]
+  }
+]

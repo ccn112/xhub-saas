@@ -1,0 +1,58 @@
+[
+  {
+    "id": "page-finerp-mp",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "title": "Trang channel triển khai FinERP Minh Phát",
+    "updatedAt": "2026-08-08T09:30:00+07:00",
+    "blocks": [
+      {
+        "type": "goal",
+        "title": "Mục tiêu channel",
+        "content": "Triển khai giải pháp FinERP cho Công ty Minh Phát theo đúng tiến độ, đảm bảo chất lượng và chuyển giao thành công."
+      },
+      {
+        "type": "scope",
+        "title": "Phạm vi triển khai",
+        "items": [
+          "Tài chính - Kế toán",
+          "Mua hàng - Kho",
+          "Bán hàng - CRM",
+          "Báo cáo & BI",
+          "Tích hợp hóa đơn điện tử và ngân hàng"
+        ]
+      },
+      {
+        "type": "milestones",
+        "title": "Mốc quan trọng",
+        "milestoneIds": [
+          "ms-mp-kickoff",
+          "ms-mp-survey",
+          "ms-mp-design",
+          "ms-mp-uat",
+          "ms-mp-golive"
+        ]
+      },
+      {
+        "type": "checklist",
+        "title": "Checklist tuần này",
+        "taskIds": [
+          "task-uat-accounting",
+          "task-master-data",
+          "task-key-user-training",
+          "task-cr12"
+        ]
+      },
+      {
+        "type": "rules",
+        "title": "Quy tắc làm việc",
+        "items": [
+          "Cập nhật trạng thái hằng ngày",
+          "Mọi thảo luận liên quan dự án đăng tại channel",
+          "Quyết định phải được ghim và gắn người chịu trách nhiệm",
+          "Tài liệu lưu đúng thư mục và đặt tên theo quy ước"
+        ]
+      }
+    ]
+  }
+]

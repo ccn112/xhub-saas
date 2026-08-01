@@ -1,0 +1,2276 @@
+[
+  {
+    "schemaVersion": "1.0",
+    "metadata": {
+      "tenantSlug": "xtech",
+      "code": "PILOT-01",
+      "name": "Đề nghị mua sắm",
+      "description": "Đề nghị mua sắm",
+      "ownerRoleCode": "ROLE_PROCESS_ADMIN",
+      "systemOfRecord": "XOFFICE",
+      "ownerSystem": "XOFFICE",
+      "wave": null,
+      "aiPolicy": {
+        "canDraft": true,
+        "canValidate": true,
+        "canExplain": true,
+        "canPublish": false,
+        "canApprove": false
+      }
+    },
+    "nodes": [
+      {
+        "id": "START",
+        "type": "start",
+        "name": "Bắt đầu",
+        "config": {},
+        "position": {
+          "x": 0,
+          "y": 200
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "form",
+        "name": "Nhập Đề nghị mua sắm",
+        "config": {
+          "formCode": "FORM-PURCHASE-PROPOSAL"
+        },
+        "position": {
+          "x": 120,
+          "y": 200
+        }
+      },
+      {
+        "id": "MGR",
+        "type": "approval",
+        "name": "Trưởng đơn vị duyệt",
+        "config": {
+          "assignment": {
+            "type": "requesterManager"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 240,
+          "y": 200
+        }
+      },
+      {
+        "id": "IT",
+        "type": "humanTask",
+        "name": "CNTT thẩm định",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_IT_MANAGER"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 480,
+          "y": 200
+        }
+      },
+      {
+        "id": "FIN_CHECK",
+        "type": "humanTask",
+        "name": "Kế toán kiểm tra",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 720,
+          "y": 200
+        }
+      },
+      {
+        "id": "CFO",
+        "type": "approval",
+        "name": "CFO phê duyệt",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_CFO"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 960,
+          "y": 200
+        }
+      },
+      {
+        "id": "AMOUNT_GATE",
+        "type": "condition",
+        "name": "Kiểm tra hạn mức",
+        "config": {
+          "expression": {
+            "operator": "gt",
+            "operands": [
+              {
+                "var": "request.amount"
+              },
+              0
+            ]
+          }
+        },
+        "position": {
+          "x": 1200,
+          "y": 200
+        }
+      },
+      {
+        "id": "CEO",
+        "type": "approval",
+        "name": "TGĐ phê duyệt",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_CEO"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 1440,
+          "y": 200
+        }
+      },
+      {
+        "id": "CREATE_MR",
+        "type": "serviceCall",
+        "name": "Tạo Material Request",
+        "config": {
+          "connectorCode": "finerp",
+          "actionCode": "create_material_request",
+          "retry": {
+            "maxAttempts": 3
+          },
+          "mappings": [
+            {
+              "target": "itemDescription",
+              "source": "request.title",
+              "required": true
+            },
+            {
+              "target": "amount",
+              "source": "request.amount",
+              "transform": "toNumber",
+              "required": true
+            },
+            {
+              "target": "purpose",
+              "source": "request.business_justification"
+            },
+            {
+              "target": "department",
+              "source": "request.department"
+            },
+            {
+              "target": "requesterEmail",
+              "source": "requesterEmail",
+              "required": true
+            }
+          ]
+        },
+        "position": {
+          "x": 1680,
+          "y": 200
+        }
+      },
+      {
+        "id": "END",
+        "type": "end",
+        "name": "Hoàn thành",
+        "config": {},
+        "position": {
+          "x": 1920,
+          "y": 200
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "START",
+        "target": "FORM"
+      },
+      {
+        "id": "e2",
+        "source": "FORM",
+        "target": "MGR"
+      },
+      {
+        "id": "e3",
+        "source": "MGR",
+        "target": "IT"
+      },
+      {
+        "id": "e4",
+        "source": "IT",
+        "target": "FIN_CHECK"
+      },
+      {
+        "id": "e5",
+        "source": "FIN_CHECK",
+        "target": "CFO"
+      },
+      {
+        "id": "e6",
+        "source": "CFO",
+        "target": "AMOUNT_GATE"
+      },
+      {
+        "id": "e7",
+        "source": "AMOUNT_GATE",
+        "target": "CEO"
+      },
+      {
+        "id": "e8",
+        "source": "CEO",
+        "target": "CREATE_MR"
+      },
+      {
+        "id": "e9",
+        "source": "CREATE_MR",
+        "target": "END"
+      }
+    ],
+    "variables": [],
+    "forms": [],
+    "presentation": {
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 0.85
+      }
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "metadata": {
+      "tenantSlug": "xtech",
+      "code": "PILOT-02",
+      "name": "Đề nghị thanh toán",
+      "description": "Đề nghị thanh toán",
+      "ownerRoleCode": "ROLE_PROCESS_ADMIN",
+      "systemOfRecord": "XOFFICE",
+      "ownerSystem": "XOFFICE",
+      "wave": null,
+      "aiPolicy": {
+        "canDraft": true,
+        "canValidate": true,
+        "canExplain": true,
+        "canPublish": false,
+        "canApprove": false
+      }
+    },
+    "nodes": [
+      {
+        "id": "START",
+        "type": "start",
+        "name": "Bắt đầu",
+        "config": {},
+        "position": {
+          "x": 0,
+          "y": 200
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "form",
+        "name": "Nhập Đề nghị thanh toán",
+        "config": {
+          "formCode": "FORM-PAYMENT-PROPOSAL"
+        },
+        "position": {
+          "x": 120,
+          "y": 200
+        }
+      },
+      {
+        "id": "MGR",
+        "type": "approval",
+        "name": "Trưởng đơn vị",
+        "config": {
+          "assignment": {
+            "type": "requesterManager"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 240,
+          "y": 200
+        }
+      },
+      {
+        "id": "ACCOUNTANT",
+        "type": "humanTask",
+        "name": "Kế toán kiểm tra",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 480,
+          "y": 200
+        }
+      },
+      {
+        "id": "CFO",
+        "type": "approval",
+        "name": "CFO phê duyệt",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_CFO"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 720,
+          "y": 200
+        }
+      },
+      {
+        "id": "CREATE_PR",
+        "type": "serviceCall",
+        "name": "Tạo Payment Request",
+        "config": {
+          "connectorCode": "xoffice",
+          "actionCode": "submit_create_pr",
+          "mappings": []
+        },
+        "position": {
+          "x": 960,
+          "y": 200
+        }
+      },
+      {
+        "id": "END",
+        "type": "end",
+        "name": "Hoàn thành",
+        "config": {},
+        "position": {
+          "x": 1200,
+          "y": 200
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "START",
+        "target": "FORM"
+      },
+      {
+        "id": "e2",
+        "source": "FORM",
+        "target": "MGR"
+      },
+      {
+        "id": "e3",
+        "source": "MGR",
+        "target": "ACCOUNTANT"
+      },
+      {
+        "id": "e4",
+        "source": "ACCOUNTANT",
+        "target": "CFO"
+      },
+      {
+        "id": "e5",
+        "source": "CFO",
+        "target": "CREATE_PR"
+      },
+      {
+        "id": "e6",
+        "source": "CREATE_PR",
+        "target": "END"
+      }
+    ],
+    "variables": [],
+    "forms": [],
+    "presentation": {
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 0.85
+      }
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "metadata": {
+      "tenantSlug": "xtech",
+      "code": "PILOT-03",
+      "name": "Đề nghị tạm ứng",
+      "description": "Đề nghị tạm ứng",
+      "ownerRoleCode": "ROLE_PROCESS_ADMIN",
+      "systemOfRecord": "FRAPPE_HR",
+      "ownerSystem": "FRAPPE_HR",
+      "wave": null,
+      "aiPolicy": {
+        "canDraft": true,
+        "canValidate": true,
+        "canExplain": true,
+        "canPublish": false,
+        "canApprove": false
+      }
+    },
+    "nodes": [
+      {
+        "id": "START",
+        "type": "start",
+        "name": "Bắt đầu tại Frappe HR",
+        "config": {},
+        "position": {
+          "x": 0,
+          "y": 200
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "form",
+        "name": "Nhập Đề nghị tạm ứng",
+        "config": {
+          "formCode": "FORM-EMPLOYEE-ADVANCE"
+        },
+        "position": {
+          "x": 120,
+          "y": 200
+        }
+      },
+      {
+        "id": "MGR",
+        "type": "approval",
+        "name": "Quản lý duyệt",
+        "config": {
+          "assignment": {
+            "type": "requesterManager"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 240,
+          "y": 200
+        }
+      },
+      {
+        "id": "ACCOUNTANT",
+        "type": "humanTask",
+        "name": "Kế toán kiểm tra",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 480,
+          "y": 200
+        }
+      },
+      {
+        "id": "CFO",
+        "type": "approval",
+        "name": "CFO duyệt",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_CFO"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 720,
+          "y": 200
+        }
+      },
+      {
+        "id": "END",
+        "type": "end",
+        "name": "Hoàn thành tại nguồn",
+        "config": {},
+        "position": {
+          "x": 960,
+          "y": 200
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "START",
+        "target": "FORM"
+      },
+      {
+        "id": "e2",
+        "source": "FORM",
+        "target": "MGR"
+      },
+      {
+        "id": "e3",
+        "source": "MGR",
+        "target": "ACCOUNTANT"
+      },
+      {
+        "id": "e4",
+        "source": "ACCOUNTANT",
+        "target": "CFO"
+      },
+      {
+        "id": "e5",
+        "source": "CFO",
+        "target": "END"
+      }
+    ],
+    "variables": [],
+    "forms": [],
+    "presentation": {
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 0.85
+      }
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "metadata": {
+      "tenantSlug": "xtech",
+      "code": "PILOT-04",
+      "name": "Đề nghị công tác",
+      "description": "Đề nghị công tác",
+      "ownerRoleCode": "ROLE_PROCESS_ADMIN",
+      "systemOfRecord": "FRAPPE_HR",
+      "ownerSystem": "FRAPPE_HR",
+      "wave": null,
+      "aiPolicy": {
+        "canDraft": true,
+        "canValidate": true,
+        "canExplain": true,
+        "canPublish": false,
+        "canApprove": false
+      }
+    },
+    "nodes": [
+      {
+        "id": "START",
+        "type": "start",
+        "name": "Bắt đầu tại Frappe HR",
+        "config": {},
+        "position": {
+          "x": 0,
+          "y": 200
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "form",
+        "name": "Nhập Đề nghị công tác",
+        "config": {
+          "formCode": "FORM-TRAVEL-REQUEST"
+        },
+        "position": {
+          "x": 120,
+          "y": 200
+        }
+      },
+      {
+        "id": "MGR",
+        "type": "approval",
+        "name": "Quản lý duyệt",
+        "config": {
+          "assignment": {
+            "type": "requesterManager"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 240,
+          "y": 200
+        }
+      },
+      {
+        "id": "HR",
+        "type": "humanTask",
+        "name": "Nhân sự kiểm tra",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 480,
+          "y": 200
+        }
+      },
+      {
+        "id": "BUDGET_GATE",
+        "type": "condition",
+        "name": "Có dự toán?",
+        "config": {
+          "expression": {
+            "operator": "gt",
+            "operands": [
+              {
+                "var": "request.amount"
+              },
+              0
+            ]
+          }
+        },
+        "position": {
+          "x": 720,
+          "y": 200
+        }
+      },
+      {
+        "id": "CFO",
+        "type": "approval",
+        "name": "CFO duyệt",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_CFO"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 960,
+          "y": 200
+        }
+      },
+      {
+        "id": "CALENDAR",
+        "type": "serviceCall",
+        "name": "Đồng bộ lịch",
+        "config": {
+          "connectorCode": "frappe-hr",
+          "actionCode": "submit_calendar",
+          "mappings": []
+        },
+        "position": {
+          "x": 1200,
+          "y": 200
+        }
+      },
+      {
+        "id": "END",
+        "type": "end",
+        "name": "Hoàn thành",
+        "config": {},
+        "position": {
+          "x": 1440,
+          "y": 200
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "START",
+        "target": "FORM"
+      },
+      {
+        "id": "e2",
+        "source": "FORM",
+        "target": "MGR"
+      },
+      {
+        "id": "e3",
+        "source": "MGR",
+        "target": "HR"
+      },
+      {
+        "id": "e4",
+        "source": "HR",
+        "target": "BUDGET_GATE"
+      },
+      {
+        "id": "e5",
+        "source": "BUDGET_GATE",
+        "target": "CFO"
+      },
+      {
+        "id": "e6",
+        "source": "CFO",
+        "target": "CALENDAR"
+      },
+      {
+        "id": "e7",
+        "source": "CALENDAR",
+        "target": "END"
+      }
+    ],
+    "variables": [],
+    "forms": [],
+    "presentation": {
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 0.85
+      }
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "metadata": {
+      "tenantSlug": "xtech",
+      "code": "PILOT-05",
+      "name": "Đề nghị cấp tài sản",
+      "description": "Đề nghị cấp tài sản",
+      "ownerRoleCode": "ROLE_PROCESS_ADMIN",
+      "systemOfRecord": "XOFFICE",
+      "ownerSystem": "XOFFICE",
+      "wave": null,
+      "aiPolicy": {
+        "canDraft": true,
+        "canValidate": true,
+        "canExplain": true,
+        "canPublish": false,
+        "canApprove": false
+      }
+    },
+    "nodes": [
+      {
+        "id": "START",
+        "type": "start",
+        "name": "Bắt đầu",
+        "config": {},
+        "position": {
+          "x": 0,
+          "y": 200
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "form",
+        "name": "Nhập Đề nghị cấp tài sản",
+        "config": {
+          "formCode": "FORM-ASSET-ALLOCATION-REQUEST"
+        },
+        "position": {
+          "x": 120,
+          "y": 200
+        }
+      },
+      {
+        "id": "MGR",
+        "type": "approval",
+        "name": "Trưởng đơn vị",
+        "config": {
+          "assignment": {
+            "type": "requesterManager"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 240,
+          "y": 200
+        }
+      },
+      {
+        "id": "ADMIN",
+        "type": "humanTask",
+        "name": "Hành chính",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_ADMIN_MANAGER"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 480,
+          "y": 200
+        }
+      },
+      {
+        "id": "IT",
+        "type": "humanTask",
+        "name": "IT thẩm định",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_IT_MANAGER"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 720,
+          "y": 200
+        }
+      },
+      {
+        "id": "BUY_GATE",
+        "type": "condition",
+        "name": "Cần mua mới?",
+        "config": {
+          "expression": {
+            "operator": "gt",
+            "operands": [
+              {
+                "var": "request.amount"
+              },
+              0
+            ]
+          }
+        },
+        "position": {
+          "x": 960,
+          "y": 200
+        }
+      },
+      {
+        "id": "CFO",
+        "type": "approval",
+        "name": "CFO duyệt",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_CFO"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 1200,
+          "y": 200
+        }
+      },
+      {
+        "id": "ASSET_ACTION",
+        "type": "serviceCall",
+        "name": "Bàn giao/điều chuyển",
+        "config": {
+          "connectorCode": "xoffice",
+          "actionCode": "submit_asset_action",
+          "mappings": []
+        },
+        "position": {
+          "x": 1440,
+          "y": 200
+        }
+      },
+      {
+        "id": "END",
+        "type": "end",
+        "name": "Hoàn thành",
+        "config": {},
+        "position": {
+          "x": 1680,
+          "y": 200
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "START",
+        "target": "FORM"
+      },
+      {
+        "id": "e2",
+        "source": "FORM",
+        "target": "MGR"
+      },
+      {
+        "id": "e3",
+        "source": "MGR",
+        "target": "ADMIN"
+      },
+      {
+        "id": "e4",
+        "source": "ADMIN",
+        "target": "IT"
+      },
+      {
+        "id": "e5",
+        "source": "IT",
+        "target": "BUY_GATE"
+      },
+      {
+        "id": "e6",
+        "source": "BUY_GATE",
+        "target": "CFO"
+      },
+      {
+        "id": "e7",
+        "source": "CFO",
+        "target": "ASSET_ACTION"
+      },
+      {
+        "id": "e8",
+        "source": "ASSET_ACTION",
+        "target": "END"
+      }
+    ],
+    "variables": [],
+    "forms": [],
+    "presentation": {
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 0.85
+      }
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "metadata": {
+      "tenantSlug": "xtech",
+      "code": "PILOT-06",
+      "name": "Yêu cầu cấp tài khoản và quyền",
+      "description": "Yêu cầu cấp tài khoản và quyền",
+      "ownerRoleCode": "ROLE_PROCESS_ADMIN",
+      "systemOfRecord": "XOFFICE",
+      "ownerSystem": "XOFFICE",
+      "wave": null,
+      "aiPolicy": {
+        "canDraft": true,
+        "canValidate": true,
+        "canExplain": true,
+        "canPublish": false,
+        "canApprove": false
+      }
+    },
+    "nodes": [
+      {
+        "id": "START",
+        "type": "start",
+        "name": "Bắt đầu",
+        "config": {},
+        "position": {
+          "x": 0,
+          "y": 200
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "form",
+        "name": "Nhập Yêu cầu cấp tài khoản và quyền",
+        "config": {
+          "formCode": "FORM-ACCESS-REQUEST"
+        },
+        "position": {
+          "x": 120,
+          "y": 200
+        }
+      },
+      {
+        "id": "MGR",
+        "type": "approval",
+        "name": "Quản lý",
+        "config": {
+          "assignment": {
+            "type": "requesterManager"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 240,
+          "y": 200
+        }
+      },
+      {
+        "id": "OWNER",
+        "type": "approval",
+        "name": "Chủ hệ thống",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 480,
+          "y": 200
+        }
+      },
+      {
+        "id": "SECURITY",
+        "type": "humanTask",
+        "name": "IT/ATTT",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 720,
+          "y": 200
+        }
+      },
+      {
+        "id": "PROVISION",
+        "type": "serviceCall",
+        "name": "Thực thi cấp quyền",
+        "config": {
+          "connectorCode": "xoffice",
+          "actionCode": "submit_provision",
+          "mappings": []
+        },
+        "position": {
+          "x": 960,
+          "y": 200
+        }
+      },
+      {
+        "id": "VERIFY",
+        "type": "humanTask",
+        "name": "Người dùng xác nhận",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 1200,
+          "y": 200
+        }
+      },
+      {
+        "id": "END",
+        "type": "end",
+        "name": "Hoàn thành",
+        "config": {},
+        "position": {
+          "x": 1440,
+          "y": 200
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "START",
+        "target": "FORM"
+      },
+      {
+        "id": "e2",
+        "source": "FORM",
+        "target": "MGR"
+      },
+      {
+        "id": "e3",
+        "source": "MGR",
+        "target": "OWNER"
+      },
+      {
+        "id": "e4",
+        "source": "OWNER",
+        "target": "SECURITY"
+      },
+      {
+        "id": "e5",
+        "source": "SECURITY",
+        "target": "PROVISION"
+      },
+      {
+        "id": "e6",
+        "source": "PROVISION",
+        "target": "VERIFY"
+      },
+      {
+        "id": "e7",
+        "source": "VERIFY",
+        "target": "END"
+      }
+    ],
+    "variables": [],
+    "forms": [],
+    "presentation": {
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 0.85
+      }
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "metadata": {
+      "tenantSlug": "xtech",
+      "code": "PILOT-07",
+      "name": "Đề xuất tuyển dụng",
+      "description": "Đề xuất tuyển dụng",
+      "ownerRoleCode": "ROLE_PROCESS_ADMIN",
+      "systemOfRecord": "XOFFICE",
+      "ownerSystem": "XOFFICE",
+      "wave": null,
+      "aiPolicy": {
+        "canDraft": true,
+        "canValidate": true,
+        "canExplain": true,
+        "canPublish": false,
+        "canApprove": false
+      }
+    },
+    "nodes": [
+      {
+        "id": "START",
+        "type": "start",
+        "name": "Bắt đầu",
+        "config": {},
+        "position": {
+          "x": 0,
+          "y": 200
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "form",
+        "name": "Nhập Đề xuất tuyển dụng",
+        "config": {
+          "formCode": "FORM-RECRUITMENT-REQUEST"
+        },
+        "position": {
+          "x": 120,
+          "y": 200
+        }
+      },
+      {
+        "id": "HR",
+        "type": "humanTask",
+        "name": "Nhân sự thẩm định",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 240,
+          "y": 200
+        }
+      },
+      {
+        "id": "BUDGET",
+        "type": "approval",
+        "name": "CFO xác nhận",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_CFO"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 480,
+          "y": 200
+        }
+      },
+      {
+        "id": "CEO",
+        "type": "approval",
+        "name": "TGĐ phê duyệt",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_CEO"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 720,
+          "y": 200
+        }
+      },
+      {
+        "id": "CREATE_JOB",
+        "type": "serviceCall",
+        "name": "Tạo Job Opening",
+        "config": {
+          "connectorCode": "xoffice",
+          "actionCode": "submit_create_job",
+          "mappings": []
+        },
+        "position": {
+          "x": 960,
+          "y": 200
+        }
+      },
+      {
+        "id": "END",
+        "type": "end",
+        "name": "Hoàn thành",
+        "config": {},
+        "position": {
+          "x": 1200,
+          "y": 200
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "START",
+        "target": "FORM"
+      },
+      {
+        "id": "e2",
+        "source": "FORM",
+        "target": "HR"
+      },
+      {
+        "id": "e3",
+        "source": "HR",
+        "target": "BUDGET"
+      },
+      {
+        "id": "e4",
+        "source": "BUDGET",
+        "target": "CEO"
+      },
+      {
+        "id": "e5",
+        "source": "CEO",
+        "target": "CREATE_JOB"
+      },
+      {
+        "id": "e6",
+        "source": "CREATE_JOB",
+        "target": "END"
+      }
+    ],
+    "variables": [],
+    "forms": [],
+    "presentation": {
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 0.85
+      }
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "metadata": {
+      "tenantSlug": "xtech",
+      "code": "PILOT-08",
+      "name": "Yêu cầu hành chính",
+      "description": "Yêu cầu hành chính",
+      "ownerRoleCode": "ROLE_PROCESS_ADMIN",
+      "systemOfRecord": "XOFFICE",
+      "ownerSystem": "XOFFICE",
+      "wave": null,
+      "aiPolicy": {
+        "canDraft": true,
+        "canValidate": true,
+        "canExplain": true,
+        "canPublish": false,
+        "canApprove": false
+      }
+    },
+    "nodes": [
+      {
+        "id": "START",
+        "type": "start",
+        "name": "Bắt đầu",
+        "config": {},
+        "position": {
+          "x": 0,
+          "y": 200
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "form",
+        "name": "Nhập Yêu cầu hành chính",
+        "config": {
+          "formCode": "FORM-ADMIN-REQUEST"
+        },
+        "position": {
+          "x": 120,
+          "y": 200
+        }
+      },
+      {
+        "id": "AI_CLASSIFY",
+        "type": "aiAssist",
+        "name": "AI phân loại",
+        "config": {
+          "mode": "assist"
+        },
+        "position": {
+          "x": 240,
+          "y": 200
+        }
+      },
+      {
+        "id": "ADMIN_TRIAGE",
+        "type": "humanTask",
+        "name": "Hành chính tiếp nhận",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_ADMIN_MANAGER"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 480,
+          "y": 200
+        }
+      },
+      {
+        "id": "COST_GATE",
+        "type": "condition",
+        "name": "Kiểm tra chi phí",
+        "config": {
+          "expression": {
+            "operator": "gt",
+            "operands": [
+              {
+                "var": "request.amount"
+              },
+              0
+            ]
+          }
+        },
+        "position": {
+          "x": 720,
+          "y": 200
+        }
+      },
+      {
+        "id": "MGR",
+        "type": "approval",
+        "name": "Trưởng đơn vị",
+        "config": {
+          "assignment": {
+            "type": "requesterManager"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 960,
+          "y": 200
+        }
+      },
+      {
+        "id": "EXECUTE",
+        "type": "humanTask",
+        "name": "Thực hiện",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 1200,
+          "y": 200
+        }
+      },
+      {
+        "id": "CONFIRM",
+        "type": "humanTask",
+        "name": "Người yêu cầu xác nhận",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 1440,
+          "y": 200
+        }
+      },
+      {
+        "id": "END",
+        "type": "end",
+        "name": "Đóng",
+        "config": {},
+        "position": {
+          "x": 1680,
+          "y": 200
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "START",
+        "target": "FORM"
+      },
+      {
+        "id": "e2",
+        "source": "FORM",
+        "target": "AI_CLASSIFY"
+      },
+      {
+        "id": "e3",
+        "source": "AI_CLASSIFY",
+        "target": "ADMIN_TRIAGE"
+      },
+      {
+        "id": "e4",
+        "source": "ADMIN_TRIAGE",
+        "target": "COST_GATE"
+      },
+      {
+        "id": "e5",
+        "source": "COST_GATE",
+        "target": "MGR"
+      },
+      {
+        "id": "e6",
+        "source": "MGR",
+        "target": "EXECUTE"
+      },
+      {
+        "id": "e7",
+        "source": "EXECUTE",
+        "target": "CONFIRM"
+      },
+      {
+        "id": "e8",
+        "source": "CONFIRM",
+        "target": "END"
+      }
+    ],
+    "variables": [],
+    "forms": [],
+    "presentation": {
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 0.85
+      }
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "metadata": {
+      "tenantSlug": "xtech",
+      "code": "PILOT-09",
+      "name": "Booking phòng họp",
+      "description": "Booking phòng họp",
+      "ownerRoleCode": "ROLE_PROCESS_ADMIN",
+      "systemOfRecord": "XOFFICE",
+      "ownerSystem": "XOFFICE",
+      "wave": null,
+      "aiPolicy": {
+        "canDraft": true,
+        "canValidate": true,
+        "canExplain": true,
+        "canPublish": false,
+        "canApprove": false
+      }
+    },
+    "nodes": [
+      {
+        "id": "START",
+        "type": "start",
+        "name": "Tìm tài nguyên",
+        "config": {},
+        "position": {
+          "x": 0,
+          "y": 200
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "form",
+        "name": "Nhập Booking phòng họp",
+        "config": {
+          "formCode": "FORM-ROOM-BOOKING"
+        },
+        "position": {
+          "x": 120,
+          "y": 200
+        }
+      },
+      {
+        "id": "HOLD",
+        "type": "notification",
+        "name": "Giữ chỗ",
+        "config": {
+          "channels": [
+            "in_app",
+            "xspace"
+          ]
+        },
+        "position": {
+          "x": 240,
+          "y": 200
+        }
+      },
+      {
+        "id": "SPECIAL_GATE",
+        "type": "condition",
+        "name": "Tài nguyên đặc biệt?",
+        "config": {
+          "expression": {
+            "operator": "gt",
+            "operands": [
+              {
+                "var": "request.amount"
+              },
+              0
+            ]
+          }
+        },
+        "position": {
+          "x": 480,
+          "y": 200
+        }
+      },
+      {
+        "id": "ADMIN",
+        "type": "approval",
+        "name": "Hành chính duyệt",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_ADMIN_MANAGER"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 720,
+          "y": 200
+        }
+      },
+      {
+        "id": "CONFIRM",
+        "type": "notification",
+        "name": "Xác nhận reservation",
+        "config": {
+          "channels": [
+            "in_app",
+            "xspace"
+          ]
+        },
+        "position": {
+          "x": 960,
+          "y": 200
+        }
+      },
+      {
+        "id": "CALENDAR",
+        "type": "serviceCall",
+        "name": "Đồng bộ lịch",
+        "config": {
+          "connectorCode": "calendar",
+          "actionCode": "create_reservation",
+          "mappings": [
+            {
+              "target": "roomCode",
+              "source": "request.roomCode"
+            },
+            {
+              "target": "title",
+              "source": "request.subject"
+            }
+          ]
+        },
+        "position": {
+          "x": 1200,
+          "y": 200
+        }
+      },
+      {
+        "id": "CHECKIN",
+        "type": "humanTask",
+        "name": "Check-in",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 1440,
+          "y": 200
+        }
+      },
+      {
+        "id": "END",
+        "type": "end",
+        "name": "Hoàn thành",
+        "config": {},
+        "position": {
+          "x": 1680,
+          "y": 200
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "START",
+        "target": "FORM"
+      },
+      {
+        "id": "e2",
+        "source": "FORM",
+        "target": "HOLD"
+      },
+      {
+        "id": "e3",
+        "source": "HOLD",
+        "target": "SPECIAL_GATE"
+      },
+      {
+        "id": "e4",
+        "source": "SPECIAL_GATE",
+        "target": "ADMIN"
+      },
+      {
+        "id": "e5",
+        "source": "ADMIN",
+        "target": "CONFIRM"
+      },
+      {
+        "id": "e6",
+        "source": "CONFIRM",
+        "target": "CALENDAR"
+      },
+      {
+        "id": "e7",
+        "source": "CALENDAR",
+        "target": "CHECKIN"
+      },
+      {
+        "id": "e8",
+        "source": "CHECKIN",
+        "target": "END"
+      }
+    ],
+    "variables": [],
+    "forms": [],
+    "presentation": {
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 0.85
+      }
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "metadata": {
+      "tenantSlug": "xtech",
+      "code": "PILOT-10",
+      "name": "Ticket CNTT",
+      "description": "Ticket CNTT",
+      "ownerRoleCode": "ROLE_PROCESS_ADMIN",
+      "systemOfRecord": "XOFFICE",
+      "ownerSystem": "XOFFICE",
+      "wave": null,
+      "aiPolicy": {
+        "canDraft": true,
+        "canValidate": true,
+        "canExplain": true,
+        "canPublish": false,
+        "canApprove": false
+      }
+    },
+    "nodes": [
+      {
+        "id": "START",
+        "type": "start",
+        "name": "Tạo ticket",
+        "config": {},
+        "position": {
+          "x": 0,
+          "y": 200
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "form",
+        "name": "Nhập Ticket CNTT",
+        "config": {
+          "formCode": "FORM-IT-TICKET"
+        },
+        "position": {
+          "x": 120,
+          "y": 200
+        }
+      },
+      {
+        "id": "AI_TRIAGE",
+        "type": "aiAssist",
+        "name": "AI phân loại",
+        "config": {
+          "mode": "assist"
+        },
+        "position": {
+          "x": 240,
+          "y": 200
+        }
+      },
+      {
+        "id": "QUEUE",
+        "type": "humanTask",
+        "name": "Queue tiếp nhận",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_IT_SUPPORT"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 480,
+          "y": 200
+        }
+      },
+      {
+        "id": "INVESTIGATE",
+        "type": "humanTask",
+        "name": "Xử lý",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_IT_SUPPORT"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 720,
+          "y": 200
+        }
+      },
+      {
+        "id": "SLA_GATE",
+        "type": "timer",
+        "name": "Kiểm tra SLA",
+        "config": {
+          "duration": "PT8H"
+        },
+        "position": {
+          "x": 960,
+          "y": 200
+        }
+      },
+      {
+        "id": "RESOLVE",
+        "type": "humanTask",
+        "name": "Đề xuất hoàn thành",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 1200,
+          "y": 200
+        }
+      },
+      {
+        "id": "CSAT",
+        "type": "humanTask",
+        "name": "Khảo sát",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 1440,
+          "y": 200
+        }
+      },
+      {
+        "id": "END",
+        "type": "end",
+        "name": "Đóng",
+        "config": {},
+        "position": {
+          "x": 1680,
+          "y": 200
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "START",
+        "target": "FORM"
+      },
+      {
+        "id": "e2",
+        "source": "FORM",
+        "target": "AI_TRIAGE"
+      },
+      {
+        "id": "e3",
+        "source": "AI_TRIAGE",
+        "target": "QUEUE"
+      },
+      {
+        "id": "e4",
+        "source": "QUEUE",
+        "target": "INVESTIGATE"
+      },
+      {
+        "id": "e5",
+        "source": "INVESTIGATE",
+        "target": "SLA_GATE"
+      },
+      {
+        "id": "e6",
+        "source": "SLA_GATE",
+        "target": "RESOLVE"
+      },
+      {
+        "id": "e7",
+        "source": "RESOLVE",
+        "target": "CSAT"
+      },
+      {
+        "id": "e8",
+        "source": "CSAT",
+        "target": "END"
+      }
+    ],
+    "variables": [],
+    "forms": [],
+    "presentation": {
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 0.85
+      }
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "metadata": {
+      "tenantSlug": "xtech",
+      "code": "PILOT-11",
+      "name": "Trình ký văn bản",
+      "description": "Trình ký văn bản",
+      "ownerRoleCode": "ROLE_PROCESS_ADMIN",
+      "systemOfRecord": "XOFFICE",
+      "ownerSystem": "XOFFICE",
+      "wave": null,
+      "aiPolicy": {
+        "canDraft": true,
+        "canValidate": true,
+        "canExplain": true,
+        "canPublish": false,
+        "canApprove": false
+      }
+    },
+    "nodes": [
+      {
+        "id": "START",
+        "type": "start",
+        "name": "Tạo dự thảo",
+        "config": {},
+        "position": {
+          "x": 0,
+          "y": 200
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "form",
+        "name": "Nhập Trình ký văn bản",
+        "config": {
+          "formCode": "FORM-DOCUMENT-SIGNING"
+        },
+        "position": {
+          "x": 120,
+          "y": 200
+        }
+      },
+      {
+        "id": "MGR",
+        "type": "approval",
+        "name": "Trưởng đơn vị",
+        "config": {
+          "assignment": {
+            "type": "requesterManager"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 240,
+          "y": 200
+        }
+      },
+      {
+        "id": "LEGAL",
+        "type": "humanTask",
+        "name": "Pháp chế",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 480,
+          "y": 200
+        }
+      },
+      {
+        "id": "FIN_GATE",
+        "type": "condition",
+        "name": "Có nghĩa vụ tài chính?",
+        "config": {
+          "expression": {
+            "operator": "gt",
+            "operands": [
+              {
+                "var": "request.amount"
+              },
+              0
+            ]
+          }
+        },
+        "position": {
+          "x": 720,
+          "y": 200
+        }
+      },
+      {
+        "id": "CFO",
+        "type": "approval",
+        "name": "CFO kiểm tra",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_CFO"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 960,
+          "y": 200
+        }
+      },
+      {
+        "id": "CEO",
+        "type": "approval",
+        "name": "TGĐ phê duyệt",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_CEO"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 1200,
+          "y": 200
+        }
+      },
+      {
+        "id": "ESIGN",
+        "type": "serviceCall",
+        "name": "Gửi ký số",
+        "config": {
+          "connectorCode": "xoffice",
+          "actionCode": "submit_esign",
+          "mappings": []
+        },
+        "position": {
+          "x": 1440,
+          "y": 200
+        }
+      },
+      {
+        "id": "PUBLISH",
+        "type": "notification",
+        "name": "Phát hành",
+        "config": {
+          "channels": [
+            "in_app",
+            "xspace"
+          ]
+        },
+        "position": {
+          "x": 1680,
+          "y": 200
+        }
+      },
+      {
+        "id": "END",
+        "type": "end",
+        "name": "Hoàn thành",
+        "config": {},
+        "position": {
+          "x": 1920,
+          "y": 200
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "START",
+        "target": "FORM"
+      },
+      {
+        "id": "e2",
+        "source": "FORM",
+        "target": "MGR"
+      },
+      {
+        "id": "e3",
+        "source": "MGR",
+        "target": "LEGAL"
+      },
+      {
+        "id": "e4",
+        "source": "LEGAL",
+        "target": "FIN_GATE"
+      },
+      {
+        "id": "e5",
+        "source": "FIN_GATE",
+        "target": "CFO"
+      },
+      {
+        "id": "e6",
+        "source": "CFO",
+        "target": "CEO"
+      },
+      {
+        "id": "e7",
+        "source": "CEO",
+        "target": "ESIGN"
+      },
+      {
+        "id": "e8",
+        "source": "ESIGN",
+        "target": "PUBLISH"
+      },
+      {
+        "id": "e9",
+        "source": "PUBLISH",
+        "target": "END"
+      }
+    ],
+    "variables": [],
+    "forms": [],
+    "presentation": {
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 0.85
+      }
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "metadata": {
+      "tenantSlug": "xtech",
+      "code": "PILOT-12",
+      "name": "Phê duyệt báo giá và chiết khấu",
+      "description": "Phê duyệt báo giá và chiết khấu",
+      "ownerRoleCode": "ROLE_PROCESS_ADMIN",
+      "systemOfRecord": "FINERP",
+      "ownerSystem": "FINERP",
+      "wave": null,
+      "aiPolicy": {
+        "canDraft": true,
+        "canValidate": true,
+        "canExplain": true,
+        "canPublish": false,
+        "canApprove": false
+      }
+    },
+    "nodes": [
+      {
+        "id": "START",
+        "type": "start",
+        "name": "Quotation submit",
+        "config": {},
+        "position": {
+          "x": 0,
+          "y": 200
+        }
+      },
+      {
+        "id": "FORM",
+        "type": "form",
+        "name": "Nhập Phê duyệt báo giá và chiết khấu",
+        "config": {
+          "formCode": "FORM-QUOTATION-DISCOUNT"
+        },
+        "position": {
+          "x": 120,
+          "y": 200
+        }
+      },
+      {
+        "id": "SALES_HEAD",
+        "type": "approval",
+        "name": "Trưởng Kinh doanh",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_PROCESS_ADMIN"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 240,
+          "y": 200
+        }
+      },
+      {
+        "id": "DISCOUNT_GATE",
+        "type": "condition",
+        "name": "Chiết khấu > 10%?",
+        "config": {
+          "expression": {
+            "operator": "gt",
+            "operands": [
+              {
+                "var": "request.amount"
+              },
+              0
+            ]
+          }
+        },
+        "position": {
+          "x": 480,
+          "y": 200
+        }
+      },
+      {
+        "id": "CFO",
+        "type": "approval",
+        "name": "CFO duyệt",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_CFO"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 720,
+          "y": 200
+        }
+      },
+      {
+        "id": "LIMIT_GATE",
+        "type": "condition",
+        "name": "Vượt hạn mức CFO?",
+        "config": {
+          "expression": {
+            "operator": "gt",
+            "operands": [
+              {
+                "var": "request.amount"
+              },
+              0
+            ]
+          }
+        },
+        "position": {
+          "x": 960,
+          "y": 200
+        }
+      },
+      {
+        "id": "CEO",
+        "type": "approval",
+        "name": "TGĐ duyệt",
+        "config": {
+          "assignment": {
+            "type": "role",
+            "roleCode": "ROLE_CEO"
+          },
+          "slaHours": 24
+        },
+        "position": {
+          "x": 1200,
+          "y": 200
+        }
+      },
+      {
+        "id": "END",
+        "type": "end",
+        "name": "FinERP hoàn thành",
+        "config": {},
+        "position": {
+          "x": 1440,
+          "y": 200
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "START",
+        "target": "FORM"
+      },
+      {
+        "id": "e2",
+        "source": "FORM",
+        "target": "SALES_HEAD"
+      },
+      {
+        "id": "e3",
+        "source": "SALES_HEAD",
+        "target": "DISCOUNT_GATE"
+      },
+      {
+        "id": "e4",
+        "source": "DISCOUNT_GATE",
+        "target": "CFO"
+      },
+      {
+        "id": "e5",
+        "source": "CFO",
+        "target": "LIMIT_GATE"
+      },
+      {
+        "id": "e6",
+        "source": "LIMIT_GATE",
+        "target": "CEO"
+      },
+      {
+        "id": "e7",
+        "source": "CEO",
+        "target": "END"
+      }
+    ],
+    "variables": [],
+    "forms": [],
+    "presentation": {
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 0.85
+      }
+    }
+  }
+]

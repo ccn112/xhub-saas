@@ -1,0 +1,32 @@
+[
+  {
+    "tenantId": "tenant-xtech",
+    "month": "2026-03",
+    "value": 11200000000
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "month": "2026-04",
+    "value": 13400000000
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "month": "2026-05",
+    "value": 15800000000
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "month": "2026-06",
+    "value": 17600000000
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "month": "2026-07",
+    "value": 16500000000
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "month": "2026-08",
+    "value": 18600000000
+  }
+]

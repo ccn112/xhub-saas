@@ -1,0 +1,9 @@
+{
+  "snapshotAt": "2026-08-08T09:30:00+07:00",
+  "schemaVersion": "1.0.0",
+  "locale": "vi-VN",
+  "timezone": "Asia/Bangkok",
+  "currency": "VND",
+  "canonicalTenantId": "tenant-xtech",
+  "note": "Dữ liệu cố định phục vụ demo và kiểm thử; không dùng Date.now() để tạo dữ liệu ngẫu nhiên."
+}

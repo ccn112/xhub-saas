@@ -1,0 +1,98 @@
+[
+  {
+    "id": "customer-minhphat",
+    "tenantId": "tenant-xtech",
+    "code": "KH-MP",
+    "name": "Công ty TNHH Minh Phát",
+    "industry": "Sản xuất",
+    "segment": "A",
+    "status": "implementing",
+    "ownerId": "user-minhquan",
+    "healthScore": 86,
+    "satisfaction": 4.3
+  },
+  {
+    "id": "customer-hungtin",
+    "tenantId": "tenant-xtech",
+    "code": "KH-HT",
+    "name": "Tập đoàn Hưng Tín",
+    "industry": "Bất động sản",
+    "segment": "A",
+    "status": "proposal",
+    "ownerId": "user-hainam",
+    "healthScore": 74,
+    "satisfaction": 4.1
+  },
+  {
+    "id": "customer-celadon",
+    "tenantId": "tenant-xtech",
+    "code": "KH-CR",
+    "name": "Celadon Riverside",
+    "industry": "Bất động sản",
+    "segment": "A",
+    "status": "negotiation",
+    "ownerId": "user-thuylinh",
+    "healthScore": 80,
+    "satisfaction": 4.2
+  },
+  {
+    "id": "customer-hoabinh",
+    "tenantId": "tenant-xtech",
+    "code": "KH-HB",
+    "name": "Nhà máy Hòa Bình",
+    "industry": "Sản xuất",
+    "segment": "B",
+    "status": "consulting",
+    "ownerId": "user-hoanglong",
+    "healthScore": 71,
+    "satisfaction": 3.9
+  },
+  {
+    "id": "customer-anphat",
+    "tenantId": "tenant-xtech",
+    "code": "KH-AP",
+    "name": "Công ty An Phát",
+    "industry": "Phân phối",
+    "segment": "B",
+    "status": "demo",
+    "ownerId": "user-thuha",
+    "healthScore": 69,
+    "satisfaction": 4.0
+  },
+  {
+    "id": "customer-tanbinh",
+    "tenantId": "tenant-xtech",
+    "code": "KH-TB",
+    "name": "Công ty Tân Bình",
+    "industry": "Thương mại",
+    "segment": "B",
+    "status": "demo",
+    "ownerId": "user-anhkhoa",
+    "healthScore": 66,
+    "satisfaction": 3.8
+  },
+  {
+    "id": "customer-donga",
+    "tenantId": "tenant-xtech",
+    "code": "KH-DA",
+    "name": "Công ty Đông Á",
+    "industry": "Dịch vụ",
+    "segment": "C",
+    "status": "lead",
+    "ownerId": "user-hainam",
+    "healthScore": 58,
+    "satisfaction": null
+  },
+  {
+    "id": "customer-saobac",
+    "tenantId": "tenant-xtech",
+    "code": "KH-SB",
+    "name": "Công ty Cổ phần Sao Bắc",
+    "industry": "Công nghệ",
+    "segment": "B",
+    "status": "active",
+    "ownerId": "user-thuha",
+    "healthScore": 82,
+    "satisfaction": 4.4
+  }
+]

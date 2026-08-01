@@ -1,0 +1,43 @@
+{
+  "code": "XH-01",
+  "set": "xhub",
+  "name": "Tổng quan điều hành",
+  "route": "/hub/home/executive",
+  "persona": "Lãnh đạo",
+  "image": "reference-images/xhub/01-tong-quan-dieu-hanh.png",
+  "seedRefs": [
+    "kpi-exec-202608",
+    "projects",
+    "approvals",
+    "calendarEvents",
+    "revenueSeries",
+    "revenueByProduct"
+  ],
+  "purpose": "Cho lãnh đạo thấy sức khỏe doanh nghiệp, cảnh báo và việc cần quyết định.",
+  "sections": [
+    "Workspace shell",
+    "KPI row",
+    "Revenue chart",
+    "Revenue by product",
+    "Directives watchlist",
+    "Alert list",
+    "AI recap",
+    "Calendar",
+    "Priority approvals",
+    "Department performance"
+  ],
+  "states": {
+    "loading": "Skeleton giữ nguyên chiều cao card/table; không dùng spinner toàn trang.",
+    "empty": "Giải thích trạng thái trống và có một CTA rõ ràng.",
+    "error": "Hiển thị error boundary theo vùng, mã lỗi, nút thử lại và link hỗ trợ.",
+    "permission": "Ẩn hành động không được phép; khi route bị chặn hiển thị 403 có lý do và cách yêu cầu quyền."
+  },
+  "implementationRules": [
+    "Không hardcode dữ liệu hiển thị trong component.",
+    "Đọc dữ liệu qua typed repository/service; mock API dùng seed canonical.",
+    "Ảnh là visual reference; seed canonical là nguồn sự thật cho nội dung và số liệu.",
+    "Giữ tenantId trong mọi query và mutation.",
+    "Mọi action tài chính hoặc quyền cần xác nhận rõ ràng và audit log.",
+    "Bảo đảm keyboard navigation, focus visible, contrast WCAG AA."
+  ]
+}

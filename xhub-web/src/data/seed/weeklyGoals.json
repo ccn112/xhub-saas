@@ -1,0 +1,35 @@
+[
+  {
+    "id": "goal-proposal-mp",
+    "tenantId": "tenant-xtech",
+    "userId": "user-nam",
+    "title": "Hoàn thiện proposal Minh Phát",
+    "current": 70,
+    "target": 100,
+    "unit": "%",
+    "dueDate": "2026-08-08",
+    "status": "in_progress"
+  },
+  {
+    "id": "goal-demo-finerp",
+    "tenantId": "tenant-xtech",
+    "userId": "user-nam",
+    "title": "Chuẩn bị demo FinERP",
+    "current": 60,
+    "target": 100,
+    "unit": "%",
+    "dueDate": "2026-08-07",
+    "status": "in_progress"
+  },
+  {
+    "id": "goal-close-tickets",
+    "tenantId": "tenant-xtech",
+    "userId": "user-nam",
+    "title": "Đóng 2 ticket khách hàng",
+    "current": 1,
+    "target": 2,
+    "unit": "ticket",
+    "dueDate": "2026-08-09",
+    "status": "in_progress"
+  }
+]

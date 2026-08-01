@@ -1,0 +1,68 @@
+[
+  {
+    "id": "act-001",
+    "tenantId": "tenant-xtech",
+    "actorId": "user-anhkhoa",
+    "type": "task.created",
+    "entityType": "task",
+    "entityId": "task-uat-accounting",
+    "channelId": "channel-finerp-mp",
+    "summary": "Phạm Anh Khoa đã tạo công việc Kiểm thử tích hợp HĐĐT",
+    "occurredAt": "2026-08-08T10:21:00+07:00"
+  },
+  {
+    "id": "act-002",
+    "tenantId": "tenant-xtech",
+    "actorId": "user-nam",
+    "type": "task.updated",
+    "entityType": "task",
+    "entityId": "task-permission-config",
+    "channelId": "channel-finerp-mp",
+    "summary": "Nguyễn Hoài Nam cập nhật trạng thái công việc Cấu hình phân quyền",
+    "occurredAt": "2026-08-08T09:47:00+07:00"
+  },
+  {
+    "id": "act-003",
+    "tenantId": "tenant-xtech",
+    "actorId": "user-thuha",
+    "type": "document.updated",
+    "entityType": "document",
+    "entityId": "doc-brd-finance",
+    "channelId": "channel-finerp-mp",
+    "summary": "Trần Thu Hà đã cập nhật BRD FinERP Minh Phát v2.1",
+    "occurredAt": "2026-08-08T09:18:00+07:00"
+  },
+  {
+    "id": "act-004",
+    "tenantId": "tenant-xtech",
+    "actorId": "user-dominhquan",
+    "type": "comment.created",
+    "entityType": "channel",
+    "entityId": "channel-finerp-mp",
+    "channelId": "channel-finerp-mp",
+    "summary": "Đỗ Minh Quân đã bình luận trong channel dự án",
+    "occurredAt": "2026-08-07T16:42:00+07:00"
+  },
+  {
+    "id": "act-005",
+    "tenantId": "tenant-xtech",
+    "actorId": "xai",
+    "type": "ai.recommendation",
+    "entityType": "project",
+    "entityId": "project-finerp-minhphat",
+    "channelId": "channel-finerp-mp",
+    "summary": "X.AI đã gợi ý 2 công việc cần ưu tiên",
+    "occurredAt": "2026-08-07T15:30:00+07:00"
+  },
+  {
+    "id": "act-006",
+    "tenantId": "tenant-xtech",
+    "actorId": "user-thuha",
+    "type": "decision.pinned",
+    "entityType": "decision",
+    "entityId": "decision-demo-mp",
+    "channelId": "channel-finerp-mp",
+    "summary": "Trần Thu Hà đã ghim quyết định lịch demo",
+    "occurredAt": "2026-08-03T10:05:00+07:00"
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "tenantSlug": "xtech",
+    "workflowCode": "WF-PROCUREMENT-250M",
+    "instanceCode": "REQ-2026-0087",
+    "title": "Đề nghị mua server phục vụ XHub",
+    "requesterEmail": "tran.thuha@xtech.com.vn",
+    "variables": {
+      "request": {
+        "title": "Mua máy chủ triển khai XHub",
+        "amount": 250000000,
+        "purpose": "Môi trường production pilot",
+        "technicalRequirements": "CPU 32 core, RAM 256 GB, NVMe 4 TB"
+      }
+    },
+    "status": "running",
+    "currentNodeId": "it"
+  },
+  {
+    "tenantSlug": "xtech",
+    "workflowCode": "WF-ROOM-BOOKING",
+    "instanceCode": "BOOK-2026-0112",
+    "title": "Họp demo FinERP với Minh Phát",
+    "requesterEmail": "nguyen.hainam@xtech.com.vn",
+    "variables": {
+      "subject": "Demo FinERP giai đoạn 1",
+      "attendeeCount": 12,
+      "startAt": "2026-08-12T10:00:00+07:00",
+      "endAt": "2026-08-12T11:30:00+07:00"
+    },
+    "status": "running",
+    "currentNodeId": "approve"
+  },
+  {
+    "tenantSlug": "xtech",
+    "workflowCode": "WF-IT-TICKET",
+    "instanceCode": "IT-2026-1258",
+    "title": "Không truy cập được FinERP",
+    "requesterEmail": "le.minhanh@xtech.com.vn",
+    "variables": {
+      "subject": "Lỗi đăng nhập FinERP",
+      "description": "Sau khi đổi mật khẩu không đăng nhập được",
+      "impact": "Một người"
+    },
+    "status": "running",
+    "currentNodeId": "solve"
+  }
+]

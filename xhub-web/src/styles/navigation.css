@@ -1,0 +1,95 @@
+:root {
+  --xhub-nav-rail-width: 4.75rem;
+  --xhub-nav-context-width: 15rem;
+  --xhub-nav-expanded-width: 17.5rem;
+  --xhub-nav-item-height: 2.75rem;
+  --xhub-nav-icon-size: 1.5rem;
+  --xhub-nav-transition: 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+[data-navigation-mode="rail-context"] {
+  --xhub-navigation-total-width: calc(var(--xhub-nav-rail-width) + var(--xhub-nav-context-width));
+}
+
+[data-navigation-mode="expanded"] {
+  --xhub-navigation-total-width: var(--xhub-nav-expanded-width);
+}
+
+@media (max-width: 767px) {
+  :root {
+    --xhub-navigation-total-width: 0px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Renderer: expanded sidebar (~280px). Visible on lg+ (below lg the responsive
+   rule forces rail-context, so it stays off-canvas).
+--------------------------------------------------------------------------- */
+.xhub-expanded-sidebar {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  width: var(--xhub-nav-expanded-width);
+  border-inline-end-width: 1px;
+  transform: translateX(-100%);
+  transition: transform var(--xhub-nav-transition);
+}
+
+[dir="rtl"] .xhub-expanded-sidebar {
+  transform: translateX(100%);
+}
+
+@media (min-width: 1024px) {
+  .xhub-expanded-sidebar {
+    transform: none;
+  }
+}
+
+/* Content offset for expanded mode (overrides the rail-based layout offsets). */
+body[data-navigation-mode="expanded"][data-layout="main-layout"] main.main-content,
+body[data-navigation-mode="expanded"][data-layout="main-layout"] .app-header,
+body[data-navigation-mode="expanded"][data-layout="main-layout"] .app-footer {
+  margin-inline-start: 0;
+}
+
+@media (min-width: 1024px) {
+  body[data-navigation-mode="expanded"][data-layout="main-layout"] main.main-content,
+  body[data-navigation-mode="expanded"][data-layout="main-layout"] .app-header,
+  body[data-navigation-mode="expanded"][data-layout="main-layout"] .app-footer {
+    margin-inline-start: var(--xhub-nav-expanded-width);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Renderer: mobile bottom navigation (<768px).
+--------------------------------------------------------------------------- */
+.xhub-mobile-nav {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 40;
+  display: flex;
+  height: 3.5rem;
+  align-items: stretch;
+  border-block-start-width: 1px;
+}
+
+body[data-navigation-mode="mobile"][data-layout="main-layout"] main.main-content,
+body[data-navigation-mode="mobile"][data-layout="main-layout"] .app-header,
+body[data-navigation-mode="mobile"][data-layout="main-layout"] .app-footer {
+  margin-inline-start: 0;
+}
+
+body[data-navigation-mode="mobile"] main.main-content {
+  padding-block-end: 4rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Density.
+--------------------------------------------------------------------------- */
+body[data-density="compact"] {
+  --xhub-nav-item-height: 2.25rem;
+}

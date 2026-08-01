@@ -1,0 +1,66 @@
+{
+  "_note": "SubscriptionPlan catalog (T011 customer readiness). SHARED / platform-plane (no tenantId, no RLS). Real CUSTOMER plans (STARTER/PROFESSIONAL/ENTERPRISE) carry billingEnabled=true + customerTenantMinNo=11 (blocks assigning a customer plan to a reserved tenant <=10). Existing plan codes already on T001-T010 are ALSO seeded (ENTERPRISE_DESIGN_PARTNER / *_VERTICAL_DEMO) with appsAllowed=['*'] + billingEnabled=false so entitlement resolves for every ACTIVE tenant and enforcement is DEFAULT-SAFE (no retro-break). App codes map to the control-plane application catalog (x1/x2/xweb/xoffice/xspace/finerp). Idempotent: upsert-by code. Grounded on docs/saas/T011_CUSTOMER_READINESS_PLAN.md plan table (STARTER 50u/20GB, PROFESSIONAL 300u/200GB, ENTERPRISE 5000u/2000GB).",
+  "version": 1,
+  "plans": [
+    {
+      "code": "STARTER",
+      "name": "Starter",
+      "tier": "STARTER",
+      "appsAllowed": ["xoffice", "x1"],
+      "featureFlags": { "ai": false, "advancedBackup": false, "sharedMdm": false, "xspace": false },
+      "limits": { "maxUsers": 50, "maxProjects": 20, "storageGb": 20 },
+      "billingEnabled": true,
+      "customerTenantMinNo": 11
+    },
+    {
+      "code": "PROFESSIONAL",
+      "name": "Professional",
+      "tier": "PROFESSIONAL",
+      "appsAllowed": ["xoffice", "x1", "x2", "xspace"],
+      "featureFlags": { "ai": true, "advancedBackup": false, "sharedMdm": false, "xspace": true },
+      "limits": { "maxUsers": 300, "maxProjects": 100, "storageGb": 200 },
+      "billingEnabled": true,
+      "customerTenantMinNo": 11
+    },
+    {
+      "code": "ENTERPRISE",
+      "name": "Enterprise",
+      "tier": "ENTERPRISE",
+      "appsAllowed": ["xoffice", "x1", "x2", "xweb", "xspace", "finerp"],
+      "featureFlags": { "ai": true, "advancedBackup": true, "sharedMdm": true, "xspace": true },
+      "limits": { "maxUsers": 5000, "maxProjects": 1000, "storageGb": 2000 },
+      "billingEnabled": true,
+      "customerTenantMinNo": 11
+    },
+    {
+      "code": "ENTERPRISE_DESIGN_PARTNER",
+      "name": "Enterprise (Design Partner)",
+      "tier": "DESIGN_PARTNER",
+      "appsAllowed": ["*"],
+      "featureFlags": { "ai": true, "advancedBackup": true, "sharedMdm": true, "xspace": true },
+      "limits": {},
+      "billingEnabled": false,
+      "customerTenantMinNo": null
+    },
+    {
+      "code": "ENTERPRISE_VERTICAL_DEMO",
+      "name": "Enterprise (Vertical Demo)",
+      "tier": "DEMO",
+      "appsAllowed": ["*"],
+      "featureFlags": { "ai": true, "advancedBackup": true, "sharedMdm": true, "xspace": true },
+      "limits": {},
+      "billingEnabled": false,
+      "customerTenantMinNo": null
+    },
+    {
+      "code": "PROFESSIONAL_VERTICAL_DEMO",
+      "name": "Professional (Vertical Demo)",
+      "tier": "DEMO",
+      "appsAllowed": ["*"],
+      "featureFlags": { "ai": true, "advancedBackup": false, "sharedMdm": false, "xspace": true },
+      "limits": {},
+      "billingEnabled": false,
+      "customerTenantMinNo": null
+    }
+  ]
+}

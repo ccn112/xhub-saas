@@ -1,0 +1,117 @@
+[
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-nam",
+    "roleId": "role-tenant-admin"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-nam",
+    "roleId": "role-executive"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-tuan",
+    "roleId": "role-executive"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-thuha",
+    "roleId": "role-manager"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-thuha",
+    "roleId": "role-sales"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-anhkhoa",
+    "roleId": "role-manager"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-minhanh",
+    "roleId": "role-finance"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-nam",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-thuha",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-anhkhoa",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-tuan",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-minhanh",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-minhquan",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-hainam",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-thuylinh",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-hoanglong",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-minhduc",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-thihuong",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-vantung",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-quocbao",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-dominhquan",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-leminhduc",
+    "roleId": "role-employee"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "userId": "user-quanghuy",
+    "roleId": "role-employee"
+  }
+]

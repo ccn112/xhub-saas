@@ -1,0 +1,53 @@
+[
+  {
+    "id": "audit-001",
+    "tenantId": "tenant-xtech",
+    "actorId": "user-minhanh",
+    "action": "approval.step.approved",
+    "entityType": "approval",
+    "entityId": "approval-payment-mp-02",
+    "at": "2026-08-08T09:12:00+07:00",
+    "ip": "10.0.1.24",
+    "metadata": {
+      "step": 1
+    }
+  },
+  {
+    "id": "audit-002",
+    "tenantId": "tenant-xtech",
+    "actorId": "user-thuha",
+    "action": "document.uploaded",
+    "entityType": "document",
+    "entityId": "doc-demo-outline",
+    "at": "2026-08-08T09:28:00+07:00",
+    "ip": "10.0.2.18",
+    "metadata": {
+      "channelId": "channel-finerp-mp"
+    }
+  },
+  {
+    "id": "audit-003",
+    "tenantId": "tenant-xtech",
+    "actorId": "xai",
+    "action": "task.created_from_message",
+    "entityType": "task",
+    "entityId": "task-proposal-mp",
+    "at": "2026-08-08T09:30:00+07:00",
+    "ip": "service:xai",
+    "metadata": {
+      "sourceMessageId": "msg-mp-003",
+      "requiresHumanConfirmation": true
+    }
+  },
+  {
+    "id": "audit-004",
+    "tenantId": "tenant-xtech",
+    "actorId": "user-thuha",
+    "action": "decision.pinned",
+    "entityType": "decision",
+    "entityId": "decision-demo-mp",
+    "at": "2026-08-03T10:05:00+07:00",
+    "ip": "10.0.2.18",
+    "metadata": {}
+  }
+]

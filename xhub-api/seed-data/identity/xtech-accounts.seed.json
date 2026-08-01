@@ -1,0 +1,63 @@
+{
+  "_note": "PH-00a (SEED-IDENTITY-01): the 24 X-TECH pilot accounts. Mirrors handoff data/SEED_ACCOUNTS.csv + seed/accounts.seed.json. Seeded under tenant-xtech via scripts/identity-accounts-seed.mjs (pg direct, RLS bypass, upsert-by-id, one tx). ADDITIVE + idempotent: reconciles with the existing 7-person xtech-identity-org seed (usr-ceo/usr-cfo/usr-sales-head/usr-tech-head/usr-hr-head/usr-admin-head reuse their exact ids + head Position ids; usr-it-support is left untouched). NO plaintext password: accounts activate via invite/reset. usr-demo-isolation (row 24, MUST_NOT_LEAK) is DELIBERATELY NOT seeded here — it only exists in tenant-demo-isolation (demo-isolation-identity.seed.json); seeding it under tenant-xtech would leak the marker and create a forbidden tenant-xtech login.",
+  "tenant": { "id": "tenant-xtech", "slug": "xtech", "name": "X-TECH" },
+
+  "orgUnits": [
+    { "id": "ou-platform", "code": "PLATFORM", "name": "Nền tảng", "type": "DIVISION", "parentId": null },
+    { "id": "ou-solution", "code": "SOLUTION", "name": "Giải pháp", "type": "TEAM", "parentId": "ou-tech" },
+    { "id": "ou-delivery", "code": "DELIVERY", "name": "Triển khai", "type": "TEAM", "parentId": "ou-tech" },
+    { "id": "ou-support", "code": "SUPPORT", "name": "Hỗ trợ", "type": "TEAM", "parentId": "ou-tech" }
+  ],
+
+  "people": [
+    { "id": "usr-platform-admin", "fullName": "Quản trị nền tảng", "email": "platform.admin@xtech.local", "orgUnitId": "ou-platform", "membershipStatus": "suspended", "roles": ["PLATFORM_ADMIN"] },
+    { "id": "usr-tenant-admin", "fullName": "Ngô Thanh Bình", "email": "tenant.admin@xtech.local", "orgUnitId": "ou-exec", "membershipStatus": "active", "roles": ["TENANT_ADMIN", "ORG_ADMIN"] },
+    { "id": "usr-security-admin", "fullName": "Bùi Quang Hưng", "email": "security.admin@xtech.local", "orgUnitId": "ou-tech", "membershipStatus": "active", "roles": ["SECURITY_ADMIN", "AUDITOR"] },
+    { "id": "usr-workflow-admin", "fullName": "Đặng Thu Hương", "email": "workflow.admin@xtech.local", "orgUnitId": "ou-admin", "membershipStatus": "active", "roles": ["WORKFLOW_ADMIN", "COMM_ADMIN"] },
+    { "id": "usr-backup-admin", "fullName": "Tạ Quốc Việt", "email": "backup.admin@xtech.local", "orgUnitId": "ou-tech", "membershipStatus": "active", "roles": ["BACKUP_ADMIN"] },
+    { "id": "usr-auditor", "fullName": "Hà Phương Linh", "email": "auditor@xtech.local", "orgUnitId": "ou-exec", "membershipStatus": "active", "roles": ["AUDITOR"] },
+    { "id": "usr-data-steward", "fullName": "Võ Thị Mai", "email": "data.steward@xtech.local", "orgUnitId": "ou-solution", "membershipStatus": "active", "roles": ["DATA_STEWARD"] },
+    { "id": "usr-records-manager", "fullName": "Phan Ngọc Anh", "email": "records.manager@xtech.local", "orgUnitId": "ou-admin", "membershipStatus": "active", "roles": ["RECORDS_MANAGER"] },
+    { "id": "usr-ceo", "fullName": "Trần Mạnh Tuấn", "email": "tuan.tm@xtech.local", "orgUnitId": "ou-exec", "membershipStatus": "active", "roles": ["EXECUTIVE", "DEPARTMENT_HEAD"] },
+    { "id": "usr-cfo", "fullName": "Nguyễn Hoài Nam", "email": "nam.nh@xtech.local", "orgUnitId": "ou-fin", "membershipStatus": "active", "roles": ["CFO", "EXECUTIVE"] },
+    { "id": "usr-sales-head", "fullName": "Trần Thu Hà", "email": "ha.tt@xtech.local", "orgUnitId": "ou-sales", "membershipStatus": "active", "roles": ["DEPARTMENT_HEAD", "EMPLOYEE"] },
+    { "id": "usr-tech-head", "fullName": "Phạm Anh Khoa", "email": "khoa.pa@xtech.local", "orgUnitId": "ou-tech", "membershipStatus": "active", "roles": ["DEPARTMENT_HEAD", "SERVICE_DESK_MANAGER"] },
+    { "id": "usr-hr-head", "fullName": "Nguyễn Lan Phương", "email": "phuong.nl@xtech.local", "orgUnitId": "ou-hr", "membershipStatus": "active", "roles": ["DEPARTMENT_HEAD", "EMPLOYEE"] },
+    { "id": "usr-admin-head", "fullName": "Lê Thu Trang", "email": "trang.lt@xtech.local", "orgUnitId": "ou-admin", "membershipStatus": "active", "roles": ["DEPARTMENT_HEAD", "COMM_ADMIN"] },
+    { "id": "usr-delivery-head", "fullName": "Lê Minh Anh", "email": "anh.lm@xtech.local", "orgUnitId": "ou-delivery", "membershipStatus": "active", "roles": ["DEPARTMENT_HEAD", "EMPLOYEE"] },
+    { "id": "usr-solution-head", "fullName": "Đỗ Minh Quân", "email": "quan.dm@xtech.local", "orgUnitId": "ou-solution", "membershipStatus": "active", "roles": ["DEPARTMENT_HEAD", "DATA_STEWARD"] },
+    { "id": "usr-support-head", "fullName": "Vũ Ngọc Bảo", "email": "bao.vn@xtech.local", "orgUnitId": "ou-support", "membershipStatus": "active", "roles": ["SERVICE_DESK_MANAGER", "DEPARTMENT_HEAD"] },
+    { "id": "usr-accountant", "fullName": "Phạm Ngọc Mai", "email": "mai.pn@xtech.local", "orgUnitId": "ou-fin", "membershipStatus": "active", "roles": ["EMPLOYEE"] },
+    { "id": "usr-infra", "fullName": "Trương Quốc Huy", "email": "huy.tq@xtech.local", "orgUnitId": "ou-tech", "membershipStatus": "active", "roles": ["SERVICE_DESK_AGENT", "EMPLOYEE"] },
+    { "id": "usr-sales-01", "fullName": "Nguyễn Hải Nam", "email": "nam.nh2@xtech.local", "orgUnitId": "ou-sales", "membershipStatus": "active", "roles": ["EMPLOYEE"] },
+    { "id": "usr-delivery-01", "fullName": "Hoàng Gia Bảo", "email": "bao.hg@xtech.local", "orgUnitId": "ou-delivery", "membershipStatus": "active", "roles": ["EMPLOYEE"] },
+    { "id": "usr-hr-01", "fullName": "Đinh Thảo Vy", "email": "vy.dt@xtech.local", "orgUnitId": "ou-hr", "membershipStatus": "active", "roles": ["EMPLOYEE"] },
+    { "id": "usr-admin-01", "fullName": "Trần Thanh Vân", "email": "van.tt@xtech.local", "orgUnitId": "ou-admin", "membershipStatus": "active", "roles": ["EMPLOYEE"] }
+  ],
+
+  "positions": [
+    { "id": "pos-platform-admin", "code": "POS_PLATFORM_ADMIN", "title": "Platform Administrator", "orgUnitId": "ou-platform", "holderPersonId": "usr-platform-admin", "reportsToPositionId": null, "isHead": true },
+    { "id": "pos-tenant-admin", "code": "POS_TENANT_ADMIN", "title": "Quản trị hệ thống XHub", "orgUnitId": "ou-exec", "holderPersonId": "usr-tenant-admin", "reportsToPositionId": "pos-ceo", "isHead": false },
+    { "id": "pos-security-admin", "code": "POS_SECURITY_ADMIN", "title": "Quản trị an toàn", "orgUnitId": "ou-tech", "holderPersonId": "usr-security-admin", "reportsToPositionId": "pos-tech-head", "isHead": false },
+    { "id": "pos-workflow-admin", "code": "POS_WORKFLOW_ADMIN", "title": "Quản trị quy trình", "orgUnitId": "ou-admin", "holderPersonId": "usr-workflow-admin", "reportsToPositionId": "pos-admin-head", "isHead": false },
+    { "id": "pos-backup-admin", "code": "POS_BACKUP_ADMIN", "title": "Quản trị backup", "orgUnitId": "ou-tech", "holderPersonId": "usr-backup-admin", "reportsToPositionId": "pos-tech-head", "isHead": false },
+    { "id": "pos-auditor", "code": "POS_AUDITOR", "title": "Kiểm toán nội bộ", "orgUnitId": "ou-exec", "holderPersonId": "usr-auditor", "reportsToPositionId": "pos-ceo", "isHead": false },
+    { "id": "pos-data-steward", "code": "POS_DATA_STEWARD", "title": "Quản trị dữ liệu", "orgUnitId": "ou-solution", "holderPersonId": "usr-data-steward", "reportsToPositionId": "pos-solution-head", "isHead": false },
+    { "id": "pos-records-manager", "code": "POS_RECORDS_MANAGER", "title": "Quản trị hồ sơ", "orgUnitId": "ou-admin", "holderPersonId": "usr-records-manager", "reportsToPositionId": "pos-admin-head", "isHead": false },
+    { "id": "pos-ceo", "code": "POS_CEO", "title": "Tổng Giám đốc", "orgUnitId": "ou-exec", "holderPersonId": "usr-ceo", "reportsToPositionId": null, "isHead": true },
+    { "id": "pos-cfo", "code": "POS_CFO", "title": "Giám đốc Tài chính", "orgUnitId": "ou-fin", "holderPersonId": "usr-cfo", "reportsToPositionId": "pos-ceo", "isHead": true },
+    { "id": "pos-sales-head", "code": "POS_SALES_HEAD", "title": "Trưởng phòng Kinh doanh", "orgUnitId": "ou-sales", "holderPersonId": "usr-sales-head", "reportsToPositionId": "pos-ceo", "isHead": true },
+    { "id": "pos-tech-head", "code": "POS_TECH_HEAD", "title": "Trưởng phòng Công nghệ", "orgUnitId": "ou-tech", "holderPersonId": "usr-tech-head", "reportsToPositionId": "pos-ceo", "isHead": true },
+    { "id": "pos-hr-head", "code": "POS_HR_HEAD", "title": "Trưởng phòng Nhân sự", "orgUnitId": "ou-hr", "holderPersonId": "usr-hr-head", "reportsToPositionId": "pos-ceo", "isHead": true },
+    { "id": "pos-admin-head", "code": "POS_ADMIN_HEAD", "title": "Trưởng phòng Hành chính", "orgUnitId": "ou-admin", "holderPersonId": "usr-admin-head", "reportsToPositionId": "pos-ceo", "isHead": true },
+    { "id": "pos-delivery-head", "code": "POS_DELIVERY_HEAD", "title": "Trưởng nhóm Triển khai", "orgUnitId": "ou-delivery", "holderPersonId": "usr-delivery-head", "reportsToPositionId": "pos-tech-head", "isHead": true },
+    { "id": "pos-solution-head", "code": "POS_SOLUTION_HEAD", "title": "Trưởng nhóm Giải pháp", "orgUnitId": "ou-solution", "holderPersonId": "usr-solution-head", "reportsToPositionId": "pos-tech-head", "isHead": true },
+    { "id": "pos-support-head", "code": "POS_SUPPORT_HEAD", "title": "Trưởng nhóm Hỗ trợ", "orgUnitId": "ou-support", "holderPersonId": "usr-support-head", "reportsToPositionId": "pos-tech-head", "isHead": true },
+    { "id": "pos-accountant", "code": "POS_ACCOUNTANT", "title": "Kế toán kiểm tra", "orgUnitId": "ou-fin", "holderPersonId": "usr-accountant", "reportsToPositionId": "pos-cfo", "isHead": false },
+    { "id": "pos-infra", "code": "POS_INFRA", "title": "Kỹ sư hạ tầng", "orgUnitId": "ou-tech", "holderPersonId": "usr-infra", "reportsToPositionId": "pos-tech-head", "isHead": false },
+    { "id": "pos-sales-01", "code": "POS_SALES_01", "title": "Chuyên viên Kinh doanh", "orgUnitId": "ou-sales", "holderPersonId": "usr-sales-01", "reportsToPositionId": "pos-sales-head", "isHead": false },
+    { "id": "pos-delivery-01", "code": "POS_DELIVERY_01", "title": "Chuyên viên Triển khai", "orgUnitId": "ou-delivery", "holderPersonId": "usr-delivery-01", "reportsToPositionId": "pos-delivery-head", "isHead": false },
+    { "id": "pos-hr-01", "code": "POS_HR_01", "title": "Chuyên viên Nhân sự", "orgUnitId": "ou-hr", "holderPersonId": "usr-hr-01", "reportsToPositionId": "pos-hr-head", "isHead": false },
+    { "id": "pos-admin-01", "code": "POS_ADMIN_01", "title": "Chuyên viên Hành chính", "orgUnitId": "ou-admin", "holderPersonId": "usr-admin-01", "reportsToPositionId": "pos-admin-head", "isHead": false }
+  ]
+}

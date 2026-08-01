@@ -1,0 +1,23 @@
+# XHub monorepo (xhub-api + xhub-web + docs). Ignore deps/build/secrets/runtime.
+**/node_modules/
+**/dist/
+**/build/
+**/out/
+**/.next/
+**/coverage/
+*.tsbuildinfo
+
+# secrets & local env (KEEP .env.example)
+.env
+.env.*
+!.env.example
+
+# runtime storage (tenant documents, backups, testruns) — data, not source
+xhub-api/storage/
+
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.turbo/
+.vercel/

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xhub.vn/schemas/xoffice/condition-ast-1.0.json",
+  "title": "Safe Condition AST",
+  "type": "object",
+  "required": [
+    "operator",
+    "operands"
+  ],
+  "properties": {
+    "operator": {
+      "enum": [
+        "and",
+        "or",
+        "not",
+        "eq",
+        "neq",
+        "gt",
+        "gte",
+        "lt",
+        "lte",
+        "in",
+        "notIn",
+        "exists",
+        "contains"
+      ]
+    },
+    "operands": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "null"
+            ]
+          },
+          {
+            "$ref": "#"
+          },
+          {
+            "type": "object",
+            "required": [
+              "var"
+            ],
+            "properties": {
+              "var": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "contact-mp-nam",
+    "tenantId": "tenant-xtech",
+    "customerId": "customer-minhphat",
+    "name": "Nguyễn Văn Nam",
+    "title": "Giám đốc",
+    "department": "Ban Giám đốc",
+    "email": "nam.nguyen@minhphat.vn",
+    "phone": "0903 123 456",
+    "isPrimary": true
+  },
+  {
+    "id": "contact-mp-ha",
+    "tenantId": "tenant-xtech",
+    "customerId": "customer-minhphat",
+    "name": "Lê Thu Hà",
+    "title": "Kế toán trưởng",
+    "department": "Kế toán",
+    "email": "ha.le@minhphat.vn",
+    "phone": "0912 345 678",
+    "isPrimary": true
+  },
+  {
+    "id": "contact-mp-accounting",
+    "tenantId": "tenant-xtech",
+    "customerId": "customer-minhphat",
+    "name": "Phòng Kế toán",
+    "title": "Đầu mối nghiệp vụ",
+    "department": "Kế toán",
+    "email": "ketoan@minhphat.vn",
+    "phone": "028 7300 1122",
+    "isPrimary": false
+  },
+  {
+    "id": "contact-mp-it",
+    "tenantId": "tenant-xtech",
+    "customerId": "customer-minhphat",
+    "name": "Trần Quốc Thành",
+    "title": "Trưởng phòng CNTT",
+    "department": "CNTT",
+    "email": "it@minhphat.vn",
+    "phone": "0906 789 012",
+    "isPrimary": false
+  }
+]

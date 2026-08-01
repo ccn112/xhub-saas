@@ -1,0 +1,28 @@
+[
+  {
+    "id": "ticket-sp2098",
+    "tenantId": "tenant-xtech",
+    "code": "SP-2098",
+    "customerId": "customer-minhphat",
+    "projectId": "project-finerp-minhphat",
+    "title": "Hiệu năng báo cáo tài chính chậm",
+    "priority": "high",
+    "status": "open",
+    "assigneeId": "user-minhanh",
+    "createdAt": "2026-08-07T14:00:00+07:00",
+    "slaDueAt": "2026-08-08T11:00:00+07:00"
+  },
+  {
+    "id": "ticket-mp-data",
+    "tenantId": "tenant-xtech",
+    "code": "SP-2101",
+    "customerId": "customer-minhphat",
+    "projectId": "project-finerp-minhphat",
+    "title": "Sai lệch danh mục nhà cung cấp",
+    "priority": "medium",
+    "status": "open",
+    "assigneeId": "user-vantung",
+    "createdAt": "2026-08-08T08:00:00+07:00",
+    "slaDueAt": "2026-08-09T17:00:00+07:00"
+  }
+]

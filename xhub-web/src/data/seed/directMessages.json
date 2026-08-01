@@ -1,0 +1,89 @@
+[
+  {
+    "id": "dm-thuha-001",
+    "tenantId": "tenant-xtech",
+    "conversationId": "dm-user-nam-user-thuha",
+    "senderId": "user-nam",
+    "recipientId": "user-thuha",
+    "sentAt": "2026-08-08T09:10:00+07:00",
+    "content": "Chào Hà, mình vừa cập nhật bản proposal mới theo các góp ý phòng tài chính. Bạn giúp mình review và xác nhận nội dung trước chiều nay nhé.",
+    "type": "text"
+  },
+  {
+    "id": "dm-thuha-002",
+    "tenantId": "tenant-xtech",
+    "conversationId": "dm-user-nam-user-thuha",
+    "senderId": "user-thuha",
+    "recipientId": "user-nam",
+    "sentAt": "2026-08-08T09:14:00+07:00",
+    "content": "Chào Nam, mình vừa xem nhanh bản cập nhật, nội dung ổn rồi. Bạn cho mình xin timeline demo chi tiết để gửi khách xác nhận lịch nhé.",
+    "type": "text"
+  },
+  {
+    "id": "dm-thuha-003",
+    "tenantId": "tenant-xtech",
+    "conversationId": "dm-user-nam-user-thuha",
+    "senderId": "user-nam",
+    "recipientId": "user-thuha",
+    "sentAt": "2026-08-08T09:18:00+07:00",
+    "content": "Dự kiến demo ngày 08/08/2026 lúc 10:00–11:30, online qua Microsoft Teams. Bạn giúp mình xác nhận lại với anh Nam phía Minh Phát nhé.",
+    "type": "text"
+  },
+  {
+    "id": "dm-thuha-004",
+    "tenantId": "tenant-xtech",
+    "conversationId": "dm-user-nam-user-thuha",
+    "senderId": "user-thuha",
+    "recipientId": "user-nam",
+    "sentAt": "2026-08-08T09:22:00+07:00",
+    "content": "Mình đã liên hệ anh Nam, khách xác nhận tham dự đúng lịch và mời thêm chị Lan - Kế toán trưởng.",
+    "type": "text"
+  },
+  {
+    "id": "dm-thuha-005",
+    "tenantId": "tenant-xtech",
+    "conversationId": "dm-user-nam-user-thuha",
+    "senderId": "user-nam",
+    "recipientId": "user-thuha",
+    "sentAt": "2026-08-08T09:24:00+07:00",
+    "content": "Tuyệt vời. Mình đã cập nhật agenda demo và phạm vi giai đoạn 1, bạn xem file đính kèm nhé.",
+    "type": "file",
+    "documentIds": [
+      "doc-demo-outline"
+    ]
+  },
+  {
+    "id": "dm-thuha-006",
+    "tenantId": "tenant-xtech",
+    "conversationId": "dm-user-nam-user-thuha",
+    "senderId": "user-thuha",
+    "recipientId": "user-nam",
+    "sentAt": "2026-08-08T09:28:00+07:00",
+    "content": "Mình đã xem agenda, ổn rồi. Mình sẽ gửi cho khách. Bạn nhớ chuẩn bị demo environment và tài khoản demo nhé.",
+    "type": "text"
+  },
+  {
+    "id": "dm-thuha-007",
+    "tenantId": "tenant-xtech",
+    "conversationId": "dm-user-nam-user-thuha",
+    "senderId": "user-nam",
+    "recipientId": "user-thuha",
+    "sentAt": "2026-08-08T09:31:00+07:00",
+    "content": "Đã sẵn sàng môi trường demo và dữ liệu mẫu. Mình cũng đã tạo task theo dõi phê duyệt proposal.",
+    "type": "task_card",
+    "linkedEntity": {
+      "type": "task",
+      "id": "task-proposal-mp"
+    }
+  },
+  {
+    "id": "dm-thuha-008",
+    "tenantId": "tenant-xtech",
+    "conversationId": "dm-user-nam-user-thuha",
+    "senderId": "user-thuha",
+    "recipientId": "user-nam",
+    "sentAt": "2026-08-08T09:34:00+07:00",
+    "content": "OK Nam, mình sẽ cập nhật trạng thái khi khách phản hồi. Cảm ơn Nam nhé!",
+    "type": "text"
+  }
+]

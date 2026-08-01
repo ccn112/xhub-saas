@@ -1,0 +1,64 @@
+[
+  {
+    "id": "role-tenant-admin",
+    "tenantId": "tenant-xtech",
+    "name": "Quản trị tenant",
+    "permissions": [
+      "*"
+    ]
+  },
+  {
+    "id": "role-executive",
+    "tenantId": "tenant-xtech",
+    "name": "Lãnh đạo",
+    "permissions": [
+      "dashboard.read_all",
+      "work.read_all",
+      "approval.act",
+      "project.read_all",
+      "report.read_all"
+    ]
+  },
+  {
+    "id": "role-manager",
+    "tenantId": "tenant-xtech",
+    "name": "Quản lý",
+    "permissions": [
+      "dashboard.read_team",
+      "work.manage_team",
+      "approval.act_assigned",
+      "project.manage"
+    ]
+  },
+  {
+    "id": "role-employee",
+    "tenantId": "tenant-xtech",
+    "name": "Nhân viên",
+    "permissions": [
+      "home.read",
+      "work.manage_self",
+      "space.use",
+      "document.use"
+    ]
+  },
+  {
+    "id": "role-finance",
+    "tenantId": "tenant-xtech",
+    "name": "Tài chính",
+    "permissions": [
+      "approval.finance",
+      "contract.read",
+      "finance.read"
+    ]
+  },
+  {
+    "id": "role-sales",
+    "tenantId": "tenant-xtech",
+    "name": "Kinh doanh",
+    "permissions": [
+      "crm.manage",
+      "customer.read",
+      "contract.read"
+    ]
+  }
+]

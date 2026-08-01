@@ -1,0 +1,41 @@
+{
+  "code": "XH-06",
+  "set": "xhub",
+  "name": "Trao đổi gắn ngữ cảnh",
+  "route": "/space/channels/trien-khai-finerp-minh-phat",
+  "persona": "Nhóm dự án",
+  "image": "reference-images/xhub/06-trao-doi-gan-ngu-canh.png",
+  "seedRefs": [
+    "channel-finerp-mp",
+    "messages",
+    "tasks",
+    "approval-payment-mp-02",
+    "documents"
+  ],
+  "purpose": "Chứng minh chat và nghiệp vụ nằm trong cùng một luồng làm việc.",
+  "sections": [
+    "X.Space channel sidebar",
+    "Channel header",
+    "Message feed",
+    "Task card",
+    "Approval card",
+    "File message",
+    "AI system message",
+    "Message composer",
+    "Channel context panel"
+  ],
+  "states": {
+    "loading": "Skeleton giữ nguyên chiều cao card/table; không dùng spinner toàn trang.",
+    "empty": "Giải thích trạng thái trống và có một CTA rõ ràng.",
+    "error": "Hiển thị error boundary theo vùng, mã lỗi, nút thử lại và link hỗ trợ.",
+    "permission": "Ẩn hành động không được phép; khi route bị chặn hiển thị 403 có lý do và cách yêu cầu quyền."
+  },
+  "implementationRules": [
+    "Không hardcode dữ liệu hiển thị trong component.",
+    "Đọc dữ liệu qua typed repository/service; mock API dùng seed canonical.",
+    "Ảnh là visual reference; seed canonical là nguồn sự thật cho nội dung và số liệu.",
+    "Giữ tenantId trong mọi query và mutation.",
+    "Mọi action tài chính hoặc quyền cần xác nhận rõ ràng và audit log.",
+    "Bảo đảm keyboard navigation, focus visible, contrast WCAG AA."
+  ]
+}

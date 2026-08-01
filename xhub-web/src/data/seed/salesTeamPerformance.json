@@ -1,0 +1,47 @@
+[
+  {
+    "id": "salesperf-hainam",
+    "tenantId": "tenant-xtech",
+    "userId": "user-hainam",
+    "period": "2026-08",
+    "quota": 1500000000,
+    "sales": 1200000000,
+    "openOpportunities": 12
+  },
+  {
+    "id": "salesperf-anhkhoa",
+    "tenantId": "tenant-xtech",
+    "userId": "user-anhkhoa",
+    "period": "2026-08",
+    "quota": 1200000000,
+    "sales": 900000000,
+    "openOpportunities": 9
+  },
+  {
+    "id": "salesperf-minhquan",
+    "tenantId": "tenant-xtech",
+    "userId": "user-minhquan",
+    "period": "2026-08",
+    "quota": 1000000000,
+    "sales": 700000000,
+    "openOpportunities": 8
+  },
+  {
+    "id": "salesperf-thuylinh",
+    "tenantId": "tenant-xtech",
+    "userId": "user-thuylinh",
+    "period": "2026-08",
+    "quota": 1000000000,
+    "sales": 600000000,
+    "openOpportunities": 7
+  },
+  {
+    "id": "salesperf-hoanglong",
+    "tenantId": "tenant-xtech",
+    "userId": "user-hoanglong",
+    "period": "2026-08",
+    "quota": 800000000,
+    "sales": 500000000,
+    "openOpportunities": 6
+  }
+]

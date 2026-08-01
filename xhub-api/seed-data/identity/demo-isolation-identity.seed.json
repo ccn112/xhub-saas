@@ -1,0 +1,25 @@
+{
+  "_note": "Isolation canary for the Identity/Org tables. Every value carries the MUST_NOT_LEAK marker so scripts/rls-test.mjs proves the new tables never leak across tenants.",
+  "tenant": { "id": "tenant-demo-isolation", "slug": "demo-isolation", "name": "demo-isolation" },
+  "orgUnits": [
+    { "id": "iso-ou-1", "code": "ISO_SECRET", "name": "MUST_NOT_LEAK OrgUnit", "type": "DEPARTMENT", "parentId": null }
+  ],
+  "people": [
+    { "id": "iso-person-1", "fullName": "MUST_NOT_LEAK Person", "email": "must-not-leak@example.invalid", "externalIdRefs": null }
+  ],
+  "positions": [
+    { "id": "iso-pos-1", "code": "ISO_POS", "title": "MUST_NOT_LEAK Position", "orgUnitId": "iso-ou-1", "holderPersonId": "iso-person-1", "reportsToPositionId": null, "isHead": true }
+  ],
+  "groups": [
+    { "id": "iso-grp-1", "code": "ISO_GRP", "name": "MUST_NOT_LEAK Group", "memberPersonIds": ["iso-person-1"] }
+  ],
+  "roleBindings": [
+    { "id": "iso-rb-1", "subjectType": "POSITION", "subjectId": "iso-pos-1", "roleCode": "ROLE_SECRET", "scope": { "all": true } }
+  ],
+  "permissionPolicies": [
+    { "id": "iso-pp-1", "roleCode": "ROLE_SECRET", "permissions": ["secret.leak"], "condition": null }
+  ],
+  "dataScopes": [
+    { "id": "iso-ds-1", "subjectType": "POSITION", "subjectId": "iso-pos-1", "scope": { "all": true } }
+  ]
+}

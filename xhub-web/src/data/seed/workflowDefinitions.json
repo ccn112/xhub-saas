@@ -1,0 +1,105 @@
+[
+  {
+    "id": "workflow-customer-demo",
+    "tenantId": "tenant-xtech",
+    "name": "Yêu cầu chuẩn bị demo khách hàng",
+    "version": "1.2",
+    "description": "Quy trình chuẩn để yêu cầu và chuẩn bị demo sản phẩm cho khách hàng.",
+    "steps": [
+      {
+        "key": "init",
+        "name": "Khởi tạo yêu cầu"
+      },
+      {
+        "key": "assign",
+        "name": "Phân công phụ trách"
+      },
+      {
+        "key": "prepare",
+        "name": "Chuẩn bị tài liệu"
+      },
+      {
+        "key": "confirm",
+        "name": "Xác nhận lịch"
+      },
+      {
+        "key": "approve",
+        "name": "Duyệt nội bộ"
+      },
+      {
+        "key": "complete",
+        "name": "Hoàn tất"
+      }
+    ]
+  },
+  {
+    "id": "workflow-project-onboarding",
+    "tenantId": "tenant-xtech",
+    "name": "Onboarding dự án mới",
+    "version": "2.0",
+    "description": "Khởi tạo dự án, phân công và mở channel cộng tác.",
+    "steps": [
+      {
+        "key": "request",
+        "name": "Tiếp nhận"
+      },
+      {
+        "key": "scope",
+        "name": "Xác định phạm vi"
+      },
+      {
+        "key": "team",
+        "name": "Lập đội dự án"
+      },
+      {
+        "key": "channel",
+        "name": "Tạo channel"
+      },
+      {
+        "key": "plan",
+        "name": "Lập kế hoạch"
+      },
+      {
+        "key": "kickoff",
+        "name": "Kick-off"
+      },
+      {
+        "key": "complete",
+        "name": "Hoàn tất"
+      }
+    ]
+  },
+  {
+    "id": "workflow-feature-request",
+    "tenantId": "tenant-xtech",
+    "name": "Yêu cầu triển khai tính năng mới",
+    "version": "1.3",
+    "description": "Tiếp nhận và xử lý yêu cầu tính năng.",
+    "steps": [
+      {
+        "key": "request",
+        "name": "Tiếp nhận"
+      },
+      {
+        "key": "analyse",
+        "name": "Phân tích"
+      },
+      {
+        "key": "estimate",
+        "name": "Ước lượng"
+      },
+      {
+        "key": "approve",
+        "name": "Duyệt"
+      },
+      {
+        "key": "implement",
+        "name": "Triển khai"
+      },
+      {
+        "key": "complete",
+        "name": "Hoàn tất"
+      }
+    ]
+  }
+]

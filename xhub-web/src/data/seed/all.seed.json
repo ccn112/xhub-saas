@@ -1,0 +1,4044 @@
+{
+  "meta": {
+    "snapshotAt": "2026-08-08T09:30:00+07:00",
+    "schemaVersion": "1.0.0",
+    "locale": "vi-VN",
+    "timezone": "Asia/Bangkok",
+    "currency": "VND",
+    "canonicalTenantId": "tenant-xtech",
+    "note": "Dữ liệu cố định phục vụ demo và kiểm thử; không dùng Date.now() để tạo dữ liệu ngẫu nhiên."
+  },
+  "tenants": [
+    {
+      "id": "tenant-xtech",
+      "slug": "xtech",
+      "name": "X-TECH",
+      "legalName": "Công ty Cổ phần Công nghệ X-TECH",
+      "timezone": "Asia/Bangkok",
+      "locale": "vi-VN",
+      "currency": "VND",
+      "status": "active",
+      "isDesignPartner": true,
+      "isFirstTenant": true,
+      "branding": {
+        "productName": "XHub",
+        "workspaceName": "X.Space",
+        "primaryColor": "#1769E0",
+        "logoAsset": "/assets/brand/xhub-logo.svg"
+      },
+      "features": [
+        "xhub",
+        "xspace",
+        "approvals",
+        "projects",
+        "crm",
+        "documents",
+        "ai",
+        "app-catalog",
+        "workflows"
+      ]
+    }
+  ],
+  "organizations": [
+    {
+      "id": "org-xtech",
+      "tenantId": "tenant-xtech",
+      "code": "XTECH",
+      "name": "X-TECH",
+      "type": "company",
+      "parentId": null
+    },
+    {
+      "id": "dept-exec",
+      "tenantId": "tenant-xtech",
+      "code": "BDH",
+      "name": "Ban Điều hành",
+      "type": "department",
+      "parentId": "org-xtech"
+    },
+    {
+      "id": "dept-sales",
+      "tenantId": "tenant-xtech",
+      "code": "KD",
+      "name": "Phòng Kinh doanh",
+      "type": "department",
+      "parentId": "org-xtech"
+    },
+    {
+      "id": "dept-finance",
+      "tenantId": "tenant-xtech",
+      "code": "TC",
+      "name": "Phòng Tài chính",
+      "type": "department",
+      "parentId": "org-xtech"
+    },
+    {
+      "id": "dept-erp",
+      "tenantId": "tenant-xtech",
+      "code": "ERP",
+      "name": "Phòng Triển khai ERP",
+      "type": "department",
+      "parentId": "org-xtech"
+    },
+    {
+      "id": "dept-tech",
+      "tenantId": "tenant-xtech",
+      "code": "CN",
+      "name": "Phòng Công nghệ",
+      "type": "department",
+      "parentId": "org-xtech"
+    },
+    {
+      "id": "dept-product",
+      "tenantId": "tenant-xtech",
+      "code": "SP",
+      "name": "Phòng Sản phẩm",
+      "type": "department",
+      "parentId": "org-xtech"
+    },
+    {
+      "id": "dept-cs",
+      "tenantId": "tenant-xtech",
+      "code": "CSKH",
+      "name": "Phòng Hỗ trợ khách hàng",
+      "type": "department",
+      "parentId": "org-xtech"
+    },
+    {
+      "id": "dept-hr",
+      "tenantId": "tenant-xtech",
+      "code": "NS",
+      "name": "Phòng Nhân sự",
+      "type": "department",
+      "parentId": "org-xtech"
+    },
+    {
+      "id": "dept-pmo",
+      "tenantId": "tenant-xtech",
+      "code": "PMO",
+      "name": "Văn phòng Dự án",
+      "type": "department",
+      "parentId": "org-xtech"
+    }
+  ],
+  "users": [
+    {
+      "id": "user-nam",
+      "tenantId": "tenant-xtech",
+      "name": "Nguyễn Hoài Nam",
+      "email": "nam.nguyen@xtech.com.vn",
+      "title": "Giám đốc Công nghệ",
+      "departmentId": "dept-exec",
+      "primaryRole": "executive",
+      "phone": "0903 111 001",
+      "status": "active",
+      "presence": "online",
+      "avatar": "/assets/avatars/user-nam.jpg"
+    },
+    {
+      "id": "user-thuha",
+      "tenantId": "tenant-xtech",
+      "name": "Trần Thu Hà",
+      "email": "ha.tran@xtech.com.vn",
+      "title": "Trưởng nhóm Kinh doanh doanh nghiệp",
+      "departmentId": "dept-sales",
+      "primaryRole": "sales_manager",
+      "phone": "0903 111 002",
+      "status": "active",
+      "presence": "online",
+      "avatar": "/assets/avatars/user-thuha.jpg"
+    },
+    {
+      "id": "user-anhkhoa",
+      "tenantId": "tenant-xtech",
+      "name": "Phạm Anh Khoa",
+      "email": "khoa.pham@xtech.com.vn",
+      "title": "Trưởng phòng Triển khai ERP",
+      "departmentId": "dept-erp",
+      "primaryRole": "delivery_manager",
+      "phone": "0903 111 003",
+      "status": "active",
+      "presence": "online",
+      "avatar": "/assets/avatars/user-anhkhoa.jpg"
+    },
+    {
+      "id": "user-tuan",
+      "tenantId": "tenant-xtech",
+      "name": "Trần Mạnh Tuấn",
+      "email": "tuan.tran@xtech.com.vn",
+      "title": "Giám đốc Vận hành",
+      "departmentId": "dept-exec",
+      "primaryRole": "operations_director",
+      "phone": "0903 111 004",
+      "status": "active",
+      "presence": "online",
+      "avatar": "/assets/avatars/user-tuan.jpg"
+    },
+    {
+      "id": "user-minhanh",
+      "tenantId": "tenant-xtech",
+      "name": "Lê Minh Anh",
+      "email": "anh.le@xtech.com.vn",
+      "title": "Trưởng phòng Tài chính",
+      "departmentId": "dept-finance",
+      "primaryRole": "finance_manager",
+      "phone": "0903 111 005",
+      "status": "active",
+      "presence": "online",
+      "avatar": "/assets/avatars/user-minhanh.jpg"
+    },
+    {
+      "id": "user-minhquan",
+      "tenantId": "tenant-xtech",
+      "name": "Trần Minh Quân",
+      "email": "quan.tran@xtech.com.vn",
+      "title": "Quản lý Kinh doanh",
+      "departmentId": "dept-sales",
+      "primaryRole": "sales_manager",
+      "phone": "0903 111 006",
+      "status": "active",
+      "presence": "online",
+      "avatar": "/assets/avatars/user-minhquan.jpg"
+    },
+    {
+      "id": "user-hainam",
+      "tenantId": "tenant-xtech",
+      "name": "Nguyễn Hải Nam",
+      "email": "hainam.nguyen@xtech.com.vn",
+      "title": "Chuyên viên Kinh doanh",
+      "departmentId": "dept-sales",
+      "primaryRole": "sales_rep",
+      "phone": "0903 111 007",
+      "status": "active",
+      "presence": "away",
+      "avatar": "/assets/avatars/user-hainam.jpg"
+    },
+    {
+      "id": "user-thuylinh",
+      "tenantId": "tenant-xtech",
+      "name": "Lê Thùy Linh",
+      "email": "linh.le@xtech.com.vn",
+      "title": "Chuyên viên Kinh doanh",
+      "departmentId": "dept-sales",
+      "primaryRole": "sales_rep",
+      "phone": "0903 111 008",
+      "status": "active",
+      "presence": "away",
+      "avatar": "/assets/avatars/user-thuylinh.jpg"
+    },
+    {
+      "id": "user-hoanglong",
+      "tenantId": "tenant-xtech",
+      "name": "Võ Hoàng Long",
+      "email": "long.vo@xtech.com.vn",
+      "title": "Chuyên viên Kinh doanh",
+      "departmentId": "dept-sales",
+      "primaryRole": "sales_rep",
+      "phone": "0903 111 009",
+      "status": "active",
+      "presence": "away",
+      "avatar": "/assets/avatars/user-hoanglong.jpg"
+    },
+    {
+      "id": "user-minhduc",
+      "tenantId": "tenant-xtech",
+      "name": "Đặng Minh Đức",
+      "email": "duc.dang@xtech.com.vn",
+      "title": "Kỹ sư Kiểm thử",
+      "departmentId": "dept-tech",
+      "primaryRole": "qa_engineer",
+      "phone": "0903 111 010",
+      "status": "active",
+      "presence": "away",
+      "avatar": "/assets/avatars/user-minhduc.jpg"
+    },
+    {
+      "id": "user-thihuong",
+      "tenantId": "tenant-xtech",
+      "name": "Vũ Thị Hương",
+      "email": "huong.vu@xtech.com.vn",
+      "title": "Chuyên viên Đào tạo",
+      "departmentId": "dept-erp",
+      "primaryRole": "trainer",
+      "phone": "0903 111 011",
+      "status": "active",
+      "presence": "away",
+      "avatar": "/assets/avatars/user-thihuong.jpg"
+    },
+    {
+      "id": "user-vantung",
+      "tenantId": "tenant-xtech",
+      "name": "Nguyễn Văn Tùng",
+      "email": "tung.nguyen@xtech.com.vn",
+      "title": "Kỹ sư Dữ liệu",
+      "departmentId": "dept-tech",
+      "primaryRole": "data_engineer",
+      "phone": "0903 111 012",
+      "status": "active",
+      "presence": "away",
+      "avatar": "/assets/avatars/user-vantung.jpg"
+    },
+    {
+      "id": "user-quocbao",
+      "tenantId": "tenant-xtech",
+      "name": "Lê Quốc Bảo",
+      "email": "bao.le@xtech.com.vn",
+      "title": "Chuyên viên CSKH",
+      "departmentId": "dept-cs",
+      "primaryRole": "customer_success",
+      "phone": "0903 111 013",
+      "status": "active",
+      "presence": "away",
+      "avatar": "/assets/avatars/user-quocbao.jpg"
+    },
+    {
+      "id": "user-dominhquan",
+      "tenantId": "tenant-xtech",
+      "name": "Đỗ Minh Quân",
+      "email": "minhquan.do@xtech.com.vn",
+      "title": "Chuyên viên PMO",
+      "departmentId": "dept-pmo",
+      "primaryRole": "pmo",
+      "phone": "0903 111 014",
+      "status": "active",
+      "presence": "away",
+      "avatar": "/assets/avatars/user-dominhquan.jpg"
+    },
+    {
+      "id": "user-leminhduc",
+      "tenantId": "tenant-xtech",
+      "name": "Lê Minh Đức",
+      "email": "minhduc.le@xtech.com.vn",
+      "title": "Tư vấn giải pháp",
+      "departmentId": "dept-erp",
+      "primaryRole": "consultant",
+      "phone": "0903 111 015",
+      "status": "active",
+      "presence": "away",
+      "avatar": "/assets/avatars/user-leminhduc.jpg"
+    },
+    {
+      "id": "user-quanghuy",
+      "tenantId": "tenant-xtech",
+      "name": "Vũ Quang Huy",
+      "email": "huy.vu@xtech.com.vn",
+      "title": "Kế toán thanh toán",
+      "departmentId": "dept-finance",
+      "primaryRole": "accountant",
+      "phone": "0903 111 016",
+      "status": "active",
+      "presence": "away",
+      "avatar": "/assets/avatars/user-quanghuy.jpg"
+    }
+  ],
+  "roles": [
+    {
+      "id": "role-tenant-admin",
+      "tenantId": "tenant-xtech",
+      "name": "Quản trị tenant",
+      "permissions": [
+        "*"
+      ]
+    },
+    {
+      "id": "role-executive",
+      "tenantId": "tenant-xtech",
+      "name": "Lãnh đạo",
+      "permissions": [
+        "dashboard.read_all",
+        "work.read_all",
+        "approval.act",
+        "project.read_all",
+        "report.read_all"
+      ]
+    },
+    {
+      "id": "role-manager",
+      "tenantId": "tenant-xtech",
+      "name": "Quản lý",
+      "permissions": [
+        "dashboard.read_team",
+        "work.manage_team",
+        "approval.act_assigned",
+        "project.manage"
+      ]
+    },
+    {
+      "id": "role-employee",
+      "tenantId": "tenant-xtech",
+      "name": "Nhân viên",
+      "permissions": [
+        "home.read",
+        "work.manage_self",
+        "space.use",
+        "document.use"
+      ]
+    },
+    {
+      "id": "role-finance",
+      "tenantId": "tenant-xtech",
+      "name": "Tài chính",
+      "permissions": [
+        "approval.finance",
+        "contract.read",
+        "finance.read"
+      ]
+    },
+    {
+      "id": "role-sales",
+      "tenantId": "tenant-xtech",
+      "name": "Kinh doanh",
+      "permissions": [
+        "crm.manage",
+        "customer.read",
+        "contract.read"
+      ]
+    }
+  ],
+  "userRoles": [
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-nam",
+      "roleId": "role-tenant-admin"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-nam",
+      "roleId": "role-executive"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-tuan",
+      "roleId": "role-executive"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-thuha",
+      "roleId": "role-manager"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-thuha",
+      "roleId": "role-sales"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-anhkhoa",
+      "roleId": "role-manager"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-minhanh",
+      "roleId": "role-finance"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-nam",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-thuha",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-anhkhoa",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-tuan",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-minhanh",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-minhquan",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-hainam",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-thuylinh",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-hoanglong",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-minhduc",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-thihuong",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-vantung",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-quocbao",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-dominhquan",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-leminhduc",
+      "roleId": "role-employee"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-quanghuy",
+      "roleId": "role-employee"
+    }
+  ],
+  "products": [
+    {
+      "id": "product-xhub",
+      "tenantId": "tenant-xtech",
+      "code": "XHUB",
+      "name": "XHub",
+      "category": "workspace",
+      "description": "Cổng điều hành và hợp nhất nghiệp vụ doanh nghiệp."
+    },
+    {
+      "id": "product-xspace",
+      "tenantId": "tenant-xtech",
+      "code": "XSPACE",
+      "name": "X.Space",
+      "category": "collaboration",
+      "description": "Không gian cộng tác, trao đổi và thực thi công việc."
+    },
+    {
+      "id": "product-xbooking",
+      "tenantId": "tenant-xtech",
+      "code": "XBOOKING",
+      "name": "XBooking",
+      "category": "saas",
+      "description": "Quản lý đặt chỗ, lịch hẹn và tài nguyên."
+    },
+    {
+      "id": "product-xbuilding",
+      "tenantId": "tenant-xtech",
+      "code": "XBUILDING",
+      "name": "XBuilding",
+      "category": "saas",
+      "description": "Quản lý bất động sản, cư dân và vận hành tòa nhà."
+    },
+    {
+      "id": "product-finerp",
+      "tenantId": "tenant-xtech",
+      "code": "FINERP",
+      "name": "FinERP",
+      "category": "erp",
+      "description": "Nền tảng ERP tài chính và vận hành dựa trên ERPNext."
+    },
+    {
+      "id": "product-xai",
+      "tenantId": "tenant-xtech",
+      "code": "XAI",
+      "name": "X.AI",
+      "category": "ai",
+      "description": "Trợ lý AI phân tích, tóm tắt và hỗ trợ tác nghiệp."
+    }
+  ],
+  "customers": [
+    {
+      "id": "customer-minhphat",
+      "tenantId": "tenant-xtech",
+      "code": "KH-MP",
+      "name": "Công ty TNHH Minh Phát",
+      "industry": "Sản xuất",
+      "segment": "A",
+      "status": "implementing",
+      "ownerId": "user-minhquan",
+      "healthScore": 86,
+      "satisfaction": 4.3
+    },
+    {
+      "id": "customer-hungtin",
+      "tenantId": "tenant-xtech",
+      "code": "KH-HT",
+      "name": "Tập đoàn Hưng Tín",
+      "industry": "Bất động sản",
+      "segment": "A",
+      "status": "proposal",
+      "ownerId": "user-hainam",
+      "healthScore": 74,
+      "satisfaction": 4.1
+    },
+    {
+      "id": "customer-celadon",
+      "tenantId": "tenant-xtech",
+      "code": "KH-CR",
+      "name": "Celadon Riverside",
+      "industry": "Bất động sản",
+      "segment": "A",
+      "status": "negotiation",
+      "ownerId": "user-thuylinh",
+      "healthScore": 80,
+      "satisfaction": 4.2
+    },
+    {
+      "id": "customer-hoabinh",
+      "tenantId": "tenant-xtech",
+      "code": "KH-HB",
+      "name": "Nhà máy Hòa Bình",
+      "industry": "Sản xuất",
+      "segment": "B",
+      "status": "consulting",
+      "ownerId": "user-hoanglong",
+      "healthScore": 71,
+      "satisfaction": 3.9
+    },
+    {
+      "id": "customer-anphat",
+      "tenantId": "tenant-xtech",
+      "code": "KH-AP",
+      "name": "Công ty An Phát",
+      "industry": "Phân phối",
+      "segment": "B",
+      "status": "demo",
+      "ownerId": "user-thuha",
+      "healthScore": 69,
+      "satisfaction": 4.0
+    },
+    {
+      "id": "customer-tanbinh",
+      "tenantId": "tenant-xtech",
+      "code": "KH-TB",
+      "name": "Công ty Tân Bình",
+      "industry": "Thương mại",
+      "segment": "B",
+      "status": "demo",
+      "ownerId": "user-anhkhoa",
+      "healthScore": 66,
+      "satisfaction": 3.8
+    },
+    {
+      "id": "customer-donga",
+      "tenantId": "tenant-xtech",
+      "code": "KH-DA",
+      "name": "Công ty Đông Á",
+      "industry": "Dịch vụ",
+      "segment": "C",
+      "status": "lead",
+      "ownerId": "user-hainam",
+      "healthScore": 58,
+      "satisfaction": null
+    },
+    {
+      "id": "customer-saobac",
+      "tenantId": "tenant-xtech",
+      "code": "KH-SB",
+      "name": "Công ty Cổ phần Sao Bắc",
+      "industry": "Công nghệ",
+      "segment": "B",
+      "status": "active",
+      "ownerId": "user-thuha",
+      "healthScore": 82,
+      "satisfaction": 4.4
+    }
+  ],
+  "contacts": [
+    {
+      "id": "contact-mp-nam",
+      "tenantId": "tenant-xtech",
+      "customerId": "customer-minhphat",
+      "name": "Nguyễn Văn Nam",
+      "title": "Giám đốc",
+      "department": "Ban Giám đốc",
+      "email": "nam.nguyen@minhphat.vn",
+      "phone": "0903 123 456",
+      "isPrimary": true
+    },
+    {
+      "id": "contact-mp-ha",
+      "tenantId": "tenant-xtech",
+      "customerId": "customer-minhphat",
+      "name": "Lê Thu Hà",
+      "title": "Kế toán trưởng",
+      "department": "Kế toán",
+      "email": "ha.le@minhphat.vn",
+      "phone": "0912 345 678",
+      "isPrimary": true
+    },
+    {
+      "id": "contact-mp-accounting",
+      "tenantId": "tenant-xtech",
+      "customerId": "customer-minhphat",
+      "name": "Phòng Kế toán",
+      "title": "Đầu mối nghiệp vụ",
+      "department": "Kế toán",
+      "email": "ketoan@minhphat.vn",
+      "phone": "028 7300 1122",
+      "isPrimary": false
+    },
+    {
+      "id": "contact-mp-it",
+      "tenantId": "tenant-xtech",
+      "customerId": "customer-minhphat",
+      "name": "Trần Quốc Thành",
+      "title": "Trưởng phòng CNTT",
+      "department": "CNTT",
+      "email": "it@minhphat.vn",
+      "phone": "0906 789 012",
+      "isPrimary": false
+    }
+  ],
+  "opportunities": [
+    {
+      "id": "opp-minhphat-finerp",
+      "tenantId": "tenant-xtech",
+      "customerId": "customer-minhphat",
+      "name": "FinERP Enterprise - Minh Phát",
+      "stage": "implementation",
+      "amount": 1200000000,
+      "probability": 0.8,
+      "ownerId": "user-minhquan",
+      "expectedCloseDate": "2026-09-30",
+      "products": [
+        "product-finerp",
+        "product-xspace"
+      ]
+    },
+    {
+      "id": "opp-hungtin-finerp",
+      "tenantId": "tenant-xtech",
+      "customerId": "customer-hungtin",
+      "name": "FinERP - Hưng Tín",
+      "stage": "proposal",
+      "amount": 1000000000,
+      "probability": 0.55,
+      "ownerId": "user-hainam",
+      "expectedCloseDate": "2026-08-31",
+      "products": [
+        "product-finerp"
+      ]
+    },
+    {
+      "id": "opp-celadon-xbuilding",
+      "tenantId": "tenant-xtech",
+      "customerId": "customer-celadon",
+      "name": "Gia hạn XBuilding - Celadon Riverside",
+      "stage": "negotiation",
+      "amount": 900000000,
+      "probability": 0.72,
+      "ownerId": "user-thuylinh",
+      "expectedCloseDate": "2026-08-20",
+      "products": [
+        "product-xbuilding"
+      ]
+    },
+    {
+      "id": "opp-hoabinh-finerp",
+      "tenantId": "tenant-xtech",
+      "customerId": "customer-hoabinh",
+      "name": "FinERP - Nhà máy Hòa Bình",
+      "stage": "consulting",
+      "amount": 800000000,
+      "probability": 0.42,
+      "ownerId": "user-hoanglong",
+      "expectedCloseDate": "2026-09-15",
+      "products": [
+        "product-finerp"
+      ]
+    }
+  ],
+  "contracts": [
+    {
+      "id": "contract-mp-finerp",
+      "tenantId": "tenant-xtech",
+      "code": "HDTV-2026-119",
+      "customerId": "customer-minhphat",
+      "name": "Hợp đồng tư vấn triển khai FinERP",
+      "value": 120000000,
+      "currency": "VND",
+      "signedDate": "2026-08-05",
+      "effectiveFrom": "2026-08-05",
+      "effectiveTo": "2026-12-31",
+      "status": "active",
+      "ownerId": "user-thuha"
+    },
+    {
+      "id": "contract-celadon-xbuilding",
+      "tenantId": "tenant-xtech",
+      "code": "HD-2026-0683",
+      "customerId": "customer-celadon",
+      "name": "Hợp đồng XBuilding - Celadon Riverside",
+      "value": 450000000,
+      "currency": "VND",
+      "signedDate": "2025-09-01",
+      "effectiveFrom": "2025-09-01",
+      "effectiveTo": "2026-08-31",
+      "status": "renewal_due",
+      "ownerId": "user-thuylinh"
+    },
+    {
+      "id": "contract-hungtin-finerp",
+      "tenantId": "tenant-xtech",
+      "code": "HD-2026-0512",
+      "customerId": "customer-hungtin",
+      "name": "Thỏa thuận tư vấn FinERP",
+      "value": 320000000,
+      "currency": "VND",
+      "signedDate": "2026-06-15",
+      "effectiveFrom": "2026-06-15",
+      "effectiveTo": "2026-12-31",
+      "status": "active",
+      "ownerId": "user-hainam"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "sub-xtech-xhub",
+      "tenantId": "tenant-xtech",
+      "productId": "product-xhub",
+      "plan": "Enterprise Pilot",
+      "status": "active",
+      "userLimit": 500,
+      "startDate": "2026-07-01",
+      "renewalDate": "2027-07-01"
+    },
+    {
+      "id": "sub-xtech-xspace",
+      "tenantId": "tenant-xtech",
+      "productId": "product-xspace",
+      "plan": "Enterprise Pilot",
+      "status": "active",
+      "userLimit": 500,
+      "startDate": "2026-07-01",
+      "renewalDate": "2027-07-01"
+    }
+  ],
+  "productInstances": [
+    {
+      "id": "instance-xtech-xhub",
+      "tenantId": "tenant-xtech",
+      "productId": "product-xhub",
+      "name": "XHub X-TECH",
+      "status": "healthy",
+      "users": 156,
+      "domain": "hub.x-tech.com.vn"
+    },
+    {
+      "id": "instance-xtech-xspace",
+      "tenantId": "tenant-xtech",
+      "productId": "product-xspace",
+      "name": "X.Space X-TECH",
+      "status": "healthy",
+      "users": 128,
+      "domain": "space.x-tech.com.vn"
+    },
+    {
+      "id": "instance-mp-finerp",
+      "tenantId": "tenant-xtech",
+      "customerId": "customer-minhphat",
+      "productId": "product-finerp",
+      "name": "FinERP Minh Phát",
+      "status": "implementing",
+      "users": 82,
+      "domain": "minhphat.finerp.vn"
+    },
+    {
+      "id": "instance-celadon-xbuilding",
+      "tenantId": "tenant-xtech",
+      "customerId": "customer-celadon",
+      "productId": "product-xbuilding",
+      "name": "XBuilding Celadon Riverside",
+      "status": "healthy",
+      "users": 96,
+      "domain": "celadon.xbuilding.vn"
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-finerp-minhphat",
+      "tenantId": "tenant-xtech",
+      "code": "PRJ-FINERP-MP",
+      "name": "Golive FinERP cho Minh Phát",
+      "customerId": "customer-minhphat",
+      "productId": "product-finerp",
+      "status": "active",
+      "managerId": "user-tuan",
+      "ownerId": "user-anhkhoa",
+      "startDate": "2026-06-01",
+      "endDate": "2026-09-30",
+      "progress": 68,
+      "riskHigh": 3,
+      "openTasks": 36,
+      "openTickets": 7
+    },
+    {
+      "id": "project-xhub-mvp",
+      "tenantId": "tenant-xtech",
+      "code": "PRJ-XHUB-MVP",
+      "name": "XHub MVP",
+      "customerId": null,
+      "productId": "product-xhub",
+      "status": "active",
+      "managerId": "user-nam",
+      "ownerId": "user-anhkhoa",
+      "startDate": "2026-07-01",
+      "endDate": "2026-10-31",
+      "progress": 42,
+      "riskHigh": 2,
+      "openTasks": 28,
+      "openTickets": 4
+    },
+    {
+      "id": "project-xbooking-upgrade",
+      "tenantId": "tenant-xtech",
+      "code": "PRJ-XBOOKING-UP",
+      "name": "Nâng cấp XBooking",
+      "customerId": null,
+      "productId": "product-xbooking",
+      "status": "active",
+      "managerId": "user-nam",
+      "ownerId": "user-minhduc",
+      "startDate": "2026-07-15",
+      "endDate": "2026-09-15",
+      "progress": 54,
+      "riskHigh": 1,
+      "openTasks": 19,
+      "openTickets": 6
+    },
+    {
+      "id": "project-datahub",
+      "tenantId": "tenant-xtech",
+      "code": "PRJ-DATAHUB",
+      "name": "Đề xuất đầu tư Data Hub",
+      "customerId": null,
+      "productId": "product-xai",
+      "status": "planned",
+      "managerId": "user-nam",
+      "ownerId": "user-vantung",
+      "startDate": "2026-08-01",
+      "endDate": "2026-11-30",
+      "progress": 5,
+      "riskHigh": 0,
+      "openTasks": 8,
+      "openTickets": 0
+    }
+  ],
+  "milestones": [
+    {
+      "id": "ms-mp-kickoff",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "name": "Khởi động dự án",
+      "dueDate": "2026-06-05",
+      "status": "completed",
+      "progress": 100
+    },
+    {
+      "id": "ms-mp-survey",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "name": "Khảo sát & phân tích",
+      "dueDate": "2026-06-26",
+      "status": "completed",
+      "progress": 100
+    },
+    {
+      "id": "ms-mp-design",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "name": "Thiết kế giải pháp",
+      "dueDate": "2026-07-20",
+      "status": "completed",
+      "progress": 100
+    },
+    {
+      "id": "ms-mp-uat",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "name": "UAT",
+      "dueDate": "2026-09-10",
+      "status": "in_progress",
+      "progress": 45
+    },
+    {
+      "id": "ms-mp-golive",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "name": "Go-live",
+      "dueDate": "2026-09-30",
+      "status": "not_started",
+      "progress": 0
+    }
+  ],
+  "workstreams": [
+    {
+      "id": "ws-mp-pm",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "name": "Quản trị & Hệ thống",
+      "ownerId": "user-tuan",
+      "progress": 70,
+      "status": "in_progress"
+    },
+    {
+      "id": "ws-mp-finance",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "name": "Tài chính - Kế toán",
+      "ownerId": "user-anhkhoa",
+      "progress": 80,
+      "status": "in_progress"
+    },
+    {
+      "id": "ws-mp-procurement",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "name": "Mua hàng - Kho",
+      "ownerId": "user-thuha",
+      "progress": 65,
+      "status": "in_progress"
+    },
+    {
+      "id": "ws-mp-sales",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "name": "Bán hàng - CRM",
+      "ownerId": "user-leminhduc",
+      "progress": 60,
+      "status": "in_progress"
+    },
+    {
+      "id": "ws-mp-bi",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "name": "Báo cáo & BI",
+      "ownerId": "user-vantung",
+      "progress": 40,
+      "status": "in_progress"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-proposal-mp",
+      "tenantId": "tenant-xtech",
+      "title": "Cập nhật proposal Minh Phát",
+      "projectId": "project-finerp-minhphat",
+      "assigneeId": "user-thuha",
+      "dueDate": "2026-08-06",
+      "priority": "high",
+      "status": "in_progress",
+      "channelId": "channel-finerp-mp",
+      "progress": 60,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-demo-mp",
+      "tenantId": "tenant-xtech",
+      "title": "Chuẩn bị demo FinERP cho Minh Phát",
+      "projectId": "project-finerp-minhphat",
+      "assigneeId": "user-nam",
+      "dueDate": "2026-08-08",
+      "priority": "medium",
+      "status": "in_progress",
+      "channelId": "channel-finerp-mp",
+      "progress": 70,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-uat-checklist",
+      "tenantId": "tenant-xtech",
+      "title": "Xác nhận checklist UAT đợt 1",
+      "projectId": "project-finerp-minhphat",
+      "assigneeId": "user-anhkhoa",
+      "dueDate": "2026-08-10",
+      "priority": "high",
+      "status": "waiting",
+      "channelId": "channel-finerp-mp",
+      "progress": 45,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-customer-ticket",
+      "tenantId": "tenant-xtech",
+      "title": "Phản hồi ticket khách hàng #SP-2098",
+      "projectId": "project-finerp-minhphat",
+      "assigneeId": "user-minhanh",
+      "dueDate": "2026-08-10",
+      "priority": "high",
+      "status": "new",
+      "channelId": "channel-support",
+      "progress": 0,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-uat-accounting",
+      "tenantId": "tenant-xtech",
+      "title": "Hoàn thiện kịch bản UAT phân hệ Kế toán",
+      "projectId": "project-finerp-minhphat",
+      "assigneeId": "user-minhduc",
+      "dueDate": "2026-08-08",
+      "priority": "high",
+      "status": "in_progress",
+      "channelId": "channel-finerp-mp",
+      "progress": 55,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-master-data",
+      "tenantId": "tenant-xtech",
+      "title": "Kiểm tra dữ liệu master trước khi migrate",
+      "projectId": "project-finerp-minhphat",
+      "assigneeId": "user-vantung",
+      "dueDate": "2026-08-09",
+      "priority": "high",
+      "status": "in_progress",
+      "channelId": "channel-finerp-mp",
+      "progress": 50,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-key-user-training",
+      "tenantId": "tenant-xtech",
+      "title": "Chuẩn bị đào tạo key user giai đoạn 1",
+      "projectId": "project-finerp-minhphat",
+      "assigneeId": "user-thihuong",
+      "dueDate": "2026-08-12",
+      "priority": "medium",
+      "status": "not_started",
+      "channelId": "channel-finerp-mp",
+      "progress": 10,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-cr12",
+      "tenantId": "tenant-xtech",
+      "title": "Ký xác nhận scope thay đổi CR-12",
+      "projectId": "project-finerp-minhphat",
+      "assigneeId": "user-anhkhoa",
+      "dueDate": "2026-08-13",
+      "priority": "high",
+      "status": "waiting",
+      "channelId": "channel-finerp-mp",
+      "progress": 20,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-report-week31",
+      "tenantId": "tenant-xtech",
+      "title": "Chuẩn bị báo cáo tuần 31",
+      "projectId": "project-xhub-mvp",
+      "assigneeId": "user-dominhquan",
+      "dueDate": "2026-08-05",
+      "priority": "low",
+      "status": "overdue",
+      "channelId": "channel-executive",
+      "progress": 70,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-renew-xbuilding",
+      "tenantId": "tenant-xtech",
+      "title": "Gia hạn hợp đồng XBuilding - Celadon Riverside",
+      "projectId": "project-xhub-mvp",
+      "assigneeId": "user-thuylinh",
+      "dueDate": "2026-08-18",
+      "priority": "medium",
+      "status": "in_progress",
+      "channelId": "channel-sales",
+      "progress": 40,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-datahub-proposal",
+      "tenantId": "tenant-xtech",
+      "title": "Đề xuất đầu tư Data Hub",
+      "projectId": "project-datahub",
+      "assigneeId": "user-vantung",
+      "dueDate": "2026-08-20",
+      "priority": "high",
+      "status": "not_started",
+      "channelId": "channel-xhub-mvp",
+      "progress": 5,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-onboarding-docs",
+      "tenantId": "tenant-xtech",
+      "title": "Rà soát tài liệu onboarding khách hàng",
+      "projectId": "project-xhub-mvp",
+      "assigneeId": "user-quocbao",
+      "dueDate": "2026-08-14",
+      "priority": "medium",
+      "status": "in_progress",
+      "channelId": "channel-support",
+      "progress": 35,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-xbuilding-quote",
+      "tenantId": "tenant-xtech",
+      "title": "Hoàn thiện báo giá XBuilding",
+      "projectId": "project-xhub-mvp",
+      "assigneeId": "user-anhkhoa",
+      "dueDate": "2026-08-08",
+      "priority": "high",
+      "status": "in_progress",
+      "channelId": "channel-sales",
+      "progress": 55,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-review-brd-finance",
+      "tenantId": "tenant-xtech",
+      "title": "Review BRD tài chính",
+      "projectId": "project-finerp-minhphat",
+      "assigneeId": "user-nam",
+      "dueDate": "2026-08-09",
+      "priority": "medium",
+      "status": "waiting",
+      "channelId": "channel-finerp-mp",
+      "progress": 65,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-api-payment",
+      "tenantId": "tenant-xtech",
+      "title": "Tích hợp API thanh toán",
+      "projectId": "project-xhub-mvp",
+      "assigneeId": "user-thuha",
+      "dueDate": "2026-08-14",
+      "priority": "high",
+      "status": "in_progress",
+      "channelId": "channel-xhub-mvp",
+      "progress": 30,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-permission-config",
+      "tenantId": "tenant-xtech",
+      "title": "Cấu hình phân quyền",
+      "projectId": "project-finerp-minhphat",
+      "assigneeId": "user-anhkhoa",
+      "dueDate": "2026-08-05",
+      "priority": "medium",
+      "status": "completed",
+      "channelId": "channel-finerp-mp",
+      "progress": 100,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    },
+    {
+      "id": "task-demo-feedback",
+      "tenantId": "tenant-xtech",
+      "title": "Tổng hợp feedback buổi demo",
+      "projectId": "project-xhub-mvp",
+      "assigneeId": "user-thuha",
+      "dueDate": "2026-08-06",
+      "priority": "low",
+      "status": "completed",
+      "channelId": "channel-xhub-mvp",
+      "progress": 100,
+      "source": "seed",
+      "createdAt": "2026-08-01T09:00:00+07:00"
+    }
+  ],
+  "workItems": [
+    {
+      "id": "wi-payment-mp-02",
+      "tenantId": "tenant-xtech",
+      "type": "approval",
+      "title": "Duyệt đề nghị thanh toán hợp đồng tư vấn",
+      "sourceType": "approval",
+      "sourceId": "approval-payment-mp-02",
+      "assignedTo": "user-nam",
+      "createdBy": "user-minhanh",
+      "dueAt": "2026-08-08T17:00:00+07:00",
+      "priority": "high",
+      "status": "needs_action",
+      "summary": "Thanh toán đợt 2 hợp đồng tư vấn triển khai FinERP cho Minh Phát.",
+      "projectId": "project-finerp-minhphat",
+      "customerId": "customer-minhphat"
+    },
+    {
+      "id": "wi-proposal-mp",
+      "tenantId": "tenant-xtech",
+      "type": "task",
+      "title": "Cập nhật proposal Minh Phát",
+      "sourceType": "task",
+      "sourceId": "task-proposal-mp",
+      "assignedTo": "user-thuha",
+      "createdBy": "user-anhkhoa",
+      "dueAt": "2026-08-06T17:00:00+07:00",
+      "priority": "high",
+      "status": "in_progress",
+      "summary": "Bổ sung phạm vi tích hợp và chi phí duy trì."
+    },
+    {
+      "id": "wi-ticket-sp2098",
+      "tenantId": "tenant-xtech",
+      "type": "conversation",
+      "title": "Phản hồi ticket #SP-2098",
+      "sourceType": "ticket",
+      "sourceId": "ticket-sp2098",
+      "assignedTo": "user-minhanh",
+      "createdBy": "user-quocbao",
+      "dueAt": "2026-08-08T11:00:00+07:00",
+      "priority": "high",
+      "status": "overdue",
+      "summary": "Khách hàng phản ánh hiệu năng báo cáo tài chính."
+    },
+    {
+      "id": "wi-renew-celadon",
+      "tenantId": "tenant-xtech",
+      "type": "customer",
+      "title": "Gia hạn hợp đồng XBuilding - Celadon Riverside",
+      "sourceType": "contract",
+      "sourceId": "contract-celadon-xbuilding",
+      "assignedTo": "user-thuylinh",
+      "createdBy": "user-tuan",
+      "dueAt": "2026-08-18T17:00:00+07:00",
+      "priority": "medium",
+      "status": "needs_action"
+    },
+    {
+      "id": "wi-demo-xspace",
+      "tenantId": "tenant-xtech",
+      "type": "project",
+      "title": "Xác nhận lịch demo X.Space",
+      "sourceType": "calendar_event",
+      "sourceId": "event-xspace-demo",
+      "assignedTo": "user-thuha",
+      "createdBy": "user-minhquan",
+      "dueAt": "2026-08-08T10:00:00+07:00",
+      "priority": "high",
+      "status": "needs_action"
+    },
+    {
+      "id": "wi-weekly-report",
+      "tenantId": "tenant-xtech",
+      "type": "task",
+      "title": "Báo cáo tuần 31",
+      "sourceType": "task",
+      "sourceId": "task-report-week31",
+      "assignedTo": "user-dominhquan",
+      "createdBy": "user-nam",
+      "dueAt": "2026-08-05T17:00:00+07:00",
+      "priority": "high",
+      "status": "overdue"
+    }
+  ],
+  "directives": [
+    {
+      "id": "directive-week31",
+      "tenantId": "tenant-xtech",
+      "title": "Chỉ đạo tuần 31 của Ban điều hành",
+      "issuedBy": "user-tuan",
+      "ownerId": "user-anhkhoa",
+      "projectId": "project-finerp-minhphat",
+      "dueDate": "2026-08-15",
+      "status": "in_progress",
+      "progress": 68,
+      "objective": "Triển khai Golive FinERP cho Minh Phát đúng kế hoạch, đảm bảo vận hành ổn định và nghiệm thu thành công.",
+      "taskIds": [
+        "task-uat-accounting",
+        "task-master-data",
+        "task-key-user-training",
+        "task-cr12"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "decision-demo-mp",
+      "tenantId": "tenant-xtech",
+      "title": "Chốt lịch demo FinERP với Minh Phát",
+      "channelId": "channel-finerp-mp",
+      "projectId": "project-finerp-minhphat",
+      "decidedAt": "2026-08-03T10:02:00+07:00",
+      "decidedBy": "user-thuha",
+      "content": "Demo chính thức ngày 08/08/2026 lúc 10:00–11:30 tại Microsoft Teams; khách mời gồm anh Nam và chị Hà phía Minh Phát.",
+      "status": "active"
+    },
+    {
+      "id": "decision-proposal-structure",
+      "tenantId": "tenant-xtech",
+      "title": "Chốt cấu trúc proposal và lộ trình demo",
+      "channelId": "channel-finerp-mp",
+      "projectId": "project-finerp-minhphat",
+      "decidedAt": "2026-08-07T10:02:00+07:00",
+      "decidedBy": "user-thuha",
+      "content": "Thống nhất cấu trúc 3 giai đoạn và trình bày 02 phương án Cloud và On-prem.",
+      "status": "active"
+    },
+    {
+      "id": "decision-uat-plan",
+      "tenantId": "tenant-xtech",
+      "title": "Phê duyệt kế hoạch triển khai UAT đợt 1",
+      "channelId": "channel-executive",
+      "projectId": "project-finerp-minhphat",
+      "decidedAt": "2026-08-02T16:00:00+07:00",
+      "decidedBy": "user-tuan",
+      "content": "UAT đợt 1 bắt đầu ngày 05/09/2026, ưu tiên Tài chính, Mua hàng và Kho.",
+      "status": "active"
+    }
+  ],
+  "approvals": [
+    {
+      "id": "approval-payment-mp-02",
+      "tenantId": "tenant-xtech",
+      "code": "TN-2026-1197",
+      "type": "payment",
+      "title": "Đề nghị thanh toán hợp đồng tư vấn",
+      "requesterId": "user-thuha",
+      "departmentId": "dept-finance",
+      "amount": 120000000,
+      "currency": "VND",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-08-08T09:00:00+07:00",
+      "dueAt": "2026-08-08T17:00:00+07:00",
+      "contractId": "contract-mp-finerp",
+      "projectId": "project-finerp-minhphat",
+      "currentStep": 2,
+      "totalSteps": 3,
+      "summary": "Thanh toán đợt 2 cho hợp đồng tư vấn triển khai FinERP."
+    },
+    {
+      "id": "approval-server-purchase",
+      "tenantId": "tenant-xtech",
+      "code": "IT-2026-087",
+      "type": "purchase",
+      "title": "Mua sắm thiết bị server",
+      "requesterId": "user-anhkhoa",
+      "departmentId": "dept-tech",
+      "amount": 250000000,
+      "currency": "VND",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-08-08T08:30:00+07:00",
+      "dueAt": "2026-08-09T17:00:00+07:00",
+      "currentStep": 1,
+      "totalSteps": 3
+    },
+    {
+      "id": "approval-hiring-q3",
+      "tenantId": "tenant-xtech",
+      "code": "HR-2026-064",
+      "type": "hiring",
+      "title": "Kế hoạch tuyển dụng Q3/2026",
+      "requesterId": "user-nam",
+      "departmentId": "dept-hr",
+      "amount": null,
+      "currency": "VND",
+      "priority": "medium",
+      "status": "pending",
+      "createdAt": "2026-08-07T14:00:00+07:00",
+      "dueAt": "2026-08-10T17:00:00+07:00",
+      "currentStep": 1,
+      "totalSteps": 2
+    },
+    {
+      "id": "approval-travel",
+      "tenantId": "tenant-xtech",
+      "code": "TA-2026-045",
+      "type": "advance",
+      "title": "Tạm ứng công tác Hà Nội - Đà Nẵng",
+      "requesterId": "user-thihuong",
+      "departmentId": "dept-sales",
+      "amount": 15000000,
+      "currency": "VND",
+      "priority": "medium",
+      "status": "pending",
+      "createdAt": "2026-08-07T09:00:00+07:00",
+      "dueAt": "2026-08-08T15:00:00+07:00",
+      "currentStep": 1,
+      "totalSteps": 2
+    },
+    {
+      "id": "approval-xspace-quote",
+      "tenantId": "tenant-xtech",
+      "code": "BG-2026-033",
+      "type": "discount",
+      "title": "Duyệt báo giá gói X.Space",
+      "requesterId": "user-hoanglong",
+      "departmentId": "dept-sales",
+      "amount": 80000000,
+      "currency": "VND",
+      "priority": "high",
+      "status": "overdue",
+      "createdAt": "2026-08-06T10:00:00+07:00",
+      "dueAt": "2026-08-08T07:30:00+07:00",
+      "currentStep": 2,
+      "totalSteps": 3
+    },
+    {
+      "id": "approval-xbuilding-renewal",
+      "tenantId": "tenant-xtech",
+      "code": "PL-2026-028",
+      "type": "contract_addendum",
+      "title": "Phụ lục gia hạn XBuilding",
+      "requesterId": "user-minhquan",
+      "departmentId": "dept-sales",
+      "amount": null,
+      "currency": "VND",
+      "priority": "medium",
+      "status": "pending",
+      "createdAt": "2026-08-06T11:30:00+07:00",
+      "dueAt": "2026-08-09T17:00:00+07:00",
+      "currentStep": 1,
+      "totalSteps": 3
+    }
+  ],
+  "approvalSteps": [
+    {
+      "id": "apstep-mp-1",
+      "tenantId": "tenant-xtech",
+      "approvalId": "approval-payment-mp-02",
+      "step": 1,
+      "name": "Trưởng phòng",
+      "assigneeId": "user-minhanh",
+      "status": "approved",
+      "actedAt": "2026-08-08T09:12:00+07:00"
+    },
+    {
+      "id": "apstep-mp-2",
+      "tenantId": "tenant-xtech",
+      "approvalId": "approval-payment-mp-02",
+      "step": 2,
+      "name": "Giám đốc điều hành",
+      "assigneeId": "user-nam",
+      "status": "pending",
+      "actedAt": null
+    },
+    {
+      "id": "apstep-mp-3",
+      "tenantId": "tenant-xtech",
+      "approvalId": "approval-payment-mp-02",
+      "step": 3,
+      "name": "Tổng giám đốc",
+      "assigneeId": "user-tuan",
+      "status": "pending",
+      "actedAt": null
+    }
+  ],
+  "paymentItems": [
+    {
+      "id": "payitem-1",
+      "tenantId": "tenant-xtech",
+      "approvalId": "approval-payment-mp-02",
+      "name": "Khảo sát & Phân tích yêu cầu",
+      "completion": 100,
+      "value": 30000000
+    },
+    {
+      "id": "payitem-2",
+      "tenantId": "tenant-xtech",
+      "approvalId": "approval-payment-mp-02",
+      "name": "Thiết kế giải pháp & Tài liệu",
+      "completion": 100,
+      "value": 30000000
+    },
+    {
+      "id": "payitem-3",
+      "tenantId": "tenant-xtech",
+      "approvalId": "approval-payment-mp-02",
+      "name": "Cấu hình hệ thống",
+      "completion": 80,
+      "value": 40000000
+    },
+    {
+      "id": "payitem-4",
+      "tenantId": "tenant-xtech",
+      "approvalId": "approval-payment-mp-02",
+      "name": "Đào tạo & Chuyển giao",
+      "completion": 0,
+      "value": 20000000
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-proposal-mp",
+      "tenantId": "tenant-xtech",
+      "title": "Proposal FinERP Minh Phát v2",
+      "fileName": "Proposal-FinERP-MinhPhat-v2.pdf",
+      "type": "pdf",
+      "size": 3600000,
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "uploadedBy": "user-thuha",
+      "updatedAt": "2026-08-05T16:45:00+07:00",
+      "version": "1.0",
+      "status": "active",
+      "storageKey": "xtech/doc-proposal-mp/Proposal-FinERP-MinhPhat-v2.pdf"
+    },
+    {
+      "id": "doc-demo-outline",
+      "tenantId": "tenant-xtech",
+      "title": "Đề cương demo FinERP Minh Phát",
+      "fileName": "De-cuong-demo-FinERP-MinhPhat.pptx",
+      "type": "pptx",
+      "size": 3800000,
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "uploadedBy": "user-thuha",
+      "updatedAt": "2026-08-08T09:28:00+07:00",
+      "version": "1.0",
+      "status": "active",
+      "storageKey": "xtech/doc-demo-outline/De-cuong-demo-FinERP-MinhPhat.pptx"
+    },
+    {
+      "id": "doc-finerp-quote",
+      "tenantId": "tenant-xtech",
+      "title": "Báo giá FinERP Minh Phát v2",
+      "fileName": "Bao-gia-FinERP-MinhPhat-v2.xlsx",
+      "type": "xlsx",
+      "size": 245000,
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "uploadedBy": "user-anhkhoa",
+      "updatedAt": "2026-08-07T16:45:00+07:00",
+      "version": "1.0",
+      "status": "active",
+      "storageKey": "xtech/doc-finerp-quote/Bao-gia-FinERP-MinhPhat-v2.xlsx"
+    },
+    {
+      "id": "doc-requirements-mp",
+      "tenantId": "tenant-xtech",
+      "title": "Tài liệu yêu cầu Minh Phát",
+      "fileName": "Tai-lieu-yeu-cau-MinhPhat.pdf",
+      "type": "pdf",
+      "size": 1200000,
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "uploadedBy": "user-nam",
+      "updatedAt": "2026-08-04T14:22:00+07:00",
+      "version": "1.0",
+      "status": "active",
+      "storageKey": "xtech/doc-requirements-mp/Tai-lieu-yeu-cau-MinhPhat.pdf"
+    },
+    {
+      "id": "doc-contract-mp",
+      "tenantId": "tenant-xtech",
+      "title": "Hợp đồng tư vấn FinERP Minh Phát",
+      "fileName": "HDTV-2026-119.pdf",
+      "type": "pdf",
+      "size": 1600000,
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "uploadedBy": "user-thuha",
+      "updatedAt": "2026-08-05T10:00:00+07:00",
+      "version": "1.0",
+      "status": "active",
+      "storageKey": "xtech/doc-contract-mp/HDTV-2026-119.pdf"
+    },
+    {
+      "id": "doc-project-plan",
+      "tenantId": "tenant-xtech",
+      "title": "Kế hoạch dự án FinERP Minh Phát v1.2",
+      "fileName": "Ke-hoach-du-an-FinERP-MinhPhat-v1.2.pdf",
+      "type": "pdf",
+      "size": 2100000,
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "uploadedBy": "user-tuan",
+      "updatedAt": "2026-08-01T09:00:00+07:00",
+      "version": "1.0",
+      "status": "active",
+      "storageKey": "xtech/doc-project-plan/Ke-hoach-du-an-FinERP-MinhPhat-v1.2.pdf"
+    },
+    {
+      "id": "doc-wbs-mp",
+      "tenantId": "tenant-xtech",
+      "title": "WBS FinERP Minh Phát",
+      "fileName": "WBS-FinERP-MinhPhat.xlsx",
+      "type": "xlsx",
+      "size": 856000,
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "uploadedBy": "user-nam",
+      "updatedAt": "2026-07-29T09:00:00+07:00",
+      "version": "1.0",
+      "status": "active",
+      "storageKey": "xtech/doc-wbs-mp/WBS-FinERP-MinhPhat.xlsx"
+    },
+    {
+      "id": "doc-brd-finance",
+      "tenantId": "tenant-xtech",
+      "title": "BRD FinERP Minh Phát - Tài chính",
+      "fileName": "BRD-FinERP-MinhPhat-v2.1.docx",
+      "type": "docx",
+      "size": 1300000,
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "uploadedBy": "user-nam",
+      "updatedAt": "2026-08-08T09:18:00+07:00",
+      "version": "1.0",
+      "status": "active",
+      "storageKey": "xtech/doc-brd-finance/BRD-FinERP-MinhPhat-v2.1.docx"
+    },
+    {
+      "id": "doc-uat-accounting",
+      "tenantId": "tenant-xtech",
+      "title": "Kịch bản UAT phân hệ Kế toán",
+      "fileName": "Kich-ban-UAT-Ke-toan-v1.3.xlsx",
+      "type": "xlsx",
+      "size": 620000,
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "uploadedBy": "user-nam",
+      "updatedAt": "2026-08-07T10:00:00+07:00",
+      "version": "1.0",
+      "status": "active",
+      "storageKey": "xtech/doc-uat-accounting/Kich-ban-UAT-Ke-toan-v1.3.xlsx"
+    },
+    {
+      "id": "doc-traceability",
+      "tenantId": "tenant-xtech",
+      "title": "Ma trận traceability",
+      "fileName": "Ma-tran-traceability-v1.0.xlsx",
+      "type": "xlsx",
+      "size": 412000,
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "uploadedBy": "user-thuha",
+      "updatedAt": "2026-08-05T13:00:00+07:00",
+      "version": "1.0",
+      "status": "active",
+      "storageKey": "xtech/doc-traceability/Ma-tran-traceability-v1.0.xlsx"
+    },
+    {
+      "id": "doc-payment-request",
+      "tenantId": "tenant-xtech",
+      "title": "Đề nghị thanh toán đợt 2",
+      "fileName": "De-nghi-thanh-toan-dot-2.pdf",
+      "type": "pdf",
+      "size": 256000,
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "uploadedBy": "user-thuha",
+      "updatedAt": "2026-08-08T09:25:00+07:00",
+      "version": "1.0",
+      "status": "active",
+      "storageKey": "xtech/doc-payment-request/De-nghi-thanh-toan-dot-2.pdf"
+    },
+    {
+      "id": "doc-week31-minutes",
+      "tenantId": "tenant-xtech",
+      "title": "Biên bản họp tuần 31",
+      "fileName": "BB-hop-tuan-31-08082026.docx",
+      "type": "docx",
+      "size": 128000,
+      "customerId": null,
+      "projectId": "project-finerp-minhphat",
+      "uploadedBy": "user-thuha",
+      "updatedAt": "2026-08-08T10:30:00+07:00",
+      "version": "1.0",
+      "status": "active",
+      "storageKey": "xtech/doc-week31-minutes/BB-hop-tuan-31-08082026.docx"
+    }
+  ],
+  "channels": [
+    {
+      "id": "channel-executive",
+      "tenantId": "tenant-xtech",
+      "slug": "ban-dieu-hanh",
+      "name": "Ban điều hành",
+      "section": "my_channels",
+      "type": "public",
+      "purpose": "Chỉ đạo, quyết định và điều hành cấp công ty.",
+      "projectId": null,
+      "customerId": null
+    },
+    {
+      "id": "channel-sales",
+      "tenantId": "tenant-xtech",
+      "slug": "kinh-doanh",
+      "name": "Kinh doanh",
+      "section": "my_channels",
+      "type": "public",
+      "purpose": "Trao đổi pipeline, khách hàng và hợp đồng.",
+      "projectId": null,
+      "customerId": null
+    },
+    {
+      "id": "channel-product",
+      "tenantId": "tenant-xtech",
+      "slug": "san-pham",
+      "name": "Sản phẩm",
+      "section": "my_channels",
+      "type": "public",
+      "purpose": "Trao đổi roadmap và phản hồi sản phẩm.",
+      "projectId": null,
+      "customerId": null
+    },
+    {
+      "id": "channel-support",
+      "tenantId": "tenant-xtech",
+      "slug": "ho-tro-khach-hang",
+      "name": "Hỗ trợ khách hàng",
+      "section": "my_channels",
+      "type": "public",
+      "purpose": "Điều phối ticket và yêu cầu hỗ trợ.",
+      "projectId": null,
+      "customerId": null
+    },
+    {
+      "id": "channel-finerp-mp",
+      "tenantId": "tenant-xtech",
+      "slug": "trien-khai-finerp-minh-phat",
+      "name": "Triển khai FinERP Minh Phát",
+      "section": "projects",
+      "type": "private",
+      "purpose": "Trao đổi, cập nhật tiến độ và phối hợp triển khai FinERP cho Công ty Minh Phát.",
+      "projectId": "project-finerp-minhphat",
+      "customerId": "customer-minhphat"
+    },
+    {
+      "id": "channel-xhub-mvp",
+      "tenantId": "tenant-xtech",
+      "slug": "xhub-mvp",
+      "name": "XHub MVP",
+      "section": "projects",
+      "type": "private",
+      "purpose": "Thiết kế và phát triển XHub MVP.",
+      "projectId": "project-xhub-mvp",
+      "customerId": null
+    },
+    {
+      "id": "channel-xbooking-upgrade",
+      "tenantId": "tenant-xtech",
+      "slug": "nang-cap-xbooking",
+      "name": "Nâng cấp XBooking",
+      "section": "projects",
+      "type": "private",
+      "purpose": "Nâng cấp XBooking và triển khai UAT.",
+      "projectId": "project-xbooking-upgrade",
+      "customerId": null
+    },
+    {
+      "id": "channel-customer-mp",
+      "tenantId": "tenant-xtech",
+      "slug": "kh-minh-phat",
+      "name": "Khách hàng Minh Phát",
+      "section": "customers",
+      "type": "private",
+      "purpose": "Customer 360 và phối hợp chăm sóc Công ty Minh Phát.",
+      "projectId": "project-finerp-minhphat",
+      "customerId": "customer-minhphat"
+    },
+    {
+      "id": "channel-customer-hungtin",
+      "tenantId": "tenant-xtech",
+      "slug": "kh-hung-tin",
+      "name": "Khách hàng Hưng Tín",
+      "section": "customers",
+      "type": "private",
+      "purpose": "Theo dõi cơ hội và trao đổi với Hưng Tín.",
+      "projectId": null,
+      "customerId": "customer-hungtin"
+    },
+    {
+      "id": "channel-customer-celadon",
+      "tenantId": "tenant-xtech",
+      "slug": "kh-celadon",
+      "name": "Khách hàng Celadon",
+      "section": "customers",
+      "type": "private",
+      "purpose": "Theo dõi hợp đồng XBuilding Celadon.",
+      "projectId": null,
+      "customerId": "customer-celadon"
+    }
+  ],
+  "channelMembers": [
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-executive",
+      "userId": "user-nam",
+      "role": "admin",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-executive",
+      "userId": "user-thuha",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-executive",
+      "userId": "user-anhkhoa",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-executive",
+      "userId": "user-tuan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-executive",
+      "userId": "user-minhanh",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-executive",
+      "userId": "user-minhquan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-executive",
+      "userId": "user-minhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-executive",
+      "userId": "user-leminhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-executive",
+      "userId": "user-quocbao",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-sales",
+      "userId": "user-nam",
+      "role": "admin",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-sales",
+      "userId": "user-thuha",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-sales",
+      "userId": "user-anhkhoa",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-sales",
+      "userId": "user-tuan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-sales",
+      "userId": "user-minhanh",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-sales",
+      "userId": "user-minhquan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-sales",
+      "userId": "user-minhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-sales",
+      "userId": "user-leminhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-sales",
+      "userId": "user-quocbao",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-product",
+      "userId": "user-nam",
+      "role": "admin",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-product",
+      "userId": "user-thuha",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-product",
+      "userId": "user-anhkhoa",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-product",
+      "userId": "user-tuan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-product",
+      "userId": "user-minhanh",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-product",
+      "userId": "user-minhquan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-product",
+      "userId": "user-minhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-product",
+      "userId": "user-leminhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-product",
+      "userId": "user-quocbao",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-support",
+      "userId": "user-nam",
+      "role": "admin",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-support",
+      "userId": "user-thuha",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-support",
+      "userId": "user-anhkhoa",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-support",
+      "userId": "user-tuan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-support",
+      "userId": "user-minhanh",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-support",
+      "userId": "user-minhquan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-support",
+      "userId": "user-minhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-support",
+      "userId": "user-leminhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-support",
+      "userId": "user-quocbao",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "userId": "user-nam",
+      "role": "admin",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "userId": "user-thuha",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "userId": "user-anhkhoa",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "userId": "user-tuan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "userId": "user-minhanh",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "userId": "user-minhquan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "userId": "user-minhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "userId": "user-leminhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "userId": "user-quocbao",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xhub-mvp",
+      "userId": "user-nam",
+      "role": "admin",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xhub-mvp",
+      "userId": "user-thuha",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xhub-mvp",
+      "userId": "user-anhkhoa",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xhub-mvp",
+      "userId": "user-tuan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xhub-mvp",
+      "userId": "user-minhanh",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xhub-mvp",
+      "userId": "user-minhquan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xhub-mvp",
+      "userId": "user-minhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xhub-mvp",
+      "userId": "user-leminhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xhub-mvp",
+      "userId": "user-quocbao",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xbooking-upgrade",
+      "userId": "user-nam",
+      "role": "admin",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xbooking-upgrade",
+      "userId": "user-thuha",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xbooking-upgrade",
+      "userId": "user-anhkhoa",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xbooking-upgrade",
+      "userId": "user-tuan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xbooking-upgrade",
+      "userId": "user-minhanh",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xbooking-upgrade",
+      "userId": "user-minhquan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xbooking-upgrade",
+      "userId": "user-minhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xbooking-upgrade",
+      "userId": "user-leminhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xbooking-upgrade",
+      "userId": "user-quocbao",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-mp",
+      "userId": "user-nam",
+      "role": "admin",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-mp",
+      "userId": "user-thuha",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-mp",
+      "userId": "user-anhkhoa",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-mp",
+      "userId": "user-tuan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-mp",
+      "userId": "user-minhanh",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-mp",
+      "userId": "user-minhquan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-mp",
+      "userId": "user-minhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-mp",
+      "userId": "user-leminhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-mp",
+      "userId": "user-quocbao",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-hungtin",
+      "userId": "user-nam",
+      "role": "admin",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-hungtin",
+      "userId": "user-thuha",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-hungtin",
+      "userId": "user-anhkhoa",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-hungtin",
+      "userId": "user-tuan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-hungtin",
+      "userId": "user-minhanh",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-hungtin",
+      "userId": "user-minhquan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-hungtin",
+      "userId": "user-minhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-hungtin",
+      "userId": "user-leminhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-hungtin",
+      "userId": "user-quocbao",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-celadon",
+      "userId": "user-nam",
+      "role": "admin",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-celadon",
+      "userId": "user-thuha",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-celadon",
+      "userId": "user-anhkhoa",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-celadon",
+      "userId": "user-tuan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-celadon",
+      "userId": "user-minhanh",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-celadon",
+      "userId": "user-minhquan",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-celadon",
+      "userId": "user-minhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-celadon",
+      "userId": "user-leminhduc",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-celadon",
+      "userId": "user-quocbao",
+      "role": "member",
+      "joinedAt": "2026-07-01T08:00:00+07:00"
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-mp-001",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "user-thuha",
+      "sentAt": "2026-08-08T09:15:00+07:00",
+      "content": "Chào team, mình đã chốt lịch demo với anh Nam vào ngày 08/08 lúc 10:00. Mọi người xác nhận giúp mình để gửi lịch calendar nhé @channel.",
+      "type": "text",
+      "threadId": null
+    },
+    {
+      "id": "msg-mp-002",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "user-nam",
+      "sentAt": "2026-08-08T09:17:00+07:00",
+      "content": "Đã xác nhận. Mình sẽ sắp xếp tham dự đầy đủ.",
+      "type": "text",
+      "threadId": null
+    },
+    {
+      "id": "msg-mp-003",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "user-anhkhoa",
+      "sentAt": "2026-08-08T09:20:00+07:00",
+      "content": "@Trần Thu Hà team mình vui lòng cập nhật proposal theo các góp ý lần trước nhé. Đặc biệt bổ sung phần lộ trình triển khai và chi phí duy trì.",
+      "type": "text",
+      "threadId": "thread-proposal-mp"
+    },
+    {
+      "id": "msg-mp-004",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "system",
+      "sentAt": "2026-08-08T09:22:00+07:00",
+      "content": "Công việc Cập nhật proposal Minh Phát đã được liên kết.",
+      "type": "task_card",
+      "linkedEntity": {
+        "type": "task",
+        "id": "task-proposal-mp"
+      },
+      "threadId": null
+    },
+    {
+      "id": "msg-mp-005",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "system",
+      "sentAt": "2026-08-08T09:25:00+07:00",
+      "content": "Đề nghị thanh toán hợp đồng tư vấn 120.000.000 VND đang chờ phê duyệt.",
+      "type": "approval_card",
+      "linkedEntity": {
+        "type": "approval",
+        "id": "approval-payment-mp-02"
+      },
+      "threadId": null
+    },
+    {
+      "id": "msg-mp-006",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "user-thuha",
+      "sentAt": "2026-08-08T09:28:00+07:00",
+      "content": "Đã tải lên đề cương demo để mọi người tham khảo.",
+      "type": "file",
+      "documentIds": [
+        "doc-demo-outline"
+      ],
+      "threadId": "thread-proposal-mp"
+    },
+    {
+      "id": "msg-mp-007",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "xai",
+      "sentAt": "2026-08-08T09:30:00+07:00",
+      "content": "Mình đã tạo công việc “Cập nhật proposal Minh Phát” từ tin nhắn của Phạm Anh Khoa.",
+      "type": "ai",
+      "linkedEntity": {
+        "type": "task",
+        "id": "task-proposal-mp"
+      },
+      "threadId": null
+    },
+    {
+      "id": "msg-thread-001",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "user-anhkhoa",
+      "sentAt": "2026-08-07T09:20:00+07:00",
+      "content": "@Trần Thu Hà team mình đã cập nhật. File mới ở đây.",
+      "type": "file",
+      "documentIds": [
+        "doc-demo-outline"
+      ],
+      "threadId": "thread-proposal-mp"
+    },
+    {
+      "id": "msg-thread-002",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "user-nam",
+      "sentAt": "2026-08-07T09:28:00+07:00",
+      "content": "Mình đã cập nhật phần chi phí duy trì và SLA, đồng thời bổ sung phương án Cloud và On-prem.",
+      "type": "file",
+      "documentIds": [
+        "doc-finerp-quote"
+      ],
+      "threadId": "thread-proposal-mp"
+    },
+    {
+      "id": "msg-thread-003",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "user-leminhduc",
+      "sentAt": "2026-08-07T09:33:00+07:00",
+      "content": "Góp ý thêm: phần lộ trình triển khai nên chia theo 3 giai đoạn rõ hơn: khảo sát, triển khai và go-live.",
+      "type": "text",
+      "threadId": "thread-proposal-mp"
+    },
+    {
+      "id": "msg-thread-004",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "user-thuha",
+      "sentAt": "2026-08-07T09:36:00+07:00",
+      "content": "@Lê Minh Đức chuẩn, mình đã cập nhật trong slide 7–9.",
+      "type": "text",
+      "threadId": "thread-proposal-mp"
+    },
+    {
+      "id": "msg-thread-005",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "xai",
+      "sentAt": "2026-08-07T09:40:00+07:00",
+      "content": "Đã tóm tắt những thay đổi chính trong file đề cương demo.",
+      "type": "ai",
+      "threadId": "thread-proposal-mp"
+    },
+    {
+      "id": "msg-thread-006",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "user-anhkhoa",
+      "sentAt": "2026-08-07T09:42:00+07:00",
+      "content": "Đã liên kết công việc Rà soát & chốt proposal Minh Phát.",
+      "type": "task_card",
+      "linkedEntity": {
+        "type": "task",
+        "id": "task-review-brd-finance"
+      },
+      "threadId": "thread-proposal-mp"
+    },
+    {
+      "id": "msg-thread-007",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "user-nam",
+      "sentAt": "2026-08-07T09:50:00+07:00",
+      "content": "Đã rà soát xong. Chỉ còn phần outline demo, sẽ gửi trong chiều nay.",
+      "type": "text",
+      "threadId": "thread-proposal-mp"
+    },
+    {
+      "id": "msg-thread-008",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "senderId": "user-thuha",
+      "sentAt": "2026-08-07T10:02:00+07:00",
+      "content": "Cảm ơn team. Chiều nay 15:00 mình họp nhanh 15 phút để chốt cuối cùng.",
+      "type": "text",
+      "threadId": "thread-proposal-mp"
+    },
+    {
+      "id": "msg-customer-mp-001",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-mp",
+      "senderId": "user-thuha",
+      "sentAt": "2026-08-08T09:25:00+07:00",
+      "content": "Đề nghị thanh toán đợt 2 theo hợp đồng HDTV-2026-119 cho Công ty Minh Phát.",
+      "type": "file",
+      "documentIds": [
+        "doc-payment-request"
+      ],
+      "threadId": "thread-customer-payment"
+    }
+  ],
+  "threads": [
+    {
+      "id": "thread-proposal-mp",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "parentMessageId": "msg-mp-003",
+      "title": "Cập nhật proposal Minh Phát",
+      "createdBy": "user-thuha",
+      "createdAt": "2026-08-07T09:15:00+07:00",
+      "participantIds": [
+        "user-thuha",
+        "user-anhkhoa",
+        "user-nam",
+        "user-leminhduc"
+      ],
+      "followerIds": [
+        "user-thuha",
+        "user-anhkhoa",
+        "user-nam",
+        "user-tuan",
+        "user-minhanh",
+        "user-minhquan"
+      ],
+      "replyCount": 8,
+      "status": "active"
+    },
+    {
+      "id": "thread-customer-payment",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-customer-mp",
+      "parentMessageId": "msg-customer-mp-001",
+      "title": "Thanh toán đợt 2 Minh Phát",
+      "createdBy": "user-thuha",
+      "createdAt": "2026-08-08T09:25:00+07:00",
+      "participantIds": [
+        "user-thuha",
+        "user-minhanh"
+      ],
+      "followerIds": [
+        "user-thuha",
+        "user-minhanh",
+        "user-nam"
+      ],
+      "replyCount": 2,
+      "status": "active"
+    }
+  ],
+  "reactions": [
+    {
+      "id": "react-001",
+      "tenantId": "tenant-xtech",
+      "messageId": "msg-mp-001",
+      "userId": "user-nam",
+      "emoji": "👍"
+    },
+    {
+      "id": "react-002",
+      "tenantId": "tenant-xtech",
+      "messageId": "msg-mp-001",
+      "userId": "user-anhkhoa",
+      "emoji": "✅"
+    },
+    {
+      "id": "react-003",
+      "tenantId": "tenant-xtech",
+      "messageId": "msg-thread-001",
+      "userId": "user-thuha",
+      "emoji": "👍"
+    },
+    {
+      "id": "react-004",
+      "tenantId": "tenant-xtech",
+      "messageId": "msg-thread-008",
+      "userId": "user-nam",
+      "emoji": "❤️"
+    }
+  ],
+  "directMessages": [
+    {
+      "id": "dm-thuha-001",
+      "tenantId": "tenant-xtech",
+      "conversationId": "dm-user-nam-user-thuha",
+      "senderId": "user-nam",
+      "recipientId": "user-thuha",
+      "sentAt": "2026-08-08T09:10:00+07:00",
+      "content": "Chào Hà, mình vừa cập nhật bản proposal mới theo các góp ý phòng tài chính. Bạn giúp mình review và xác nhận nội dung trước chiều nay nhé.",
+      "type": "text"
+    },
+    {
+      "id": "dm-thuha-002",
+      "tenantId": "tenant-xtech",
+      "conversationId": "dm-user-nam-user-thuha",
+      "senderId": "user-thuha",
+      "recipientId": "user-nam",
+      "sentAt": "2026-08-08T09:14:00+07:00",
+      "content": "Chào Nam, mình vừa xem nhanh bản cập nhật, nội dung ổn rồi. Bạn cho mình xin timeline demo chi tiết để gửi khách xác nhận lịch nhé.",
+      "type": "text"
+    },
+    {
+      "id": "dm-thuha-003",
+      "tenantId": "tenant-xtech",
+      "conversationId": "dm-user-nam-user-thuha",
+      "senderId": "user-nam",
+      "recipientId": "user-thuha",
+      "sentAt": "2026-08-08T09:18:00+07:00",
+      "content": "Dự kiến demo ngày 08/08/2026 lúc 10:00–11:30, online qua Microsoft Teams. Bạn giúp mình xác nhận lại với anh Nam phía Minh Phát nhé.",
+      "type": "text"
+    },
+    {
+      "id": "dm-thuha-004",
+      "tenantId": "tenant-xtech",
+      "conversationId": "dm-user-nam-user-thuha",
+      "senderId": "user-thuha",
+      "recipientId": "user-nam",
+      "sentAt": "2026-08-08T09:22:00+07:00",
+      "content": "Mình đã liên hệ anh Nam, khách xác nhận tham dự đúng lịch và mời thêm chị Lan - Kế toán trưởng.",
+      "type": "text"
+    },
+    {
+      "id": "dm-thuha-005",
+      "tenantId": "tenant-xtech",
+      "conversationId": "dm-user-nam-user-thuha",
+      "senderId": "user-nam",
+      "recipientId": "user-thuha",
+      "sentAt": "2026-08-08T09:24:00+07:00",
+      "content": "Tuyệt vời. Mình đã cập nhật agenda demo và phạm vi giai đoạn 1, bạn xem file đính kèm nhé.",
+      "type": "file",
+      "documentIds": [
+        "doc-demo-outline"
+      ]
+    },
+    {
+      "id": "dm-thuha-006",
+      "tenantId": "tenant-xtech",
+      "conversationId": "dm-user-nam-user-thuha",
+      "senderId": "user-thuha",
+      "recipientId": "user-nam",
+      "sentAt": "2026-08-08T09:28:00+07:00",
+      "content": "Mình đã xem agenda, ổn rồi. Mình sẽ gửi cho khách. Bạn nhớ chuẩn bị demo environment và tài khoản demo nhé.",
+      "type": "text"
+    },
+    {
+      "id": "dm-thuha-007",
+      "tenantId": "tenant-xtech",
+      "conversationId": "dm-user-nam-user-thuha",
+      "senderId": "user-nam",
+      "recipientId": "user-thuha",
+      "sentAt": "2026-08-08T09:31:00+07:00",
+      "content": "Đã sẵn sàng môi trường demo và dữ liệu mẫu. Mình cũng đã tạo task theo dõi phê duyệt proposal.",
+      "type": "task_card",
+      "linkedEntity": {
+        "type": "task",
+        "id": "task-proposal-mp"
+      }
+    },
+    {
+      "id": "dm-thuha-008",
+      "tenantId": "tenant-xtech",
+      "conversationId": "dm-user-nam-user-thuha",
+      "senderId": "user-thuha",
+      "recipientId": "user-nam",
+      "sentAt": "2026-08-08T09:34:00+07:00",
+      "content": "OK Nam, mình sẽ cập nhật trạng thái khi khách phản hồi. Cảm ơn Nam nhé!",
+      "type": "text"
+    }
+  ],
+  "channelPages": [
+    {
+      "id": "page-finerp-mp",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "title": "Trang channel triển khai FinERP Minh Phát",
+      "updatedAt": "2026-08-08T09:30:00+07:00",
+      "blocks": [
+        {
+          "type": "goal",
+          "title": "Mục tiêu channel",
+          "content": "Triển khai giải pháp FinERP cho Công ty Minh Phát theo đúng tiến độ, đảm bảo chất lượng và chuyển giao thành công."
+        },
+        {
+          "type": "scope",
+          "title": "Phạm vi triển khai",
+          "items": [
+            "Tài chính - Kế toán",
+            "Mua hàng - Kho",
+            "Bán hàng - CRM",
+            "Báo cáo & BI",
+            "Tích hợp hóa đơn điện tử và ngân hàng"
+          ]
+        },
+        {
+          "type": "milestones",
+          "title": "Mốc quan trọng",
+          "milestoneIds": [
+            "ms-mp-kickoff",
+            "ms-mp-survey",
+            "ms-mp-design",
+            "ms-mp-uat",
+            "ms-mp-golive"
+          ]
+        },
+        {
+          "type": "checklist",
+          "title": "Checklist tuần này",
+          "taskIds": [
+            "task-uat-accounting",
+            "task-master-data",
+            "task-key-user-training",
+            "task-cr12"
+          ]
+        },
+        {
+          "type": "rules",
+          "title": "Quy tắc làm việc",
+          "items": [
+            "Cập nhật trạng thái hằng ngày",
+            "Mọi thảo luận liên quan dự án đăng tại channel",
+            "Quyết định phải được ghim và gắn người chịu trách nhiệm",
+            "Tài liệu lưu đúng thư mục và đặt tên theo quy ước"
+          ]
+        }
+      ]
+    }
+  ],
+  "collaborationLists": [
+    {
+      "id": "list-week32",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-xhub-mvp",
+      "title": "Việc tuần 32",
+      "description": "Danh sách cộng tác theo dõi công việc ưu tiên của tuần 32.",
+      "views": [
+        "list",
+        "kanban",
+        "calendar"
+      ],
+      "updatedAt": "2026-08-08T09:28:00+07:00",
+      "itemIds": [
+        "task-demo-mp",
+        "task-xbuilding-quote",
+        "task-review-brd-finance",
+        "task-uat-checklist",
+        "task-key-user-training",
+        "task-permission-config",
+        "task-api-payment",
+        "task-demo-feedback"
+      ]
+    }
+  ],
+  "huddles": [
+    {
+      "id": "huddle-demo-mp",
+      "tenantId": "tenant-xtech",
+      "channelId": "channel-finerp-mp",
+      "title": "Họp nhanh: Demo & proposal Minh Phát",
+      "status": "live",
+      "startedAt": "2026-08-08T09:23:00+07:00",
+      "participantIds": [
+        "user-nam",
+        "user-thuha",
+        "user-anhkhoa",
+        "user-minhanh"
+      ],
+      "files": [
+        "doc-demo-outline",
+        "doc-finerp-quote"
+      ],
+      "notes": [
+        "Chốt lịch demo với Minh Phát vào 08/08 lúc 10:00.",
+        "Proposal đã bổ sung phạm vi tích hợp và lộ trình triển khai.",
+        "Cần xác nhận dữ liệu khách hàng để chuẩn bị môi trường demo."
+      ],
+      "decisionIds": [
+        "decision-demo-mp",
+        "decision-proposal-structure"
+      ],
+      "actionTaskIds": [
+        "task-proposal-mp",
+        "task-master-data"
+      ]
+    }
+  ],
+  "workflowDefinitions": [
+    {
+      "id": "workflow-customer-demo",
+      "tenantId": "tenant-xtech",
+      "name": "Yêu cầu chuẩn bị demo khách hàng",
+      "version": "1.2",
+      "description": "Quy trình chuẩn để yêu cầu và chuẩn bị demo sản phẩm cho khách hàng.",
+      "steps": [
+        {
+          "key": "init",
+          "name": "Khởi tạo yêu cầu"
+        },
+        {
+          "key": "assign",
+          "name": "Phân công phụ trách"
+        },
+        {
+          "key": "prepare",
+          "name": "Chuẩn bị tài liệu"
+        },
+        {
+          "key": "confirm",
+          "name": "Xác nhận lịch"
+        },
+        {
+          "key": "approve",
+          "name": "Duyệt nội bộ"
+        },
+        {
+          "key": "complete",
+          "name": "Hoàn tất"
+        }
+      ]
+    },
+    {
+      "id": "workflow-project-onboarding",
+      "tenantId": "tenant-xtech",
+      "name": "Onboarding dự án mới",
+      "version": "2.0",
+      "description": "Khởi tạo dự án, phân công và mở channel cộng tác.",
+      "steps": [
+        {
+          "key": "request",
+          "name": "Tiếp nhận"
+        },
+        {
+          "key": "scope",
+          "name": "Xác định phạm vi"
+        },
+        {
+          "key": "team",
+          "name": "Lập đội dự án"
+        },
+        {
+          "key": "channel",
+          "name": "Tạo channel"
+        },
+        {
+          "key": "plan",
+          "name": "Lập kế hoạch"
+        },
+        {
+          "key": "kickoff",
+          "name": "Kick-off"
+        },
+        {
+          "key": "complete",
+          "name": "Hoàn tất"
+        }
+      ]
+    },
+    {
+      "id": "workflow-feature-request",
+      "tenantId": "tenant-xtech",
+      "name": "Yêu cầu triển khai tính năng mới",
+      "version": "1.3",
+      "description": "Tiếp nhận và xử lý yêu cầu tính năng.",
+      "steps": [
+        {
+          "key": "request",
+          "name": "Tiếp nhận"
+        },
+        {
+          "key": "analyse",
+          "name": "Phân tích"
+        },
+        {
+          "key": "estimate",
+          "name": "Ước lượng"
+        },
+        {
+          "key": "approve",
+          "name": "Duyệt"
+        },
+        {
+          "key": "implement",
+          "name": "Triển khai"
+        },
+        {
+          "key": "complete",
+          "name": "Hoàn tất"
+        }
+      ]
+    }
+  ],
+  "workflowInstances": [
+    {
+      "id": "wf-demo-0087",
+      "tenantId": "tenant-xtech",
+      "workflowId": "workflow-customer-demo",
+      "code": "REQ-2026-0087",
+      "customerId": "customer-anphat",
+      "title": "Demo FinERP cho Ban Giám đốc",
+      "currentStep": "prepare",
+      "status": "in_progress",
+      "ownerId": "user-anhkhoa",
+      "slaHours": 72,
+      "dueAt": "2026-08-10T17:00:00+07:00",
+      "formData": {
+        "goal": "Giới thiệu giải pháp FinERP và quy trình triển khai",
+        "demoAt": "2026-08-12T10:00:00+07:00",
+        "format": "Online - Google Meet",
+        "scope": [
+          "Tài chính",
+          "Kho",
+          "Mua hàng",
+          "Báo cáo quản trị"
+        ],
+        "supporterIds": [
+          "user-thuha",
+          "user-nam"
+        ],
+        "documentIds": [
+          "doc-proposal-mp",
+          "doc-demo-outline"
+        ]
+      }
+    },
+    {
+      "id": "wf-demo-0086",
+      "tenantId": "tenant-xtech",
+      "workflowId": "workflow-customer-demo",
+      "code": "REQ-2026-0086",
+      "customerId": "customer-hungtin",
+      "title": "Demo phân hệ Kế toán - Kho",
+      "currentStep": "assign",
+      "status": "in_progress",
+      "ownerId": "user-nam",
+      "slaHours": 72,
+      "dueAt": "2026-08-11T17:00:00+07:00",
+      "formData": {}
+    },
+    {
+      "id": "wf-demo-0085",
+      "tenantId": "tenant-xtech",
+      "workflowId": "workflow-customer-demo",
+      "code": "REQ-2026-0085",
+      "customerId": "customer-celadon",
+      "title": "Demo tổng thể FinERP",
+      "currentStep": "confirm",
+      "status": "overdue",
+      "ownerId": "user-thuha",
+      "slaHours": 72,
+      "dueAt": "2026-08-07T17:00:00+07:00",
+      "formData": {}
+    },
+    {
+      "id": "wf-demo-0084",
+      "tenantId": "tenant-xtech",
+      "workflowId": "workflow-customer-demo",
+      "code": "REQ-2026-0084",
+      "customerId": "customer-tanbinh",
+      "title": "Demo phân hệ CRM",
+      "currentStep": "approve",
+      "status": "in_progress",
+      "ownerId": "user-anhkhoa",
+      "slaHours": 72,
+      "dueAt": "2026-08-12T17:00:00+07:00",
+      "formData": {}
+    }
+  ],
+  "calendarEvents": [
+    {
+      "id": "event-daily-standup",
+      "tenantId": "tenant-xtech",
+      "title": "Daily Standup X-TECH",
+      "start": "2026-08-08T09:00:00+07:00",
+      "end": "2026-08-08T09:30:00+07:00",
+      "type": "internal",
+      "channelId": "channel-xhub-mvp",
+      "participantIds": [
+        "user-nam",
+        "user-thuha",
+        "user-anhkhoa",
+        "user-minhanh"
+      ]
+    },
+    {
+      "id": "event-demo-mp",
+      "tenantId": "tenant-xtech",
+      "title": "Demo FinERP - Minh Phát",
+      "start": "2026-08-08T10:00:00+07:00",
+      "end": "2026-08-08T11:30:00+07:00",
+      "type": "customer",
+      "channelId": "channel-finerp-mp",
+      "customerId": "customer-minhphat",
+      "participantIds": [
+        "user-nam",
+        "user-thuha",
+        "user-anhkhoa"
+      ]
+    },
+    {
+      "id": "event-plan-review",
+      "tenantId": "tenant-xtech",
+      "title": "Rà soát kế hoạch triển khai",
+      "start": "2026-08-08T15:00:00+07:00",
+      "end": "2026-08-08T15:30:00+07:00",
+      "type": "project",
+      "channelId": "channel-finerp-mp",
+      "participantIds": [
+        "user-tuan",
+        "user-anhkhoa",
+        "user-thuha"
+      ]
+    }
+  ],
+  "tickets": [
+    {
+      "id": "ticket-sp2098",
+      "tenantId": "tenant-xtech",
+      "code": "SP-2098",
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "title": "Hiệu năng báo cáo tài chính chậm",
+      "priority": "high",
+      "status": "open",
+      "assigneeId": "user-minhanh",
+      "createdAt": "2026-08-07T14:00:00+07:00",
+      "slaDueAt": "2026-08-08T11:00:00+07:00"
+    },
+    {
+      "id": "ticket-mp-data",
+      "tenantId": "tenant-xtech",
+      "code": "SP-2101",
+      "customerId": "customer-minhphat",
+      "projectId": "project-finerp-minhphat",
+      "title": "Sai lệch danh mục nhà cung cấp",
+      "priority": "medium",
+      "status": "open",
+      "assigneeId": "user-vantung",
+      "createdAt": "2026-08-08T08:00:00+07:00",
+      "slaDueAt": "2026-08-09T17:00:00+07:00"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif-001",
+      "tenantId": "tenant-xtech",
+      "userId": "user-nam",
+      "type": "mention",
+      "title": "Trần Thu Hà đã nhắc đến bạn",
+      "body": "Trong #trien-khai-finerp-minh-phat",
+      "createdAt": "2026-08-08T09:15:00+07:00",
+      "read": false
+    },
+    {
+      "id": "notif-002",
+      "tenantId": "tenant-xtech",
+      "userId": "user-nam",
+      "type": "approval",
+      "title": "Có hồ sơ cần phê duyệt",
+      "body": "Đề nghị thanh toán 120.000.000 VND",
+      "createdAt": "2026-08-08T09:25:00+07:00",
+      "read": false
+    },
+    {
+      "id": "notif-003",
+      "tenantId": "tenant-xtech",
+      "userId": "user-thuha",
+      "type": "task",
+      "title": "Phạm Anh Khoa giao việc cho bạn",
+      "body": "Cập nhật proposal Minh Phát",
+      "createdAt": "2026-08-08T09:20:00+07:00",
+      "read": false
+    }
+  ],
+  "kpiSnapshots": [
+    {
+      "id": "kpi-exec-202608",
+      "tenantId": "tenant-xtech",
+      "scope": "company",
+      "scopeId": "org-xtech",
+      "period": "2026-08",
+      "metrics": {
+        "monthlyRevenue": 18600000000,
+        "receivables": 6200000000,
+        "pendingApprovals": 23,
+        "activeProjects": 12,
+        "overdueTasks": 12,
+        "contractsExpiring": 3
+      }
+    },
+    {
+      "id": "kpi-sales-202608",
+      "tenantId": "tenant-xtech",
+      "scope": "department",
+      "scopeId": "dept-sales",
+      "period": "2026-08",
+      "metrics": {
+        "salesRevenue": 6800000000,
+        "openOpportunities": 42,
+        "winRate": 0.28,
+        "contractsAwaitingSignature": 7,
+        "pipeline": 6800000000
+      }
+    },
+    {
+      "id": "kpi-user-nam-week32",
+      "tenantId": "tenant-xtech",
+      "scope": "user",
+      "scopeId": "user-nam",
+      "period": "2026-W32",
+      "metrics": {
+        "tasksToday": 7,
+        "overdueTasks": 2,
+        "approvalsToRespond": 1,
+        "meetingsToday": 4
+      }
+    }
+  ],
+  "revenueSeries": [
+    {
+      "tenantId": "tenant-xtech",
+      "month": "2026-03",
+      "value": 11200000000
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "month": "2026-04",
+      "value": 13400000000
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "month": "2026-05",
+      "value": 15800000000
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "month": "2026-06",
+      "value": 17600000000
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "month": "2026-07",
+      "value": 16500000000
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "month": "2026-08",
+      "value": 18600000000
+    }
+  ],
+  "revenueByProduct": [
+    {
+      "tenantId": "tenant-xtech",
+      "period": "2026-08",
+      "productId": "product-xbooking",
+      "value": 7500000000
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "period": "2026-08",
+      "productId": "product-xbuilding",
+      "value": 5100000000
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "period": "2026-08",
+      "productId": "product-finerp",
+      "value": 3200000000
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "period": "2026-08",
+      "productId": "product-xai",
+      "value": 1600000000
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "period": "2026-08",
+      "productId": "product-xspace",
+      "value": 1200000000
+    }
+  ],
+  "appCatalog": [
+    {
+      "id": "app-xbooking",
+      "tenantId": "tenant-xtech",
+      "productId": "product-xbooking",
+      "name": "XBooking",
+      "description": "Quản lý đặt phòng, lịch hẹn và tài nguyên doanh nghiệp.",
+      "status": "active",
+      "users": 128,
+      "instances": 1,
+      "launchMode": "embedded"
+    },
+    {
+      "id": "app-xbuilding",
+      "tenantId": "tenant-xtech",
+      "productId": "product-xbuilding",
+      "name": "XBuilding",
+      "description": "Quản lý bất động sản, hợp đồng và khách hàng.",
+      "status": "active",
+      "users": 96,
+      "instances": 12,
+      "launchMode": "sso"
+    },
+    {
+      "id": "app-finerp",
+      "tenantId": "tenant-xtech",
+      "productId": "product-finerp",
+      "name": "FinERP",
+      "description": "Quản trị tài chính, kế toán và vận hành doanh nghiệp.",
+      "status": "active",
+      "users": 82,
+      "instances": 8,
+      "launchMode": "embedded"
+    },
+    {
+      "id": "app-xai",
+      "tenantId": "tenant-xtech",
+      "productId": "product-xai",
+      "name": "X.AI",
+      "description": "Trợ lý AI cho phân tích dữ liệu và gợi ý thông minh.",
+      "status": "active",
+      "users": 156,
+      "instances": 1,
+      "launchMode": "native"
+    },
+    {
+      "id": "app-xspace",
+      "tenantId": "tenant-xtech",
+      "productId": "product-xspace",
+      "name": "X.Space",
+      "description": "Không gian cộng tác, trao đổi và quản lý tri thức.",
+      "status": "active",
+      "users": 128,
+      "instances": 1,
+      "launchMode": "native"
+    },
+    {
+      "id": "app-erpnext-connector",
+      "tenantId": "tenant-xtech",
+      "name": "ERPNext Connector",
+      "description": "Kết nối và đồng bộ dữ liệu với ERPNext.",
+      "status": "connected",
+      "users": 0,
+      "instances": 1,
+      "launchMode": "config"
+    },
+    {
+      "id": "app-mattermost-connector",
+      "tenantId": "tenant-xtech",
+      "name": "Mattermost Connector",
+      "description": "Kết nối channel, message và realtime với Mattermost.",
+      "status": "connected",
+      "users": 0,
+      "instances": 1,
+      "launchMode": "config"
+    },
+    {
+      "id": "app-digital-signature",
+      "tenantId": "tenant-xtech",
+      "name": "Ký số",
+      "description": "Ký số tài liệu và quản lý chứng thư số.",
+      "status": "active",
+      "users": 42,
+      "instances": 1,
+      "monthlyUsage": 356,
+      "launchMode": "embedded"
+    },
+    {
+      "id": "app-einvoice",
+      "tenantId": "tenant-xtech",
+      "name": "Hóa đơn điện tử",
+      "description": "Phát hành và quản lý hóa đơn điện tử.",
+      "status": "active",
+      "users": 38,
+      "instances": 1,
+      "monthlyUsage": 1248,
+      "launchMode": "embedded"
+    },
+    {
+      "id": "app-bi",
+      "tenantId": "tenant-xtech",
+      "name": "BI Dashboard",
+      "description": "Phân tích dữ liệu và báo cáo trực quan.",
+      "status": "recommended",
+      "users": 25,
+      "instances": 1,
+      "launchMode": "native"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "connector-erpnext",
+      "tenantId": "tenant-xtech",
+      "name": "ERPNext Connector",
+      "status": "healthy",
+      "lastSyncAt": "2026-08-08T09:20:00+07:00",
+      "latencyMs": 180,
+      "errorRate": 0.001
+    },
+    {
+      "id": "connector-mattermost",
+      "tenantId": "tenant-xtech",
+      "name": "Mattermost Connector",
+      "status": "healthy",
+      "lastSyncAt": "2026-08-08T09:29:00+07:00",
+      "latencyMs": 95,
+      "errorRate": 0.0005
+    },
+    {
+      "id": "connector-webhook",
+      "tenantId": "tenant-xtech",
+      "name": "Webhook Gateway",
+      "status": "warning",
+      "lastSyncAt": "2026-08-08T09:10:00+07:00",
+      "latencyMs": 460,
+      "errorRate": 0.035
+    },
+    {
+      "id": "connector-email",
+      "tenantId": "tenant-xtech",
+      "name": "Email Service",
+      "status": "healthy",
+      "lastSyncAt": "2026-08-08T09:25:00+07:00",
+      "latencyMs": 220,
+      "errorRate": 0.002
+    }
+  ],
+  "projectRisks": [
+    {
+      "id": "risk-mp-inventory-data",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "title": "Dữ liệu tồn kho lịch sử chưa đồng nhất",
+      "severity": "high",
+      "status": "open",
+      "ownerId": "user-vantung",
+      "dueDate": "2026-08-10",
+      "impact": "Ảnh hưởng kế hoạch migrate và UAT."
+    },
+    {
+      "id": "risk-mp-cr12",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "title": "Phụ thuộc xử lý CR-12 từ khách hàng chậm phản hồi",
+      "severity": "high",
+      "status": "open",
+      "ownerId": "user-anhkhoa",
+      "dueDate": "2026-08-13",
+      "impact": "Có thể làm chậm kế hoạch cut-over."
+    },
+    {
+      "id": "risk-mp-test-data",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "title": "Tiến độ UAT bị ảnh hưởng bởi dữ liệu test",
+      "severity": "medium",
+      "status": "monitoring",
+      "ownerId": "user-minhduc",
+      "dueDate": "2026-08-12",
+      "impact": "Giảm phạm vi test đợt 1."
+    },
+    {
+      "id": "risk-mp-wms",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "title": "Tích hợp WMS bên thứ ba chưa ổn định",
+      "severity": "medium",
+      "status": "monitoring",
+      "ownerId": "user-nam",
+      "dueDate": "2026-08-15",
+      "impact": "Ảnh hưởng đồng bộ tồn kho."
+    },
+    {
+      "id": "risk-mp-keyuser",
+      "tenantId": "tenant-xtech",
+      "projectId": "project-finerp-minhphat",
+      "title": "Nguồn lực key user cuối tuần chưa đảm bảo",
+      "severity": "medium",
+      "status": "open",
+      "ownerId": "user-thihuong",
+      "dueDate": "2026-08-09",
+      "impact": "Ảnh hưởng đào tạo và UAT."
+    }
+  ],
+  "activityEvents": [
+    {
+      "id": "act-001",
+      "tenantId": "tenant-xtech",
+      "actorId": "user-anhkhoa",
+      "type": "task.created",
+      "entityType": "task",
+      "entityId": "task-uat-accounting",
+      "channelId": "channel-finerp-mp",
+      "summary": "Phạm Anh Khoa đã tạo công việc Kiểm thử tích hợp HĐĐT",
+      "occurredAt": "2026-08-08T10:21:00+07:00"
+    },
+    {
+      "id": "act-002",
+      "tenantId": "tenant-xtech",
+      "actorId": "user-nam",
+      "type": "task.updated",
+      "entityType": "task",
+      "entityId": "task-permission-config",
+      "channelId": "channel-finerp-mp",
+      "summary": "Nguyễn Hoài Nam cập nhật trạng thái công việc Cấu hình phân quyền",
+      "occurredAt": "2026-08-08T09:47:00+07:00"
+    },
+    {
+      "id": "act-003",
+      "tenantId": "tenant-xtech",
+      "actorId": "user-thuha",
+      "type": "document.updated",
+      "entityType": "document",
+      "entityId": "doc-brd-finance",
+      "channelId": "channel-finerp-mp",
+      "summary": "Trần Thu Hà đã cập nhật BRD FinERP Minh Phát v2.1",
+      "occurredAt": "2026-08-08T09:18:00+07:00"
+    },
+    {
+      "id": "act-004",
+      "tenantId": "tenant-xtech",
+      "actorId": "user-dominhquan",
+      "type": "comment.created",
+      "entityType": "channel",
+      "entityId": "channel-finerp-mp",
+      "channelId": "channel-finerp-mp",
+      "summary": "Đỗ Minh Quân đã bình luận trong channel dự án",
+      "occurredAt": "2026-08-07T16:42:00+07:00"
+    },
+    {
+      "id": "act-005",
+      "tenantId": "tenant-xtech",
+      "actorId": "xai",
+      "type": "ai.recommendation",
+      "entityType": "project",
+      "entityId": "project-finerp-minhphat",
+      "channelId": "channel-finerp-mp",
+      "summary": "X.AI đã gợi ý 2 công việc cần ưu tiên",
+      "occurredAt": "2026-08-07T15:30:00+07:00"
+    },
+    {
+      "id": "act-006",
+      "tenantId": "tenant-xtech",
+      "actorId": "user-thuha",
+      "type": "decision.pinned",
+      "entityType": "decision",
+      "entityId": "decision-demo-mp",
+      "channelId": "channel-finerp-mp",
+      "summary": "Trần Thu Hà đã ghim quyết định lịch demo",
+      "occurredAt": "2026-08-03T10:05:00+07:00"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "audit-001",
+      "tenantId": "tenant-xtech",
+      "actorId": "user-minhanh",
+      "action": "approval.step.approved",
+      "entityType": "approval",
+      "entityId": "approval-payment-mp-02",
+      "at": "2026-08-08T09:12:00+07:00",
+      "ip": "10.0.1.24",
+      "metadata": {
+        "step": 1
+      }
+    },
+    {
+      "id": "audit-002",
+      "tenantId": "tenant-xtech",
+      "actorId": "user-thuha",
+      "action": "document.uploaded",
+      "entityType": "document",
+      "entityId": "doc-demo-outline",
+      "at": "2026-08-08T09:28:00+07:00",
+      "ip": "10.0.2.18",
+      "metadata": {
+        "channelId": "channel-finerp-mp"
+      }
+    },
+    {
+      "id": "audit-003",
+      "tenantId": "tenant-xtech",
+      "actorId": "xai",
+      "action": "task.created_from_message",
+      "entityType": "task",
+      "entityId": "task-proposal-mp",
+      "at": "2026-08-08T09:30:00+07:00",
+      "ip": "service:xai",
+      "metadata": {
+        "sourceMessageId": "msg-mp-003",
+        "requiresHumanConfirmation": true
+      }
+    },
+    {
+      "id": "audit-004",
+      "tenantId": "tenant-xtech",
+      "actorId": "user-thuha",
+      "action": "decision.pinned",
+      "entityType": "decision",
+      "entityId": "decision-demo-mp",
+      "at": "2026-08-03T10:05:00+07:00",
+      "ip": "10.0.2.18",
+      "metadata": {}
+    }
+  ],
+  "approvalComments": [
+    {
+      "id": "apcomment-001",
+      "tenantId": "tenant-xtech",
+      "approvalId": "approval-payment-mp-02",
+      "authorId": "user-thuha",
+      "createdAt": "2026-08-08T09:20:00+07:00",
+      "content": "Kính gửi anh Nam, đề nghị xem xét và phê duyệt thanh toán đợt 2 theo hồ sơ đính kèm."
+    },
+    {
+      "id": "apcomment-002",
+      "tenantId": "tenant-xtech",
+      "approvalId": "approval-payment-mp-02",
+      "authorId": "user-nam",
+      "createdAt": "2026-08-08T11:50:00+07:00",
+      "content": "Đề nghị bổ sung xác nhận nghiệm thu hạng mục Cấu hình hệ thống."
+    },
+    {
+      "id": "apcomment-003",
+      "tenantId": "tenant-xtech",
+      "approvalId": "approval-payment-mp-02",
+      "authorId": "user-minhanh",
+      "createdAt": "2026-08-08T12:05:00+07:00",
+      "content": "Đã cập nhật biên bản nghiệm thu hạng mục Cấu hình hệ thống."
+    }
+  ],
+  "aiInsights": [
+    {
+      "id": "ai-exec-recap",
+      "tenantId": "tenant-xtech",
+      "scopeType": "dashboard",
+      "scopeId": "XH-01",
+      "generatedAt": "2026-08-08T09:30:00+07:00",
+      "title": "Tóm tắt nhanh từ X.AI",
+      "bullets": [
+        "Doanh thu tháng 8 tăng 12,4% so với tháng trước, chủ yếu từ XBooking.",
+        "Công nợ cần thu tăng 8,7%, tập trung ở nhóm khách hàng dự án.",
+        "5 dự án có nguy cơ chậm tiến độ, cần ưu tiên nguồn lực.",
+        "12 công việc quá hạn, trong đó 3 việc quá hạn trên 7 ngày."
+      ],
+      "sourceIds": [
+        "kpi-exec-202608",
+        "project-finerp-minhphat"
+      ]
+    },
+    {
+      "id": "ai-sales-recap",
+      "tenantId": "tenant-xtech",
+      "scopeType": "dashboard",
+      "scopeId": "XH-02",
+      "generatedAt": "2026-08-08T09:30:00+07:00",
+      "title": "Tóm tắt kinh doanh",
+      "bullets": [
+        "Doanh số tháng đạt 6,8 tỷ.",
+        "Tỷ lệ chốt đạt 28%.",
+        "Có 7 hợp đồng đang chờ ký.",
+        "Ưu tiên đẩy nhanh cơ hội Minh Phát và Celadon."
+      ],
+      "sourceIds": [
+        "kpi-sales-202608",
+        "opp-minhphat-finerp"
+      ]
+    },
+    {
+      "id": "ai-channel-recap",
+      "tenantId": "tenant-xtech",
+      "scopeType": "channel",
+      "scopeId": "channel-finerp-mp",
+      "generatedAt": "2026-08-08T09:30:00+07:00",
+      "title": "Tóm tắt channel",
+      "bullets": [
+        "Đã chốt lịch demo lúc 10:00 ngày 08/08.",
+        "Proposal đang được cập nhật theo feedback.",
+        "Đề nghị thanh toán 120.000.000 VND đang chờ duyệt.",
+        "Đã chia sẻ đề cương demo và báo giá v2."
+      ],
+      "sourceIds": [
+        "msg-mp-001",
+        "task-proposal-mp",
+        "approval-payment-mp-02",
+        "doc-demo-outline"
+      ]
+    },
+    {
+      "id": "ai-thread-recap",
+      "tenantId": "tenant-xtech",
+      "scopeType": "thread",
+      "scopeId": "thread-proposal-mp",
+      "generatedAt": "2026-08-07T10:05:00+07:00",
+      "title": "Tóm tắt thread",
+      "bullets": [
+        "Proposal đã bổ sung lộ trình 3 giai đoạn.",
+        "Có 2 phương án triển khai Cloud và On-prem.",
+        "Nguyễn Hoài Nam phụ trách rà soát cuối.",
+        "Họp chốt lúc 15:00."
+      ],
+      "sourceIds": [
+        "thread-proposal-mp",
+        "decision-proposal-structure"
+      ]
+    },
+    {
+      "id": "ai-project-recap",
+      "tenantId": "tenant-xtech",
+      "scopeType": "project",
+      "scopeId": "project-finerp-minhphat",
+      "generatedAt": "2026-08-08T09:30:00+07:00",
+      "title": "Tóm tắt dự án",
+      "bullets": [
+        "Tiến độ tổng 68%, đang đúng kế hoạch.",
+        "UAT là giai đoạn tiếp theo, cần tập trung dữ liệu test.",
+        "Có 3 rủi ro cao cần xử lý trong tuần.",
+        "Ưu tiên CR-12 và kế hoạch UAT."
+      ],
+      "sourceIds": [
+        "project-finerp-minhphat",
+        "risk-mp-cr12",
+        "risk-mp-test-data"
+      ]
+    },
+    {
+      "id": "ai-customer-recap",
+      "tenantId": "tenant-xtech",
+      "scopeType": "customer",
+      "scopeId": "customer-minhphat",
+      "generatedAt": "2026-08-08T09:30:00+07:00",
+      "title": "Tóm tắt khách hàng",
+      "bullets": [
+        "Khách hàng ưu tiên nhóm A, ngành sản xuất.",
+        "Đã ký hợp đồng và đang triển khai.",
+        "Mức hài lòng 4,3/5.",
+        "Có thể giới thiệu thêm X.Space."
+      ],
+      "sourceIds": [
+        "customer-minhphat",
+        "contract-mp-finerp",
+        "opp-minhphat-finerp"
+      ]
+    }
+  ],
+  "weeklyGoals": [
+    {
+      "id": "goal-proposal-mp",
+      "tenantId": "tenant-xtech",
+      "userId": "user-nam",
+      "title": "Hoàn thiện proposal Minh Phát",
+      "current": 70,
+      "target": 100,
+      "unit": "%",
+      "dueDate": "2026-08-08",
+      "status": "in_progress"
+    },
+    {
+      "id": "goal-demo-finerp",
+      "tenantId": "tenant-xtech",
+      "userId": "user-nam",
+      "title": "Chuẩn bị demo FinERP",
+      "current": 60,
+      "target": 100,
+      "unit": "%",
+      "dueDate": "2026-08-07",
+      "status": "in_progress"
+    },
+    {
+      "id": "goal-close-tickets",
+      "tenantId": "tenant-xtech",
+      "userId": "user-nam",
+      "title": "Đóng 2 ticket khách hàng",
+      "current": 1,
+      "target": 2,
+      "unit": "ticket",
+      "dueDate": "2026-08-09",
+      "status": "in_progress"
+    }
+  ],
+  "departmentPerformance": [
+    {
+      "id": "deptperf-sales",
+      "tenantId": "tenant-xtech",
+      "departmentId": "dept-sales",
+      "period": "2026-08",
+      "kpiCompletion": 92,
+      "overdueTasks": 3,
+      "alerts": 2
+    },
+    {
+      "id": "deptperf-erp",
+      "tenantId": "tenant-xtech",
+      "departmentId": "dept-erp",
+      "period": "2026-08",
+      "kpiCompletion": 88,
+      "overdueTasks": 2,
+      "alerts": 1
+    },
+    {
+      "id": "deptperf-finance",
+      "tenantId": "tenant-xtech",
+      "departmentId": "dept-finance",
+      "period": "2026-08",
+      "kpiCompletion": 95,
+      "overdueTasks": 1,
+      "alerts": 0
+    },
+    {
+      "id": "deptperf-product",
+      "tenantId": "tenant-xtech",
+      "departmentId": "dept-product",
+      "period": "2026-08",
+      "kpiCompletion": 90,
+      "overdueTasks": 4,
+      "alerts": 2
+    },
+    {
+      "id": "deptperf-cs",
+      "tenantId": "tenant-xtech",
+      "departmentId": "dept-cs",
+      "period": "2026-08",
+      "kpiCompletion": 89,
+      "overdueTasks": 2,
+      "alerts": 1
+    }
+  ],
+  "salesTeamPerformance": [
+    {
+      "id": "salesperf-hainam",
+      "tenantId": "tenant-xtech",
+      "userId": "user-hainam",
+      "period": "2026-08",
+      "quota": 1500000000,
+      "sales": 1200000000,
+      "openOpportunities": 12
+    },
+    {
+      "id": "salesperf-anhkhoa",
+      "tenantId": "tenant-xtech",
+      "userId": "user-anhkhoa",
+      "period": "2026-08",
+      "quota": 1200000000,
+      "sales": 900000000,
+      "openOpportunities": 9
+    },
+    {
+      "id": "salesperf-minhquan",
+      "tenantId": "tenant-xtech",
+      "userId": "user-minhquan",
+      "period": "2026-08",
+      "quota": 1000000000,
+      "sales": 700000000,
+      "openOpportunities": 8
+    },
+    {
+      "id": "salesperf-thuylinh",
+      "tenantId": "tenant-xtech",
+      "userId": "user-thuylinh",
+      "period": "2026-08",
+      "quota": 1000000000,
+      "sales": 600000000,
+      "openOpportunities": 7
+    },
+    {
+      "id": "salesperf-hoanglong",
+      "tenantId": "tenant-xtech",
+      "userId": "user-hoanglong",
+      "period": "2026-08",
+      "quota": 800000000,
+      "sales": 500000000,
+      "openOpportunities": 6
+    }
+  ],
+  "integrationEvents": [
+    {
+      "id": "intev-001",
+      "tenantId": "tenant-xtech",
+      "connectorId": "connector-mattermost",
+      "type": "sync.success",
+      "summary": "Đồng bộ channel và message thành công",
+      "occurredAt": "2026-08-08T09:29:00+07:00"
+    },
+    {
+      "id": "intev-002",
+      "tenantId": "tenant-xtech",
+      "connectorId": "connector-erpnext",
+      "type": "sync.success",
+      "summary": "Đồng bộ Work Item và Approval thành công",
+      "occurredAt": "2026-08-08T09:20:00+07:00"
+    },
+    {
+      "id": "intev-003",
+      "tenantId": "tenant-xtech",
+      "connectorId": "connector-webhook",
+      "type": "delivery.warning",
+      "summary": "Webhook Gateway có 3,5% lỗi trong 15 phút gần nhất",
+      "occurredAt": "2026-08-08T09:10:00+07:00"
+    },
+    {
+      "id": "intev-004",
+      "tenantId": "tenant-xtech",
+      "connectorId": "connector-email",
+      "type": "delivery.success",
+      "summary": "Email Service đã gửi 42 thông báo",
+      "occurredAt": "2026-08-08T09:25:00+07:00"
+    }
+  ],
+  "workflowHistory": [
+    {
+      "id": "wfh-001",
+      "tenantId": "tenant-xtech",
+      "instanceId": "wf-demo-0087",
+      "step": "init",
+      "status": "completed",
+      "actorId": "user-thuha",
+      "at": "2026-08-08T08:45:00+07:00",
+      "note": "Khởi tạo yêu cầu demo."
+    },
+    {
+      "id": "wfh-002",
+      "tenantId": "tenant-xtech",
+      "instanceId": "wf-demo-0087",
+      "step": "assign",
+      "status": "completed",
+      "actorId": "user-thuha",
+      "at": "2026-08-08T09:00:00+07:00",
+      "note": "Phân công Phạm Anh Khoa phụ trách."
+    },
+    {
+      "id": "wfh-003",
+      "tenantId": "tenant-xtech",
+      "instanceId": "wf-demo-0087",
+      "step": "prepare",
+      "status": "in_progress",
+      "actorId": "user-anhkhoa",
+      "at": "2026-08-08T09:20:00+07:00",
+      "note": "Đã cập nhật tài liệu nghiệp vụ chuẩn bị demo."
+    }
+  ]
+}

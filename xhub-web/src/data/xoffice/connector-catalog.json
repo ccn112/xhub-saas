@@ -1,0 +1,68 @@
+{
+  "version": "2026.07.29.1",
+  "note": "Danh mục connector + action + trường đích. Mapping (workflow variable → trường đích) là DATA lưu trên config.mapping của node serviceCall, KHÔNG fix cứng trong code. Engine resolve source path tại runtime.",
+  "connectors": [
+    {
+      "code": "finerp",
+      "name": "FinERP (Frappe)",
+      "ownerSystem": "FinERP",
+      "boundary": "delegated command (không sao chép transaction ERP)",
+      "actions": [
+        {
+          "code": "create_material_request",
+          "name": "Tạo Material Request",
+          "eventOnComplete": "xoffice.connector.command.completed.v1",
+          "targetFields": [
+            { "key": "itemDescription", "label": "Mô tả vật tư", "type": "string", "required": true },
+            { "key": "quantity", "label": "Số lượng", "type": "number", "required": false },
+            { "key": "amount", "label": "Giá trị (VND)", "type": "moneyVND", "required": true },
+            { "key": "purpose", "label": "Mục đích", "type": "string", "required": false },
+            { "key": "technicalRequirements", "label": "Yêu cầu kỹ thuật", "type": "string", "required": false },
+            { "key": "requesterEmail", "label": "Email người đề nghị", "type": "string", "required": true },
+            { "key": "department", "label": "Phòng ban", "type": "string", "required": false }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "resource-booking",
+      "name": "Đặt tài nguyên nội bộ",
+      "ownerSystem": "XOffice",
+      "boundary": "office-owned",
+      "actions": [
+        {
+          "code": "check_availability",
+          "name": "Kiểm tra lịch trống",
+          "eventOnComplete": "xoffice.connector.command.completed.v1",
+          "targetFields": [
+            { "key": "roomCode", "label": "Mã phòng", "type": "string", "required": true },
+            { "key": "date", "label": "Ngày", "type": "date", "required": true },
+            { "key": "startTime", "label": "Giờ bắt đầu", "type": "string", "required": true },
+            { "key": "endTime", "label": "Giờ kết thúc", "type": "string", "required": true }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "calendar",
+      "name": "Lịch / Calendar",
+      "ownerSystem": "XOffice",
+      "boundary": "office-owned",
+      "actions": [
+        {
+          "code": "create_reservation",
+          "name": "Giữ phòng & đồng bộ lịch",
+          "eventOnComplete": "xoffice.connector.command.completed.v1",
+          "targetFields": [
+            { "key": "roomCode", "label": "Mã phòng", "type": "string", "required": true },
+            { "key": "title", "label": "Tiêu đề", "type": "string", "required": true },
+            { "key": "start", "label": "Bắt đầu", "type": "datetime", "required": true },
+            { "key": "end", "label": "Kết thúc", "type": "datetime", "required": true },
+            { "key": "organizerEmail", "label": "Email người tổ chức", "type": "string", "required": true },
+            { "key": "attendees", "label": "Người tham dự", "type": "string[]", "required": false }
+          ]
+        }
+      ]
+    }
+  ]
+}

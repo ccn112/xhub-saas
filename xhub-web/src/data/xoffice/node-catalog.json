@@ -1,0 +1,93 @@
+[
+  {
+    "type": "start",
+    "name": "Bắt đầu",
+    "category": "Luồng",
+    "icon": "play-circle",
+    "description": "Điểm bắt đầu của quy trình"
+  },
+  {
+    "type": "approval",
+    "name": "Phê duyệt",
+    "category": "Con người",
+    "icon": "user-check",
+    "description": "Yêu cầu một hoặc nhiều người duyệt"
+  },
+  {
+    "type": "humanTask",
+    "name": "Công việc xử lý",
+    "category": "Con người",
+    "icon": "clipboard-check",
+    "description": "Giao việc cho người/role/đơn vị"
+  },
+  {
+    "type": "form",
+    "name": "Thu thập biểu mẫu",
+    "category": "Dữ liệu",
+    "icon": "file-input",
+    "description": "Yêu cầu nhập hoặc bổ sung dữ liệu"
+  },
+  {
+    "type": "condition",
+    "name": "Điều kiện",
+    "category": "Điều hướng",
+    "icon": "git-branch",
+    "description": "Rẽ nhánh theo dữ liệu"
+  },
+  {
+    "type": "parallelSplit",
+    "name": "Tách song song",
+    "category": "Điều hướng",
+    "icon": "split",
+    "description": "Khởi tạo nhiều nhánh song song"
+  },
+  {
+    "type": "parallelJoin",
+    "name": "Gộp song song",
+    "category": "Điều hướng",
+    "icon": "merge",
+    "description": "Chờ các nhánh hoàn thành"
+  },
+  {
+    "type": "timer",
+    "name": "Hẹn giờ / SLA",
+    "category": "Tự động",
+    "icon": "timer",
+    "description": "Chờ thời gian hoặc xử lý quá hạn"
+  },
+  {
+    "type": "notification",
+    "name": "Gửi thông báo",
+    "category": "Tự động",
+    "icon": "bell",
+    "description": "Gửi in-app/email/X.Space"
+  },
+  {
+    "type": "serviceCall",
+    "name": "Gọi hệ thống",
+    "category": "Tích hợp",
+    "icon": "plug",
+    "description": "Thực hiện connector action có kiểm soát"
+  },
+  {
+    "type": "subflow",
+    "name": "Quy trình con",
+    "category": "Tái sử dụng",
+    "icon": "workflow",
+    "description": "Gọi workflow đã publish"
+  },
+  {
+    "type": "aiAssist",
+    "name": "AI hỗ trợ",
+    "category": "AI",
+    "icon": "sparkles",
+    "description": "Tóm tắt/phân loại/soạn nháp; không tự duyệt"
+  },
+  {
+    "type": "end",
+    "name": "Kết thúc",
+    "category": "Luồng",
+    "icon": "circle-stop",
+    "description": "Điểm kết thúc quy trình"
+  }
+]

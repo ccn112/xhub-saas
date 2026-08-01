@@ -1,0 +1,38 @@
+{
+  "code": "XH-08",
+  "set": "xhub",
+  "name": "Trung tâm phê duyệt",
+  "route": "/hub/approvals",
+  "persona": "Người phê duyệt",
+  "image": "reference-images/xhub/08-trung-tam-phe-duyet.png",
+  "seedRefs": [
+    "approvals",
+    "approvalSteps",
+    "users",
+    "organizations"
+  ],
+  "purpose": "Danh sách phê duyệt, SLA, workflow và kiểm tra nhanh bằng AI.",
+  "sections": [
+    "Approval tabs",
+    "Approval filters",
+    "Approval queue",
+    "Selected approval summary",
+    "Workflow timeline",
+    "AI validation",
+    "Action bar"
+  ],
+  "states": {
+    "loading": "Skeleton giữ nguyên chiều cao card/table; không dùng spinner toàn trang.",
+    "empty": "Giải thích trạng thái trống và có một CTA rõ ràng.",
+    "error": "Hiển thị error boundary theo vùng, mã lỗi, nút thử lại và link hỗ trợ.",
+    "permission": "Ẩn hành động không được phép; khi route bị chặn hiển thị 403 có lý do và cách yêu cầu quyền."
+  },
+  "implementationRules": [
+    "Không hardcode dữ liệu hiển thị trong component.",
+    "Đọc dữ liệu qua typed repository/service; mock API dùng seed canonical.",
+    "Ảnh là visual reference; seed canonical là nguồn sự thật cho nội dung và số liệu.",
+    "Giữ tenantId trong mọi query và mutation.",
+    "Mọi action tài chính hoặc quyền cần xác nhận rõ ràng và audit log.",
+    "Bảo đảm keyboard navigation, focus visible, contrast WCAG AA."
+  ]
+}

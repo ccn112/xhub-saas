@@ -1,0 +1,47 @@
+[
+  {
+    "id": "ms-mp-kickoff",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "name": "Khởi động dự án",
+    "dueDate": "2026-06-05",
+    "status": "completed",
+    "progress": 100
+  },
+  {
+    "id": "ms-mp-survey",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "name": "Khảo sát & phân tích",
+    "dueDate": "2026-06-26",
+    "status": "completed",
+    "progress": 100
+  },
+  {
+    "id": "ms-mp-design",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "name": "Thiết kế giải pháp",
+    "dueDate": "2026-07-20",
+    "status": "completed",
+    "progress": 100
+  },
+  {
+    "id": "ms-mp-uat",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "name": "UAT",
+    "dueDate": "2026-09-10",
+    "status": "in_progress",
+    "progress": 45
+  },
+  {
+    "id": "ms-mp-golive",
+    "tenantId": "tenant-xtech",
+    "projectId": "project-finerp-minhphat",
+    "name": "Go-live",
+    "dueDate": "2026-09-30",
+    "status": "not_started",
+    "progress": 0
+  }
+]

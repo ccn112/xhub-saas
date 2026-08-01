@@ -1,0 +1,122 @@
+[
+  {
+    "tenantNo": 1,
+    "tenantCode": "T001",
+    "tenantKey": "xtech",
+    "displayName": "X-TECH",
+    "tenantClass": "PLATFORM_OWNER_REFERENCE_CUSTOMER",
+    "industry": "Công nghệ và triển khai giải pháp số",
+    "status": "ACTIVE",
+    "plan": "ENTERPRISE_DESIGN_PARTNER",
+    "blueprint": "TECHNOLOGY_SOLUTION_PROVIDER",
+    "purpose": "Chủ nền tảng, đơn vị vận hành, đơn vị triển khai và khách hàng trải nghiệm đầu tiên."
+  },
+  {
+    "tenantNo": 2,
+    "tenantCode": "T002",
+    "tenantKey": "realestate-demo",
+    "displayName": "Chủ đầu tư Bất động sản Demo",
+    "tenantClass": "VERTICAL_DEMO",
+    "industry": "Chủ đầu tư và phát triển bất động sản",
+    "status": "PLANNED",
+    "plan": "ENTERPRISE_VERTICAL_DEMO",
+    "blueprint": "REAL_ESTATE_DEVELOPER",
+    "purpose": "Demo chuỗi đầu tư, dự án, bán hàng, cư dân và vận hành."
+  },
+  {
+    "tenantNo": 3,
+    "tenantCode": "T003",
+    "tenantKey": "manufacturing-demo",
+    "displayName": "Doanh nghiệp Sản xuất Demo",
+    "tenantClass": "VERTICAL_DEMO",
+    "industry": "Sản xuất công nghiệp",
+    "status": "PLANNED",
+    "plan": "PROFESSIONAL_VERTICAL_DEMO",
+    "blueprint": "MANUFACTURING_ENTERPRISE",
+    "purpose": "Demo mua sắm, bảo trì, chất lượng, kho và FinERP."
+  },
+  {
+    "tenantNo": 4,
+    "tenantCode": "T004",
+    "tenantKey": "distribution-demo",
+    "displayName": "Doanh nghiệp Phân phối Demo",
+    "tenantClass": "VERTICAL_DEMO",
+    "industry": "Phân phối và bán lẻ",
+    "status": "PLANNED",
+    "plan": "PROFESSIONAL_VERTICAL_DEMO",
+    "blueprint": "DISTRIBUTION_RETAIL",
+    "purpose": "Demo CRM, bán hàng, chiết khấu, kho, giao nhận và CSKH."
+  },
+  {
+    "tenantNo": 5,
+    "tenantCode": "T005",
+    "tenantKey": "construction-demo",
+    "displayName": "Doanh nghiệp Xây dựng Demo",
+    "tenantClass": "VERTICAL_DEMO",
+    "industry": "Xây dựng và tổng thầu",
+    "status": "PLANNED",
+    "plan": "PROFESSIONAL_VERTICAL_DEMO",
+    "blueprint": "CONSTRUCTION_CONTRACTOR",
+    "purpose": "Demo dự án công trình, hồ sơ, vật tư, nhà thầu phụ và nghiệm thu."
+  },
+  {
+    "tenantNo": 6,
+    "tenantCode": "T006",
+    "tenantKey": "hospitality-demo",
+    "displayName": "Doanh nghiệp Khách sạn - Dịch vụ Demo",
+    "tenantClass": "VERTICAL_DEMO",
+    "industry": "Khách sạn, nghỉ dưỡng và dịch vụ",
+    "status": "PLANNED",
+    "plan": "PROFESSIONAL_VERTICAL_DEMO",
+    "blueprint": "HOSPITALITY_SERVICES",
+    "purpose": "Demo vận hành dịch vụ, lịch trực, tài sản và chất lượng."
+  },
+  {
+    "tenantNo": 7,
+    "tenantCode": "T007",
+    "tenantKey": "education-demo",
+    "displayName": "Tổ chức Giáo dục Demo",
+    "tenantClass": "VERTICAL_DEMO",
+    "industry": "Giáo dục và đào tạo",
+    "status": "PLANNED",
+    "plan": "PROFESSIONAL_VERTICAL_DEMO",
+    "blueprint": "EDUCATION_ORGANIZATION",
+    "purpose": "Demo tuyển sinh, đào tạo, lịch học, hành chính và chăm sóc học viên."
+  },
+  {
+    "tenantNo": 8,
+    "tenantCode": "T008",
+    "tenantKey": "healthcare-demo",
+    "displayName": "Tổ chức Y tế Demo",
+    "tenantClass": "VERTICAL_DEMO",
+    "industry": "Y tế và chăm sóc sức khỏe",
+    "status": "PLANNED",
+    "plan": "ENTERPRISE_VERTICAL_DEMO",
+    "blueprint": "HEALTHCARE_ADMINISTRATION",
+    "purpose": "Demo quản trị nội bộ, lịch trực, cấp quyền, tài sản và hồ sơ; không dùng bệnh án thật."
+  },
+  {
+    "tenantNo": 9,
+    "tenantCode": "T009",
+    "tenantKey": "logistics-demo",
+    "displayName": "Doanh nghiệp Logistics Demo",
+    "tenantClass": "VERTICAL_DEMO",
+    "industry": "Logistics và vận tải",
+    "status": "PLANNED",
+    "plan": "PROFESSIONAL_VERTICAL_DEMO",
+    "blueprint": "LOGISTICS_TRANSPORT",
+    "purpose": "Demo điều phối, phương tiện, tài sản, booking và ERP."
+  },
+  {
+    "tenantNo": 10,
+    "tenantCode": "T010",
+    "tenantKey": "professional-services-demo",
+    "displayName": "Doanh nghiệp Dịch vụ Chuyên nghiệp Demo",
+    "tenantClass": "VERTICAL_DEMO",
+    "industry": "Tư vấn, luật, kiểm toán và dịch vụ chuyên nghiệp",
+    "status": "PLANNED",
+    "plan": "PROFESSIONAL_VERTICAL_DEMO",
+    "blueprint": "PROFESSIONAL_SERVICES",
+    "purpose": "Demo CRM, dự án tư vấn, tài liệu, phê duyệt và customer success."
+  }
+]

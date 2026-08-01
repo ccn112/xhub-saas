@@ -1,0 +1,67 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "meta": {
+    "name": "XHub / X.Space Light Enterprise",
+    "version": "1.0.0"
+  },
+  "color": {
+    "navy900": "#071C3F",
+    "navy800": "#0A2A58",
+    "blue600": "#1769E0",
+    "blue500": "#2D7FF9",
+    "cyan500": "#16B8D4",
+    "green500": "#22A06B",
+    "orange500": "#F59E0B",
+    "red500": "#EF4444",
+    "purple500": "#7C5CFC",
+    "gray950": "#0F172A",
+    "gray700": "#334155",
+    "gray500": "#64748B",
+    "gray300": "#CBD5E1",
+    "gray200": "#E2E8F0",
+    "gray100": "#F1F5F9",
+    "white": "#FFFFFF"
+  },
+  "font": {
+    "heading": "Plus Jakarta Sans",
+    "body": "Inter",
+    "size": {
+      "xs": 12,
+      "sm": 13,
+      "md": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 28,
+      "3xl": 34
+    }
+  },
+  "radius": {
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "pill": 999
+  },
+  "shadow": {
+    "card": "0 1px 3px rgba(15,23,42,.08), 0 8px 24px rgba(15,23,42,.04)",
+    "floating": "0 12px 32px rgba(15,23,42,.14)"
+  },
+  "layout": {
+    "desktopReference": {
+      "width": 1440,
+      "height": 1080
+    },
+    "globalSidebar": 168,
+    "spaceSidebar": 260,
+    "contextPanel": 340,
+    "topbar": 64,
+    "contentGap": 16,
+    "pagePadding": 20
+  },
+  "breakpoints": {
+    "sm": 640,
+    "md": 768,
+    "lg": 1024,
+    "xl": 1280,
+    "2xl": 1536
+  }
+}

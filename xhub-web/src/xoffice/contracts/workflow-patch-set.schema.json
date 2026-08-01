@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xhub.vn/schemas/xoffice/workflow-patch-set-1.0.json",
+  "title": "WorkflowPatchSet",
+  "type": "object",
+  "required": [
+    "summary",
+    "operations",
+    "assumptions",
+    "evidence"
+  ],
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "op",
+          "path"
+        ],
+        "properties": {
+          "op": {
+            "enum": [
+              "add",
+              "replace",
+              "remove",
+              "move"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "value": {}
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "sourceType",
+          "sourceId",
+          "label"
+        ],
+        "properties": {
+          "sourceType": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "validation": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

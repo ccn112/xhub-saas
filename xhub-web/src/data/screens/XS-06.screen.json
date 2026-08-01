@@ -1,0 +1,43 @@
+{
+  "code": "XS-06",
+  "set": "xspace",
+  "name": "Tin nhắn trực tiếp",
+  "route": "/space/dm/user-thuha",
+  "persona": "Nhân viên",
+  "image": "reference-images/xspace/06-tin-nhan-truc-tiep.png",
+  "seedRefs": [
+    "directMessages",
+    "user-thuha",
+    "tasks",
+    "documents",
+    "calendarEvents"
+  ],
+  "purpose": "DM cá nhân có ngữ cảnh người liên hệ, việc và lịch.",
+  "sections": [
+    "DM header",
+    "Private note",
+    "DM stream",
+    "File card",
+    "Task card",
+    "Composer",
+    "Contact profile",
+    "Related work",
+    "Shared files",
+    "Upcoming meeting",
+    "AI interaction summary"
+  ],
+  "states": {
+    "loading": "Skeleton giữ nguyên chiều cao card/table; không dùng spinner toàn trang.",
+    "empty": "Giải thích trạng thái trống và có một CTA rõ ràng.",
+    "error": "Hiển thị error boundary theo vùng, mã lỗi, nút thử lại và link hỗ trợ.",
+    "permission": "Ẩn hành động không được phép; khi route bị chặn hiển thị 403 có lý do và cách yêu cầu quyền."
+  },
+  "implementationRules": [
+    "Không hardcode dữ liệu hiển thị trong component.",
+    "Đọc dữ liệu qua typed repository/service; mock API dùng seed canonical.",
+    "Ảnh là visual reference; seed canonical là nguồn sự thật cho nội dung và số liệu.",
+    "Giữ tenantId trong mọi query và mutation.",
+    "Mọi action tài chính hoặc quyền cần xác nhận rõ ràng và audit log.",
+    "Bảo đảm keyboard navigation, focus visible, contrast WCAG AA."
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "_note": "X-TECH Identity/Org Core seed. Deterministic + idempotent (upsert by id). PersonProfile.id is the opaque identity key; email is only an attribute. externalIdRefs.userId links to the legacy all.seed users so existing sessions/tasks stay connected. Seeded under withBypass.",
+  "tenant": { "id": "tenant-xtech", "slug": "xtech", "name": "X-TECH" },
+
+  "orgUnits": [
+    { "id": "ou-exec", "code": "EXEC", "name": "Ban Điều hành", "type": "DIVISION", "parentId": null },
+    { "id": "ou-fin", "code": "FIN", "name": "Tài chính - Kế toán", "type": "DEPARTMENT", "parentId": "ou-exec" },
+    { "id": "ou-sales", "code": "SALES", "name": "Kinh doanh", "type": "DEPARTMENT", "parentId": "ou-exec" },
+    { "id": "ou-tech", "code": "TECH", "name": "Công nghệ", "type": "DEPARTMENT", "parentId": "ou-exec" },
+    { "id": "ou-hr", "code": "HR", "name": "Nhân sự", "type": "DEPARTMENT", "parentId": "ou-exec" },
+    { "id": "ou-admin", "code": "ADMIN", "name": "Hành chính", "type": "DEPARTMENT", "parentId": "ou-exec" },
+    { "id": "ou-impl", "code": "IMPL", "name": "Triển khai", "type": "DEPARTMENT", "parentId": "ou-tech" }
+  ],
+
+  "people": [
+    { "id": "usr-ceo", "fullName": "Trần Mạnh Tuấn", "email": "tuan.tran@xtech.com.vn", "externalIdRefs": { "userId": "user-tuan" } },
+    { "id": "usr-cfo", "fullName": "Nguyễn Hoài Nam", "email": "nam.nguyen@xtech.com.vn", "externalIdRefs": { "userId": "user-nam" } },
+    { "id": "usr-sales-head", "fullName": "Trần Thu Hà", "email": "ha.tran@xtech.com.vn", "externalIdRefs": { "userId": "user-thuha" } },
+    { "id": "usr-tech-head", "fullName": "Phạm Anh Khoa", "email": "khoa.pham@xtech.com.vn", "externalIdRefs": { "userId": "user-anhkhoa" } },
+    { "id": "usr-hr-head", "fullName": "Nguyễn Lan Phương", "email": "phuong.nguyen@xtech.com.vn", "externalIdRefs": { "userId": null } },
+    { "id": "usr-admin-head", "fullName": "Lê Thu Trang", "email": "trang.le@xtech.com.vn", "externalIdRefs": { "userId": null } },
+    { "id": "usr-it-support", "fullName": "Vũ Quang Huy", "email": "huy.vu@xtech.com.vn", "externalIdRefs": { "userId": "user-huyvu" } }
+  ],
+
+  "positions": [
+    { "id": "pos-ceo", "code": "POS_CEO", "title": "Tổng Giám đốc", "orgUnitId": "ou-exec", "holderPersonId": "usr-ceo", "reportsToPositionId": null, "isHead": true },
+    { "id": "pos-cfo", "code": "POS_CFO", "title": "Giám đốc Tài chính", "orgUnitId": "ou-fin", "holderPersonId": "usr-cfo", "reportsToPositionId": "pos-ceo", "isHead": true },
+    { "id": "pos-sales-head", "code": "POS_SALES_HEAD", "title": "Trưởng phòng Kinh doanh", "orgUnitId": "ou-sales", "holderPersonId": "usr-sales-head", "reportsToPositionId": "pos-ceo", "isHead": true },
+    { "id": "pos-tech-head", "code": "POS_TECH_HEAD", "title": "Trưởng phòng Công nghệ", "orgUnitId": "ou-tech", "holderPersonId": "usr-tech-head", "reportsToPositionId": "pos-ceo", "isHead": true },
+    { "id": "pos-hr-head", "code": "POS_HR_HEAD", "title": "Trưởng phòng Nhân sự", "orgUnitId": "ou-hr", "holderPersonId": "usr-hr-head", "reportsToPositionId": "pos-ceo", "isHead": true },
+    { "id": "pos-admin-head", "code": "POS_ADMIN_HEAD", "title": "Trưởng phòng Hành chính", "orgUnitId": "ou-admin", "holderPersonId": "usr-admin-head", "reportsToPositionId": "pos-ceo", "isHead": true },
+    { "id": "pos-it-support", "code": "POS_IT_SUPPORT", "title": "Chuyên viên Hỗ trợ CNTT", "orgUnitId": "ou-impl", "holderPersonId": "usr-it-support", "reportsToPositionId": "pos-tech-head", "isHead": false }
+  ],
+
+  "groups": [
+    { "id": "grp-process-admin", "code": "GRP_PROCESS_ADMIN", "name": "Quản trị quy trình", "memberPersonIds": ["usr-tech-head", "usr-admin-head"] },
+    { "id": "grp-it-support", "code": "GRP_IT_SUPPORT", "name": "Hàng đợi Hỗ trợ CNTT", "memberPersonIds": ["usr-it-support", "usr-tech-head"] }
+  ],
+
+  "roleBindings": [
+    { "id": "rb-ceo", "subjectType": "POSITION", "subjectId": "pos-ceo", "roleCode": "ROLE_CEO", "scope": { "all": true } },
+    { "id": "rb-cfo", "subjectType": "POSITION", "subjectId": "pos-cfo", "roleCode": "ROLE_CFO", "scope": { "orgUnitId": "ou-fin" } },
+    { "id": "rb-sales-head", "subjectType": "POSITION", "subjectId": "pos-sales-head", "roleCode": "ROLE_SALES_MANAGER", "scope": { "orgUnitId": "ou-sales" } },
+    { "id": "rb-it-manager", "subjectType": "POSITION", "subjectId": "pos-tech-head", "roleCode": "ROLE_IT_MANAGER", "scope": { "orgUnitId": "ou-tech" } },
+    { "id": "rb-hr-head", "subjectType": "POSITION", "subjectId": "pos-hr-head", "roleCode": "ROLE_HR_MANAGER", "scope": { "orgUnitId": "ou-hr" } },
+    { "id": "rb-admin-manager", "subjectType": "POSITION", "subjectId": "pos-admin-head", "roleCode": "ROLE_ADMIN_MANAGER", "scope": { "orgUnitId": "ou-admin" } },
+    { "id": "rb-it-support", "subjectType": "GROUP", "subjectId": "grp-it-support", "roleCode": "ROLE_IT_SUPPORT", "scope": { "orgUnitId": "ou-tech" } },
+    { "id": "rb-process-admin", "subjectType": "GROUP", "subjectId": "grp-process-admin", "roleCode": "ROLE_PROCESS_ADMIN", "scope": { "all": true } },
+    { "id": "rb-platform-admin-cfo", "subjectType": "USER", "subjectId": "usr-cfo", "roleCode": "ROLE_PLATFORM_ADMIN", "scope": { "all": true } },
+    { "id": "rb-platform-admin-ceo", "subjectType": "USER", "subjectId": "usr-ceo", "roleCode": "ROLE_PLATFORM_ADMIN", "scope": { "all": true } }
+  ],
+
+  "permissionPolicies": [
+    { "id": "pp-ceo", "roleCode": "ROLE_CEO", "permissions": ["request.approve", "workflow.read", "workflow.manage", "identity.read"], "condition": null },
+    { "id": "pp-cfo", "roleCode": "ROLE_CFO", "permissions": ["request.approve", "workflow.read"], "condition": { "maxAmount": 500000000 } },
+    { "id": "pp-it-manager", "roleCode": "ROLE_IT_MANAGER", "permissions": ["request.approve", "workflow.read"], "condition": { "maxAmount": 100000000 } },
+    { "id": "pp-admin-manager", "roleCode": "ROLE_ADMIN_MANAGER", "permissions": ["request.approve", "workflow.read"], "condition": { "maxAmount": 50000000 } },
+    { "id": "pp-process-admin", "roleCode": "ROLE_PROCESS_ADMIN", "permissions": ["workflow.read", "workflow.manage", "workflow.publish"], "condition": null },
+    { "id": "pp-it-support", "roleCode": "ROLE_IT_SUPPORT", "permissions": ["request.read", "task.act"], "condition": null },
+    { "id": "pp-platform-admin", "roleCode": "ROLE_PLATFORM_ADMIN", "permissions": ["provisioning.manage", "backup.manage", "records.manage", "identity.manage", "identity.read", "admin.read"], "condition": null }
+  ],
+
+  "dataScopes": [
+    { "id": "ds-cfo", "subjectType": "POSITION", "subjectId": "pos-cfo", "scope": { "orgUnits": ["ou-fin", "ou-exec"], "legalEntities": ["xtech"] } },
+    { "id": "ds-it-manager", "subjectType": "POSITION", "subjectId": "pos-tech-head", "scope": { "orgUnits": ["ou-tech", "ou-impl"], "legalEntities": ["xtech"] } },
+    { "id": "ds-ceo", "subjectType": "POSITION", "subjectId": "pos-ceo", "scope": { "all": true, "legalEntities": ["xtech"] } }
+  ]
+}

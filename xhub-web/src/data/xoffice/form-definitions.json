@@ -1,0 +1,1522 @@
+[
+  {
+    "schemaVersion": "1.0",
+    "code": "FORM-ACCESS-REQUEST",
+    "name": "Yêu cầu cấp tài khoản và quyền",
+    "jsonSchema": {
+      "type": "object",
+      "required": [
+        "title",
+        "requester",
+        "department",
+        "priority",
+        "description",
+        "target_user",
+        "request_type",
+        "systems",
+        "requested_roles",
+        "effective_from",
+        "business_reason"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Tiêu đề",
+          "description": "Ngắn gọn, dễ tìm"
+        },
+        "requester": {
+          "type": "string",
+          "title": "Người đề nghị",
+          "description": "Tự động theo tài khoản"
+        },
+        "department": {
+          "type": "string",
+          "title": "Đơn vị",
+          "description": "Từ HR projection"
+        },
+        "priority": {
+          "type": "string",
+          "title": "Ưu tiên",
+          "description": "Bình thường/Cao/Khẩn"
+        },
+        "description": {
+          "type": "string",
+          "title": "Mô tả chi tiết",
+          "description": "Nhu cầu và kết quả mong muốn"
+        },
+        "attachments": {
+          "type": "string",
+          "title": "Tệp đính kèm",
+          "description": "Theo yêu cầu thủ tục"
+        },
+        "target_user": {
+          "type": "string",
+          "title": "Người được cấp"
+        },
+        "request_type": {
+          "type": "string",
+          "title": "Loại thao tác",
+          "description": "Cấp/Đổi/Thu hồi"
+        },
+        "systems": {
+          "type": "string",
+          "title": "Hệ thống"
+        },
+        "requested_roles": {
+          "type": "string",
+          "title": "Vai trò đề nghị"
+        },
+        "effective_from": {
+          "type": "string",
+          "title": "Hiệu lực từ"
+        },
+        "effective_to": {
+          "type": "string",
+          "title": "Hiệu lực đến"
+        },
+        "business_reason": {
+          "type": "string",
+          "title": "Lý do"
+        }
+      }
+    },
+    "uiSchema": {
+      "title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requester": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "department": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "priority": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "description": {
+        "ui:widget": "textarea",
+        "ui:help": "Viết lại rõ ràng và trích mục tiêu."
+      },
+      "attachments": {
+        "ui:help": "Kiểm tra hồ sơ còn thiếu."
+      },
+      "target_user": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "request_type": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "systems": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requested_roles": {
+        "ui:help": "Gợi ý quyền tối thiểu."
+      },
+      "effective_from": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "effective_to": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "business_reason": {
+        "ui:widget": "textarea",
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      }
+    },
+    "rules": [],
+    "metadata": {
+      "tenantSlug": "xtech",
+      "procedureCode": "PILOT-06"
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "code": "FORM-ADMIN-REQUEST",
+    "name": "Yêu cầu hành chính",
+    "jsonSchema": {
+      "type": "object",
+      "required": [
+        "title",
+        "requester",
+        "department",
+        "priority",
+        "description",
+        "service_category",
+        "needed_by"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Tiêu đề",
+          "description": "Ngắn gọn, dễ tìm"
+        },
+        "requester": {
+          "type": "string",
+          "title": "Người đề nghị",
+          "description": "Tự động theo tài khoản"
+        },
+        "department": {
+          "type": "string",
+          "title": "Đơn vị",
+          "description": "Từ HR projection"
+        },
+        "priority": {
+          "type": "string",
+          "title": "Ưu tiên",
+          "description": "Bình thường/Cao/Khẩn"
+        },
+        "description": {
+          "type": "string",
+          "title": "Mô tả chi tiết",
+          "description": "Nhu cầu và kết quả mong muốn"
+        },
+        "attachments": {
+          "type": "string",
+          "title": "Tệp đính kèm",
+          "description": "Theo yêu cầu thủ tục"
+        },
+        "service_category": {
+          "type": "string",
+          "title": "Nhóm dịch vụ"
+        },
+        "location": {
+          "type": "string",
+          "title": "Địa điểm"
+        },
+        "needed_by": {
+          "type": "string",
+          "title": "Hạn hoàn thành"
+        },
+        "estimated_cost": {
+          "type": "number",
+          "title": "Chi phí dự kiến",
+          "description": "VND"
+        },
+        "checklist": {
+          "type": "string",
+          "title": "Danh sách yêu cầu"
+        }
+      }
+    },
+    "uiSchema": {
+      "title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requester": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "department": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "priority": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "description": {
+        "ui:widget": "textarea",
+        "ui:help": "Viết lại rõ ràng và trích mục tiêu."
+      },
+      "attachments": {
+        "ui:help": "Kiểm tra hồ sơ còn thiếu."
+      },
+      "service_category": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "location": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "needed_by": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "estimated_cost": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "checklist": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      }
+    },
+    "rules": [],
+    "metadata": {
+      "tenantSlug": "xtech",
+      "procedureCode": "PILOT-08"
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "code": "FORM-ASSET-ALLOCATION-REQUEST",
+    "name": "Đề nghị cấp tài sản",
+    "jsonSchema": {
+      "type": "object",
+      "required": [
+        "title",
+        "requester",
+        "department",
+        "priority",
+        "description",
+        "action_type",
+        "asset_category",
+        "specification",
+        "quantity",
+        "needed_by"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Tiêu đề",
+          "description": "Ngắn gọn, dễ tìm"
+        },
+        "requester": {
+          "type": "string",
+          "title": "Người đề nghị",
+          "description": "Tự động theo tài khoản"
+        },
+        "department": {
+          "type": "string",
+          "title": "Đơn vị",
+          "description": "Từ HR projection"
+        },
+        "priority": {
+          "type": "string",
+          "title": "Ưu tiên",
+          "description": "Bình thường/Cao/Khẩn"
+        },
+        "description": {
+          "type": "string",
+          "title": "Mô tả chi tiết",
+          "description": "Nhu cầu và kết quả mong muốn"
+        },
+        "attachments": {
+          "type": "string",
+          "title": "Tệp đính kèm",
+          "description": "Theo yêu cầu thủ tục"
+        },
+        "action_type": {
+          "type": "string",
+          "title": "Loại yêu cầu",
+          "description": "Cấp mới/Đổi/Thu hồi"
+        },
+        "asset_category": {
+          "type": "string",
+          "title": "Nhóm tài sản",
+          "description": "FinERP"
+        },
+        "specification": {
+          "type": "string",
+          "title": "Cấu hình"
+        },
+        "quantity": {
+          "type": "number",
+          "title": "Số lượng"
+        },
+        "needed_by": {
+          "type": "string",
+          "title": "Ngày cần",
+          "format": "date"
+        },
+        "existing_asset": {
+          "type": "string",
+          "title": "Tài sản hiện tại"
+        }
+      }
+    },
+    "uiSchema": {
+      "title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requester": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "department": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "priority": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "description": {
+        "ui:widget": "textarea",
+        "ui:help": "Viết lại rõ ràng và trích mục tiêu."
+      },
+      "attachments": {
+        "ui:help": "Kiểm tra hồ sơ còn thiếu."
+      },
+      "action_type": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "asset_category": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "specification": {
+        "ui:widget": "textarea",
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "quantity": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "needed_by": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "existing_asset": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      }
+    },
+    "rules": [],
+    "metadata": {
+      "tenantSlug": "xtech",
+      "procedureCode": "PILOT-05"
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "code": "FORM-DOCUMENT-SIGNING",
+    "name": "Trình ký văn bản",
+    "jsonSchema": {
+      "type": "object",
+      "required": [
+        "title",
+        "requester",
+        "department",
+        "priority",
+        "description",
+        "document_type",
+        "signers",
+        "document_file"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Tiêu đề",
+          "description": "Ngắn gọn, dễ tìm"
+        },
+        "requester": {
+          "type": "string",
+          "title": "Người đề nghị",
+          "description": "Tự động theo tài khoản"
+        },
+        "department": {
+          "type": "string",
+          "title": "Đơn vị",
+          "description": "Từ HR projection"
+        },
+        "priority": {
+          "type": "string",
+          "title": "Ưu tiên",
+          "description": "Bình thường/Cao/Khẩn"
+        },
+        "description": {
+          "type": "string",
+          "title": "Mô tả chi tiết",
+          "description": "Nhu cầu và kết quả mong muốn"
+        },
+        "attachments": {
+          "type": "string",
+          "title": "Tệp đính kèm",
+          "description": "Theo yêu cầu thủ tục"
+        },
+        "document_type": {
+          "type": "string",
+          "title": "Loại văn bản"
+        },
+        "document_number": {
+          "type": "string",
+          "title": "Số dự kiến"
+        },
+        "counterparty": {
+          "type": "string",
+          "title": "Đối tác/nơi nhận"
+        },
+        "effective_date": {
+          "type": "string",
+          "title": "Ngày hiệu lực",
+          "format": "date"
+        },
+        "signers": {
+          "type": "string",
+          "title": "Người ký"
+        },
+        "document_file": {
+          "type": "string",
+          "title": "Bản dự thảo"
+        },
+        "appendices": {
+          "type": "string",
+          "title": "Phụ lục"
+        }
+      }
+    },
+    "uiSchema": {
+      "title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requester": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "department": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "priority": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "description": {
+        "ui:widget": "textarea",
+        "ui:help": "Viết lại rõ ràng và trích mục tiêu."
+      },
+      "attachments": {
+        "ui:help": "Kiểm tra hồ sơ còn thiếu."
+      },
+      "document_type": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "document_number": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "counterparty": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "effective_date": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "signers": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "document_file": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "appendices": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      }
+    },
+    "rules": [],
+    "metadata": {
+      "tenantSlug": "xtech",
+      "procedureCode": "PILOT-11"
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "code": "FORM-EMPLOYEE-ADVANCE",
+    "name": "Đề nghị tạm ứng",
+    "jsonSchema": {
+      "type": "object",
+      "required": [
+        "title",
+        "requester",
+        "department",
+        "priority",
+        "description",
+        "purpose",
+        "amount",
+        "needed_date",
+        "settlement_deadline"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Tiêu đề",
+          "description": "Ngắn gọn, dễ tìm"
+        },
+        "requester": {
+          "type": "string",
+          "title": "Người đề nghị",
+          "description": "Tự động theo tài khoản"
+        },
+        "department": {
+          "type": "string",
+          "title": "Đơn vị",
+          "description": "Từ HR projection"
+        },
+        "priority": {
+          "type": "string",
+          "title": "Ưu tiên",
+          "description": "Bình thường/Cao/Khẩn"
+        },
+        "description": {
+          "type": "string",
+          "title": "Mô tả chi tiết",
+          "description": "Nhu cầu và kết quả mong muốn"
+        },
+        "attachments": {
+          "type": "string",
+          "title": "Tệp đính kèm",
+          "description": "Theo yêu cầu thủ tục"
+        },
+        "purpose": {
+          "type": "string",
+          "title": "Mục đích"
+        },
+        "amount": {
+          "type": "number",
+          "title": "Số tiền",
+          "description": "VND"
+        },
+        "needed_date": {
+          "type": "string",
+          "title": "Ngày cần tiền",
+          "format": "date"
+        },
+        "settlement_deadline": {
+          "type": "string",
+          "title": "Hạn quyết toán",
+          "format": "date"
+        },
+        "related_travel": {
+          "type": "string",
+          "title": "Đề nghị công tác"
+        }
+      }
+    },
+    "uiSchema": {
+      "title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requester": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "department": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "priority": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "description": {
+        "ui:widget": "textarea",
+        "ui:help": "Viết lại rõ ràng và trích mục tiêu."
+      },
+      "attachments": {
+        "ui:help": "Kiểm tra hồ sơ còn thiếu."
+      },
+      "purpose": {
+        "ui:widget": "textarea",
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "amount": {
+        "ui:help": "Kiểm tra ngưỡng duyệt và bất thường."
+      },
+      "needed_date": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "settlement_deadline": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "related_travel": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      }
+    },
+    "rules": [],
+    "metadata": {
+      "tenantSlug": "xtech",
+      "procedureCode": "PILOT-03"
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "code": "FORM-IT-TICKET",
+    "name": "Ticket CNTT",
+    "jsonSchema": {
+      "type": "object",
+      "required": [
+        "title",
+        "requester",
+        "department",
+        "priority",
+        "description",
+        "service",
+        "impact",
+        "urgency"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Tiêu đề",
+          "description": "Ngắn gọn, dễ tìm"
+        },
+        "requester": {
+          "type": "string",
+          "title": "Người đề nghị",
+          "description": "Tự động theo tài khoản"
+        },
+        "department": {
+          "type": "string",
+          "title": "Đơn vị",
+          "description": "Từ HR projection"
+        },
+        "priority": {
+          "type": "string",
+          "title": "Ưu tiên",
+          "description": "Bình thường/Cao/Khẩn"
+        },
+        "description": {
+          "type": "string",
+          "title": "Mô tả chi tiết",
+          "description": "Nhu cầu và kết quả mong muốn"
+        },
+        "attachments": {
+          "type": "string",
+          "title": "Tệp đính kèm",
+          "description": "Theo yêu cầu thủ tục"
+        },
+        "service": {
+          "type": "string",
+          "title": "Dịch vụ ảnh hưởng"
+        },
+        "impact": {
+          "type": "string",
+          "title": "Mức ảnh hưởng"
+        },
+        "urgency": {
+          "type": "string",
+          "title": "Mức khẩn"
+        },
+        "error_message": {
+          "type": "string",
+          "title": "Thông báo lỗi"
+        },
+        "device": {
+          "type": "string",
+          "title": "Thiết bị"
+        },
+        "screenshot": {
+          "type": "string",
+          "title": "Ảnh lỗi"
+        }
+      }
+    },
+    "uiSchema": {
+      "title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requester": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "department": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "priority": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "description": {
+        "ui:widget": "textarea",
+        "ui:help": "Viết lại rõ ràng và trích mục tiêu."
+      },
+      "attachments": {
+        "ui:help": "Kiểm tra hồ sơ còn thiếu."
+      },
+      "service": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "impact": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "urgency": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "error_message": {
+        "ui:widget": "textarea",
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "device": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "screenshot": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      }
+    },
+    "rules": [],
+    "metadata": {
+      "tenantSlug": "xtech",
+      "procedureCode": "PILOT-10"
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "code": "FORM-PAYMENT-PROPOSAL",
+    "name": "Đề nghị thanh toán",
+    "jsonSchema": {
+      "type": "object",
+      "required": [
+        "title",
+        "requester",
+        "department",
+        "priority",
+        "description",
+        "supplier",
+        "contract",
+        "payment_stage",
+        "amount",
+        "acceptance_record",
+        "bank_account"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Tiêu đề",
+          "description": "Ngắn gọn, dễ tìm"
+        },
+        "requester": {
+          "type": "string",
+          "title": "Người đề nghị",
+          "description": "Tự động theo tài khoản"
+        },
+        "department": {
+          "type": "string",
+          "title": "Đơn vị",
+          "description": "Từ HR projection"
+        },
+        "priority": {
+          "type": "string",
+          "title": "Ưu tiên",
+          "description": "Bình thường/Cao/Khẩn"
+        },
+        "description": {
+          "type": "string",
+          "title": "Mô tả chi tiết",
+          "description": "Nhu cầu và kết quả mong muốn"
+        },
+        "attachments": {
+          "type": "string",
+          "title": "Tệp đính kèm",
+          "description": "Theo yêu cầu thủ tục"
+        },
+        "supplier": {
+          "type": "string",
+          "title": "Nhà cung cấp",
+          "description": "FinERP"
+        },
+        "contract": {
+          "type": "string",
+          "title": "Hợp đồng"
+        },
+        "payment_stage": {
+          "type": "string",
+          "title": "Đợt thanh toán"
+        },
+        "amount": {
+          "type": "number",
+          "title": "Số tiền",
+          "description": "VND"
+        },
+        "invoice_number": {
+          "type": "string",
+          "title": "Số hóa đơn"
+        },
+        "acceptance_record": {
+          "type": "string",
+          "title": "Biên bản nghiệm thu"
+        },
+        "bank_account": {
+          "type": "string",
+          "title": "Tài khoản thụ hưởng"
+        }
+      }
+    },
+    "uiSchema": {
+      "title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requester": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "department": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "priority": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "description": {
+        "ui:widget": "textarea",
+        "ui:help": "Viết lại rõ ràng và trích mục tiêu."
+      },
+      "attachments": {
+        "ui:help": "Kiểm tra hồ sơ còn thiếu."
+      },
+      "supplier": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "contract": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "payment_stage": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "amount": {
+        "ui:help": "Kiểm tra ngưỡng duyệt và bất thường."
+      },
+      "invoice_number": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "acceptance_record": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "bank_account": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      }
+    },
+    "rules": [],
+    "metadata": {
+      "tenantSlug": "xtech",
+      "procedureCode": "PILOT-02"
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "code": "FORM-PURCHASE-PROPOSAL",
+    "name": "Đề nghị mua sắm",
+    "jsonSchema": {
+      "type": "object",
+      "required": [
+        "title",
+        "requester",
+        "department",
+        "priority",
+        "description",
+        "purchase_type",
+        "items",
+        "business_justification",
+        "needed_by",
+        "cost_center",
+        "quotations"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Tiêu đề",
+          "description": "Ngắn gọn, dễ tìm"
+        },
+        "requester": {
+          "type": "string",
+          "title": "Người đề nghị",
+          "description": "Tự động theo tài khoản"
+        },
+        "department": {
+          "type": "string",
+          "title": "Đơn vị",
+          "description": "Từ HR projection"
+        },
+        "priority": {
+          "type": "string",
+          "title": "Ưu tiên",
+          "description": "Bình thường/Cao/Khẩn"
+        },
+        "description": {
+          "type": "string",
+          "title": "Mô tả chi tiết",
+          "description": "Nhu cầu và kết quả mong muốn"
+        },
+        "attachments": {
+          "type": "string",
+          "title": "Tệp đính kèm",
+          "description": "Theo yêu cầu thủ tục"
+        },
+        "purchase_type": {
+          "type": "string",
+          "title": "Loại mua sắm",
+          "description": "Thiết bị/Dịch vụ/Khác"
+        },
+        "items": {
+          "type": "string",
+          "title": "Hạng mục",
+          "description": "Tên, số lượng, đơn giá"
+        },
+        "business_justification": {
+          "type": "string",
+          "title": "Lý do và hiệu quả"
+        },
+        "needed_by": {
+          "type": "string",
+          "title": "Ngày cần",
+          "format": "date"
+        },
+        "cost_center": {
+          "type": "string",
+          "title": "Trung tâm chi phí",
+          "description": "FinERP"
+        },
+        "budget_code": {
+          "type": "string",
+          "title": "Mã ngân sách",
+          "description": "FinERP"
+        },
+        "quotations": {
+          "type": "string",
+          "title": "Báo giá",
+          "description": "Theo ngưỡng"
+        }
+      }
+    },
+    "uiSchema": {
+      "title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requester": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "department": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "priority": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "description": {
+        "ui:widget": "textarea",
+        "ui:help": "Viết lại rõ ràng và trích mục tiêu."
+      },
+      "attachments": {
+        "ui:help": "Kiểm tra hồ sơ còn thiếu."
+      },
+      "purchase_type": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "items": {
+        "ui:help": "Chuẩn hóa hạng mục, phát hiện dòng trùng."
+      },
+      "business_justification": {
+        "ui:widget": "textarea",
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "needed_by": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "cost_center": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "budget_code": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "quotations": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      }
+    },
+    "rules": [],
+    "metadata": {
+      "tenantSlug": "xtech",
+      "procedureCode": "PILOT-01"
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "code": "FORM-QUOTATION-DISCOUNT",
+    "name": "Phê duyệt báo giá và chiết khấu",
+    "jsonSchema": {
+      "type": "object",
+      "required": [
+        "title",
+        "requester",
+        "department",
+        "priority",
+        "description",
+        "customer",
+        "opportunity",
+        "quotation",
+        "gross_amount",
+        "discount_rate",
+        "net_amount",
+        "gross_margin"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Tiêu đề",
+          "description": "Ngắn gọn, dễ tìm"
+        },
+        "requester": {
+          "type": "string",
+          "title": "Người đề nghị",
+          "description": "Tự động theo tài khoản"
+        },
+        "department": {
+          "type": "string",
+          "title": "Đơn vị",
+          "description": "Từ HR projection"
+        },
+        "priority": {
+          "type": "string",
+          "title": "Ưu tiên",
+          "description": "Bình thường/Cao/Khẩn"
+        },
+        "description": {
+          "type": "string",
+          "title": "Mô tả chi tiết",
+          "description": "Nhu cầu và kết quả mong muốn"
+        },
+        "attachments": {
+          "type": "string",
+          "title": "Tệp đính kèm",
+          "description": "Theo yêu cầu thủ tục"
+        },
+        "customer": {
+          "type": "string",
+          "title": "Khách hàng",
+          "description": "FinERP"
+        },
+        "opportunity": {
+          "type": "string",
+          "title": "Cơ hội",
+          "description": "FinERP"
+        },
+        "quotation": {
+          "type": "string",
+          "title": "Báo giá",
+          "description": "FinERP"
+        },
+        "gross_amount": {
+          "type": "number",
+          "title": "Giá niêm yết",
+          "description": "VND"
+        },
+        "discount_rate": {
+          "type": "number",
+          "title": "Chiết khấu"
+        },
+        "net_amount": {
+          "type": "number",
+          "title": "Giá sau CK",
+          "description": "VND"
+        },
+        "gross_margin": {
+          "type": "number",
+          "title": "Biên lợi nhuận"
+        },
+        "competitor_context": {
+          "type": "string",
+          "title": "Bối cảnh cạnh tranh"
+        }
+      }
+    },
+    "uiSchema": {
+      "title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requester": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "department": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "priority": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "description": {
+        "ui:widget": "textarea",
+        "ui:help": "Viết lại rõ ràng và trích mục tiêu."
+      },
+      "attachments": {
+        "ui:help": "Kiểm tra hồ sơ còn thiếu."
+      },
+      "customer": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "opportunity": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "quotation": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "gross_amount": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "discount_rate": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "net_amount": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "gross_margin": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "competitor_context": {
+        "ui:widget": "textarea",
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      }
+    },
+    "rules": [],
+    "metadata": {
+      "tenantSlug": "xtech",
+      "procedureCode": "PILOT-12"
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "code": "FORM-RECRUITMENT-REQUEST",
+    "name": "Đề xuất tuyển dụng",
+    "jsonSchema": {
+      "type": "object",
+      "required": [
+        "title",
+        "requester",
+        "department",
+        "priority",
+        "description",
+        "position_title",
+        "headcount",
+        "employment_type",
+        "required_by",
+        "job_description",
+        "salary_range",
+        "reason"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Tiêu đề",
+          "description": "Ngắn gọn, dễ tìm"
+        },
+        "requester": {
+          "type": "string",
+          "title": "Người đề nghị",
+          "description": "Tự động theo tài khoản"
+        },
+        "department": {
+          "type": "string",
+          "title": "Đơn vị",
+          "description": "Từ HR projection"
+        },
+        "priority": {
+          "type": "string",
+          "title": "Ưu tiên",
+          "description": "Bình thường/Cao/Khẩn"
+        },
+        "description": {
+          "type": "string",
+          "title": "Mô tả chi tiết",
+          "description": "Nhu cầu và kết quả mong muốn"
+        },
+        "attachments": {
+          "type": "string",
+          "title": "Tệp đính kèm",
+          "description": "Theo yêu cầu thủ tục"
+        },
+        "position_title": {
+          "type": "string",
+          "title": "Chức danh"
+        },
+        "headcount": {
+          "type": "number",
+          "title": "Số lượng"
+        },
+        "employment_type": {
+          "type": "string",
+          "title": "Loại hợp đồng"
+        },
+        "required_by": {
+          "type": "string",
+          "title": "Ngày cần",
+          "format": "date"
+        },
+        "job_description": {
+          "type": "string",
+          "title": "Mô tả công việc"
+        },
+        "salary_range": {
+          "type": "string",
+          "title": "Khoảng lương",
+          "description": "VND/tháng"
+        },
+        "reason": {
+          "type": "string",
+          "title": "Lý do tuyển"
+        }
+      }
+    },
+    "uiSchema": {
+      "title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requester": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "department": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "priority": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "description": {
+        "ui:widget": "textarea",
+        "ui:help": "Viết lại rõ ràng và trích mục tiêu."
+      },
+      "attachments": {
+        "ui:help": "Kiểm tra hồ sơ còn thiếu."
+      },
+      "position_title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "headcount": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "employment_type": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "required_by": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "job_description": {
+        "ui:widget": "textarea",
+        "ui:help": "Sinh JD draft."
+      },
+      "salary_range": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "reason": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      }
+    },
+    "rules": [],
+    "metadata": {
+      "tenantSlug": "xtech",
+      "procedureCode": "PILOT-07"
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "code": "FORM-ROOM-BOOKING",
+    "name": "Booking phòng họp",
+    "jsonSchema": {
+      "type": "object",
+      "required": [
+        "title",
+        "requester",
+        "department",
+        "priority",
+        "description",
+        "start_at",
+        "end_at",
+        "attendee_count"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Tiêu đề",
+          "description": "Ngắn gọn, dễ tìm"
+        },
+        "requester": {
+          "type": "string",
+          "title": "Người đề nghị",
+          "description": "Tự động theo tài khoản"
+        },
+        "department": {
+          "type": "string",
+          "title": "Đơn vị",
+          "description": "Từ HR projection"
+        },
+        "priority": {
+          "type": "string",
+          "title": "Ưu tiên",
+          "description": "Bình thường/Cao/Khẩn"
+        },
+        "description": {
+          "type": "string",
+          "title": "Mô tả chi tiết",
+          "description": "Nhu cầu và kết quả mong muốn"
+        },
+        "attachments": {
+          "type": "string",
+          "title": "Tệp đính kèm",
+          "description": "Theo yêu cầu thủ tục"
+        },
+        "start_at": {
+          "type": "string",
+          "title": "Bắt đầu"
+        },
+        "end_at": {
+          "type": "string",
+          "title": "Kết thúc"
+        },
+        "attendee_count": {
+          "type": "number",
+          "title": "Số người"
+        },
+        "required_equipment": {
+          "type": "string",
+          "title": "Thiết bị"
+        },
+        "preferred_location": {
+          "type": "string",
+          "title": "Khu vực"
+        },
+        "recurrence": {
+          "type": "string",
+          "title": "Lặp lại"
+        },
+        "external_guests": {
+          "type": "string",
+          "title": "Khách ngoài"
+        }
+      }
+    },
+    "uiSchema": {
+      "title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requester": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "department": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "priority": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "description": {
+        "ui:widget": "textarea",
+        "ui:help": "Viết lại rõ ràng và trích mục tiêu."
+      },
+      "attachments": {
+        "ui:help": "Kiểm tra hồ sơ còn thiếu."
+      },
+      "start_at": {
+        "ui:help": "Tìm xung đột và gợi ý thời gian."
+      },
+      "end_at": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "attendee_count": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "required_equipment": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "preferred_location": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "recurrence": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "external_guests": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      }
+    },
+    "rules": [],
+    "metadata": {
+      "tenantSlug": "xtech",
+      "procedureCode": "PILOT-09"
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "code": "FORM-TRAVEL-REQUEST",
+    "name": "Đề nghị công tác",
+    "jsonSchema": {
+      "type": "object",
+      "required": [
+        "title",
+        "requester",
+        "department",
+        "priority",
+        "description",
+        "destination",
+        "start_at",
+        "end_at",
+        "objectives",
+        "participants",
+        "transport"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "title": "Tiêu đề",
+          "description": "Ngắn gọn, dễ tìm"
+        },
+        "requester": {
+          "type": "string",
+          "title": "Người đề nghị",
+          "description": "Tự động theo tài khoản"
+        },
+        "department": {
+          "type": "string",
+          "title": "Đơn vị",
+          "description": "Từ HR projection"
+        },
+        "priority": {
+          "type": "string",
+          "title": "Ưu tiên",
+          "description": "Bình thường/Cao/Khẩn"
+        },
+        "description": {
+          "type": "string",
+          "title": "Mô tả chi tiết",
+          "description": "Nhu cầu và kết quả mong muốn"
+        },
+        "attachments": {
+          "type": "string",
+          "title": "Tệp đính kèm",
+          "description": "Theo yêu cầu thủ tục"
+        },
+        "destination": {
+          "type": "string",
+          "title": "Địa điểm"
+        },
+        "start_at": {
+          "type": "string",
+          "title": "Bắt đầu"
+        },
+        "end_at": {
+          "type": "string",
+          "title": "Kết thúc"
+        },
+        "objectives": {
+          "type": "string",
+          "title": "Mục tiêu"
+        },
+        "participants": {
+          "type": "string",
+          "title": "Người tham gia"
+        },
+        "estimated_budget": {
+          "type": "number",
+          "title": "Dự toán",
+          "description": "VND"
+        },
+        "transport": {
+          "type": "string",
+          "title": "Phương tiện"
+        }
+      }
+    },
+    "uiSchema": {
+      "title": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "requester": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "department": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "priority": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "description": {
+        "ui:widget": "textarea",
+        "ui:help": "Viết lại rõ ràng và trích mục tiêu."
+      },
+      "attachments": {
+        "ui:help": "Kiểm tra hồ sơ còn thiếu."
+      },
+      "destination": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "start_at": {
+        "ui:help": "Tìm xung đột và gợi ý thời gian."
+      },
+      "end_at": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "objectives": {
+        "ui:widget": "textarea",
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "participants": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "estimated_budget": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      },
+      "transport": {
+        "ui:help": "Gợi ý giá trị, giải thích trường hoặc kiểm tra logic khi được yêu cầu."
+      }
+    },
+    "rules": [],
+    "metadata": {
+      "tenantSlug": "xtech",
+      "procedureCode": "PILOT-04"
+    }
+  }
+]

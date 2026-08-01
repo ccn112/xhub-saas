@@ -1,0 +1,632 @@
+[
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-executive",
+    "userId": "user-nam",
+    "role": "admin",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-executive",
+    "userId": "user-thuha",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-executive",
+    "userId": "user-anhkhoa",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-executive",
+    "userId": "user-tuan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-executive",
+    "userId": "user-minhanh",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-executive",
+    "userId": "user-minhquan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-executive",
+    "userId": "user-minhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-executive",
+    "userId": "user-leminhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-executive",
+    "userId": "user-quocbao",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-sales",
+    "userId": "user-nam",
+    "role": "admin",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-sales",
+    "userId": "user-thuha",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-sales",
+    "userId": "user-anhkhoa",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-sales",
+    "userId": "user-tuan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-sales",
+    "userId": "user-minhanh",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-sales",
+    "userId": "user-minhquan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-sales",
+    "userId": "user-minhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-sales",
+    "userId": "user-leminhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-sales",
+    "userId": "user-quocbao",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-product",
+    "userId": "user-nam",
+    "role": "admin",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-product",
+    "userId": "user-thuha",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-product",
+    "userId": "user-anhkhoa",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-product",
+    "userId": "user-tuan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-product",
+    "userId": "user-minhanh",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-product",
+    "userId": "user-minhquan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-product",
+    "userId": "user-minhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-product",
+    "userId": "user-leminhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-product",
+    "userId": "user-quocbao",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-support",
+    "userId": "user-nam",
+    "role": "admin",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-support",
+    "userId": "user-thuha",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-support",
+    "userId": "user-anhkhoa",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-support",
+    "userId": "user-tuan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-support",
+    "userId": "user-minhanh",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-support",
+    "userId": "user-minhquan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-support",
+    "userId": "user-minhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-support",
+    "userId": "user-leminhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-support",
+    "userId": "user-quocbao",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "userId": "user-nam",
+    "role": "admin",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "userId": "user-thuha",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "userId": "user-anhkhoa",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "userId": "user-tuan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "userId": "user-minhanh",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "userId": "user-minhquan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "userId": "user-minhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "userId": "user-leminhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-finerp-mp",
+    "userId": "user-quocbao",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xhub-mvp",
+    "userId": "user-nam",
+    "role": "admin",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xhub-mvp",
+    "userId": "user-thuha",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xhub-mvp",
+    "userId": "user-anhkhoa",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xhub-mvp",
+    "userId": "user-tuan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xhub-mvp",
+    "userId": "user-minhanh",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xhub-mvp",
+    "userId": "user-minhquan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xhub-mvp",
+    "userId": "user-minhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xhub-mvp",
+    "userId": "user-leminhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xhub-mvp",
+    "userId": "user-quocbao",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xbooking-upgrade",
+    "userId": "user-nam",
+    "role": "admin",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xbooking-upgrade",
+    "userId": "user-thuha",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xbooking-upgrade",
+    "userId": "user-anhkhoa",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xbooking-upgrade",
+    "userId": "user-tuan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xbooking-upgrade",
+    "userId": "user-minhanh",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xbooking-upgrade",
+    "userId": "user-minhquan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xbooking-upgrade",
+    "userId": "user-minhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xbooking-upgrade",
+    "userId": "user-leminhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xbooking-upgrade",
+    "userId": "user-quocbao",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-mp",
+    "userId": "user-nam",
+    "role": "admin",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-mp",
+    "userId": "user-thuha",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-mp",
+    "userId": "user-anhkhoa",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-mp",
+    "userId": "user-tuan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-mp",
+    "userId": "user-minhanh",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-mp",
+    "userId": "user-minhquan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-mp",
+    "userId": "user-minhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-mp",
+    "userId": "user-leminhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-mp",
+    "userId": "user-quocbao",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-hungtin",
+    "userId": "user-nam",
+    "role": "admin",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-hungtin",
+    "userId": "user-thuha",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-hungtin",
+    "userId": "user-anhkhoa",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-hungtin",
+    "userId": "user-tuan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-hungtin",
+    "userId": "user-minhanh",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-hungtin",
+    "userId": "user-minhquan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-hungtin",
+    "userId": "user-minhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-hungtin",
+    "userId": "user-leminhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-hungtin",
+    "userId": "user-quocbao",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-celadon",
+    "userId": "user-nam",
+    "role": "admin",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-celadon",
+    "userId": "user-thuha",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-celadon",
+    "userId": "user-anhkhoa",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-celadon",
+    "userId": "user-tuan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-celadon",
+    "userId": "user-minhanh",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-celadon",
+    "userId": "user-minhquan",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-celadon",
+    "userId": "user-minhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-celadon",
+    "userId": "user-leminhduc",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  },
+  {
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-customer-celadon",
+    "userId": "user-quocbao",
+    "role": "member",
+    "joinedAt": "2026-07-01T08:00:00+07:00"
+  }
+]

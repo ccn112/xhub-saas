@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xhub.vn/schemas/xoffice/form-definition-1.0.json",
+  "title": "XOffice Form Definition",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "code",
+    "name",
+    "jsonSchema",
+    "uiSchema"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "code": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "jsonSchema": {
+      "type": "object"
+    },
+    "uiSchema": {
+      "type": "object"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

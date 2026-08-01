@@ -1,0 +1,62 @@
+{
+  "tenantDefaults": [
+    {
+      "tenantId": "tenant-xtech",
+      "tenantCode": "xtech",
+      "navigationMode": "rail-context",
+      "allowedModes": ["rail-context", "expanded"]
+    },
+    {
+      "tenantId": "tenant-demo-isolation",
+      "tenantCode": "demo-isolation",
+      "navigationMode": "expanded",
+      "allowedModes": ["rail-context", "expanded"]
+    }
+  ],
+  "userPreferences": [
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-nguyen-hoai-nam",
+      "displayName": "Nguyễn Hoài Nam",
+      "roleHint": "Lãnh đạo",
+      "navigationMode": "rail-context",
+      "theme": "light",
+      "density": "comfortable"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-tran-thu-ha",
+      "displayName": "Trần Thu Hà",
+      "roleHint": "Kinh doanh",
+      "navigationMode": "expanded",
+      "theme": "light",
+      "density": "comfortable"
+    },
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-pham-anh-khoa",
+      "displayName": "Phạm Anh Khoa",
+      "roleHint": "Quản lý dự án",
+      "navigationMode": "rail-context",
+      "theme": "dark",
+      "density": "compact"
+    },
+    {
+      "tenantId": "tenant-demo-isolation",
+      "userId": "user-nguyen-hoai-nam",
+      "displayName": "Nguyễn Hoài Nam",
+      "roleHint": "Khách mời kiểm thử",
+      "navigationMode": "expanded",
+      "theme": "system",
+      "density": "comfortable"
+    }
+  ],
+  "usersWithoutPreference": [
+    {
+      "tenantId": "tenant-xtech",
+      "userId": "user-le-minh-anh",
+      "displayName": "Lê Minh Anh",
+      "expectedEffectiveMode": "rail-context"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "product-xhub",
+    "tenantId": "tenant-xtech",
+    "code": "XHUB",
+    "name": "XHub",
+    "category": "workspace",
+    "description": "Cổng điều hành và hợp nhất nghiệp vụ doanh nghiệp."
+  },
+  {
+    "id": "product-xspace",
+    "tenantId": "tenant-xtech",
+    "code": "XSPACE",
+    "name": "X.Space",
+    "category": "collaboration",
+    "description": "Không gian cộng tác, trao đổi và thực thi công việc."
+  },
+  {
+    "id": "product-xbooking",
+    "tenantId": "tenant-xtech",
+    "code": "XBOOKING",
+    "name": "XBooking",
+    "category": "saas",
+    "description": "Quản lý đặt chỗ, lịch hẹn và tài nguyên."
+  },
+  {
+    "id": "product-xbuilding",
+    "tenantId": "tenant-xtech",
+    "code": "XBUILDING",
+    "name": "XBuilding",
+    "category": "saas",
+    "description": "Quản lý bất động sản, cư dân và vận hành tòa nhà."
+  },
+  {
+    "id": "product-finerp",
+    "tenantId": "tenant-xtech",
+    "code": "FINERP",
+    "name": "FinERP",
+    "category": "erp",
+    "description": "Nền tảng ERP tài chính và vận hành dựa trên ERPNext."
+  },
+  {
+    "id": "product-xai",
+    "tenantId": "tenant-xtech",
+    "code": "XAI",
+    "name": "X.AI",
+    "category": "ai",
+    "description": "Trợ lý AI phân tích, tóm tắt và hỗ trợ tác nghiệp."
+  }
+]

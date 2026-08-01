@@ -1,0 +1,25 @@
+[
+  {
+    "id": "list-week32",
+    "tenantId": "tenant-xtech",
+    "channelId": "channel-xhub-mvp",
+    "title": "Việc tuần 32",
+    "description": "Danh sách cộng tác theo dõi công việc ưu tiên của tuần 32.",
+    "views": [
+      "list",
+      "kanban",
+      "calendar"
+    ],
+    "updatedAt": "2026-08-08T09:28:00+07:00",
+    "itemIds": [
+      "task-demo-mp",
+      "task-xbuilding-quote",
+      "task-review-brd-finance",
+      "task-uat-checklist",
+      "task-key-user-training",
+      "task-permission-config",
+      "task-api-payment",
+      "task-demo-feedback"
+    ]
+  }
+]
