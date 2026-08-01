@@ -364,6 +364,7 @@ export const XHUB_NAVIGATION: XNavItem[] = [
     children: [
       { id: "ioc.entry", label: "Trung tâm điều hành", href: "/ioc", icon: "chart", match: ["/ioc"], permission: "ioc.view" },
       { id: "ioc.twin.office", label: "Bản sao số văn phòng", href: "/ioc/twin/office", icon: "business", match: ["/ioc/twin/office"], permission: "ioc.view" },
+      { id: "ioc.studio.templates", label: "Thư viện mẫu (nhân bản)", href: "/ioc/studio/templates", icon: "folder", match: ["/ioc/studio/templates"], permission: "ioc.studio.read" },
       { id: "ioc.studio", label: "Twin Studio", href: "/ioc/studio", icon: "office", match: ["/ioc/studio"], permission: "ioc.studio.read" },
       { id: "ioc.studio.dataLayers", label: "Lớp dữ liệu", href: "/ioc/studio/data-layers", icon: "list", match: ["/ioc/studio/data-layers"], permission: "ioc.datalayer.manage" },
       { id: "ioc.studio.dashboards", label: "Bảng điều khiển twin", href: "/ioc/studio/dashboards", icon: "apps", match: ["/ioc/studio/dashboards"], permission: "ioc.studio.read" },

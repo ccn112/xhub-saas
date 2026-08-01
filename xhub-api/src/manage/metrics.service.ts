@@ -81,8 +81,12 @@ export class MetricsService {
    * NativeWorkItems that carry a dueAt and are not CANCELLED, the share that are
    * NOT overdue. Overdue = dueAt < asOf AND status not in (DONE, CANCELLED).
    * A companion "overdueCount" is surfaced in detail for the exception view.
+   *
+   * PUBLIC because it is the ONE on-time definition in the platform: the IOC
+   * command centre (IocInsightsService) reuses this exact method rather than
+   * inventing a second SLA number (#12 — one read model, one formula).
    */
-  private async computeFromWork(tenantId: string, asOf: Date) {
+  async computeFromWork(tenantId: string, asOf: Date) {
     const items = await this.db.nativeWorkItem.findMany({
       where: { tenantId, status: { not: 'CANCELLED' }, dueAt: { not: null } },
       select: { id: true, status: true, dueAt: true },

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Stage, Layer, Line, Circle, Text, Rect, Group } from "react-konva";
+import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from "@heroicons/react/24/outline";
 import type { FloorPlan, Geometry, Point, Zone, SceneBinding } from "@/xoffice/lib/ioc-data";
 import { ICON_GLYPHS } from "@/xoffice/lib/ioc-data";
 
@@ -73,16 +74,38 @@ export default function FloorPlanEditor({ plan, orgUnits, bindings, sceneId, ico
     Object.fromEntries(bindings.map((b) => [b.zoneId, { orgUnitId: b.bindingId, iconKey: b.iconKey ?? "" }])),
   );
   const [size, setSize] = useState({ w: 900, h: 520 });
+  const [full, setFull] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
+  // A Konva <Stage> is a real <canvas>: its backing store is set from the width/
+  // height PROPS, not from CSS. Growing the wrapper with CSS alone would leave a
+  // stale, blurry canvas — so the ResizeObserver below re-measures the wrapper and
+  // feeds the new pixel size back into the Stage on every fullscreen toggle.
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => setSize({ w: el.clientWidth, h: Math.max(380, Math.round(el.clientWidth * 0.5)) }));
+    const measure = () =>
+      setSize({
+        w: el.clientWidth,
+        // In fullscreen use the real available height; otherwise keep the 2:1 card.
+        h: full ? Math.max(380, el.clientHeight) : Math.max(380, Math.round(el.clientWidth * 0.5)),
+      });
+    const ro = new ResizeObserver(measure);
     ro.observe(el);
-    setSize({ w: el.clientWidth, h: Math.max(380, Math.round(el.clientWidth * 0.5)) });
-    return () => ro.disconnect();
-  }, []);
+    measure();
+    // The wrapper's own box changes in the SAME frame as the class flip, so also
+    // re-measure on the next tick to catch the settled layout.
+    const t = setTimeout(measure, 60);
+    return () => { ro.disconnect(); clearTimeout(t); };
+  }, [full]);
+
+  // Same fullscreen contract as admin/organization/OrgChart.tsx — Esc exits.
+  useEffect(() => {
+    if (!full) return;
+    const onEsc = (e: KeyboardEvent) => { if (e.key === "Escape") setFull(false); };
+    window.addEventListener("keydown", onEsc);
+    return () => window.removeEventListener("keydown", onEsc);
+  }, [full]);
 
   // Fit the meter-space extents to the viewport. This IS the pixel transform.
   const view = useMemo(() => {
@@ -223,7 +246,7 @@ export default function FloorPlanEditor({ plan, orgUnits, bindings, sceneId, ico
   for (let y = 0; y <= view.maxY + 2; y += GRID_M) gridLines.push([view.ox, view.oy + y * view.scale, view.ox + (view.maxX + 2) * view.scale, view.oy + y * view.scale]);
 
   return (
-    <div className="space-y-3">
+    <div className={full ? "fixed inset-0 z-[70] flex flex-col gap-3 overflow-hidden bg-gray-100 p-3 dark:bg-dark-800" : "space-y-3"}>
       <div className="flex flex-wrap items-center gap-2">
         <div className="inline-flex rounded-lg border border-gray-300 p-0.5 dark:border-dark-500">
           <button type="button" onClick={() => { setTool("select"); setDraft([]); }} className={`rounded-md px-3 py-1.5 text-xs font-medium ${tool === "select" ? "bg-primary-600 text-white" : "text-gray-600 dark:text-dark-200"}`}>Chọn</button>
@@ -247,11 +270,20 @@ export default function FloorPlanEditor({ plan, orgUnits, bindings, sceneId, ico
         </label>
         <button type="button" onClick={() => void save()} className="rounded-lg border border-primary-600 px-3 py-1.5 text-xs font-medium text-primary-600">Lưu nháp</button>
         <button type="button" onClick={() => void publish()} className="rounded-lg bg-primary-600 px-3 py-1.5 text-xs font-medium text-white">Xuất bản phiên bản</button>
+        <button
+          type="button"
+          onClick={() => setFull((v) => !v)}
+          aria-label={full ? "Thu nhỏ trình vẽ" : "Mở rộng trình vẽ toàn màn hình"}
+          title={full ? "Thu nhỏ (Esc)" : "Toàn màn hình"}
+          className="flex size-7 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:bg-gray-100 dark:border-dark-500 dark:text-dark-200 dark:hover:bg-dark-600"
+        >
+          {full ? <ArrowsPointingInIcon className="size-4" /> : <ArrowsPointingOutIcon className="size-4" />}
+        </button>
         {status ? <span className="text-xs text-gray-500 dark:text-dark-300">{status}</span> : null}
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-[1fr_280px]">
-        <div ref={wrapRef} className="overflow-hidden rounded-lg border border-gray-200 bg-slate-50 dark:border-dark-600 dark:bg-dark-800">
+      <div className={`grid gap-3 lg:grid-cols-[1fr_280px] ${full ? "min-h-0 flex-1" : ""}`}>
+        <div ref={wrapRef} className={`overflow-hidden rounded-lg border border-gray-200 bg-slate-50 dark:border-dark-600 dark:bg-dark-800 ${full ? "min-h-0" : ""}`}>
           <Stage width={size.w} height={size.h} onClick={onStageClick}>
             <Layer listening={false}>
               {gridLines.map((pts, i) => (
@@ -296,7 +328,7 @@ export default function FloorPlanEditor({ plan, orgUnits, bindings, sceneId, ico
           </Stage>
         </div>
 
-        <aside className="space-y-3 rounded-lg border border-gray-200 p-3 dark:border-dark-600">
+        <aside className={`space-y-3 rounded-lg border border-gray-200 p-3 dark:border-dark-600 ${full ? "overflow-y-auto bg-white dark:bg-dark-700" : ""}`}>
           <h3 className="font-heading text-sm font-semibold text-gray-800 dark:text-dark-50">Thuộc tính vùng</h3>
           {selectedZone ? (
             <div className="space-y-2.5">

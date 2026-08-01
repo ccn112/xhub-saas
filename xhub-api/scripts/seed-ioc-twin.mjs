@@ -16,94 +16,42 @@
 //
 // A SYSTEM-ISOLATION twin is seeded into tenant-demo-isolation carrying the
 // MUST_NOT_LEAK markers so the RLS/isolation tests have something to prove.
+//
+// NON-DUPLICATIVE (2026-08-01): the office layout, icon catalog and data-layer
+// set are NOT written twice. They live once in scripts/ioc-template-specs.mjs
+// as the SHARED template `TPL-OFFICE`, which this seed materialises for T001 and
+// which ioc-template-catalog-seed.mjs publishes as an `IocTemplate` row. Editing
+// the template therefore updates both the reference slice and the gallery.
 import 'dotenv/config';
 import pg from 'pg';
 import { createHash } from 'node:crypto';
+import { templateByCode, zonePolygons, ALL_ICONS } from './ioc-template-specs.mjs';
 
 const TENANT = 'tenant-xtech';
 const ISO_TENANT = 'tenant-demo-isolation';
 const ACTOR = 'usr-ceo';
 
+const TPL = templateByCode('TPL-OFFICE');
+
 // zone id → real OrgUnit code (resolved to ids at runtime — never hardcode ids).
-const ZONE_PLAN = [
-  { id: 'zone-exec', name: 'Ban Điều hành', org: 'EXEC', icon: 'department-executive', box: [0, 0, 10, 7] },
-  { id: 'zone-sales', name: 'Kinh doanh', org: 'SALES', icon: 'department-sales', box: [10, 0, 22, 7] },
-  { id: 'zone-fin', name: 'Tài chính - Kế toán', org: 'FIN', icon: 'department-finance', box: [22, 0, 32, 7] },
-  { id: 'zone-hr', name: 'Nhân sự', org: 'HR', icon: 'department-hr', box: [32, 0, 42, 7] },
-  { id: 'zone-tech', name: 'Công nghệ', org: 'TECH', icon: 'department-it', box: [0, 7, 10, 15] },
-  { id: 'zone-solution', name: 'Giải pháp', org: 'SOLUTION', icon: 'department-operations', box: [10, 7, 22, 15] },
-  { id: 'zone-delivery', name: 'Triển khai', org: 'DELIVERY', icon: 'department-pmo', box: [22, 7, 32, 15] },
-  { id: 'zone-support', name: 'Hỗ trợ', org: 'SUPPORT', icon: 'department-support', box: [32, 7, 42, 15] },
-];
+// The canonical code is the FIRST candidate in the template's orgHint; T001 has
+// every one of them seeded by Identity, so this seed still fails loudly if not.
+const ZONE_PLAN = zonePolygons(TPL).map((z) => ({
+  id: z.id,
+  name: z.name,
+  org: z.orgHint.codes[0],
+  icon: z.icon,
+  polygon: z.polygon,
+}));
 
-// Clockwise in meter space (the API normalizes, we match it so checksums are stable).
-const rect = ([x1, y1, x2, y2]) => [
-  { x: x1, y: y1 },
-  { x: x1, y: y2 },
-  { x: x2, y: y2 },
-  { x: x2, y: y1 },
-];
+// The FULL platform icon catalog (office + industry sets) — a tenant browsing
+// the gallery must be able to pick a factory/retail/hotel icon in the editor.
+const ICONS = ALL_ICONS;
 
-const ICONS = [
-  ['department-executive', 'Ban điều hành'],
-  ['department-sales', 'Kinh doanh'],
-  ['department-finance', 'Tài chính'],
-  ['department-hr', 'Nhân sự'],
-  ['department-it', 'CNTT'],
-  ['department-operations', 'Vận hành'],
-  ['department-pmo', 'PMO'],
-  ['department-support', 'CSKH'],
-  ['object-task', 'Task'],
-  ['object-approval', 'Phê duyệt'],
-  ['object-ticket', 'Ticket'],
-  ['object-project', 'Dự án'],
-  ['object-kpi', 'KPI'],
-  ['object-risk', 'Rủi ro'],
-];
-
-const DATA_LAYERS = [
-  {
-    id: 'ioc-dl-workload',
-    code: 'DL-WORKLOAD',
-    name: 'Tải công việc theo phòng ban',
-    sourceKey: 'xoffice-work',
-    entityKey: 'NativeWorkItem',
-    query: { filters: [{ field: 'status', operator: 'NOT_IN', value: ['DONE', 'CANCELLED'] }], timeWindow: 'LIVE', groupBy: ['orgUnitId'] },
-    aggregation: { op: 'SUM', field: 'weightedDemand' },
-    refreshPolicy: 'ONE_MINUTE',
-    visualMapping: {
-      mode: 'ZONE_COLOR',
-      thresholds: [
-        { min: 0, max: 6, state: 'NORMAL' },
-        { min: 6, max: 12, state: 'GOOD' },
-        { min: 12, max: 20, state: 'BUSY' },
-        { min: 20, max: null, state: 'OVERLOADED' },
-      ],
-    },
-  },
-  {
-    id: 'ioc-dl-headcount',
-    code: 'DL-HEADCOUNT',
-    name: 'Định biên có người giữ theo phòng ban',
-    sourceKey: 'identity-org',
-    entityKey: 'Position',
-    query: { filters: [], timeWindow: 'LIVE', groupBy: ['orgUnitId'] },
-    aggregation: { op: 'DISTINCT_COUNT', field: 'holderPersonId' },
-    refreshPolicy: 'FIVE_MINUTES',
-    visualMapping: { mode: 'CARD', thresholds: [] },
-  },
-  {
-    id: 'ioc-dl-projects',
-    code: 'DL-PROJECT',
-    name: 'Dự án đang chạy theo phòng ban',
-    sourceKey: 'xoffice-work',
-    entityKey: 'ExecutionProject',
-    query: { filters: [{ field: 'status', operator: 'IN', value: ['PLANNED', 'ACTIVE', 'AT_RISK'] }], timeWindow: 'LIVE', groupBy: ['orgUnitId'] },
-    aggregation: { op: 'COUNT', field: null },
-    refreshPolicy: 'FIVE_MINUTES',
-    visualMapping: { mode: 'BADGE', thresholds: [] },
-  },
-];
+// Deterministic ids for the three reference layers (kept from the original slice
+// so an existing T001 database is updated in place rather than re-keyed).
+const LAYER_IDS = { 'DL-WORKLOAD': 'ioc-dl-workload', 'DL-HEADCOUNT': 'ioc-dl-headcount', 'DL-PROJECT': 'ioc-dl-projects' };
+const DATA_LAYERS = TPL.dataLayerSpecs.map((s) => ({ ...s, id: LAYER_IDS[s.code] }));
 
 function canonical(v) {
   if (Array.isArray(v)) return v.map(canonical);
@@ -160,15 +108,13 @@ try {
 
   // 3) Floor plan draft (geometry in METERS)
   const geometry = {
-    walls: [
-      { id: 'wall-perimeter', points: [{ x: 0, y: 0 }, { x: 42, y: 0 }, { x: 42, y: 15 }, { x: 0, y: 15 }, { x: 0, y: 0 }], thickness: 0.2, height: 3 },
-    ],
+    walls: TPL.floorPlanSpec.walls,
     zones: ZONE_PLAN.map((z) => ({
       id: z.id,
       name: z.name,
       kind: 'DEPARTMENT',
       orgUnitId: orgByCode.get(z.org).id,
-      polygon: rect(z.box),
+      polygon: z.polygon,
     })),
   };
   await c.query(
@@ -250,15 +196,15 @@ try {
   await c.query(`UPDATE "TwinScene" SET status='PUBLISHED', "activeVersionNo"=$2 WHERE id=$1`, [SCENE_ID, sceneVersionNo]);
 
   // 8) Office Twin dashboard + publish v1
-  const widgets = [
-    { id: 'w-kpi-workload', type: 'KPI', title: 'Tổng tải công việc', dataLayerId: layerByCode.get('DL-WORKLOAD'), layout: { x: 0, y: 0, w: 3, h: 1 } },
-    { id: 'w-kpi-headcount', type: 'KPI', title: 'Định biên có người giữ', dataLayerId: layerByCode.get('DL-HEADCOUNT'), layout: { x: 3, y: 0, w: 3, h: 1 } },
-    { id: 'w-kpi-projects', type: 'KPI', title: 'Dự án đang chạy', dataLayerId: layerByCode.get('DL-PROJECT'), layout: { x: 6, y: 0, w: 3, h: 1 } },
-    { id: 'w-scene', type: 'SCENE_3D', title: 'Bản sao số văn phòng', dataLayerId: null, layout: { x: 0, y: 1, w: 9, h: 8 } },
-    { id: 'w-rank', type: 'WORKLOAD_RANKING', title: 'Xếp hạng tải theo phòng ban', dataLayerId: layerByCode.get('DL-WORKLOAD'), layout: { x: 9, y: 1, w: 3, h: 8 } },
-    { id: 'w-heat', type: 'HEATMAP', title: 'Bản đồ nhiệt tải', dataLayerId: layerByCode.get('DL-WORKLOAD'), layout: { x: 0, y: 9, w: 6, h: 3 } },
-    { id: 'w-table', type: 'TABLE', title: 'Định biên theo phòng ban', dataLayerId: layerByCode.get('DL-HEADCOUNT'), layout: { x: 6, y: 9, w: 6, h: 3 } },
-  ];
+  // Widget list comes from the SHARED template — layerCode is resolved to this
+  // tenant's own DataLayerDefinition id (never a cross-tenant id).
+  const widgets = TPL.dashboardSpec.widgets.map((w) => ({
+    id: w.id,
+    type: w.type,
+    title: w.title,
+    dataLayerId: w.layerCode ? (layerByCode.get(w.layerCode) ?? null) : null,
+    layout: w.layout,
+  }));
   await c.query(
     `INSERT INTO "DashboardDefinition" (id,"tenantId",code,name,"viewType","sceneId","globalFilters",widgets,status,revision,"createdBy","createdAt","updatedAt")
      VALUES ($1,$2,'DASH-OFFICE','Office Digital Twin Command Center','OFFICE_TWIN',$3,ARRAY['orgUnitId','timeWindow']::text[],$4,'DRAFT',0,$5,now(),now())

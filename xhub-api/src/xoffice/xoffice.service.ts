@@ -838,6 +838,53 @@ export class XofficeService implements OnModuleInit {
     return { ...this.aiDraftMock(slug, prompt, screen), source: 'mock' };
   }
 
+  /**
+   * DRAFT-FIRST advisory TEXT (Constitution #8/#10/#11) — the same gate as
+   * `aiDraft` above, exposed for callers that need prose rather than a patch set
+   * (e.g. the IOC "AI Twin Brief"). It is deliberately the ONLY other AI entry
+   * point in the platform so there is exactly one place where the live-model
+   * switch lives:
+   *
+   *   live  ⇔ XOFFICE_AI_LIVE === 'true'  AND  ANTHROPIC_API_KEY is present
+   *   otherwise (and on ANY error/timeout) → the caller's deterministic
+   *   `fallback()` text, tagged source='mock'
+   *
+   * The result is ALWAYS advisory: `mustRequireHumanApply` is hard-coded true and
+   * nothing here writes to any business table. The model never sees raw personal
+   * data — callers pass pre-aggregated department numbers.
+   */
+  async aiAdvisory(
+    system: string,
+    user: string,
+    fallback: () => string,
+    opts: { maxTokens?: number; timeoutMs?: number } = {},
+  ): Promise<{ text: string; source: 'live' | 'mock'; mustRequireHumanApply: true }> {
+    const live = process.env.XOFFICE_AI_LIVE === 'true';
+    if (live && this.anthropic) {
+      try {
+        const resp = await this.anthropic.messages.create(
+          {
+            model: process.env.XOFFICE_AI_MODEL || 'claude-opus-4-8',
+            max_tokens: opts.maxTokens ?? 800,
+            system,
+            messages: [{ role: 'user', content: user }],
+          },
+          // Hard ceiling: a dashboard read must never hang on the model. On
+          // timeout we fall through to the deterministic fallback below.
+          { timeout: opts.timeoutMs ?? 15000, maxRetries: 0 },
+        );
+        const text = resp.content
+          .map((b: any) => (b.type === 'text' ? b.text : ''))
+          .join('')
+          .trim();
+        if (text) return { text, source: 'live', mustRequireHumanApply: true };
+      } catch {
+        // fall through to the deterministic fallback on any error/timeout
+      }
+    }
+    return { text: fallback(), source: 'mock', mustRequireHumanApply: true };
+  }
+
   private async aiDraftLive(
     slug: string,
     prompt: string,

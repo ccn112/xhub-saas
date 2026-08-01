@@ -81,10 +81,14 @@
     "seed:manage-okr": "node scripts/seed-manage-okr.mjs",
     "test:manage-okr": "node scripts/manage-okr-smoke.mjs",
     "seed:manage-industries": "node scripts/seed-manage-industries.mjs",
-    "test:manage-industry": "node scripts/manage-industry-smoke.mjs",
+    "test:manage-industry": "node scripts/seed-manage.mjs && node scripts/seed-manage-okr.mjs && node scripts/seed-manage-industries.mjs && node scripts/manage-industry-smoke.mjs",
     "seed:ioc": "node scripts/seed-ioc-twin.mjs",
     "test:ioc-twin": "node scripts/ioc-twin-smoke.mjs",
-    "test:ioc-data-layer": "node scripts/ioc-data-layer-smoke.mjs"
+    "test:ioc-data-layer": "node scripts/ioc-data-layer-smoke.mjs",
+    "seed:ioc-demo-load": "node scripts/ioc-demo-load-seed.mjs",
+    "seed:ioc-templates": "node scripts/ioc-template-catalog-seed.mjs",
+    "test:ioc-templates": "node scripts/ioc-template-gallery-smoke.mjs",
+    "test:ioc-insights": "node scripts/ioc-insights-smoke.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

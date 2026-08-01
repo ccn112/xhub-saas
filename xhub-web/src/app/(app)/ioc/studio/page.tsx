@@ -2,7 +2,7 @@ import Link from "next/link";
 import { SectionCard } from "@/xhub/ui/Card";
 import { StatCard } from "@/xhub/ui/StatCard";
 import { Badge } from "@/xhub/ui/Badge";
-import { listSites, listPlans, listScenes, listDataLayers, listDashboards } from "@/xoffice/lib/ioc-data";
+import { listSites, listPlans, listScenes, listDataLayers, listDashboards, listTemplates } from "@/xoffice/lib/ioc-data";
 
 export const metadata = { title: "Twin Studio · XHub IOC" };
 export const dynamic = "force-dynamic";
@@ -18,8 +18,8 @@ const statusTone: Record<string, "success" | "warning" | "info" | "neutral"> = {
 // IOC-S01 — Twin Studio home (DT-01). The configuration chain in one screen:
 // Site → Floor → FloorPlan → Scene (+ bindings) → DataLayer → Dashboard.
 export default async function TwinStudioPage() {
-  const [sites, plans, scenes, layers, dashboards] = await Promise.all([
-    listSites(), listPlans(), listScenes(), listDataLayers(), listDashboards(),
+  const [sites, plans, scenes, layers, dashboards, templates] = await Promise.all([
+    listSites(), listPlans(), listScenes(), listDataLayers(), listDashboards(), listTemplates(),
   ]);
   const floors = sites.items.flatMap((s) => s.floors ?? []);
 
@@ -43,7 +43,26 @@ export default async function TwinStudioPage() {
         <StatCard label="Lớp dữ liệu" value={String(layers.items.length)} icon="🧭" tone="neutral" />
       </div>
 
-      <SectionCard title="Chuỗi cấu hình" accent="primary">
+      {/* PRIMARY entry point (DT-04): browse a standard template and clone it.
+          Drawing from a blank canvas is the fallback, not the default path. */}
+      <SectionCard title="Bắt đầu từ đây — Thư viện mẫu" accent="primary">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-sm text-gray-600 dark:text-dark-200">
+              {templates.items.length} bản mô phỏng mẫu theo ngành ({templates.items.map((t) => t.code).join(", ") || "chưa seed"}). Xem trước rồi{" "}
+              <strong>nhân bản</strong> thành bản nháp của tenant bạn — nhanh hơn nhiều so với vẽ từ trang trắng.
+            </p>
+            <p className="mt-1 text-xs text-gray-400">
+              Vùng nào không dò được đơn vị phù hợp sẽ để trống để bạn tự gán; hệ thống không tạo đơn vị ảo.
+            </p>
+          </div>
+          <Link href="/ioc/studio/templates" className="shrink-0 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white">
+            Mở thư viện mẫu →
+          </Link>
+        </div>
+      </SectionCard>
+
+      <SectionCard title="Chuỗi cấu hình (khi tự dựng từ đầu)" accent="neutral">
         <ol className="flex flex-wrap items-center gap-2 text-xs">
           {["Địa điểm/Tầng", "Mặt bằng (mét)", "Vùng phòng ban", "Gán OrgUnit + icon", "Lớp dữ liệu", "Bảng điều khiển", "Xuất bản (bất biến)"].map((s, i) => (
             <li key={s} className="flex items-center gap-2">

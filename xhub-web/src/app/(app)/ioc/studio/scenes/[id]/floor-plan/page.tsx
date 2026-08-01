@@ -13,8 +13,16 @@ export const dynamic = "force-dynamic";
 // IOC-S02 — Floor Plan Editor (DT-01). Draw zones in METERS, bind each to a REAL
 // OrgUnit from Identity, pick an icon from the seeded catalog, autosave the
 // draft, publish an immutable version.
-export default async function FloorPlanEditorPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function FloorPlanEditorPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ cloned?: string; unmapped?: string }>;
+}) {
   const { id } = await params;
+  const { cloned, unmapped } = await searchParams;
+  const unmappedCount = Number(unmapped ?? 0);
   const scene = await getScene(id);
   const plan = scene?.planId ? await getPlan(scene.planId) : null;
   const [orgUnits, icons] = await Promise.all([listOrgUnits(), listIcons()]);
@@ -48,6 +56,27 @@ export default async function FloorPlanEditorPage({ params }: { params: Promise<
           <Link href="/ioc/studio/publish" className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium dark:border-dark-500 dark:text-dark-100">Xuất bản</Link>
         </div>
       </div>
+
+      {/* Post-clone banner (DT-04). Honest by design: it names how many zones the
+          clone could NOT bind, because the system refuses to invent an OrgUnit. */}
+      {cloned ? (
+        <SectionCard title={`Đã nhân bản từ template ${cloned}`} accent={unmappedCount > 0 ? "warning" : "success"}>
+          <p className="text-sm text-gray-600 dark:text-dark-200">
+            {unmappedCount > 0 ? (
+              <>
+                Đây là <strong>bản nháp của riêng bạn</strong>. Có <strong>{unmappedCount} vùng chưa gán đơn vị</strong> — hệ thống không
+                tìm được đơn vị phù hợp trong cây tổ chức của tenant và <em>không tự tạo đơn vị ảo</em>. Hãy chọn từng vùng trên mặt bằng
+                rồi gán đơn vị thật ở khung “Thuộc tính vùng”.
+              </>
+            ) : (
+              <>
+                Đây là <strong>bản nháp của riêng bạn</strong>. Tất cả vùng đã gán được vào đơn vị thật của tenant — bạn có thể chỉnh mặt
+                bằng rồi xuất bản.
+              </>
+            )}
+          </p>
+        </SectionCard>
+      ) : null}
 
       <SectionCard title="Trình vẽ" accent="primary" bodyClassName="space-y-3">
         <FloorPlanEditor

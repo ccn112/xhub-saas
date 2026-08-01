@@ -1,13 +1,14 @@
 # MACHINE HANDOFF — Runbook dựng lại trên máy mới
 
 > **Đọc file này đầu tiên khi mở dự án trên máy khác.**
-> **XHub giờ là 1 git MONOREPO** tại `D:\Code` (branch `main`, track `xhub-api`+`xhub-web`+docs; `.gitignore` allowlist bỏ node_modules/.env/dist/.next/storage + dự án khác). Máy mới: `git clone <remote>` (hoặc sync Drive) → code về. **DB Postgres + server + `.env` là LOCAL — không theo git/Drive**, phải tạo lại `.env` + dựng DB + seed + chạy server (các mục dưới). Chưa có remote GitHub — thêm khi cần: `git remote add origin <url> && git push -u origin main`.
-> Cập nhật: 2026-07-30. Mốc bàn giao: **PH-02 đóng + SaaS bước 1 (Tenant Registry) + bước 2 (Platform Console) — tất cả verified xanh.**
+> **XHub là 1 git MONOREPO** tự chứa tại `D:\Code\xhub-saas\` (branch `main`, track `xhub-api`+`xhub-web`+docs; `.gitignore` allowlist bỏ node_modules/.env/dist/.next/storage + dự án khác). Remote: `https://github.com/ccn112/xhub-saas` (private). Máy mới: `git clone https://github.com/ccn112/xhub-saas.git` → code về. **DB Postgres + server + `.env` là LOCAL — không theo git**, phải tạo lại `.env` + dựng DB + seed + chạy server (các mục dưới).
+> Cập nhật: 2026-08-01. Mốc bàn giao: **SaaS v1.0 (10 tenant) + Work/PM v2 + Management OS MG-01→03 + KPI/OKR theo ngành + IOC Digital Twin DT-01→03 + Template Gallery — tất cả verified xanh.** People Essentials: PE-00 rebase-audit xong (docs-only, chưa build code) ở `xhub-web/docs/people-essentials/`.
 
 ## 0. Trạng thái tại mốc bàn giao
-- Nền tảng 8/8 · PH-00/01/02 đóng · SaaS step 1 (Tenant Registry) + step 2 (Platform Console + PLT_ namespace) xong.
-- **RLS ~57 bảng**; ~23 `test:*` PASS; **không agent nào đang chạy** (an toàn chuyển máy).
-- Repo: `D:\Code\xhub-saas\xhub-api` (NestJS :4000) · `D:\Code\xhub-web` (Next 16 :3000).
+- Nền tảng 8/8 · PH-00/01/02 đóng · SaaS bước 1+2 (Tenant Registry + Platform Console) · Work/PM v2 (5 view) · Management OS MG-01→03 (reference slice + Scorecard/OKR + KPI ngành) · IOC Digital Twin DT-01→03 + Template Gallery.
+- **RLS 89 bảng** (đọc động, xem lệnh ở mục 6); ~40+ `test:*` PASS.
+- Repo: `D:\Code\xhub-saas\xhub-api` (NestJS :4000) · `D:\Code\xhub-saas\xhub-web` (Next 16 :3000) — **đường dẫn đã đổi, không còn `D:\Code\xhub-web` root**.
+- 🔴 **`ANTHROPIC_API_KEY` VẪN CHƯA rotate** (đã lộ, xác nhận lại fingerprint khớp) — làm ngay tại console.anthropic.com trước khi dùng máy mới cho production.
 
 ## 1. Prerequisites máy mới
 - Node (v24 như máy cũ), PostgreSQL (bản 18), Git Bash/PowerShell.
@@ -131,6 +132,33 @@ npm run test:manage-slice        # reset && smoke self-cleaning: chứng minh TR
 > API: `/api/manage/*` (module `src/manage`, gated `manage.objective|metric|review|decision|action.*`, soft trừ khi AUTH_ENFORCE): objectives (list/get/create/update), metrics (list/get/create + `GET /metrics/:id/observations` compute-from-Work), reviews (list/get/create + `POST /reviews/:id/close` → follow-up), decisions (list/get/create/update), actions (list/get/create — spawn/link NativeWorkItem). MetricObservation là READ MODEL: giá trị `sourceSystem=XOFFICE_WORK` tính từ NativeWorkItem (KHÔNG dual-write, KHÔNG direct-DB #12); ActionCommitment LINK NativeWorkItem (KHÔNG bảng task thứ 3 #13). BSC/Scorecard/OKR/Initiative/Portfolio/Risk/AI nằm NGOÀI slice (MG-03/04/06/07 sau).
 > FE (workspace mới **Quản trị**, đặt sau `home`, gated `manage.*`): `/manage` (health tiles), `/manage/objectives`(+`/[id]`), `/manage/metrics` (chart observation từ Work), `/manage/reviews`(+`/[id]`, hiển thị vòng lặp: pre-read→decision→action→việc thật), `/manage/decisions`. BFF `src/app/api/manage/[[...path]]`; data-lib `src/xoffice/lib/manage-data.ts`. KHÔNG phá 5 workspace cũ, KHÔNG trùng `/work/*`,`/projects`,`/tasks/[id]`.
 
+### X.Office Management OS — MG-03 (Scorecard/OKR) + KPI/OKR theo NGÀNH — seed/smoke
+```bash
+cd D:/Code/xhub-saas/xhub-api
+npm run rls:setup                # 89 bảng RLS hiện tại (đọc động từ scripts/rls-setup.mjs — KHÔNG hardcode số, xem thực tế bằng: node -e "console.log(require('fs').readFileSync('scripts/rls-setup.mjs','utf8').match(/TENANT_TABLES\s*=\s*\[([\s\S]*?)\];/)[1].match(/'[^']+'/g).length)")
+npm run seed:manage-okr          # Scorecard 4 góc nhìn + OKRCycle 2026Q3 (O-001/O-002, KR-001..004) cho T001
+npm run test:manage-okr          # 25 assertions: KPI-tree theo góc nhìn, KPI đỏ KHÔNG bị điểm gộp che, check-in giữ lịch sử (append-only), RLS
+npm run seed:manage-industries   # KPI/OKR ĐÚNG NGÀNH cho T002-010 (BĐS/Sản xuất/Phân phối/Xây dựng/Khách sạn/Giáo dục/Y tế/Logistics/Dịch vụ) — mỗi tenant 4 objective+7-8 KPI+OKR riêng, chỉ chung 1 KPI thật ACT-CLOSE
+npm run test:manage-industry     # tự chạy lại seed:manage + seed:manage-okr + seed:manage-industries trước khi assert (self-healing thứ tự) — xác nhận T003≠T004 KHÔNG trùng KPI ngoài ACT-CLOSE, T001 không bị ghi đè
+```
+> FE thêm: `/manage/scorecards`, `/manage/okrs`(+`/[id]`, check-in form).
+
+### IOC Digital Twin — DT-01→03 + Template Gallery — seed/smoke
+```bash
+cd D:/Code/xhub-saas/xhub-api
+npm run seed:ioc                 # X-TECH HQ Tầng 5, 8 vùng → 8 OrgUnit thật, 3 lớp dữ liệu, dashboard DASH-OFFICE v1
+npm run seed:ioc-demo-load       # thêm việc thật để tải phòng ban KHÁC NHAU rõ rệt (không phẳng lặng) — chứng minh IOC chỉ chiếu lại Work thật
+npm run seed:ioc-templates       # 4 mẫu dùng chung (TPL-OFFICE/FACTORY/RETAIL/HOSPITALITY) — bảng IocTemplate KHÔNG có tenantId (shared, giống Blueprint, cố ý ngoài RLS)
+npm run test:ioc-twin            # 44 assertions: mặt bằng/scene/publish-rollback bất biến, 2D luôn dùng được khi tắt WebGL
+npm run test:ioc-data-layer      # 45 assertions: lớp dữ liệu chiếu từ Work thật, cấm camera/chấm công/sinh trắc học (403)
+npm run test:ioc-templates       # 60 assertions: nhân bản template → chỉ ghi vào tenant gọi, KHÔNG tự bịa OrgUnit nếu không khớp, cách ly tenant qua 404 chéo
+```
+> FE: workspace **IOC — Bản sao số** `/ioc/*` (9+ route, gate `ioc.*`) + **`/ioc/studio/templates`** (thư viện mẫu → "Nhân bản & sửa"). Icon catalog 14→30 (thêm icon theo ngành). Xem toàn màn hình ở twin viewer + studio editor (đúng pattern OrgChart: `z-[70]`, Esc thoát, canvas Konva/Babylon tự resize thật — không chỉ CSS).
+> ⚠️ Nếu route `/ioc/*`/`/manage/*` mới 404 hoặc trang nháy liên tục sau khi pull code mới: xóa cache `.next` và khởi động lại `npm run dev` (lỗi cache Turbopack đã gặp, không phải bug thật):
+> ```bash
+> cd D:/Code/xhub-saas/xhub-web && rm -rf .next && npm run dev
+> ```
+
 ### Tenant Lifecycle (DEMO ↔ LIVE + reset-demo + go-live) — seed/backfill idempotent
 ```bash
 cd D:/Code/xhub-saas/xhub-api
@@ -151,5 +179,8 @@ npm run test:lifecycle           # reset-demo + go-live + guards (self-cleaning 
 - 🔴 **Việc người:** rotate `ANTHROPIC_API_KEY`.
 
 ## 8. Điểm tiếp theo (cho phiên máy mới)
-SaaS **bước 3 — Launch Factory** (tái dùng outbox control-plane; `TenantLaunch` = chuỗi step idempotent register→org→enable app→blueprint→seed pack→backup→isolation→handover). Xem `xhub-web/docs/saas/TENANT_LAUNCH_FACTORY_PLAN.md`.
+- **People Essentials PE-01 (Nghỉ phép & lịch rảnh)** — PE-00 rebase-audit đã xong (`xhub-web/docs/people-essentials/`), sẵn sàng build: 6 bảng mới (RLS 89→95), operating mode đã chốt **SME Lite**, workspace mới **"Nhân sự & Công"** (top-level, không gate).
+- **Management OS MG-04→07** (Portfolio/Cockpit/AI Copilot) — design spec sẵn ở `xhub-web/docs/management-os/design/`.
+- **IOC DT-04→07** (năng lực phòng ban — chờ PE-07 giải blocker định biên; pipeline quy trình; nhân sự/vị trí; realtime/AI).
+- SaaS **bước 3 — Launch Factory** (tái dùng outbox control-plane; `TenantLaunch` = chuỗi step idempotent register→org→enable app→blueprint→seed pack→backup→isolation→handover). Xem `xhub-web/docs/saas/TENANT_LAUNCH_FACTORY_PLAN.md`.
 </content>

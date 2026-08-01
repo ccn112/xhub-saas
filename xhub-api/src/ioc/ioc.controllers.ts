@@ -7,6 +7,8 @@ import { IdentityService } from '../identity/identity.service';
 import { TwinStudioService } from './twin-studio.service';
 import { DataLayerService } from './data-layer.service';
 import { DashboardService } from './dashboard.service';
+import { IocTemplateService } from './ioc-template.service';
+import { IocInsightsService } from './insights.service';
 
 /**
  * XHub Enterprise IOC — HTTP surface. All routes under /api/ioc/*, tenant-scoped
@@ -183,6 +185,40 @@ export class IocScenesController {
   }
 }
 
+// ---- Template gallery + clone-to-edit (DT-04) -------------------------------
+
+/**
+ * The SHARED twin-template catalog. Reads are a platform catalog read (the rows
+ * carry no tenant data at all — same posture as the Blueprint catalog), gated by
+ * `ioc.studio.read` so any studio user can browse. The CLONE writes only into
+ * the caller's own tenant through the RLS transaction, so it needs
+ * `ioc.studio.write`.
+ */
+@Controller('api/ioc/templates')
+@UseInterceptors(TenantScopeInterceptor)
+export class IocTemplatesController {
+  constructor(private readonly svc: IocTemplateService) {}
+
+  @Get()
+  @RequirePermission('ioc.studio.read')
+  list(@Query('industry') industry?: string, @Query('twinType') twinType?: string, @Query('status') status?: string) {
+    return this.svc.list({ industry, twinType, status });
+  }
+
+  @Get(':id')
+  @RequirePermission('ioc.studio.read')
+  get(@Param('id') tid: string) {
+    return this.svc.get(tid);
+  }
+
+  /** Nhân bản: materialise the template as a NEW draft owned by THIS tenant. */
+  @Post(':id/clone')
+  @RequirePermission('ioc.studio.write')
+  clone(@Param('id') tid: string, @Body() body: any, @Identity() id: RequestIdentity) {
+    return this.svc.clone(tenant(id), user(id), tid, body ?? {});
+  }
+}
+
 @Controller('api/ioc/icons')
 @UseInterceptors(TenantScopeInterceptor)
 export class IocIconsController {
@@ -314,6 +350,7 @@ export class IocDashboardsController {
 export class IocRuntimeController {
   constructor(
     private readonly svc: DashboardService,
+    private readonly insights: IocInsightsService,
     private readonly identity: IdentityService,
   ) {}
 
@@ -323,5 +360,18 @@ export class IocRuntimeController {
   async dashboard(@Param('codeOrId') codeOrId: string, @Identity() id: RequestIdentity) {
     const permissions = await heldPermissions(this.identity, id);
     return this.svc.runtime(tenant(id), user(id), codeOrId, { permissions });
+  }
+
+  /**
+   * Command-centre INSIGHTS for the same published dashboard (DT-05): real
+   * cross-zone flow volume, the derived health score, the pipeline/alert feeds
+   * and the draft-first AI brief. Read-only projection — same `ioc.view` gate,
+   * same aggregate-only posture (never individual rows).
+   */
+  @Get('dashboards/:codeOrId/insights')
+  @RequirePermission('ioc.view')
+  async dashboardInsights(@Param('codeOrId') codeOrId: string, @Identity() id: RequestIdentity) {
+    const permissions = await heldPermissions(this.identity, id);
+    return this.insights.insights(tenant(id), user(id), codeOrId, { permissions });
   }
 }

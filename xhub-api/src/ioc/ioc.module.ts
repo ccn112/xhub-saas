@@ -1,15 +1,20 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '../prisma/prisma.module';
 import { IdentityModule } from '../identity/identity.module';
+import { ManageModule } from '../manage/manage.module';
+import { XofficeModule } from '../xoffice/xoffice.module';
 import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
 import { TwinStudioService } from './twin-studio.service';
 import { DataLayerService } from './data-layer.service';
 import { DashboardService } from './dashboard.service';
+import { IocTemplateService } from './ioc-template.service';
+import { IocInsightsService } from './insights.service';
 import {
   IocSitesController,
   IocFloorPlansController,
   IocScenesController,
   IocIconsController,
+  IocTemplatesController,
   IocDataLayersController,
   IocDashboardsController,
   IocRuntimeController,
@@ -28,17 +33,18 @@ import {
  * IdentityService for the privacy gate on individual drill-down.
  */
 @Module({
-  imports: [PrismaModule, IdentityModule],
+  imports: [PrismaModule, IdentityModule, ManageModule, XofficeModule],
   controllers: [
     IocSitesController,
     IocFloorPlansController,
     IocScenesController,
     IocIconsController,
+    IocTemplatesController,
     IocDataLayersController,
     IocDashboardsController,
     IocRuntimeController,
   ],
-  providers: [TwinStudioService, DataLayerService, DashboardService, TenantScopeInterceptor],
-  exports: [TwinStudioService, DataLayerService, DashboardService],
+  providers: [TwinStudioService, DataLayerService, DashboardService, IocTemplateService, IocInsightsService, TenantScopeInterceptor],
+  exports: [TwinStudioService, DataLayerService, DashboardService, IocTemplateService, IocInsightsService],
 })
 export class IocModule {}

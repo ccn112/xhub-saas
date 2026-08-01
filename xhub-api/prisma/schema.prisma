@@ -2438,3 +2438,48 @@ model DashboardVersion {
   @@unique([tenantId, dashboardId, versionNo])
   @@index([tenantId, dashboardId])
 }
+
+/// IocTemplate = a SHARED, versioned "twin template" (mặt bằng mẫu + scene +
+/// lớp dữ liệu + bảng điều khiển) a tenant BROWSES and CLONES. Platform-plane
+/// like `Blueprint`/`SeedPack`: NO tenantId, NO RLS — it holds no tenant data,
+/// only neutral specs. Cloning MATERIALIZES tenant-scoped rows
+/// (FloorPlanDefinition / TwinScene / SceneBinding / DataLayerDefinition /
+/// DashboardDefinition) inside the CALLING tenant's RLS scope; it never lets one
+/// tenant read another tenant's live twin.
+///
+/// The JSON specs mirror the real row shapes so a clone is a materialize+remap,
+/// not a redesign:
+///   floorPlanSpec  { name, unit, metersPerUnit, originX, originY, walls[], zones[] }
+///     zone.orgHint { codes[], keywords[], type } drives BEST-EFFORT binding to
+///     the calling tenant's REAL OrgUnits. No match = zone stays UNBOUND and is
+///     reported as such (#12 honesty) — a fake OrgUnit is never invented.
+///   sceneSpec      { name, themeKey, wallHeightMeters }
+///   dataLayerSpecs [ { code, name, sourceKey, entityKey, query, aggregation,
+///                      refreshPolicy, visualMapping, metricCode?, zoneLevel } ]
+///     metricCode is resolved against the CALLING tenant's own MetricDefinition;
+///     unresolvable = the layer is SKIPPED and reported, never faked.
+///   dashboardSpec  { code, name, viewType, globalFilters[], widgets[] }
+model IocTemplate {
+  id             String    @id @default(cuid())
+  code           String
+  name           String
+  industry       String?
+  twinType       String // OFFICE | FACTORY | RETAIL | HOSPITALITY | CAMPUS | WAREHOUSE
+  description    String?
+  version        Int       @default(1)
+  status         String    @default("DRAFT") // DRAFT | PUBLISHED | RETIRED
+  floorPlanSpec  Json      @default("{}")
+  sceneSpec      Json      @default("{}")
+  dataLayerSpecs Json      @default("[]")
+  dashboardSpec  Json      @default("{}")
+  iconSetCodes   String[]  @default([])
+  checksum       String
+  publishedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([code, version])
+  @@index([code])
+  @@index([status])
+  @@index([twinType])
+}

@@ -216,16 +216,155 @@ export interface DashboardRuntime {
 
 export interface IconAsset { id: string; key: string; label: string; type: string; status: string }
 
+// ---- command-centre insights (DT-05) ---------------------------------------
+// Everything below is a PROJECTION computed server-side from Work v2 /
+// Identity / ManageOS. The FE never derives a KPI of its own from these rows —
+// it only renders them, together with the honesty flags the API ships
+// (`omitted`, `heatmap.available`, `forecast.available`, `flowMeta.sources`).
+
+export interface InsightZone {
+  zoneId: string;
+  name: string;
+  label: string;
+  orgUnitId: string | null;
+  state: ZoneState;
+  workload: number;
+  areaSqM: number;
+  /** Position rows in this zone's org unit (định biên) */
+  seats: number;
+  /** …of which have a holder — what the desk/person markers are scaled to */
+  filled: number;
+}
+
+/** One REAL inter-department handoff bundle: owner in `from`, assignee in `to`. */
+export interface FlowEdge {
+  fromZoneId: string;
+  toZoneId: string;
+  fromLabel: string;
+  toLabel: string;
+  items: number;
+  samples: string[];
+}
+
+export interface InsightAlert {
+  severity: "CRITICAL" | "WARNING" | "INFO";
+  title: string;
+  detail: string;
+  zone?: string;
+  at: string;
+  source: string;
+}
+
+export interface IocInsights {
+  dashboardCode: string;
+  resolvedAt: string;
+  zones: InsightZone[];
+  flows: FlowEdge[];
+  flowMeta: {
+    windowDays: number;
+    definition: string;
+    handoffsInWindow: number;
+    unmappedHandoffs: number;
+    sources: Array<{ key: string; label: string; available: boolean; reason?: string }>;
+  };
+  pipeline: Array<{ key: string; label: string; count: number }>;
+  pipelineNote: string;
+  alerts: InsightAlert[];
+  kpi: {
+    headcount: { filled: number; seats: number; note: string };
+    workload: { total: number; zones: number; note: string };
+    onTime: { rate: number; totalWithDue: number; overdueCount: number; onTimeCount: number; note: string };
+    overdue: { count: number };
+    health: { score: number; formula: string; inputs: { onTimeRate: number; loadBalance: number; penalty: number; zonesWithData: number } };
+  };
+  forecast:
+    | { available: false; reason: string }
+    | { available: true; metric: { code: string; name: string; unit: string }; points: Array<{ at: string; value: number }>; delta: number; method: string };
+  heatmap: { available: boolean; reason: string };
+  omitted: Array<{ key: string; reason: string }>;
+  brief: {
+    source: "live" | "mock";
+    mustRequireHumanApply: boolean;
+    bottleneck: string;
+    recommendations: string[];
+    raw: string;
+    inputs: string;
+    note: string;
+  };
+}
+
+// ---- template gallery (DT-04) ----------------------------------------------
+// `IocTemplate` is a SHARED platform catalog row (no tenantId, no RLS — same
+// posture as Blueprint). Cloning MATERIALISES it as the calling tenant's own
+// DRAFT rows; the gallery never exposes another tenant's live twin.
+
+export interface TemplateZoneSpec {
+  id: string;
+  name: string;
+  kind: string;
+  icon?: string | null;
+  orgHint?: { codes?: string[]; keywords?: string[]; type?: string } | null;
+  polygon: Point[];
+}
+
+export interface IocTemplate {
+  id: string;
+  code: string;
+  name: string;
+  industry?: string | null;
+  twinType: string;
+  description?: string | null;
+  version: number;
+  status: string;
+  floorPlanSpec: { name?: string; metersPerUnit?: number; walls?: Wall[]; zones?: TemplateZoneSpec[] };
+  sceneSpec: { name?: string; themeKey?: string; wallHeightMeters?: number };
+  dataLayerSpecs: Array<{ code: string; name: string; entityKey: string; zoneLevel?: boolean; metricCode?: string }>;
+  dashboardSpec: { code?: string; name?: string; viewType?: string; widgets?: Widget[] };
+  iconSetCodes: string[];
+  checksum: string;
+  publishedAt?: string | null;
+  zoneCount: number;
+  dataLayerCount: number;
+  widgetCount: number;
+}
+
+export interface CloneResult {
+  template: { id: string; code: string; name: string; version: number; twinType: string };
+  siteId: string;
+  floorId: string;
+  planId: string;
+  sceneId: string;
+  dashboardId: string;
+  dashboardCode: string;
+  status: string;
+  zoneCount: number;
+  boundZones: Array<{ zoneId: string; zoneName: string; orgUnitId: string; orgCode: string; matchedBy: string }>;
+  unmappedZones: Array<{ zoneId: string; zoneName: string; reason: string }>;
+  dataLayers: Array<{ id: string; code: string; zoneLevel: boolean }>;
+  skippedDataLayers: Array<{ code: string; reason: string }>;
+  editorPath: string;
+  note: string;
+}
+
+export const TWIN_TYPE_LABEL: Record<string, string> = {
+  OFFICE: "Văn phòng",
+  FACTORY: "Nhà xưởng",
+  RETAIL: "Bán lẻ",
+  HOSPITALITY: "Lưu trú & dịch vụ",
+  WAREHOUSE: "Kho vận",
+  CAMPUS: "Khuôn viên",
+};
+
 // ---- transport --------------------------------------------------------------
 
 interface Listed<T> { items: T[]; count: number }
 
-async function get<T>(path: string, ctx: XOfficeContext): Promise<T | null> {
+async function get<T>(path: string, ctx: XOfficeContext, timeoutMs = 4000): Promise<T | null> {
   try {
     const res = await fetch(`${API_BASE}${path}`, {
       headers: { "x-tenant-id": ctx.tenantId, "x-user-id": ctx.userId, "content-type": "application/json" },
       cache: "no-store",
-      signal: AbortSignal.timeout(4000),
+      signal: AbortSignal.timeout(timeoutMs),
     });
     if (!res.ok) return null;
     return (await res.json()) as T;
@@ -303,6 +442,21 @@ export async function getDashboardRuntime(codeOrId: string) {
   return get<DashboardRuntime>(`/api/ioc/runtime/dashboards/${codeOrId}`, ctx);
 }
 
+/**
+ * Command-centre insights for the same published dashboard: real cross-zone
+ * flow volume, the derived health score, pipeline/alert feeds and the
+ * draft-first AI brief. Returns null when the backend is down — every consumer
+ * must degrade to the plain twin rather than invent numbers.
+ */
+export async function getDashboardInsights(codeOrId: string) {
+  const ctx = xofficeContext();
+  // Longer budget than the other reads on purpose: when XOFFICE_AI_LIVE is on,
+  // this endpoint waits on a real model call for the brief. The API caps that
+  // call itself and degrades to its deterministic fallback, so this timeout is
+  // the outer guard, not the primary one.
+  return get<IocInsights>(`/api/ioc/runtime/dashboards/${codeOrId}/insights`, ctx, 25000);
+}
+
 interface OrgNode { id: string; code: string; name: string; children?: OrgNode[] }
 
 /** Flatten the Identity org-unit TREE into the picker list the studio binds to. */
@@ -318,6 +472,22 @@ export async function listOrgUnits(): Promise<Array<{ id: string; code: string; 
   };
   walk(Array.isArray(tree) ? tree : []);
   return out.sort((a, b) => a.code.localeCompare(b.code));
+}
+
+/** The SHARED template gallery — the primary entry point of Twin Studio. */
+export async function listTemplates(filter: { industry?: string; twinType?: string } = {}) {
+  const ctx = xofficeContext();
+  const qs = new URLSearchParams();
+  if (filter.industry) qs.set("industry", filter.industry);
+  if (filter.twinType) qs.set("twinType", filter.twinType);
+  const suffix = qs.toString() ? `?${qs}` : "";
+  const data = await get<Listed<IocTemplate>>(`/api/ioc/templates${suffix}`, ctx);
+  return { items: data?.items ?? [], source: (data ? "api" : "offline") as Source };
+}
+
+export async function getTemplate(id: string) {
+  const ctx = xofficeContext();
+  return get<IocTemplate>(`/api/ioc/templates/${id}`, ctx);
 }
 
 export async function listIcons() {
@@ -346,6 +516,27 @@ export const ICON_GLYPHS: Record<string, string> = {
   "object-project": "📁",
   "object-kpi": "📈",
   "object-risk": "⚠️",
+  // Workplace (DT-04)
+  "space-meeting-room": "🪑",
+  "space-workstation": "🖱️",
+  "space-reception": "🛎️",
+  // Manufacturing
+  "facility-factory": "🏭",
+  "facility-machine": "🛠️",
+  "facility-production-line": "🔩",
+  "facility-qc-checkpoint": "🔍",
+  "facility-maintenance": "🧰",
+  // Warehouse / logistics
+  "logistics-warehouse-rack": "🗄️",
+  "logistics-forklift": "🚜",
+  "logistics-loading-dock": "🚚",
+  // Retail
+  "retail-shelf": "🏪",
+  "retail-pos-counter": "🧾",
+  // Hospitality
+  "hospitality-hotel-room": "🛏️",
+  "hospitality-restaurant": "🍽️",
+  "hospitality-housekeeping": "🧹",
 };
 
 export const STATE_FILL: Record<ZoneState, string> = {
@@ -404,3 +595,80 @@ export function zoneMetrics(scene: RuntimeScene | null, layers: Record<string, L
 }
 
 export type ZoneMetric = ReturnType<typeof zoneMetrics>[number];
+
+// ---- occupancy geometry (shared by the 2D plan and the 3D scene) ------------
+// The SAME deterministic desk layout feeds both renderers, so a zone that shows
+// 4 desks in 2D shows 4 desks in 3D. The desk COUNT is the zone's real Position
+// count (định biên) and the OCCUPIED desks are the real holders — nothing here
+// invents a headcount, and nothing here is attendance/presence data (AT-012:
+// that source is permanently banned).
+
+export interface Bounds { minX: number; maxX: number; minY: number; maxY: number; cx: number; cy: number; w: number; d: number }
+
+export function zoneBounds(polygon: Point[]): Bounds {
+  const xs = polygon.map((p) => p.x);
+  const ys = polygon.map((p) => p.y);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  return { minX, maxX, minY, maxY, cx: (minX + maxX) / 2, cy: (minY + maxY) / 2, w: maxX - minX, d: maxY - minY };
+}
+
+export interface Desk { x: number; y: number; w: number; d: number; occupied: boolean }
+
+const DESK_W = 1.5;
+const DESK_D = 0.8;
+const DESK_GAP_X = 0.7;
+const DESK_GAP_Y = 1.1;
+/** Hard ceiling so a 500-seat unit cannot explode the poly budget. */
+const MAX_DESKS = 40;
+
+/**
+ * Lay `seats` desks out in a deterministic grid inside the zone's bounding box,
+ * leaving the LOWER band free for the zone's info card. `filled` of them are
+ * marked occupied (drawn with a person marker).
+ */
+export function deskLayout(polygon: Point[], seats: number, filled: number): Desk[] {
+  const b = zoneBounds(polygon);
+  const n = Math.min(Math.max(0, Math.round(seats)), MAX_DESKS);
+  if (!n) return [];
+  const pad = 0.8;
+  const usableW = Math.max(DESK_W, b.w - pad * 2);
+  const usableD = Math.max(DESK_D, b.d - pad * 2 - 2.2); // 2.2 m reserved for the label card
+  const cols = Math.max(1, Math.floor((usableW + DESK_GAP_X) / (DESK_W + DESK_GAP_X)));
+  const rows = Math.max(1, Math.ceil(n / cols));
+  const gridW = cols * DESK_W + (cols - 1) * DESK_GAP_X;
+  const gridD = rows * DESK_D + (rows - 1) * DESK_GAP_Y;
+  const scale = Math.min(1, usableD / Math.max(gridD, 0.001));
+  const startX = b.cx - gridW / 2;
+  const startY = b.minY + pad + 0.4;
+  const out: Desk[] = [];
+  for (let i = 0; i < n; i++) {
+    const r = Math.floor(i / cols);
+    const cInRow = Math.min(cols, n - r * cols);
+    const rowW = cInRow * DESK_W + (cInRow - 1) * DESK_GAP_X;
+    const c = i % cols;
+    out.push({
+      x: (cInRow === cols ? startX : b.cx - rowW / 2) + c * (DESK_W + DESK_GAP_X),
+      y: startY + r * (DESK_D + DESK_GAP_Y) * scale,
+      w: DESK_W,
+      d: DESK_D,
+      occupied: i < filled,
+    });
+  }
+  return out;
+}
+
+/**
+ * Quadratic-bezier control point for a flow arc A→B, bowed perpendicular to the
+ * segment so two opposite-direction edges never overlap.
+ */
+export function flowArc(a: { x: number; y: number }, b: { x: number; y: number }, bow = 0.18) {
+  const mx = (a.x + b.x) / 2;
+  const my = (a.y + b.y) / 2;
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  return { cx: mx + (-dy / len) * len * bow, cy: my + (dx / len) * len * bow };
+}
