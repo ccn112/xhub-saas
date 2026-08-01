@@ -1,0 +1,68 @@
+[
+  {
+    "id": "ANN-2026-001",
+    "tenantId": "tenant-xtech",
+    "title": "Thông báo lịch UAT XHub nội bộ",
+    "publisherId": "usr-admin-head",
+    "audience": "ALL",
+    "requiresAcknowledgement": false,
+    "status": "PUBLISHED",
+    "publishedAt": "2026-07-29T09:00:00+07:00",
+    "sourceKind": "REALISTIC_SYNTHETIC"
+  },
+  {
+    "id": "ANN-2026-002",
+    "tenantId": "tenant-xtech",
+    "title": "Quy định bảo mật tài khoản và dữ liệu",
+    "publisherId": "usr-workflow-admin",
+    "audience": "ALL",
+    "requiresAcknowledgement": true,
+    "status": "PUBLISHED",
+    "publishedAt": "2026-07-28T09:00:00+07:00",
+    "sourceKind": "REALISTIC_SYNTHETIC"
+  },
+  {
+    "id": "ANN-2026-003",
+    "tenantId": "tenant-xtech",
+    "title": "Hướng dẫn sử dụng quy trình đề nghị mua sắm",
+    "publisherId": "usr-admin-head",
+    "audience": "ADMIN",
+    "requiresAcknowledgement": true,
+    "status": "PUBLISHED",
+    "publishedAt": "2026-07-27T09:00:00+07:00",
+    "sourceKind": "REALISTIC_SYNTHETIC"
+  },
+  {
+    "id": "ANN-2026-004",
+    "tenantId": "tenant-xtech",
+    "title": "Lịch bảo trì hệ thống cuối tuần",
+    "publisherId": "usr-workflow-admin",
+    "audience": "ALL",
+    "requiresAcknowledgement": false,
+    "status": "PUBLISHED",
+    "publishedAt": "2026-07-26T09:00:00+07:00",
+    "sourceKind": "REALISTIC_SYNTHETIC"
+  },
+  {
+    "id": "ANN-2026-005",
+    "tenantId": "tenant-xtech",
+    "title": "Thông báo cập nhật sơ đồ tổ chức",
+    "publisherId": "usr-admin-head",
+    "audience": "FIN",
+    "requiresAcknowledgement": false,
+    "status": "DRAFT",
+    "publishedAt": null,
+    "sourceKind": "REALISTIC_SYNTHETIC"
+  },
+  {
+    "id": "ANN-2026-006",
+    "tenantId": "tenant-xtech",
+    "title": "Quy định quản lý và phát hành tài liệu",
+    "publisherId": "usr-workflow-admin",
+    "audience": "ADMIN",
+    "requiresAcknowledgement": true,
+    "status": "DRAFT",
+    "publishedAt": null,
+    "sourceKind": "REALISTIC_SYNTHETIC"
+  }
+]
