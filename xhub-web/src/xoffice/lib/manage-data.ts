@@ -297,6 +297,97 @@ export async function getOkr(id: string) {
   return get<OKRObjective>(`/api/manage/okrs/${id}`, ctx);
 }
 
+// ---- MG-04 (Portfolio / Initiative / Benefit) ------------------------------
+
+export interface DeliverySnapshot {
+  id: string;
+  code: string;
+  name: string;
+  status: string;
+  health: string;
+  progressPercent: number;
+  plannedFinish?: string | null;
+  forecastFinish?: string | null;
+}
+
+export interface Initiative {
+  id: string;
+  code: string;
+  name: string;
+  description?: string | null;
+  ownerId: string;
+  sponsorId?: string | null;
+  status: string;
+  strategicObjectiveIds: string[];
+  expectedBenefits: { name: string; target: number; unit: string; ownerId: string }[];
+  executionProjectId?: string | null;
+  delivery: DeliverySnapshot | null;
+}
+
+export interface PortfolioRollup {
+  initiativeCount: number;
+  byStage: Record<string, number>;
+  benefitCount: number;
+  byBenefitStatus: Record<string, number>;
+}
+
+export interface Portfolio {
+  id: string;
+  code: string;
+  name: string;
+  ownerRole?: string | null;
+  itemIds: string[];
+  rollup: PortfolioRollup;
+}
+
+export interface BenefitRealization {
+  status: string;
+  latestValue: number | null;
+  latestPeriodEnd: string | null;
+  metric: { code: string; direction: string } | null;
+}
+
+export interface BenefitProfile {
+  id: string;
+  initiativeId: string;
+  benefitName: string;
+  unit: string;
+  baseline?: number | null;
+  target?: number | null;
+  metricCode?: string | null;
+  ownerId: string;
+  status: string;
+  realization: BenefitRealization;
+}
+
+export async function listPortfolios() {
+  const ctx = xofficeContext();
+  const data = await get<Listed<Portfolio>>(`/api/manage/portfolios`, ctx);
+  return { items: data?.items ?? [], source: (data ? "api" : "offline") as "api" | "offline" };
+}
+
+export async function getPortfolio(id: string) {
+  const ctx = xofficeContext();
+  return get<Portfolio>(`/api/manage/portfolios/${id}`, ctx);
+}
+
+export async function listInitiatives(portfolioId?: string) {
+  const ctx = xofficeContext();
+  const data = await get<Listed<Initiative>>(`/api/manage/initiatives${portfolioId ? `?portfolioId=${portfolioId}` : ""}`, ctx);
+  return { items: data?.items ?? [], source: (data ? "api" : "offline") as "api" | "offline" };
+}
+
+export async function getInitiative(id: string) {
+  const ctx = xofficeContext();
+  return get<Initiative>(`/api/manage/initiatives/${id}`, ctx);
+}
+
+export async function listBenefitProfiles(initiativeId?: string) {
+  const ctx = xofficeContext();
+  const data = await get<Listed<BenefitProfile>>(`/api/manage/benefit-profiles${initiativeId ? `?initiativeId=${initiativeId}` : ""}`, ctx);
+  return { items: data?.items ?? [], source: (data ? "api" : "offline") as "api" | "offline" };
+}
+
 export async function getKpiTree(objectiveId?: string) {
   const ctx = xofficeContext();
   const data = await get<{ groups: KpiTreeGroup[]; totalKpis: number }>(

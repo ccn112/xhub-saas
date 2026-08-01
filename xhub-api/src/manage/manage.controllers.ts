@@ -11,6 +11,9 @@ import { ActionsService } from './actions.service';
 import { ScorecardsService } from './scorecards.service';
 import { OkrService } from './okr.service';
 import { KpiTreeService } from './kpi-tree.service';
+import { PortfoliosService } from './portfolios.service';
+import { InitiativesService } from './initiatives.service';
+import { BenefitProfilesService } from './benefit-profiles.service';
 
 /**
  * X.Office Management Operating System — MG-01 reference slice API. All routes
@@ -281,5 +284,129 @@ export class KpiTreeController {
   @RequirePermission('manage.metric.read')
   series(@Param('metricCode') metricCode: string, @Identity() id: RequestIdentity) {
     return this.svc.series(tenant(id), metricCode);
+  }
+}
+
+// ---- MG-04 — Portfolio & Benefit (LINK layer over ExecutionProject, #17) ----
+
+@Controller('api/manage/portfolios')
+@UseInterceptors(TenantScopeInterceptor)
+export class PortfoliosController {
+  constructor(private readonly svc: PortfoliosService) {}
+
+  @Get()
+  @RequirePermission('manage.portfolio.read')
+  list(@Identity() id: RequestIdentity) {
+    return this.svc.list(tenant(id));
+  }
+
+  @Get(':id')
+  @RequirePermission('manage.portfolio.read')
+  get(@Param('id') pid: string, @Identity() id: RequestIdentity) {
+    return this.svc.get(tenant(id), pid);
+  }
+
+  @Post()
+  @RequirePermission('manage.portfolio.write')
+  create(@Body() body: any, @Identity() id: RequestIdentity) {
+    return this.svc.create(tenant(id), user(id), body ?? {});
+  }
+
+  @Patch(':id')
+  @RequirePermission('manage.portfolio.write')
+  update(@Param('id') pid: string, @Body() body: any, @Identity() id: RequestIdentity) {
+    return this.svc.update(tenant(id), user(id), pid, body ?? {});
+  }
+}
+
+@Controller('api/manage/initiatives')
+@UseInterceptors(TenantScopeInterceptor)
+export class InitiativesController {
+  constructor(private readonly svc: InitiativesService) {}
+
+  @Get()
+  @RequirePermission('manage.initiative.read')
+  list(@Identity() id: RequestIdentity, @Query('status') status?: string, @Query('portfolioId') portfolioId?: string) {
+    return this.svc.list(tenant(id), { status, portfolioId });
+  }
+
+  @Get(':id')
+  @RequirePermission('manage.initiative.read')
+  get(@Param('id') iid: string, @Identity() id: RequestIdentity) {
+    return this.svc.get(tenant(id), iid);
+  }
+
+  @Post()
+  @RequirePermission('manage.initiative.write')
+  create(@Body() body: any, @Identity() id: RequestIdentity) {
+    return this.svc.create(tenant(id), user(id), body ?? {});
+  }
+
+  @Patch(':id')
+  @RequirePermission('manage.initiative.write')
+  update(@Param('id') iid: string, @Body() body: any, @Identity() id: RequestIdentity) {
+    return this.svc.update(tenant(id), user(id), iid, body ?? {});
+  }
+
+  @Post(':id/gate')
+  @RequirePermission('manage.initiative.write')
+  gate(@Param('id') iid: string, @Body() body: any, @Identity() id: RequestIdentity) {
+    return this.svc.gate(tenant(id), user(id), iid, body ?? {});
+  }
+
+  /** Attach an EXISTING ExecutionProject — never creates one (#17). */
+  @Post(':id/link-project')
+  @RequirePermission('manage.initiative.write')
+  linkProject(@Param('id') iid: string, @Body() body: any, @Identity() id: RequestIdentity) {
+    return this.svc.linkProject(tenant(id), user(id), iid, body ?? {});
+  }
+
+  /** Read-only proxy to the linked ExecutionProject's status/health/progress. */
+  @Get(':id/delivery')
+  @RequirePermission('manage.initiative.read')
+  delivery(@Param('id') iid: string, @Identity() id: RequestIdentity) {
+    return this.svc.delivery(tenant(id), iid);
+  }
+
+  @Get(':id/benefits')
+  @RequirePermission('manage.benefit.read')
+  benefits(@Param('id') iid: string, @Identity() id: RequestIdentity) {
+    return this.svc.benefits(tenant(id), iid);
+  }
+}
+
+@Controller('api/manage/benefit-profiles')
+@UseInterceptors(TenantScopeInterceptor)
+export class BenefitProfilesController {
+  constructor(private readonly svc: BenefitProfilesService) {}
+
+  @Get()
+  @RequirePermission('manage.benefit.read')
+  list(@Identity() id: RequestIdentity, @Query('initiativeId') initiativeId?: string) {
+    return this.svc.list(tenant(id), initiativeId);
+  }
+
+  @Get(':id')
+  @RequirePermission('manage.benefit.read')
+  get(@Param('id') bid: string, @Identity() id: RequestIdentity) {
+    return this.svc.get(tenant(id), bid);
+  }
+
+  @Post()
+  @RequirePermission('manage.benefit.write')
+  create(@Body() body: any, @Identity() id: RequestIdentity) {
+    return this.svc.create(tenant(id), user(id), body ?? {});
+  }
+
+  @Patch(':id')
+  @RequirePermission('manage.benefit.write')
+  update(@Param('id') bid: string, @Body() body: any, @Identity() id: RequestIdentity) {
+    return this.svc.update(tenant(id), user(id), bid, body ?? {});
+  }
+
+  @Get(':id/realization')
+  @RequirePermission('manage.benefit.read')
+  realization(@Param('id') bid: string, @Identity() id: RequestIdentity) {
+    return this.svc.realization(tenant(id), bid);
   }
 }

@@ -81,3 +81,36 @@ export type ActionStatus = (typeof ACTION_STATUSES)[number];
 export type OkrCycleStatus = (typeof OKR_CYCLE_STATUSES)[number];
 export type OkrObjectiveStatus = (typeof OKR_OBJECTIVE_STATUSES)[number];
 export type KpiStatus = (typeof KPI_STATUSES)[number];
+
+// MG-04 — Portfolio & Benefit. Initiative is a stage-gate FSM; gate transitions
+// only move forward or to STOPPED (no going back — a stopped/closed initiative
+// is re-opened as a NEW one, matching ExecutionProject's own immutable-history
+// convention).
+export const INITIATIVE_STATUSES = [
+  'INTAKE',
+  'DISCOVERY',
+  'APPROVED',
+  'FUNDED',
+  'DELIVERY',
+  'BENEFIT_REVIEW',
+  'CLOSED',
+  'STOPPED',
+] as const;
+
+export const INITIATIVE_GATE_ORDER: Record<string, string[]> = {
+  INTAKE: ['DISCOVERY', 'STOPPED'],
+  DISCOVERY: ['APPROVED', 'STOPPED'],
+  APPROVED: ['FUNDED', 'STOPPED'],
+  FUNDED: ['DELIVERY', 'STOPPED'],
+  DELIVERY: ['BENEFIT_REVIEW', 'STOPPED'],
+  BENEFIT_REVIEW: ['CLOSED', 'STOPPED'],
+  CLOSED: [],
+  STOPPED: [],
+};
+
+// BenefitProfile.status is DERIVED (service-computed from realizationSchedule
+// vs the metric's actual MetricObservation), never hand-set to REALIZED.
+export const BENEFIT_STATUSES = ['PLANNED', 'TRACKING', 'REALIZED', 'MISSED'] as const;
+
+export type InitiativeStatus = (typeof INITIATIVE_STATUSES)[number];
+export type BenefitStatus = (typeof BENEFIT_STATUSES)[number];

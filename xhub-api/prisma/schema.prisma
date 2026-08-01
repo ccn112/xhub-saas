@@ -2483,3 +2483,448 @@ model IocTemplate {
   @@index([status])
   @@index([twinType])
 }
+
+// ============================================================================
+// People Essentials — PE-01 (Leave & Availability). Operating mode = SME Lite
+// (PeopleTenantConfig.leaveMode="XOFFICE"): X.Office is the System of Record for
+// these 6 tables today. If a tenant later flips leaveMode="FRAPPE_HR", writes to
+// LeaveRequest are rejected server-side (SOR_NOT_XOFFICE guard) and
+// LeavePolicyRef/LeaveBalanceSnapshot become projections (sourceSystem/
+// sourceVersion/syncedAt already present for that transition — no re-migration).
+// LeaveImpactSnapshot is ALWAYS X.Office-owned (it reads Work/Identity, not HR).
+// Approval reuses WorkflowInstance + ApprovalTask (no second approval queue) —
+// LeaveRequest.status stays the SoR of the request itself. All 6 tables are
+// tenant-scoped and MUST be added to scripts/rls-setup.mjs + scripts/rls-test.mjs.
+// ============================================================================
+
+/// Per-tenant People Essentials operating mode switch (singleton). Chosen once
+/// via PE-001 (SME Lite for T001 today); upgradeable per-field without a schema
+/// migration when a real FinERP/Frappe HR adapter exists (PE-08).
+model PeopleTenantConfig {
+  id                       String   @id @default(cuid())
+  tenantId                 String
+  attendanceMode           String   @default("FILE_IMPORT") // XOFFICE|FRAPPE_HR|DEVICE|FILE_IMPORT
+  leaveMode                String   @default("XOFFICE") // XOFFICE|FRAPPE_HR
+  payrollMode              String   @default("FILE_IMPORT") // FINERP|EXTERNAL_API|FILE_IMPORT
+  timesheetEnabled         Boolean  @default(true)
+  performanceBridgeEnabled Boolean  @default(false)
+  iocCapacityEnabled       Boolean  @default(false)
+  workCalendarId           String?
+  externalSystemId         String?
+  defaultStandardHoursPerDay Float  @default(8)
+  workingWeekdays          Int[]    @default([1, 2, 3, 4, 5])
+  createdBy                String
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  @@unique([tenantId])
+  @@index([tenantId])
+}
+
+/// A leave policy definition (ANNUAL/SICK/UNPAID/COMP/REMOTE). SoR under SME
+/// Lite; becomes a synced projection under FRAPPE_HR (externalSystem/
+/// externalPolicyCode/sourceVersion/syncedAt used only in that mode).
+model LeavePolicyRef {
+  id                   String    @id @default(cuid())
+  tenantId             String
+  code                 String // ANNUAL|SICK|UNPAID|COMP|REMOTE
+  name                 String
+  paid                 Boolean   @default(true)
+  unit                 String    @default("DAY") // DAY|HOUR
+  accrualMethod        String    @default("ANNUAL") // ANNUAL|MONTHLY|NONE
+  accrualPerPeriod     Float     @default(0)
+  maxCarryOver         Float?
+  allowNegative        Boolean   @default(false)
+  requiresAttachment   Boolean   @default(false)
+  minNoticeDays        Int       @default(0)
+  maxConsecutiveDays   Int?
+  appliesToOrgUnitIds  String[]  @default([])
+  appliesToPositionIds String[]  @default([])
+  status               String    @default("ACTIVE") // ACTIVE|RETIRED
+  externalSystem       String?
+  externalPolicyCode   String?
+  sourceVersion        String?
+  syncedAt             DateTime?
+  createdBy            String
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, status])
+}
+
+/// APPEND-ONLY balance ledger (never UPDATEd — each change is a new row with the
+/// next `sequence` for the same person+policy+period). `available` is the
+/// snapshot value at that sequence; current balance = latest sequence per key.
+model LeaveBalanceSnapshot {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  personId              String
+  leavePolicyId         String
+  periodCode            String // "2026" | "2026-08"
+  openingBalance        Float     @default(0)
+  accrued               Float     @default(0)
+  used                  Float     @default(0)
+  pending               Float     @default(0)
+  adjusted              Float     @default(0)
+  carriedOver           Float     @default(0)
+  available             Float     @default(0)
+  unit                  String    @default("DAY")
+  sequence              Int       @default(1)
+  reason                String // ACCRUAL|LEAVE_SUBMITTED|LEAVE_APPROVED|LEAVE_CANCELLED|LEAVE_REJECTED|HR_ADJUSTMENT|CARRY_OVER|INITIAL
+  sourceLeaveRequestId  String?
+  sourceSystem          String?
+  sourceVersion         String?
+  syncedAt              DateTime?
+  createdBy             String
+  createdAt             DateTime  @default(now())
+
+  @@unique([tenantId, personId, leavePolicyId, periodCode, sequence])
+  @@index([tenantId, personId])
+  @@index([tenantId, leavePolicyId])
+  @@index([tenantId, personId, leavePolicyId, periodCode])
+}
+
+/// The leave request itself (SoR under SME Lite). durationValue is ALWAYS
+/// server-computed from startAt/endAt/startDayPart/endDayPart — a client-sent
+/// value is ignored. FSM: DRAFT→SUBMITTED→IN_REVIEW→APPROVED|REJECTED|
+/// CHANGES_REQUESTED→CANCEL_REQUESTED→CANCELLED (service enforces transitions;
+/// invalid ones return 409 INVALID_TRANSITION). No overlap allowed for the same
+/// personId (409 LEAVE_OVERLAP). workflowInstanceId/approvalTaskId point at the
+/// WorkflowInstance/ApprovalTask spawned on submit (reused, not duplicated).
+model LeaveRequest {
+  id                  String    @id @default(cuid())
+  tenantId            String
+  personId            String
+  orgUnitId           String?
+  positionId          String?
+  leaveTypeCode       String
+  leavePolicyId       String
+  startAt             DateTime
+  endAt               DateTime
+  startDayPart        String    @default("FULL") // FULL|AM|PM
+  endDayPart          String    @default("FULL") // FULL|AM|PM
+  durationValue       Float     @default(0) // server-computed only
+  durationUnit        String    @default("DAY")
+  reason              String?
+  replacementPersonId String?
+  attachmentRecordIds String[]  @default([])
+  status              String    @default("DRAFT") // DRAFT|SUBMITTED|IN_REVIEW|APPROVED|REJECTED|CHANGES_REQUESTED|CANCEL_REQUESTED|CANCELLED
+  submittedAt         DateTime?
+  decidedAt           DateTime?
+  decidedBy           String?
+  decisionNote        String?
+  cancelledAt         DateTime?
+  cancelReason        String?
+  workflowInstanceId  String?
+  approvalTaskId      String?
+  idempotencyKey      String
+  createdBy           String
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@unique([tenantId, idempotencyKey])
+  @@index([tenantId, personId])
+  @@index([tenantId, status])
+  @@index([tenantId, startAt, endAt])
+  @@index([tenantId, leavePolicyId])
+}
+
+/// Immutable, X.Office-owned. Captured on submit/approve/cancel: which real
+/// NativeWorkItem/ApprovalTask/Booking/Directive/ExecutionProject rows are
+/// impacted by this leave window (resolved via personId → Position.holderPersonId
+/// → OrgUnit; NativeWorkItem has no orgUnitId column). capacityDeltaHours feeds
+/// PE-07 IOC Capacity Bridge (availability.changed OutboxEvent payload).
+model LeaveImpactSnapshot {
+  id                      String   @id @default(cuid())
+  tenantId                String
+  leaveRequestId          String
+  personId                String
+  capturedAt              DateTime @default(now())
+  capturedPhase           String // ON_SUBMIT|ON_APPROVE|ON_CANCEL
+  impactedWorkItemIds     String[] @default([])
+  impactedMilestoneIds    String[] @default([])
+  impactedApprovalTaskIds String[] @default([])
+  impactedBookingIds      String[] @default([])
+  impactedDirectiveIds    String[] @default([])
+  impactedProjectIds      String[] @default([])
+  summary                 Json     @default("{}")
+  capacityDeltaHours      Float    @default(0)
+  createdBy               String
+  createdAt               DateTime @default(now())
+
+  @@index([tenantId, leaveRequestId])
+  @@index([tenantId, personId])
+}
+
+/// Overtime request. X.Office is SoR of the REQUEST regardless of payrollMode
+/// (FinERP, when connected, is SoR of the OT *payout* — a different object).
+/// hours is server-computed from startAt/endAt, never client-trusted.
+model OvertimeRequest {
+  id                String    @id @default(cuid())
+  tenantId          String
+  personId          String
+  orgUnitId         String?
+  workDate          DateTime
+  startAt           DateTime
+  endAt             DateTime
+  hours             Float     @default(0) // server-computed only
+  otType            String    @default("NORMAL") // NORMAL|WEEKEND|HOLIDAY|NIGHT
+  reason            String?
+  relatedWorkItemId String?
+  relatedProjectId  String?
+  status            String    @default("DRAFT") // DRAFT|SUBMITTED|IN_REVIEW|APPROVED|REJECTED|CANCELLED
+  submittedAt       DateTime?
+  decidedAt         DateTime?
+  decidedBy         String?
+  decisionNote      String?
+  workflowInstanceId String?
+  approvalTaskId    String?
+  idempotencyKey    String
+  createdBy         String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([tenantId, idempotencyKey])
+  @@index([tenantId, personId])
+  @@index([tenantId, status])
+}
+
+// ============================================================================
+// Management OS — MG-04 (Portfolio & Benefit). LINK layer only: Initiative
+// points at an EXISTING ExecutionProject via executionProjectId — it never
+// creates/owns project/milestone/task data (that stays Work v2's SoR). Benefit
+// "actual" values are read from MetricObservation via BenefitProfile.metricCode
+// — never hand-entered. Distinct from the existing `/api/work/portfolio`
+// read-only delivery rollup (work-portfolio.controller.ts): that one computes
+// ExecutionProject health on the fly; THIS Portfolio is a Mgmt-owned grouping of
+// Initiatives for investment/benefit tracking. Tenant-scoped — register in
+// scripts/rls-setup.mjs + scripts/rls-test.mjs.
+// ============================================================================
+
+/// A funded/candidate initiative. status is a stage-gate FSM (INTAKE→DISCOVERY→
+/// APPROVED→FUNDED→DELIVERY→BENEFIT_REVIEW→CLOSED|STOPPED), advanced only via
+/// the /gate endpoint (audited). executionProjectId is null until /link-project
+/// attaches an EXISTING ExecutionProject — this endpoint never creates one.
+model Initiative {
+  id                    String   @id @default(cuid())
+  tenantId              String
+  code                  String
+  name                  String
+  description           String?
+  ownerId               String
+  sponsorId             String?
+  status                String   @default("INTAKE") // INTAKE|DISCOVERY|APPROVED|FUNDED|DELIVERY|BENEFIT_REVIEW|CLOSED|STOPPED
+  strategicObjectiveIds String[] @default([]) // → StrategicObjective.id (reference)
+  expectedBenefits      Json     @default("[]") // [{name,target,unit,ownerId}]
+  executionProjectId    String? // → ExecutionProject.id (link-only, set via /link-project)
+  prioritization        Json? // { dimension: score } — phase 2
+  createdBy             String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@unique([tenantId, code])
+  @@index([tenantId, status])
+  @@index([tenantId, executionProjectId])
+}
+
+/// A named grouping of Initiatives for cockpit rollup (e.g. by strategic theme).
+model Portfolio {
+  id               String   @id @default(cuid())
+  tenantId         String
+  code             String
+  name             String
+  ownerRole        String? // e.g. CIO|CCO
+  strategicThemeId String?
+  itemIds          String[] @default([]) // → Initiative.id (reference)
+  createdBy        String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+}
+
+/// One tracked benefit line for an Initiative. `status` is DERIVED by the
+/// service from realizationSchedule vs the metric's actuals — never hand-set to
+/// REALIZED. metricCode, when set, resolves against the tenant's own
+/// MetricDefinition; "actual" is always read from MetricObservation (#12 — no
+/// manual entry of a certified metric's value).
+model BenefitProfile {
+  id                  String   @id @default(cuid())
+  tenantId            String
+  initiativeId        String
+  benefitName         String
+  unit                String
+  baseline            Float?
+  target              Float?
+  metricCode          String? // → MetricDefinition.code (reference)
+  ownerId             String
+  realizationSchedule Json     @default("[]")
+  status              String   @default("PLANNED") // PLANNED|TRACKING|REALIZED|MISSED (derived)
+  createdBy           String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([tenantId, initiativeId])
+}
+
+// ============================================================================
+// People Essentials — PE-02 (Attendance & Correction). SME Lite: attendance
+// data enters ONLY via file import (PeopleTenantConfig.attendanceMode=
+// FILE_IMPORT) — no live clock device/connector today. AttendanceEvent is
+// append-only (immutable punches); AttendanceDay is a MATERIALIZED daily
+// aggregate recomputed from AttendanceEvent + ShiftAssignment + LeaveRequest —
+// it is never hand-edited directly, only via recompute or an approved
+// AttendanceCorrectionRequest (same WorkflowInstance/ApprovalTask reuse as
+// PE-01 leave approval — no second approval mechanism). All 7 tables are
+// tenant-scoped — register in scripts/rls-setup.mjs + scripts/rls-test.mjs.
+// ============================================================================
+
+/// Per-tenant work calendar (holidays + working weekdays). Referenced by
+/// ShiftAssignment; used by recomputeDay to mark HOLIDAY/WEEKEND days.
+model WorkCalendar {
+  id              String   @id @default(cuid())
+  tenantId        String
+  code            String
+  name            String
+  workingWeekdays Int[]    @default([1, 2, 3, 4, 5])
+  holidays        Json     @default("[]") // [{date, name}]
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([tenantId, code])
+}
+
+/// A named shift definition (start/end/break/grace/standard hours).
+model ShiftPattern {
+  id            String   @id @default(cuid())
+  tenantId      String
+  code          String
+  name          String
+  startTime     String // "08:30"
+  endTime       String // "17:30"
+  breakMinutes  Int      @default(60)
+  graceMinutes  Int      @default(15)
+  standardHours Float    @default(8)
+  status        String   @default("ACTIVE") // ACTIVE|RETIRED
+  createdBy     String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([tenantId, code])
+}
+
+/// Which ShiftPattern + WorkCalendar apply to a person over an effective
+/// window. Latest non-expired row per person is authoritative.
+model ShiftAssignment {
+  id              String    @id @default(cuid())
+  tenantId        String
+  personId        String
+  shiftPatternId  String
+  workCalendarId  String
+  effectiveFrom   DateTime
+  effectiveTo     DateTime?
+  createdBy       String
+  createdAt       DateTime  @default(now())
+
+  @@index([tenantId, personId])
+  @@index([tenantId, personId, effectiveFrom])
+}
+
+/// One uploaded attendance file. PREVIEWED (parsed+validated, nothing written
+/// yet) → COMMITTED (AttendanceEvent rows written, tagged with this batch id)
+/// → ROLLED_BACK (those same rows deleted again). `checksum` (sha256 of raw
+/// file content) is unique per tenant so re-uploading an identical file is
+/// rejected (409), not silently re-imported.
+model AttendanceImportBatch {
+  id              String    @id @default(cuid())
+  tenantId        String
+  templateVersion String    @default("ATTENDANCE_IMPORT_V1")
+  fileName        String
+  checksum        String
+  status          String    @default("PREVIEWED") // PREVIEWED|COMMITTED|ROLLED_BACK
+  totalRows       Int       @default(0)
+  validRows       Int       @default(0)
+  errorRows       Int       @default(0)
+  preview         Json      @default("[]") // [{row, personId, date, clockIn, clockOut, error?}]
+  createdBy       String
+  createdAt       DateTime  @default(now())
+  committedAt     DateTime?
+  rolledBackAt    DateTime?
+
+  @@unique([tenantId, checksum])
+  @@index([tenantId, status])
+}
+
+/// Append-only raw punch. NEVER updated/deleted except by rolling back the
+/// AttendanceImportBatch that created it (importBatchId is the rollback key).
+model AttendanceEvent {
+  id            String   @id @default(cuid())
+  tenantId      String
+  personId      String
+  eventType     String // CLOCK_IN|CLOCK_OUT
+  at            DateTime
+  source        String   @default("FILE_IMPORT") // FILE_IMPORT|XOFFICE|DEVICE|FRAPPE_HR
+  importBatchId String?
+  createdBy     String
+  createdAt     DateTime @default(now())
+
+  @@index([tenantId, personId, at])
+  @@index([tenantId, importBatchId])
+}
+
+/// MATERIALIZED daily aggregate — the read model for /attendance/me and
+/// /attendance/team. Written ONLY by recomputeDay() (from AttendanceEvent +
+/// ShiftAssignment + approved LeaveRequest + WorkCalendar) or by an approved
+/// AttendanceCorrectionRequest (correctionApplied=true then, and recompute no
+/// longer overwrites the corrected fields for that day).
+model AttendanceDay {
+  id                String   @id @default(cuid())
+  tenantId          String
+  personId          String
+  workDate          DateTime
+  shiftPatternId    String?
+  firstIn           DateTime?
+  lastOut           DateTime?
+  workedMinutes     Int      @default(0)
+  lateMinutes       Int      @default(0)
+  status            String   @default("ABSENT") // PRESENT|LATE|HALF_DAY|ABSENT|LEAVE|HOLIDAY|WEEKEND
+  correctionApplied Boolean  @default(false)
+  sourceEventIds    String[] @default([])
+  recomputedAt      DateTime @default(now())
+
+  @@unique([tenantId, personId, workDate])
+  @@index([tenantId, workDate])
+}
+
+/// Employee-raised dispute over a computed AttendanceDay. FSM SUBMITTED→
+/// APPROVED|REJECTED, approval reuses WorkflowInstance+ApprovalTask (see
+/// people.helpers.ts spawnApprovalTask) exactly like PE-01 leave — no second
+/// approval mechanism. On approve, the requested fields overwrite the
+/// AttendanceDay row and correctionApplied is set true.
+model AttendanceCorrectionRequest {
+  id                String    @id @default(cuid())
+  tenantId          String
+  personId          String
+  workDate          DateTime
+  reason            String
+  requestedStatus   String?
+  requestedFirstIn  DateTime?
+  requestedLastOut  DateTime?
+  status            String    @default("SUBMITTED") // SUBMITTED|APPROVED|REJECTED
+  decidedAt         DateTime?
+  decidedBy         String?
+  decisionNote      String?
+  workflowInstanceId String?
+  approvalTaskId    String?
+  idempotencyKey    String
+  createdBy         String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([tenantId, idempotencyKey])
+  @@index([tenantId, personId, workDate])
+}

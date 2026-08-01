@@ -131,6 +131,25 @@ const TENANT_TABLES = [
   'DataLayerDefinition',
   'DashboardDefinition',
   'DashboardVersion',
+  // People Essentials — PE-01 (Leave & Availability).
+  'PeopleTenantConfig',
+  'LeavePolicyRef',
+  'LeaveBalanceSnapshot',
+  'LeaveRequest',
+  'LeaveImpactSnapshot',
+  'OvertimeRequest',
+  // Management OS — MG-04 (Portfolio & Benefit).
+  'Initiative',
+  'Portfolio',
+  'BenefitProfile',
+  // People Essentials — PE-02 (Attendance & Correction).
+  'WorkCalendar',
+  'ShiftPattern',
+  'ShiftAssignment',
+  'AttendanceImportBatch',
+  'AttendanceEvent',
+  'AttendanceDay',
+  'AttendanceCorrectionRequest',
 ];
 
 const PREDICATE =

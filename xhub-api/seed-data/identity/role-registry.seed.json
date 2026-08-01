@@ -1,5 +1,5 @@
 {
-  "_note": "Canonical role registry (16 roles) for the XHub Internal Pilot — mirrors handoff data/ROLE_CATALOG.csv. SINGLE source of truth: roleCode -> {name, permissions[], condition?, dataScope}. Seeded as PermissionPolicy rows (version 1) under tenant-xtech via scripts/role-registry-seed.mjs (upsert-by (tenantId, roleCode, version), RLS-bypass). ADDITIVE: coexists with the legacy ROLE_* policies from xtech-identity-org.seed.json; PLATFORM_ADMIN is the canonical super-admin (grants ['*']).",
+  "_note": "Canonical role registry (21 roles — count drifted from the original 16 as WORK_MANAGER/SOLUTION_DELIVERY_MANAGER/IOC_OPERATOR/IOC_TWIN_ADMIN/HR_MANAGER were added later; HR_MANAGER added for PE-01/PE-02 People Essentials) for the XHub Internal Pilot — mirrors handoff data/ROLE_CATALOG.csv. SINGLE source of truth: roleCode -> {name, permissions[], condition?, dataScope}. Seeded as PermissionPolicy rows (version 1) under tenant-xtech via scripts/role-registry-seed.mjs (upsert-by (tenantId, roleCode, version), RLS-bypass). ADDITIVE: coexists with the legacy ROLE_* policies from xtech-identity-org.seed.json; PLATFORM_ADMIN is the canonical super-admin (grants ['*']).",
   "tenant": { "id": "tenant-xtech", "slug": "xtech", "name": "X-TECH" },
   "version": 1,
   "roles": [
@@ -9,16 +9,17 @@
     { "roleCode": "SECURITY_ADMIN", "name": "Quản trị bảo mật", "permissions": ["role.*", "permission.*", "scope.*", "authz.simulate"], "dataScope": "TENANT" },
     { "roleCode": "WORKFLOW_ADMIN", "name": "Quản trị quy trình", "permissions": ["workflow.*", "form.*", "assignment.simulate"], "dataScope": "TENANT" },
     { "roleCode": "BACKUP_ADMIN", "name": "Quản trị sao lưu", "permissions": ["backup.*", "restore.request", "restore.sandbox"], "dataScope": "TENANT" },
-    { "roleCode": "AUDITOR", "name": "Kiểm toán", "permissions": ["audit.read", "backup.read", "permission.read"], "dataScope": "TENANT" },
+    { "roleCode": "AUDITOR", "name": "Kiểm toán", "permissions": ["audit.read", "backup.read", "permission.read", "people.audit.read"], "dataScope": "TENANT" },
     { "roleCode": "DATA_STEWARD", "name": "Quản lý dữ liệu chủ", "permissions": ["mdm.*", "import.*", "quality.*"], "dataScope": "TENANT" },
     { "roleCode": "RECORDS_MANAGER", "name": "Quản lý hồ sơ", "permissions": ["records.*", "document.publish", "retention.manage"], "dataScope": "TENANT" },
     { "roleCode": "COMM_ADMIN", "name": "Quản trị truyền thông", "permissions": ["announcement.*"], "dataScope": "TENANT" },
     { "roleCode": "SERVICE_DESK_MANAGER", "name": "Quản lý Service Desk", "permissions": ["ticket.manage", "service_catalog.*", "sla.*"], "dataScope": "TENANT" },
     { "roleCode": "SERVICE_DESK_AGENT", "name": "Nhân viên Service Desk", "permissions": ["ticket.read", "assign.self", "ticket.resolve"], "dataScope": "SELF" },
-    { "roleCode": "EXECUTIVE", "name": "Ban điều hành", "permissions": ["dashboard.executive", "directive.*", "request.approve"], "dataScope": "TENANT" },
+    { "roleCode": "EXECUTIVE", "name": "Ban điều hành", "permissions": ["dashboard.executive", "directive.*", "request.approve", "manage.portfolio.read", "manage.portfolio.write", "manage.initiative.read", "manage.initiative.write", "manage.benefit.read", "manage.benefit.write", "ioc.view", "ioc.people.detail"], "dataScope": "TENANT" },
     { "roleCode": "CFO", "name": "Giám đốc Tài chính", "permissions": ["payment.approve", "purchase.approve", "report.finance"], "condition": { "maxAmount": 5000000000 }, "dataScope": "TENANT" },
-    { "roleCode": "DEPARTMENT_HEAD", "name": "Trưởng bộ phận", "permissions": ["request.approve", "task.assign", "directive.receive", "work.item.create", "work.item.update", "work.item.assign", "work.item.comment", "work.view.full"], "dataScope": "ORG_UNIT" },
-    { "roleCode": "EMPLOYEE", "name": "Nhân viên", "permissions": ["request.create", "task.self", "document.read", "work.item.create", "work.item.update", "work.item.assign", "work.item.comment", "work.view.summary"], "dataScope": "SELF" },
+    { "roleCode": "DEPARTMENT_HEAD", "name": "Trưởng bộ phận", "permissions": ["request.approve", "task.assign", "directive.receive", "work.item.create", "work.item.update", "work.item.assign", "work.item.comment", "work.view.full", "people.team.availability.read", "people.team.leave.approve", "people.team.attendance.approve", "manage.portfolio.read", "manage.initiative.read", "ioc.view", "ioc.people.detail"], "dataScope": "ORG_UNIT" },
+    { "roleCode": "EMPLOYEE", "name": "Nhân viên", "permissions": ["request.create", "task.self", "document.read", "work.item.create", "work.item.update", "work.item.assign", "work.item.comment", "work.view.summary", "people.self.leave.request", "people.self.attendance.read", "people.self.attendance.correct"], "dataScope": "SELF" },
+    { "roleCode": "HR_MANAGER", "name": "Trưởng phòng Nhân sự", "permissions": ["people.hr.timekeeping.manage", "people.hr.timekeeping.lock", "people.hr.import.manage"], "dataScope": "TENANT" },
     { "roleCode": "WORK_MANAGER", "name": "Quản lý công việc", "permissions": ["work.*", "work.view.full"], "dataScope": "TENANT" },
     { "roleCode": "SOLUTION_DELIVERY_MANAGER", "name": "Quản lý triển khai giải pháp (T001)", "permissions": ["delivery.read", "delivery.manage"], "dataScope": "TENANT" },
     { "roleCode": "IOC_OPERATOR", "name": "Vận hành IOC", "permissions": ["ioc.view"], "dataScope": "TENANT" },
@@ -29,6 +30,7 @@
     { "id": "rb-platform-admin-canonical-cfo", "subjectType": "USER", "subjectId": "usr-cfo", "roleCode": "PLATFORM_ADMIN", "scope": { "all": true } },
     { "id": "rb-platform-admin-canonical-ceo", "subjectType": "USER", "subjectId": "usr-ceo", "roleCode": "PLATFORM_ADMIN", "scope": { "all": true } },
     { "id": "rb-service-desk-agent-infra", "subjectType": "USER", "subjectId": "usr-it-support", "roleCode": "SERVICE_DESK_AGENT", "scope": { "orgUnitId": "ou-tech" } },
-    { "id": "rb-solution-delivery-mgr", "subjectType": "USER", "subjectId": "usr-delivery-mgr", "roleCode": "SOLUTION_DELIVERY_MANAGER", "scope": { "tenant": true } }
+    { "id": "rb-solution-delivery-mgr", "subjectType": "USER", "subjectId": "usr-delivery-mgr", "roleCode": "SOLUTION_DELIVERY_MANAGER", "scope": { "tenant": true } },
+    { "id": "rb-hr-manager-hr-head", "subjectType": "USER", "subjectId": "usr-hr-head", "roleCode": "HR_MANAGER", "scope": { "tenant": true } }
   ]
 }

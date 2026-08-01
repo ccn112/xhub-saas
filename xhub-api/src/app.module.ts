@@ -27,9 +27,10 @@ import { TenantLifecycleModule } from './platform/lifecycle/tenant-lifecycle.mod
 import { WorkModule } from './work/work.module';
 import { ManageModule } from './manage/manage.module';
 import { IocModule } from './ioc/ioc.module';
+import { PeopleModule } from './people/people.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, SeedModule, PreferencesModule, IdentityModule, XofficeModule, ControlplaneModule, MdmModule, BackupModule, RecordsModule, WebhookModule, TestRunsModule, RequestsModule, DirectivesModule, TicketsModule, BookingsModule, AnnouncementsModule, PlatformModule, TenantLaunchModule, CatalogModule, OnboardingModule, DeliveryModule, TenantLifecycleModule, WorkModule, ManageModule, IocModule],
+  imports: [PrismaModule, AuthModule, SeedModule, PreferencesModule, IdentityModule, XofficeModule, ControlplaneModule, MdmModule, BackupModule, RecordsModule, WebhookModule, TestRunsModule, RequestsModule, DirectivesModule, TicketsModule, BookingsModule, AnnouncementsModule, PlatformModule, TenantLaunchModule, CatalogModule, OnboardingModule, DeliveryModule, TenantLifecycleModule, WorkModule, ManageModule, IocModule, PeopleModule],
   controllers: [AppController],
   providers: [AppService],
 })

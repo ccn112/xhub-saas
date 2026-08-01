@@ -9,6 +9,9 @@ import { ActionsService } from './actions.service';
 import { ScorecardsService } from './scorecards.service';
 import { OkrService } from './okr.service';
 import { KpiTreeService } from './kpi-tree.service';
+import { PortfoliosService } from './portfolios.service';
+import { InitiativesService } from './initiatives.service';
+import { BenefitProfilesService } from './benefit-profiles.service';
 import {
   ObjectivesController,
   MetricsController,
@@ -19,6 +22,9 @@ import {
   OkrCyclesController,
   OkrsController,
   KpiTreeController,
+  PortfoliosController,
+  InitiativesController,
+  BenefitProfilesController,
 } from './manage.controllers';
 
 /**
@@ -41,6 +47,9 @@ import {
     OkrCyclesController,
     OkrsController,
     KpiTreeController,
+    PortfoliosController,
+    InitiativesController,
+    BenefitProfilesController,
   ],
   providers: [
     ObjectivesService,
@@ -51,8 +60,11 @@ import {
     ScorecardsService,
     OkrService,
     KpiTreeService,
+    PortfoliosService,
+    InitiativesService,
+    BenefitProfilesService,
     TenantScopeInterceptor,
   ],
-  exports: [ObjectivesService, MetricsService, ReviewsService, DecisionsService, ActionsService, ScorecardsService, OkrService, KpiTreeService],
+  exports: [ObjectivesService, MetricsService, ReviewsService, DecisionsService, ActionsService, ScorecardsService, OkrService, KpiTreeService, PortfoliosService, InitiativesService, BenefitProfilesService],
 })
 export class ManageModule {}
