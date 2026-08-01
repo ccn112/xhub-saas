@@ -644,6 +644,10 @@ Backend script (chạy trong `xhub-api`, cần Postgres + `.env`):
 | `npm run test:webhook` | Inbound HMAC verify + dedupe + outbox dispatch/reconcile |
 | `npm run test:condition` | Condition AST evaluator (operators, dot-path, fail-safe) |
 | `npm run test:authz` | RBAC/ABAC: allow/deny/401/oidc |
+| `npm run test:manage-slice` | Management OS MG-01 reference slice (objective→metric→review→decision→action) |
+| `npm run test:manage-portfolio` | MG-04: stage-gate FSM, link-project (404 nếu id giả), benefit realization suy từ MetricObservation thật |
+| `npm run test:people-leave` | PE-01: FSM+overlap+idempotency+SOR_NOT_XOFFICE guard+approve→balance+cancel-refund+ABAC scope+cross-tenant |
+| `npm run test:ioc-twin` / `test:ioc-insights` | IOC Digital Twin: RLS/isolation, chiếu dữ liệu Work thật, AI brief draft-first |
 | `npm run scan:secrets` | Fail nếu có secret ngoài `.env*` (source-only scan) |
 
 Các script `test:controlplane/mdm/backup/records/webhook` là **reset + smoke** — re-runnable

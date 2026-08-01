@@ -231,6 +231,26 @@ export const USER_TEST_ROWS: UserTestRow[] = [
   { id: "U82", group: "IOC — Bản sao số", step: "Bảng điều khiển /ioc/studio/dashboards", expected: "Xem trước bố cục lưới 12 cột đúng như màn twin; danh mục widget được phép hiển thị đầy đủ", link: "/ioc/studio/dashboards" },
   { id: "U83", group: "IOC — Bản sao số", step: "Rà soát & xuất bản /ioc/studio/publish", expected: "Bảng lịch sử phiên bản cho mặt bằng/scene/bảng điều khiển kèm checksum + trạng thái PUBLISHED/SUPERSEDED", link: "/ioc/studio/publish" },
   { id: "U84", group: "IOC — Bản sao số", step: "Icon & asset /ioc/studio/assets", expected: "14 icon dựng sẵn; mục tải asset tuỳ chỉnh ghi rõ CHƯA MỞ kèm lý do an toàn", link: "/ioc/studio/assets" },
+  { id: "U101", group: "IOC — Bản sao số", step: "Bấm 1 vùng trên mặt bằng 2D ở /ioc/twin/office", expected: "Cột phải đổi từ 'AI Twin Brief' sang 'Chi tiết vùng: <tên phòng ban>' — hiện danh sách người giữ vị trí (tên thật + chức danh), việc đang xử lý, cảnh báo của đúng vùng đó; nút 'Quay lại AI Twin Brief' trả về màn cũ", link: "/ioc/twin/office" },
+  { id: "U102", group: "IOC — Bản sao số", step: "Chuyển sang tab 'Không gian 3D' rồi bấm 1 khối vùng khác", expected: "Cùng panel chi tiết vùng cập nhật đúng theo khối vừa bấm (không cần rời màn 3D); khối đang chọn sáng lên rõ hơn các khối khác" },
+  { id: "U103", group: "IOC — Bản sao số", step: "Đăng nhập bằng tài khoản KHÔNG có quyền xem chi tiết cá nhân (ví dụ nhân viên thường), bấm 1 vùng", expected: "Panel báo lỗi rõ ràng (không phải màn trắng) — từ chối xem roster cá nhân, đúng tinh thần 'dữ liệu cá nhân cần quyền riêng'" },
+  { id: "U104", group: "IOC — Bản sao số", step: "Khối 'Xu hướng chỉ số (thật)' trong AI Twin Brief", expected: "Hiện cột chỉ số + mini biểu đồ cột từ các kỳ MetricObservation thật (không phải luôn 'chưa đủ dữ liệu')" },
+  { id: "U105", group: "IOC — Bản sao số", step: "Khối 'Phân bố giờ vào/ra' cuối trang /ioc/twin/office", expected: "Biểu đồ cột 24 giờ, xanh=vào/xanh dương=ra, dựng từ AttendanceEvent thật (PE-02); nếu tenant chưa import chấm công thì hiện đúng lý do trung thực thay vì biểu đồ trống", link: "/ioc/twin/office" },
+
+  // ── Nhân sự & Công (PE-01 Leave & Availability, SME Lite) ──
+  { id: "U90", group: "Nhân sự & Công", step: "Trang chủ /people", expected: "Thẻ số dư theo từng loại nghỉ (nghỉ phép năm/ốm/không lương/nghỉ bù/từ xa) khớp seed:people-leave; đơn đang chờ hiện đúng", link: "/people" },
+  { id: "U91", group: "Nhân sự & Công", step: "Tạo đơn nghỉ /people/leave — chọn ngày rồi bấm 'Xem trước ảnh hưởng'", expected: "Hiện mức ảnh hưởng LOW/MEDIUM/HIGH + số việc/phê duyệt/đặt phòng/chỉ đạo đến hạn trong kỳ nghỉ — số liệu thật, nút Gửi chỉ bật SAU khi đã xem trước", link: "/people/leave" },
+  { id: "U92", group: "Nhân sự & Công", step: "Gửi đơn nghỉ vừa xem trước", expected: "Đơn xuất hiện ở 'Đơn của tôi' trạng thái SUBMITTED; đồng thời hiện ở /approvals và /inbox (không tạo hàng đợi duyệt riêng)", link: "/approvals" },
+  { id: "U93", group: "Nhân sự & Công", step: "Gửi lại đơn y hệt (double-click nhanh nút Gửi)", expected: "KHÔNG tạo 2 đơn trùng — idempotency chặn tạo trùng dù bấm nhiều lần" },
+  { id: "U94", group: "Nhân sự & Công", step: "Lịch hiện diện nhóm /people/team/availability — mặc định đơn vị của mình", expected: "Danh sách định biên thật (Position) + đơn đang chờ duyệt của đơn vị; bấm 'Duyệt'/'Từ chối' đổi trạng thái ngay", link: "/people/team/availability" },
+  { id: "U95", group: "Nhân sự & Công", step: "Chọn 1 đơn vị NGOÀI phạm vi quản lý của mình ở /people/team/availability", expected: "Hiện rõ thông báo 'Ngoài phạm vi của bạn' (403 do DataScope) — KHÔNG hiện lẫn lộn với 'Backend offline'", link: "/people/team/availability" },
+  { id: "U96", group: "Nhân sự & Công", step: "Duyệt 1 đơn nghỉ rồi quay lại /people", expected: "Số dư (available) giảm đúng bằng số ngày nghỉ; đơn chuyển APPROVED", link: "/people" },
+  { id: "U97", group: "Nhân sự & Công", step: "Huỷ 1 đơn đã duyệt (APPROVED) ở /people/leave", expected: "Chuyển CANCEL_REQUESTED trước, không huỷ thẳng; sau khi HR/quản lý duyệt huỷ, số dư được hoàn lại đúng" },
+
+  // ── Quản trị — Danh mục đầu tư (MG-04 Portfolio & Benefit) ──
+  { id: "U98", group: "Quản trị", step: "Danh mục đầu tư /manage/portfolio", expected: "Portfolio PF-CORE gồm 3 initiative theo 3 giai đoạn khác nhau (stage-gate); initiative CHƯA gắn dự án hiện badge 'Chưa gắn thực thi'", link: "/manage/portfolio" },
+  { id: "U99", group: "Quản trị", step: "Gắn 1 dự án thực thi có sẵn cho initiative chưa gắn", expected: "Sau khi gắn, hiện nhãn 'Nguồn: Work v2' + health/tiến độ THẬT của dự án; bấm 'Xem thực thi' sang đúng /work/projects/[id]", link: "/manage/portfolio" },
+  { id: "U100", group: "Quản trị", step: "Chuyển giai đoạn 1 initiative bằng nút mũi tên", expected: "Chỉ chuyển được sang giai đoạn TIẾP THEO (không nhảy cóc); nút 'Dừng' luôn khả dụng và không quay lại được sau khi dừng" },
 
   // ── Console kỹ thuật ──
   { id: "U70", group: "Console kỹ thuật", step: "DevTools Console khi lướt tất cả màn", expected: "0 lỗi đỏ (JS error / failed fetch) trên mọi route đã mở" },
@@ -247,6 +267,7 @@ export const USER_TEST_GROUPS = [
   "X.Space",
   "Platform Console",
   "Đa tenant",
+  "Nhân sự & Công",
   "IOC — Bản sao số",
   "Console kỹ thuật",
 ] as const;

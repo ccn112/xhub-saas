@@ -14,10 +14,11 @@ _Cổng làm việc hợp nhất cho X-TECH — XHub · X.Space · X.Office_
 4. [Trang chủ (điều hành & thông báo)](#4-trang-chủ)
 5. [Công việc (Work v2: hộp việc · phê duyệt · Gantt · Kanban · danh mục dự án)](#5-công-việc)
 6. [Quản trị điều hành (Management OS)](#6-quản-trị-điều-hành-management-os)
-7. [X.Space (trao đổi & cộng tác)](#7-xspace)
-8. [X.Office (quy trình & vận hành)](#8-xoffice)
-9. [Doanh nghiệp & Quản trị hệ thống](#9-doanh-nghiệp--quản-trị-hệ-thống)
-10. [Câu hỏi thường gặp & Mẹo](#10-câu-hỏi-thường-gặp--mẹo)
+7. [Nhân sự & Công (nghỉ phép · hiện diện nhóm)](#7-nhân-sự--công)
+8. [X.Space (trao đổi & cộng tác)](#8-xspace)
+9. [X.Office (quy trình & vận hành)](#9-xoffice)
+10. [Doanh nghiệp & Quản trị hệ thống](#10-doanh-nghiệp--quản-trị-hệ-thống)
+11. [Câu hỏi thường gặp & Mẹo](#11-câu-hỏi-thường-gặp--mẹo)
 
 ---
 
@@ -274,9 +275,43 @@ Mỗi kỳ review có **pre-read** (snapshot số liệu + danh sách ngoại l�
 
 Nhật ký quyết định liệt kê từng quyết định với vai trò RAPID, bằng chứng đi kèm, và **độ tuổi (aging)** của các quyết định chưa xử lý — giúp lãnh đạo thấy ngay quyết định nào đang bị treo quá lâu.
 
+### Danh mục đầu tư — Portfolio & Benefit (`/manage/portfolio`)
+
+> **Nguyên tắc quản trị:** một **initiative** (sáng kiến đầu tư) không phải là một dự án — nó là **lý do đầu tư** (gắn mục tiêu chiến lược + lợi ích kỳ vọng), còn việc **thực thi** (ai làm gì, khi nào xong) đã có đủ ở Công việc (mục 5). Trộn hai khái niệm này khiến tổ chức không biết đang đánh giá "có nên đầu tư tiếp không" hay "dự án có đúng tiến độ không" — hai câu hỏi khác nhau, cần hai góc nhìn khác nhau trên cùng một dữ liệu thật.
+
+Mỗi **initiative** đi qua các giai đoạn cổng (stage-gate): Tiếp nhận → Khảo sát → Đã duyệt → Đã cấp vốn → Triển khai → Rà soát lợi ích → Đóng (hoặc Dừng bất kỳ lúc nào) — chỉ đi tới, không quay lui, đúng tinh thần một quyết định đầu tư đã qua cổng thì không âm thầm lùi lại. Một initiative có thể **gắn** với một dự án thực thi đã có sẵn ở mục 5 (nút "Gắn") để xem tiến độ/sức khỏe thật — nhãn **"Nguồn: Work v2"** luôn đi kèm để không ai nhầm đây là số liệu quản trị tự nhập tay. Initiative chưa gắn dự án hiện rõ **"Chưa gắn thực thi"** — trung thực về việc "mới có ý tưởng, chưa triển khai" thay vì bịa ra một dự án giả.
+
+Mỗi initiative có thể có nhiều **chỉ tiêu lợi ích (benefit)** — ví dụ "tăng tỷ lệ đúng hạn", "tăng điểm hài lòng khách hàng". Trạng thái của một chỉ tiêu (Đang lên kế hoạch/Đang theo dõi/Đã đạt/Không đạt) là **tự suy ra** từ số liệu chỉ số thật (KPI đã có ở `/manage/metrics`) khi chỉ tiêu đó gắn với một chỉ số đã chứng nhận — không ai được phép tự tay đánh dấu "Đã đạt". Chỉ tiêu chưa gắn chỉ số nào thì giữ nguyên "Đang lên kế hoạch" — trung thực thay vì suy đoán.
+
+**Portfolio** (danh mục) chỉ đơn giản là một nhóm các initiative để xem tổng quan cùng lúc (bao nhiêu cái đang ở giai đoạn nào, bao nhiêu chỉ tiêu đã đạt) — không phải một tầng phê duyệt mới.
+
 ---
 
-## 7. X.Space
+## 7. Nhân sự & Công
+
+Workspace này (`/people/*`) phục vụ nghiệp vụ **nhân sự thiết yếu** cho từng nhân viên: xin nghỉ phép, xem số dư, xem lịch hiện diện của nhóm mình quản lý. Đây là chức năng nhân sự đầu tiên trên nền tảng ("PE-01") — **khác hẳn** với `/admin/users` (đó là sổ đăng ký người dùng & tài khoản của toàn nền tảng, không phải nghiệp vụ nhân sự).
+
+> **Nguyên tắc quản trị:** ở quy mô một doanh nghiệp vừa và nhỏ (SME) chưa nối hệ thống nhân sự/lương ngoài (FinERP, Frappe HR), X.Office **tự làm nguồn dữ liệu gốc (System of Record)** cho nghỉ phép — gọi là chế độ **"SME Lite"**. Khi doanh nghiệp lớn lên và nối một hệ thống nhân sự thật, chế độ này chuyển đổi được **không cần xoá dữ liệu cũ**: dữ liệu nghỉ phép đã có sẽ tự động trở thành "bản chiếu" đọc từ hệ thống mới, người dùng không thấy gián đoạn.
+
+### Tổng quan của tôi (`/people`)
+
+Thẻ số dư theo từng loại nghỉ (nghỉ phép năm, nghỉ ốm, nghỉ không lương, nghỉ bù, làm việc từ xa) và danh sách đơn đang chờ xử lý của chính mình.
+
+### Nghỉ phép (`/people/leave`)
+
+> **Nguyên tắc quản trị:** trước khi xin nghỉ, người xin cần biết ngay **ai/việc gì sẽ bị ảnh hưởng** trong những ngày đó — nếu chờ đến lúc quản lý duyệt xong mới phát hiện có việc bị treo thì đã quá muộn. Vì vậy hệ thống **bắt buộc xem trước ảnh hưởng** trước khi cho phép gửi đơn, thay vì để người dùng gửi mù rồi xử lý hậu quả sau.
+
+Điền loại nghỉ + khoảng ngày, bấm **"Xem trước ảnh hưởng"** — hệ thống quét thật công việc/phê duyệt/lịch đặt phòng/chỉ đạo của người xin nghỉ rơi vào khoảng đó và báo mức ảnh hưởng (Thấp/Trung bình/Cao). Chỉ sau bước này nút **"Gửi đơn"** mới bật. Đơn gửi đi **đồng thời hiện ở Trung tâm phê duyệt/Hộp việc** (mục 5) — nghỉ phép không có một hàng đợi duyệt riêng biệt, để quản lý không phải kiểm tra 2 nơi khác nhau. Đơn có thể huỷ trước khi được duyệt (huỷ ngay); đơn **đã được duyệt** muốn huỷ phải qua một bước xin huỷ (chờ quản lý xác nhận) — tránh trường hợp huỷ nghỉ ngay sát giờ làm xáo trộn kế hoạch đã sắp xếp.
+
+### Lịch hiện diện nhóm (`/people/team/availability`)
+
+> **Nguyên tắc quản trị & phân quyền:** đây là màn **có phạm vi dữ liệu (data scope)** — chỉ quản lý trực tiếp của một đơn vị mới thấy và duyệt được đơn của đơn vị đó, dựa trên phạm vi tổ chức thật đã cấu hình ở `/admin/data-scopes`, **không phải** ai đăng nhập cũng thấy toàn bộ nhân sự công ty. Đây là ranh giới bảo vệ dữ liệu cá nhân, không phải một giới hạn kỹ thuật tạm thời.
+
+Chọn đơn vị (dải nút phía trên) để xem **định biên thật** (ai đang giữ vị trí nào) chồng lịch nghỉ phép, cùng danh sách đơn đang chờ duyệt của đơn vị đó với 2 nút Duyệt/Từ chối ngay tại chỗ. Nếu chọn một đơn vị **ngoài phạm vi quản lý của mình**, hệ thống báo rõ **"Ngoài phạm vi của bạn"** — đây là quyết định phân quyền có chủ đích, không phải lỗi. Muốn mở rộng phạm vi cho một người quản lý, chủ đầu tư/quản trị hệ thống cấu hình ở `/admin/data-scopes` (mục 10).
+
+---
+
+## 8. X.Space
 
 Workspace **X.Space** là nơi trao đổi và cộng tác. Các màn con:
 
@@ -308,7 +343,7 @@ Nhắn tin 1–1 với đồng nghiệp.
 
 ---
 
-## 8. X.Office
+## 9. X.Office
 
 Workspace **X.Office** quản lý các quy trình nghiệp vụ. Ba màn con:
 
@@ -340,7 +375,7 @@ Trong X.Office, trợ lý AI có thể **gợi ý bản nháp** quy trình/biể
 
 ---
 
-## 9. Doanh nghiệp & Quản trị hệ thống
+## 10. Doanh nghiệp & Quản trị hệ thống
 
 Workspace **Doanh nghiệp** gom dữ liệu doanh nghiệp và (với người có quyền) khu **Quản trị**.
 
@@ -421,7 +456,7 @@ Các màn quản trị hiển thị **nhãn nguồn**: "Dữ liệu trực tiế
 
 ---
 
-## 10. Câu hỏi thường gặp & Mẹo
+## 11. Câu hỏi thường gặp & Mẹo
 
 **Vì sao tôi không thấy khu Quản trị?**
 Nhóm **Quản trị** trong workspace Doanh nghiệp chỉ hiển thị với người có quyền quản trị tenant. Nếu tài khoản của bạn không có quyền đó, các màn `/admin/*` sẽ không xuất hiện. Liên hệ quản trị viên nếu bạn cần truy cập.

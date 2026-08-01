@@ -17,6 +17,7 @@
 | **v2.x SaaS** (handoff SAAS_TENANT_001_010) | Sau PH-02: Solution Delivery WS · Platform Tenant Registry (tenantNo immutable) · Launch Factory · Blueprint/Seed Catalog · T002 BĐS demo · T003–010 batch · T011 readiness · Platform Console (tách quyền khỏi Tenant Admin) | ⬜ docs-first |
 
 ## Đã hoàn thành (chi tiết, mới nhất trên cùng)
+- **PE-01 (Nghỉ phép & Hiện diện nhóm) + MG-04 (Portfolio & Benefit)** ✅ — chạy song song 2026-08-01. Workspace mới `/people/*` (SME Lite, FSM+idempotency+SOR guard+ABAC scope), workspace `manage` thêm `/manage/portfolio` (Initiative link-only → ExecutionProject, BenefitProfile status suy ra từ MetricObservation). **98 bảng RLS.** `test:people-leave` 26/26 + `test:manage-portfolio` 20/20 PASS, xem chi tiết `TINH_HINH_DU_AN_XHUB.md` §9.
 - **PH-02 Ticket/Service Desk** ✅ — models ServiceCatalogItem/Ticket/TicketEvent, FSM NEW→…→RESOLVED→CLOSED + CSAT, catalog+queue+SLA, 15 ticket + 5 catalog seed, màn `/office/service-desk` + detail, nav + icon lifebuoy. **47 bảng RLS.** `test:tickets` PASS (đã fix bug assign person-id↔user-id).
 - **PH-02 ĐÓNG (6/6 nghiệp vụ)** — thêm **Announcement** ✅: audience→receipt, đọc/xác nhận, report thống kê, nhắc lại (mock), 6 thông báo + 76 receipt, **53 bảng RLS**, `test:announcements` 38/38. XOffice Operational cho T001 hoàn tất.
 - **PH-02 Booking** ✅ — BookableResource/Booking/BookingEvent, FSM REQUESTED→APPROVED→CHECKED_IN→CHECKED_OUT/NO_SHOW, **conflict 409** cùng tài nguyên, 4 resource + 12 booking, màn Đặt phòng & tài nguyên, **50 bảng RLS**, `test:bookings` PASS.

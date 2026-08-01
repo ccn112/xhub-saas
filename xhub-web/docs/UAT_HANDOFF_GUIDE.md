@@ -31,6 +31,7 @@
 - **[ADMIN]** — chỉ tài khoản quản trị tenant (dùng tài khoản Nguyễn Hoài Nam ở trên) mới thấy/thao tác được.
 - **[PLATFORM]** — chỉ tài khoản vận hành nền tảng (platform-operator, cũng dùng tài khoản Nguyễn Hoài Nam) mới thấy/thao tác được.
 - **[ENFORCE]** — màn/luồng này chỉ thể hiện đúng khi máy chủ API đang **bật** chế độ kiểm soát quyền nghiêm ngặt (`AUTH_ENFORCE=true`). Ở môi trường demo mặc định, chế độ này **đang tắt** — khi gặp dòng `[ENFORCE]`, bạn **không cần** coi là lỗi nếu không thấy hành vi mô tả; hãy để trạng thái **"Chưa test"** và ghi chú **"N/A demo mode"**. Đừng tick FAIL cho các dòng này trừ khi dev xác nhận `AUTH_ENFORCE=true` đang bật.
+- **Lưu ý riêng cho `/people/team/availability` (U94–U95):** đây là màn **duy nhất** trong bản demo có giới hạn phạm vi dữ liệu (`DataScope`) hoạt động **luôn luôn**, kể cả khi `AUTH_ENFORCE=false` — khác với `[ENFORCE]` ở trên. Tài khoản Nguyễn Hoài Nam (Giám đốc Tài chính, `usr-cfo`) chỉ được cấp phạm vi **Tài chính + Ban điều hành** (`ou-fin`, `ou-exec`), dù đây là tài khoản "có mọi quyền" ở các màn khác. Chọn 2 đơn vị này ở U94 phải xem được bình thường; chọn bất kỳ đơn vị nào khác (Kinh doanh, Công nghệ, Nhân sự…) ở U95 phải báo **"Ngoài phạm vi của bạn"** — đây là hành vi **ĐÚNG**, không phải lỗi/thiếu quyền cần báo dev.
 
 ## 5. Cách dùng checklist tương tác (khuyến nghị — nhanh hơn bản in này)
 
@@ -206,6 +207,32 @@
 
 ### 6k. Console kỹ thuật
 - [ ] **U70** — DevTools Console khi lướt tất cả màn → 0 lỗi đỏ (JS error / failed fetch) trên mọi route đã mở.
+  - Ghi chú: ______
+
+### 6l. Nhân sự & Công (`/people/*`, PE-01)
+- [ ] **U90** — `/people` → Thẻ số dư theo từng loại nghỉ khớp seed:people-leave; đơn đang chờ hiện đúng.
+  - Ghi chú: ______
+- [ ] **U91** — `/people/leave` chọn ngày rồi bấm "Xem trước ảnh hưởng" → Hiện mức ảnh hưởng LOW/MEDIUM/HIGH + số việc/phê duyệt/đặt phòng/chỉ đạo thật; nút Gửi chỉ bật SAU khi đã xem trước.
+  - Ghi chú: ______
+- [ ] **U92** — Gửi đơn nghỉ vừa xem trước → Xuất hiện ở "Đơn của tôi" (SUBMITTED) và đồng thời ở `/approvals` + `/inbox` (không hàng đợi riêng).
+  - Ghi chú: ______
+- [ ] **U93** — Bấm nút Gửi 2 lần liên tiếp (double-click) → KHÔNG tạo 2 đơn trùng (idempotency).
+  - Ghi chú: ______
+- [ ] **U94** — `/people/team/availability` (đơn vị của mình) → Danh sách định biên thật + đơn chờ duyệt; Duyệt/Từ chối đổi trạng thái ngay.
+  - Ghi chú: ______
+- [ ] **U95** — Chọn 1 đơn vị NGOÀI phạm vi quản lý ở `/people/team/availability` → Báo rõ "Ngoài phạm vi của bạn" (403 do DataScope), không lẫn với "Backend offline".
+  - Ghi chú: ______
+- [ ] **U96** — Duyệt 1 đơn nghỉ rồi quay lại `/people` → Số dư giảm đúng số ngày nghỉ; đơn chuyển APPROVED.
+  - Ghi chú: ______
+- [ ] **U97** — Huỷ 1 đơn đã duyệt (APPROVED) → Chuyển CANCEL_REQUESTED trước (không huỷ thẳng); sau khi duyệt huỷ, số dư hoàn lại đúng.
+  - Ghi chú: ______
+
+### 6m. Quản trị — Danh mục đầu tư (`/manage/portfolio`, MG-04)
+- [ ] **U98** — `/manage/portfolio` → Portfolio PF-CORE gồm 3 initiative ở 3 giai đoạn khác nhau; initiative chưa gắn dự án hiện "Chưa gắn thực thi".
+  - Ghi chú: ______
+- [ ] **U99** — Gắn 1 dự án thực thi có sẵn cho initiative chưa gắn → Hiện nhãn "Nguồn: Work v2" + health/tiến độ thật; "Xem thực thi" sang đúng `/work/projects/[id]`.
+  - Ghi chú: ______
+- [ ] **U100** — Chuyển giai đoạn 1 initiative bằng nút mũi tên → Chỉ chuyển được sang giai đoạn TIẾP THEO (không nhảy cóc); "Dừng" luôn khả dụng và không quay lại được.
   - Ghi chú: ______
 
 ## 7. Báo cáo kết quả
