@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SectionCard } from "@/xhub/ui/Card";
 import { Badge, type Tone } from "@/xhub/ui/Badge";
-import { listOkrCycles, listOkrs } from "@/xoffice/lib/manage-data";
+import { listOkrCycles, listOkrs, getKpiTree } from "@/xoffice/lib/manage-data";
 
 export const metadata = { title: "OKR · XHub" };
 export const dynamic = "force-dynamic";
@@ -15,13 +15,30 @@ const statusTone: Record<string, Tone> = {
   CLOSED: "neutral",
 };
 
+// Worst-case KPI icon for an objective's linked StrategicObjective(s) — a
+// glance-able signal distinct from the OKR's own `status`/`confidence`
+// (Constitution #9: KPI ≠ OKR, this only SHOWS the KPI side, never blends it
+// into the OKR's own score).
+const KPI_ICON: Record<string, string> = { RED: "🔴", YELLOW: "🟡", GREEN: "🟢", STALE: "⚪", UNKNOWN: "⚪" };
+const KPI_SEVERITY: Record<string, number> = { RED: 3, YELLOW: 2, STALE: 1, UNKNOWN: 1, GREEN: 0 };
+
+function worstKpiStatus(kpis: { objectiveId: string; status: string }[], strategicObjectiveIds: string[]): string | null {
+  const relevant = kpis.filter((k) => strategicObjectiveIds.includes(k.objectiveId));
+  if (!relevant.length) return null;
+  return relevant.reduce((worst, k) => (KPI_SEVERITY[k.status] ?? 0) > (KPI_SEVERITY[worst] ?? 0) ? k.status : worst, relevant[0].status);
+}
+
 // MG-03 OKR — cycle list → objective drill-down. KeyResults link Initiative/
 // ActionCommitment (never a raw task list, Constitution #9); confidence is
 // shown alongside each Objective, distinct from any KPI status.
 export default async function OkrsPage() {
   const { items: cycles, source } = await listOkrCycles();
   const current = cycles[0] ?? null;
-  const { items: objectives } = current ? await listOkrs(current.id) : { items: [] };
+  const [{ items: objectives }, { groups: kpiGroups }] = await Promise.all([
+    current ? listOkrs(current.id) : Promise.resolve({ items: [] }),
+    getKpiTree(),
+  ]);
+  const allKpis = kpiGroups.flatMap((g) => g.kpis);
 
   return (
     <div className="space-y-4">
@@ -61,11 +78,15 @@ export default async function OkrsPage() {
                         100,
                     )
                   : 0;
+                const kpiStatus = worstKpiStatus(allKpis, o.strategicObjectiveIds ?? []);
                 return (
                   <li key={o.id}>
                     <Link href={`/manage/okrs/${o.id}`} className="flex items-center justify-between gap-3 px-1 py-2.5 hover:bg-gray-50 dark:hover:bg-dark-600/40">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-gray-800 dark:text-dark-50">{o.objective}</p>
+                        <p className="truncate text-sm font-medium text-gray-800 dark:text-dark-50">
+                          {kpiStatus && <span title={`KPI liên kết: ${kpiStatus}`}>{KPI_ICON[kpiStatus]} </span>}
+                          {o.objective}
+                        </p>
                         <p className="text-xs text-gray-400">{o.keyResults.length} Key Result · confidence {o.confidence != null ? `${Math.round(o.confidence * 100)}%` : "—"} · tiến độ trung bình {avgProgress}%</p>
                       </div>
                       <Badge tone={statusTone[o.status] ?? "neutral"}>{o.status}</Badge>

@@ -24,6 +24,14 @@ function mapChildren(items: XNavItem[]): NavigationTree[] {
   });
 }
 
+/** Level-1 ids tagged `group: "platform"` — rendered as a visually separate,
+ * bottom-pinned cluster on the rail (Menu.tsx), distinct from the core tenant
+ * workspaces. Pure rail-rendering hint, computed straight off XNavItem so the
+ * Tailux-provided NavigationTree type is never touched. */
+export function platformGroupIds(items: XNavItem[]): Set<string> {
+  return new Set(items.filter((item) => item.group === "platform").map((item) => item.id));
+}
+
 /** Convert the shared tree into rail (root) + context (childs) NavigationTree. */
 export function toRailTree(items: XNavItem[]): NavigationTree[] {
   return items.map((item) => {

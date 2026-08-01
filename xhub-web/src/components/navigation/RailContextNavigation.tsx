@@ -12,7 +12,7 @@ import { MainPanel } from "@/components/layout/MainLayout/Sidebar/MainPanel";
 import { PrimePanel } from "@/components/layout/MainLayout/Sidebar/PrimePanel";
 import { useNavigation } from "@/xhub/nav/NavigationProvider";
 import { findActivePrimary } from "@/xhub/nav/resolver";
-import { toRailTree } from "./railTreeAdapter";
+import { toRailTree, platformGroupIds } from "./railTreeAdapter";
 
 type SegmentPath = string | undefined;
 
@@ -23,6 +23,7 @@ export function RailContextNavigation() {
   const { isExpanded, close } = useSidebarContext();
 
   const nav = useMemo(() => toRailTree(tree), [tree]);
+  const platformIds = useMemo(() => platformGroupIds(tree), [tree]);
 
   // Resolve the active WORKSPACE from the shared tree using the full `match`
   // array + descendant check (not just the first match path). The adapter's
@@ -52,6 +53,7 @@ export function RailContextNavigation() {
     <>
       <MainPanel
         nav={nav}
+        platformIds={platformIds}
         activeSegmentPath={activeSegmentPath}
         setActiveSegmentPath={setActiveSegmentPath}
       />

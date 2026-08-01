@@ -23,21 +23,38 @@
 //
 //   Trang chủ (home) + all children ......... ALL            → (none)
 //   Công việc (work) rail ................... ALL            → (none)
-//     Hộp việc hợp nhất ..................... ALL            → (none)
-//     Trung tâm phê duyệt ................... APPROVER       → request.approve
-//     Công việc & chỉ đạo ................... ALL            → (none)
-//     Dự án ................................. ALL            → (none)
+//     Việc hằng ngày (group) ................ ALL            → (none, pruned to any child)
+//       Hộp việc hợp nhất ................... ALL            → (none)
+//       Trung tâm phê duyệt ................. APPROVER       → request.approve
+//       Tổng quan ............................ ALL            → (none)
+//       Việc của tôi ......................... ALL            → (none)
+//       Tôi giao ............................. ALL            → (none)
+//     Dự án & Portfolio (group) ............. ALL            → (none, pruned to any child)
+//       Dự án thực thi ....................... ALL            → (none)
+//       Dự án (MDM) .......................... ALL            → (none)
+//       Kanban ............................... ALL            → (none)
+//       Lịch công việc ....................... ALL            → (none)
+//       Portfolio ............................ MANAGER        → work.portfolio.read
+//       Báo cáo đa chiều ..................... MANAGER        → work.report.read
 //   X.Space (space) + all children ......... ALL            → (none)
 //   X.Office (office) rail .................. ALL            → (none)
-//     Danh mục quy trình .................... WORKFLOW_ADMIN → workflow.*
-//     Vận hành (Instances) .................. WORKFLOW_ADMIN → workflow.*
-//     Giám sát vận hành ..................... WORKFLOW_ADMIN → workflow.*
+//     Dịch vụ nội bộ (group) ................ ALL            → (none, pruned to any child)
+//       Trung tâm yêu cầu .................... APPROVER       → request.approve
+//       Yêu cầu của tôi ...................... ALL/requester  → request.create
+//       Chỉ đạo & cam kết .................... ALL            → (none)
+//       Service Desk ......................... ALL            → (none)
+//       Đặt phòng & tài nguyên ............... ALL            → (none)
+//       Thông báo nội bộ ..................... ALL            → (none)
+//     Quản trị quy trình (group) ............ (any admin)    → (none, pruned to any child)
+//       Danh mục quy trình ................... WORKFLOW_ADMIN → workflow.*
+//       Vận hành (Instances) ................. WORKFLOW_ADMIN → workflow.*
+//       Giám sát vận hành .................... WORKFLOW_ADMIN → workflow.*
 //   Doanh nghiệp (business) rail ........... ALL            → (none)
 //     Khách hàng (group) .................... SALES/customer → mdm.*
 //     Tài liệu .............................. ALL/records    → document.read
 //     Báo cáo ............................... MANAGER/exec   → dashboard.executive
 //     Ứng dụng .............................. TENANT_ADMIN   → application.*
-//     Quản trị (group) ...................... (any admin)    → (none, pruned to any child)
+//     Quản trị hệ thống (group) ............. (any admin)    → (none, pruned to any child)
 //       Tổng quan quản trị .................. TENANT_ADMIN   → tenant.*
 //       Người dùng & thành viên ............. TENANT_ADMIN   → tenant.*
 //       Sơ đồ tổ chức ....................... ORG_ADMIN      → org.*
@@ -70,21 +87,39 @@ export interface XNavItem {
   badgeKey?: string;
   /** Placeholder ("sắp có") — rendered but not a live route. */
   placeholder?: boolean;
+  /**
+   * Level-1 ONLY. Rail grouping: "platform" clusters platform-operator /
+   * cross-tenant surfaces (Platform Console, Solution Delivery, IOC) visually
+   * separate from — and pinned below — the core tenant-business workspaces
+   * (default, unset = "core"). Purely a rail-rendering hint; does not affect
+   * routing, permissions, or the prime-panel tree.
+   */
+  group?: "core" | "platform";
   children?: XNavItem[];
 }
 
 // -----------------------------------------------------------------------------
 // Level-1 = WORKSPACE (the outermost / parent level shown on the icon rail).
-// Deliberately kept to 5 workspaces — the rail is a coarse grouping, NOT a flat
-// list of every screen. Each workspace's real screens live one level down and
-// render in the prime (context) panel. This matches the intended IA: rail =
-// parent grouping; prime panel = the workspace's modules.
+// The rail is a coarse grouping, NOT a flat list of every screen — each
+// workspace's real screens live one level down and render in the prime
+// (context) panel. Originally "deliberately kept to 5 workspaces"; that core
+// tenant-business group still stands, but later additive phases registered
+// more top-level entries alongside it (each documented at its own block below
+// with why it doesn't disturb the original 5) — the rail today has 10:
 //
+//   Original 5 tenant-business workspaces:
 //   1. home     — Trang chủ (dashboards + thông báo)
 //   2. work     — Công việc (hộp việc · phê duyệt · chỉ đạo · dự án)
 //   3. space    — X.Space (trao đổi / cộng tác)
 //   4. office   — X.Office (quy trình / vận hành)
 //   5. business — Doanh nghiệp & Quản trị (khách hàng · tài liệu · báo cáo · ứng dụng · quản trị)
+//
+//   Later additive workspaces (each gated, each documented at its block):
+//   6. manage   — "Điều hành" (MG-01→04: mục tiêu/KPI/OKR/review/quyết định/portfolio)
+//   7. people   — "Nhân sự & Chấm công" (PE-01/PE-02: nghỉ phép/hiện diện nhóm/chấm công)
+//   8. platform — "Bảng điều khiển nền tảng" (SaaS operator surface, PLT_ namespace)
+//   9. delivery — "Triển khai giải pháp" (customer engagement lifecycle)
+//  10. ioc      — IOC Digital Twin (bản sao số văn phòng/phòng ban)
 // -----------------------------------------------------------------------------
 export const XHUB_NAVIGATION: XNavItem[] = [
   {
@@ -113,7 +148,7 @@ export const XHUB_NAVIGATION: XNavItem[] = [
   // ---------------------------------------------------------------------------
   {
     id: "manage",
-    label: "Quản trị",
+    label: "Điều hành",
     icon: "chart",
     href: "/manage",
     match: ["/manage"],
@@ -128,6 +163,10 @@ export const XHUB_NAVIGATION: XNavItem[] = [
       // OKR/KPI/task list stay distinct; no blended score may hide a red KPI, #5).
       { id: "manage.scorecards", label: "Scorecard", href: "/manage/scorecards", icon: "chart", match: ["/manage/scorecards"], permission: "manage.scorecard.read" },
       { id: "manage.okrs", label: "OKR", href: "/manage/okrs", icon: "directive", match: ["/manage/okrs"], permission: "manage.okr.read" },
+      // MG-04 — Portfolio & Benefit. LINK layer over Initiative→ExecutionProject
+      // (Work v2) — distinct from the existing /work/portfolio delivery rollup
+      // (see MANAGEMENT_UI_ROUTE_PLAN §2 "một-portfolio-một-nguồn").
+      { id: "manage.portfolio", label: "Danh mục đầu tư", href: "/manage/portfolio", icon: "briefcase", match: ["/manage/portfolio"], permission: "manage.portfolio.read" },
     ],
   },
   {
@@ -139,29 +178,44 @@ export const XHUB_NAVIGATION: XNavItem[] = [
     // Rail open to all employees; only "Phê duyệt" is gated (APPROVER).
     badgeKey: "inbox.open",
     children: [
-      { id: "inbox.unified", label: "Hộp việc hợp nhất", href: "/inbox", icon: "inbox", match: ["/inbox"], badgeKey: "inbox.open" },
-      { id: "approvals.center", label: "Trung tâm phê duyệt", href: "/approvals", icon: "approvals", match: ["/approvals"], badgeKey: "approval.pending", permission: "request.approve" },
-      // X.Office Work & PM v2 — W1 (NativeWorkItem). Overview + My Work + Tôi giao.
-      // No nav permission (open to all authenticated users); write actions are
-      // gated server-side by work.item.* and the read path enforces the summary/
-      // full visibility tier (owner requirement #1).
-      { id: "work.overview", label: "Tổng quan", href: "/work", icon: "chart", match: ["/work"] },
-      { id: "work.myTasks", label: "Việc của tôi", href: "/work/tasks", icon: "work", match: ["/work/tasks"] },
-      { id: "work.assignedByMe", label: "Tôi giao", href: "/work/tasks/assigned-by-me", icon: "approvals", match: ["/work/tasks/assigned-by-me"] },
-      { id: "work.directives", label: "Công việc & chỉ đạo", href: "/office/directives", icon: "directive", match: ["/office/directives"] },
-      // X.Office Work & PM v2 — W2 (ExecutionProject). Delivery projects with WBS
-      // roll-up + baseline + coordination visibility. Open in nav; writes gated
-      // server-side by work.project.*; detail read enforces FULL/SUMMARY per actor.
-      { id: "work.projects", label: "Dự án thực thi", href: "/work/projects", icon: "projects", match: ["/work/projects"] },
-      // X.Office Work & PM v2 — W3 (Management Views). Kanban / Calendar / Portfolio
-      // / multi-dimensional reports. Gantt is reached from project detail
-      // (/work/projects/[id]/gantt). Open in nav; portfolio + reports reads gated
-      // server-side (work.portfolio.read / work.report.read) — soft unless AUTH_ENFORCE.
-      { id: "work.board", label: "Kanban", href: "/work/board", icon: "apps", match: ["/work/board"] },
-      { id: "work.calendar", label: "Lịch công việc", href: "/work/calendar", icon: "calendar", match: ["/work/calendar"] },
-      { id: "work.portfolio", label: "Portfolio", href: "/work/portfolio", icon: "chart", match: ["/work/portfolio"], permission: "work.portfolio.read" },
-      { id: "work.reports", label: "Báo cáo đa chiều", href: "/work/reports", icon: "list", match: ["/work/reports"], permission: "work.report.read" },
-      { id: "projects.list", label: "Dự án (MDM)", href: "/projects", icon: "projects", match: ["/projects"] },
+      {
+        id: "work.daily",
+        label: "Việc hằng ngày",
+        href: "/inbox",
+        icon: "inbox",
+        children: [
+          { id: "inbox.unified", label: "Hộp việc hợp nhất", href: "/inbox", icon: "inbox", match: ["/inbox"], badgeKey: "inbox.open" },
+          { id: "approvals.center", label: "Trung tâm phê duyệt", href: "/approvals", icon: "approvals", match: ["/approvals"], badgeKey: "approval.pending", permission: "request.approve" },
+          // X.Office Work & PM v2 — W1 (NativeWorkItem). Overview + My Work + Tôi giao.
+          // No nav permission (open to all authenticated users); write actions are
+          // gated server-side by work.item.* and the read path enforces the summary/
+          // full visibility tier (owner requirement #1).
+          { id: "work.overview", label: "Tổng quan", href: "/work", icon: "chart", match: ["/work"] },
+          { id: "work.myTasks", label: "Việc của tôi", href: "/work/tasks", icon: "work", match: ["/work/tasks"] },
+          { id: "work.assignedByMe", label: "Tôi giao", href: "/work/tasks/assigned-by-me", icon: "approvals", match: ["/work/tasks/assigned-by-me"] },
+        ],
+      },
+      {
+        id: "work.projectsPortfolio",
+        label: "Dự án & Portfolio",
+        href: "/work/projects",
+        icon: "projects",
+        children: [
+          // X.Office Work & PM v2 — W2 (ExecutionProject). Delivery projects with WBS
+          // roll-up + baseline + coordination visibility. Open in nav; writes gated
+          // server-side by work.project.*; detail read enforces FULL/SUMMARY per actor.
+          { id: "work.projects", label: "Dự án thực thi", href: "/work/projects", icon: "projects", match: ["/work/projects"] },
+          { id: "projects.list", label: "Dự án (MDM)", href: "/projects", icon: "projects", match: ["/projects"] },
+          // X.Office Work & PM v2 — W3 (Management Views). Kanban / Calendar / Portfolio
+          // / multi-dimensional reports. Gantt is reached from project detail
+          // (/work/projects/[id]/gantt). Open in nav; portfolio + reports reads gated
+          // server-side (work.portfolio.read / work.report.read) — soft unless AUTH_ENFORCE.
+          { id: "work.board", label: "Kanban", href: "/work/board", icon: "apps", match: ["/work/board"] },
+          { id: "work.calendar", label: "Lịch công việc", href: "/work/calendar", icon: "calendar", match: ["/work/calendar"] },
+          { id: "work.portfolio", label: "Portfolio", href: "/work/portfolio", icon: "chart", match: ["/work/portfolio"], permission: "work.portfolio.read" },
+          { id: "work.reports", label: "Báo cáo đa chiều", href: "/work/reports", icon: "list", match: ["/work/reports"], permission: "work.report.read" },
+        ],
+      },
     ],
   },
   {
@@ -210,24 +264,40 @@ export const XHUB_NAVIGATION: XNavItem[] = [
     match: ["/office"],
     // Rail open to all; workflow admin screens gated (WORKFLOW_ADMIN → workflow.*).
     children: [
-      // Request module (PH-02a — NX-020..024). Request Center is approver-facing
-      // (gated by request.approve / workflow.*); My Requests is requester-facing
-      // (open to request.create). Enforcement lives in the API guards.
-      { id: "office.requests", label: "Trung tâm yêu cầu", href: "/office/requests", icon: "inbox", match: ["/office/requests"], permission: "request.approve" },
-      { id: "office.my-requests", label: "Yêu cầu của tôi", href: "/office/my-requests", icon: "work", match: ["/office/my-requests"], permission: "request.create" },
-      // Directive / Decision / Commitment module (PH-02b — NX-025). No nav
-      // permission so assignees (commitment holders) can reach directives given
-      // to them; the issue/complete/cancel actions are gated server-side by
-      // directive.issue (EXECUTIVE) in the API guards.
-      { id: "office.directives", label: "Chỉ đạo & cam kết", href: "/office/directives", icon: "directive", match: ["/office/directives"] },
-      // No nav permission — anyone can raise a ticket; manage actions are guarded
-      // server-side (ticket.manage / ticket.resolve).
-      { id: "office.service-desk", label: "Service Desk", href: "/office/service-desk", icon: "lifebuoy", match: ["/office/service-desk"] },
-      { id: "office.bookings", label: "Đặt phòng & tài nguyên", href: "/office/bookings", icon: "calendar", match: ["/office/bookings"] },
-      { id: "office.announcements", label: "Thông báo nội bộ", href: "/office/announcements", icon: "announce", match: ["/office/announcements"] },
-      { id: "office.workflows", label: "Danh mục quy trình", href: "/office/workflows", icon: "office", match: ["/office/workflows"], permission: "workflow.*" },
-      { id: "office.instances", label: "Vận hành (Instances)", href: "/office/instances", icon: "work", match: ["/office/instances"], permission: "workflow.*" },
-      { id: "office.monitor", label: "Giám sát vận hành", href: "/office/monitor", icon: "chart", match: ["/office/monitor"], permission: "workflow.*" },
+      {
+        id: "office.services",
+        label: "Dịch vụ nội bộ",
+        href: "/office/requests",
+        icon: "inbox",
+        children: [
+          // Request module (PH-02a — NX-020..024). Request Center is approver-facing
+          // (gated by request.approve / workflow.*); My Requests is requester-facing
+          // (open to request.create). Enforcement lives in the API guards.
+          { id: "office.requests", label: "Trung tâm yêu cầu", href: "/office/requests", icon: "inbox", match: ["/office/requests"], permission: "request.approve" },
+          { id: "office.my-requests", label: "Yêu cầu của tôi", href: "/office/my-requests", icon: "work", match: ["/office/my-requests"], permission: "request.create" },
+          // Directive / Decision / Commitment module (PH-02b — NX-025). No nav
+          // permission so assignees (commitment holders) can reach directives given
+          // to them; the issue/complete/cancel actions are gated server-side by
+          // directive.issue (EXECUTIVE) in the API guards.
+          { id: "office.directives", label: "Chỉ đạo & cam kết", href: "/office/directives", icon: "directive", match: ["/office/directives"] },
+          // No nav permission — anyone can raise a ticket; manage actions are guarded
+          // server-side (ticket.manage / ticket.resolve).
+          { id: "office.service-desk", label: "Service Desk", href: "/office/service-desk", icon: "lifebuoy", match: ["/office/service-desk"] },
+          { id: "office.bookings", label: "Đặt phòng & tài nguyên", href: "/office/bookings", icon: "calendar", match: ["/office/bookings"] },
+          { id: "office.announcements", label: "Thông báo nội bộ", href: "/office/announcements", icon: "announce", match: ["/office/announcements"] },
+        ],
+      },
+      {
+        id: "office.workflowAdmin",
+        label: "Quản trị quy trình",
+        href: "/office/workflows",
+        icon: "office",
+        children: [
+          { id: "office.workflows", label: "Danh mục quy trình", href: "/office/workflows", icon: "office", match: ["/office/workflows"], permission: "workflow.*" },
+          { id: "office.instances", label: "Vận hành (Instances)", href: "/office/instances", icon: "work", match: ["/office/instances"], permission: "workflow.*" },
+          { id: "office.monitor", label: "Giám sát vận hành", href: "/office/monitor", icon: "chart", match: ["/office/monitor"], permission: "workflow.*" },
+        ],
+      },
     ],
   },
   {
@@ -255,7 +325,7 @@ export const XHUB_NAVIGATION: XNavItem[] = [
       { id: "apps.catalog", label: "Ứng dụng", href: "/apps", icon: "apps", match: ["/apps"], permission: "application.*" },
       {
         id: "admin.console",
-        label: "Quản trị",
+        label: "Quản trị hệ thống",
         href: "/admin",
         icon: "settings",
         match: ["/admin"],
@@ -296,19 +366,53 @@ export const XHUB_NAVIGATION: XNavItem[] = [
     ],
   },
   // -----------------------------------------------------------------------------
+  // People Essentials — PE-01 "Leave & Availability" (owner-approved SME Lite
+  // operating mode, PE-001, 2026-08-01). Placed AFTER business / BEFORE the
+  // platform/delivery/ioc extended-surface group so the tenant-facing business
+  // workspaces stay together. Does NOT touch the 5 original workspaces below
+  // and does not collide with /admin/users (that stays the identity/account
+  // registry; this is HR-essentials — leave/availability — a DIFFERENT domain).
+  // -----------------------------------------------------------------------------
+  {
+    id: "people",
+    label: "Nhân sự & Chấm công",
+    icon: "customer",
+    href: "/people",
+    match: ["/people"],
+    children: [
+      { id: "people.home", label: "Tổng quan của tôi", href: "/people", icon: "me", match: ["/people"] },
+      { id: "people.leave", label: "Nghỉ phép", href: "/people/leave", icon: "calendar", match: ["/people/leave"] },
+      {
+        id: "people.team.availability",
+        label: "Lịch hiện diện nhóm",
+        href: "/people/team/availability",
+        icon: "customer",
+        match: ["/people/team/availability"],
+        permission: "people.team.availability.read",
+      },
+      // PE-02 — Attendance & Correction. Self-service view + "báo sai" — reuses
+      // the same ApprovalTask queue as leave, no second approval mechanism.
+      { id: "people.attendance", label: "Chấm công", href: "/people/attendance", icon: "calendar", match: ["/people/attendance"], permission: "people.self.attendance.read" },
+      // HR-only: file import engine (SME Lite — attendanceMode=FILE_IMPORT).
+      { id: "people.admin.import", label: "Nhập chấm công (HR)", href: "/people/admin/import", icon: "office", match: ["/people/admin/import"], permission: "people.hr.import.manage" },
+    ],
+  },
+  // -----------------------------------------------------------------------------
   // PLATFORM CONSOLE (SAAS-004) — a SEPARATE surface, NOT a tenant workspace.
   // Gated by `platform.tenant.read`, granted ONLY by the `PLT_` platform-role
   // namespace (+ the dev/tenant PLATFORM_ADMIN=`*`). A normal tenant user under
   // enforcement lacks platform.* → filterNavByPermissions hides this whole
-  // workspace (and every child). Kept last so the 5 tenant workspaces are intact.
+  // workspace (and every child). Kept after the core tenant/HR workspaces so
+  // the original 5 tenant workspaces (+ manage + people) stay together.
   // -----------------------------------------------------------------------------
   {
     id: "platform",
-    label: "Platform Console",
+    label: "Bảng điều khiển nền tảng",
     icon: "business",
     href: "/platform",
     match: ["/platform"],
     permission: "platform.tenant.read",
+    group: "platform",
     children: [
       { id: "platform.overview", label: "Tổng quan SaaS", href: "/platform", icon: "chart", match: ["/platform"], permission: "platform.tenant.read" },
       { id: "platform.tenants", label: "Sổ đăng ký tenant", href: "/platform/tenants", icon: "business", match: ["/platform/tenants"], permission: "platform.tenant.read" },
@@ -331,11 +435,12 @@ export const XHUB_NAVIGATION: XNavItem[] = [
   // -----------------------------------------------------------------------------
   {
     id: "delivery",
-    label: "Solution Delivery",
+    label: "Triển khai giải pháp",
     icon: "briefcase",
     href: "/delivery",
     match: ["/delivery"],
     permission: "delivery.read",
+    group: "platform",
     children: [
       { id: "delivery.overview", label: "Tổng quan pipeline", href: "/delivery", icon: "chart", match: ["/delivery"], permission: "delivery.read" },
       { id: "delivery.engagements", label: "Dự án triển khai", href: "/delivery/engagements", icon: "briefcase", match: ["/delivery/engagements"], permission: "delivery.read" },
@@ -361,6 +466,7 @@ export const XHUB_NAVIGATION: XNavItem[] = [
     href: "/ioc",
     match: ["/ioc"],
     permission: "ioc.view",
+    group: "platform",
     children: [
       { id: "ioc.entry", label: "Trung tâm điều hành", href: "/ioc", icon: "chart", match: ["/ioc"], permission: "ioc.view" },
       { id: "ioc.twin.office", label: "Bản sao số văn phòng", href: "/ioc/twin/office", icon: "business", match: ["/ioc/twin/office"], permission: "ioc.view" },

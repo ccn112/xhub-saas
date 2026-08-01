@@ -98,7 +98,7 @@ export async function getOrgStructure(): Promise<OrgStructure> {
 // getOrgStructure() untouched for the existing StatCards/AI panel consumers.
 export interface OrgGraphNode {
   id: string; code: string; name: string; type: string; parentId: string | null;
-  headName: string | null; positionCount: number; staffCount: number;
+  headName: string | null; headTitle: string | null; positionCount: number; staffCount: number;
 }
 export interface OrgGraphPosition {
   id: string; name: string; orgUnitId: string;
@@ -124,7 +124,7 @@ export async function getOrgGraph(): Promise<OrgGraph> {
       const head = POSITIONS.find((p) => p.code === u.headPosition);
       return {
         id: u.code, code: u.code, name: u.name, type: u.type, parentId: u.parent,
-        headName: head?.person ?? null, positionCount: inUnit.length,
+        headName: head?.person ?? null, headTitle: head?.name ?? null, positionCount: inUnit.length,
         staffCount: inUnit.filter((p) => p.holder).length,
       };
     });
@@ -148,6 +148,7 @@ export async function getOrgGraph(): Promise<OrgGraph> {
     return {
       id: u.id, code: u.code, name: u.name, type: u.type, parentId: u.parentId ?? null,
       headName: head?.holderPersonId ? personName.get(head.holderPersonId) ?? null : null,
+      headTitle: head?.title ?? null,
       positionCount: inUnit.length,
       staffCount: inUnit.filter((p) => p.holderPersonId).length,
     };

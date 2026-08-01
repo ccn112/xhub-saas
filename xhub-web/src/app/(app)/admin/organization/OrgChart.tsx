@@ -79,10 +79,18 @@ function OrgUnitNode({ data }: NodeProps<OrgFlowNode>) {
         <p className="truncate text-sm font-semibold text-gray-800 dark:text-dark-50" title={item.name}>{item.name}</p>
         <span className="shrink-0 rounded bg-gray-100 px-1.5 py-0.5 font-mono text-[10px] text-gray-500 dark:bg-dark-600 dark:text-dark-200">{item.code}</span>
       </div>
-      <p className="mt-1 text-xs text-gray-500 dark:text-dark-300">
-        {TYPE_LABEL[item.type] ?? item.type}
-        <span className="mx-1 text-gray-300 dark:text-dark-500">·</span>
-        {item.headName ? <span className="text-gray-600 dark:text-dark-100">{item.headName}</span> : <span className="text-warning">Khuyết trưởng đơn vị</span>}
+      <div className="mt-1 flex items-center gap-1.5">
+        <Badge tone={TYPE_TONE[item.type] ?? "neutral"}>{TYPE_LABEL[item.type] ?? item.type}</Badge>
+      </div>
+      <p className="mt-1 truncate text-xs text-gray-500 dark:text-dark-300">
+        {item.headName ? (
+          <>
+            <span className="text-gray-600 dark:text-dark-100">{item.headName}</span>
+            {item.headTitle && <span className="text-gray-400 dark:text-dark-400"> · {item.headTitle}</span>}
+          </>
+        ) : (
+          <span className="text-warning">Khuyết trưởng đơn vị</span>
+        )}
       </p>
       <div className="mt-2 flex items-center gap-3 text-[11px] text-gray-400 dark:text-dark-300">
         <span title="Số vị trí">💼 {item.positionCount} vị trí</span>
@@ -355,15 +363,33 @@ function ChartInner({ graph, people }: { graph: OrgGraph; people: OrgPerson[] })
 
   const canMutate = mode === "setup" && !degraded;
 
+  // A4 landscape printable width at the 12mm @page margin (globals.css), in
+  // CSS px @96dpi: (297mm - 2*12mm) * 96/25.4 ≈ 1032px. Used to shrink a wide
+  // tree to fit instead of letting it get cut off past the page edge.
+  const PRINT_SAFE_WIDTH_PX = 1032;
+
   // Print / Export PDF: mark <html> so the print stylesheet reveals only the
   // .org-print-root subtree, hides app chrome, then restores after printing.
+  // Also measures the tree's real rendered width and sets --org-print-scale
+  // so a wide/deep org chart shrinks to fit the A4 page instead of clipping.
   const handlePrint = useCallback(() => {
     if (view !== "staff") setView("staff");
     const root = document.documentElement;
-    const cleanup = () => { root.classList.remove("org-printing"); window.removeEventListener("afterprint", cleanup); };
+    const cleanup = () => {
+      root.classList.remove("org-printing");
+      root.style.removeProperty("--org-print-scale");
+      window.removeEventListener("afterprint", cleanup);
+    };
     window.addEventListener("afterprint", cleanup);
-    // let React flush the staff view before printing
-    setTimeout(() => { root.classList.add("org-printing"); window.print(); }, view === "staff" ? 0 : 120);
+    // let React flush the staff view before measuring + printing
+    setTimeout(() => {
+      const tree = document.querySelector<HTMLElement>(".org-tree");
+      const contentWidth = tree?.scrollWidth ?? PRINT_SAFE_WIDTH_PX;
+      const scale = Math.min(1, PRINT_SAFE_WIDTH_PX / contentWidth);
+      root.style.setProperty("--org-print-scale", String(scale));
+      root.classList.add("org-printing");
+      window.print();
+    }, view === "staff" ? 0 : 120);
   }, [view]);
 
   return (
@@ -512,7 +538,13 @@ function ChartInner({ graph, people }: { graph: OrgGraph; people: OrgPerson[] })
                 <div className="flex items-center justify-between"><span className="text-gray-400">Tên</span><span className="font-medium text-gray-800 dark:text-dark-100">{selected.name}</span></div>
                 <div className="flex items-center justify-between"><span className="text-gray-400">Mã</span><span className="font-mono text-gray-600 dark:text-dark-200">{selected.code}</span></div>
                 <div className="flex items-center justify-between"><span className="text-gray-400">Loại</span><Badge tone={TYPE_TONE[selected.type] ?? "neutral"}>{TYPE_LABEL[selected.type] ?? selected.type}</Badge></div>
-                <div className="flex items-center justify-between"><span className="text-gray-400">Trưởng đơn vị</span><span className="text-gray-600 dark:text-dark-200">{selected.headName ?? "—"}</span></div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Trưởng đơn vị</span>
+                  <span className="text-right text-gray-600 dark:text-dark-200">
+                    {selected.headName ?? "—"}
+                    {selected.headTitle && <span className="block text-xs text-gray-400">{selected.headTitle}</span>}
+                  </span>
+                </div>
                 <div className="flex items-center justify-between"><span className="text-gray-400">Đơn vị con</span><span className="text-gray-600 dark:text-dark-200">{items.filter((n) => n.parentId === selected.id).length}</span></div>
               </div>
 

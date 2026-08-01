@@ -15,12 +15,15 @@ import { SegmentPath } from "../index";
 
 interface MainPanelProps {
   nav: NavigationTree[];
+  /** ids rendered as a separate, bottom-pinned cluster (see Menu.tsx). */
+  platformIds?: Set<string>;
   setActiveSegmentPath?: Dispatch<SetStateAction<SegmentPath>>;
   activeSegmentPath: SegmentPath;
 }
 
 export function MainPanel({
   nav,
+  platformIds,
   setActiveSegmentPath,
   activeSegmentPath,
 }: MainPanelProps) {
@@ -46,6 +49,7 @@ export function MainPanel({
 
         <Menu
           nav={nav}
+          platformIds={platformIds}
           activeSegmentPath={activeSegmentPath}
           setActiveSegmentPath={setActiveSegmentPath}
         />

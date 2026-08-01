@@ -101,8 +101,24 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     box-shadow: none !important;
     border: 0 !important;
   }
+  /* Shrink-to-fit: handlePrint() measures the tree's real rendered width and
+     sets --org-print-scale (0 < scale <= 1) on <html> right before printing,
+     so a wide/deep org chart scales down to fit the A4 page width instead of
+     being cut off at the page edge (overflow:visible alone does not stop the
+     print engine from clipping content past the physical page boundary). */
+  .org-printing .org-tree-scroll {
+    overflow: visible !important;
+    transform: scale(var(--org-print-scale, 1));
+    transform-origin: top left;
+  }
+  /* Never split a person card (or the unit-node) mid-row across a page break —
+     the single biggest cause of "messy" printed output on tall/deep trees. */
+  .org-printing .org-tree li,
+  .org-printing .org-person-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
   /* elements explicitly excluded from print (toolbars, action bars, side panels) */
   .org-print-hide { display: none !important; }
-  .org-tree-scroll { overflow: visible !important; }
-  @page { size: landscape; margin: 12mm; }
+  @page { size: A4 landscape; margin: 12mm; }
 }
