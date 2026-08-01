@@ -7,7 +7,7 @@
 ## 0. Trạng thái tại mốc bàn giao
 - Nền tảng 8/8 · PH-00/01/02 đóng · SaaS step 1 (Tenant Registry) + step 2 (Platform Console + PLT_ namespace) xong.
 - **RLS ~57 bảng**; ~23 `test:*` PASS; **không agent nào đang chạy** (an toàn chuyển máy).
-- Repo: `D:\Code\xhub-api` (NestJS :4000) · `D:\Code\xhub-web` (Next 16 :3000).
+- Repo: `D:\Code\xhub-saas\xhub-api` (NestJS :4000) · `D:\Code\xhub-web` (Next 16 :3000).
 
 ## 1. Prerequisites máy mới
 - Node (v24 như máy cũ), PostgreSQL (bản 18), Git Bash/PowerShell.
@@ -17,8 +17,8 @@
 
 ## 2. Cài đặt
 ```bash
-cd D:/Code/xhub-api && npm ci
-cd D:/Code/xhub-web && npm ci
+cd D:/Code/xhub-saas/xhub-api && npm ci
+cd D:/Code/xhub-saas/xhub-web && npm ci
 ```
 
 ## 3. Dựng schema + RLS (trong xhub-api)
@@ -54,17 +54,17 @@ npm run seed:backup-schedules # lịch backup định kỳ + retention cho tenan
 ## 5. Chạy server
 ```bash
 # API — CHỈ 1 instance trên :4000 (KHÔNG dùng start:prod — trỏ sai dist/main)
-cd D:/Code/xhub-api && node dist/src/main.js
+cd D:/Code/xhub-saas/xhub-api && node dist/src/main.js
 # Provision T002 (BĐS demo) — SAU KHI server :4000 chạy + đã seed ở §4.
 # Idempotent: reuse launch, không tạo trùng; T002 -> ACTIVE (tenantNo=2, VERTICAL_DEMO).
-cd D:/Code/xhub-api && npm run provision:t002
+cd D:/Code/xhub-saas/xhub-api && npm run provision:t002
 # Provision T003–T010 (8 vertical demo tenants) — 1 batch idempotent, SAU provision:t002.
 # Reuse cùng Launch Factory + catalog + registry; skip tenant đã ACTIVE (không trùng);
 # tự tạo backup schedule cho từng tenant mới. Resumable: chạy lại để hoàn tất phần còn lại.
-cd D:/Code/xhub-api && npm run provision:demos
+cd D:/Code/xhub-saas/xhub-api && npm run provision:demos
 # (tuỳ chọn) 1 tenant lẻ: npm run provision:tenant <tenantNo|key>  (vd: 8 | healthcare-demo)
 # Web
-cd D:/Code/xhub-web && npm run dev            # :3000
+cd D:/Code/xhub-saas/xhub-web && npm run dev            # :3000
 ```
 > `provision:t002` chạy Launch Factory (BP-RE-002 + SP-RE-DEMO) tạo tenant T002 thật:
 > org/users/apps(x1,x2)/dữ liệu demo + backup riêng + cô lập T001↔T002. In ra 2 user
@@ -78,7 +78,7 @@ cd D:/Code/xhub-web && npm run dev            # :3000
 
 ## 6. Verify (nên chạy hết để chắc)
 ```bash
-cd D:/Code/xhub-api && npx tsc --noEmit       # 0 lỗi
+cd D:/Code/xhub-saas/xhub-api && npx tsc --noEmit       # 0 lỗi
 # chạy lần lượt, tất cả PASS:
 npm run test:rls && npm run test:smoke && npm run test:controlplane && npm run test:mdm && \
 npm run test:backup && npm run test:records && npm run test:webhook && npm run test:condition && \
@@ -88,12 +88,12 @@ npm run test:tenant-registry && npm run test:platform-console && \
 npm run test:launch-factory && npm run test:catalog && npm run test:delivery && \
 npm run test:t002 && npm run test:backup-schedule && npm run test:demos && \
 npm run test:readiness && npm run test:lifecycle && npm run scan:secrets
-cd D:/Code/xhub-web && npx tsc --noEmit        # 0 lỗi src/**
+cd D:/Code/xhub-saas/xhub-web && npx tsc --noEmit        # 0 lỗi src/**
 ```
 
 ### Tenant Lifecycle (DEMO ↔ LIVE + reset-demo + go-live) — seed/backfill idempotent
 ```bash
-cd D:/Code/xhub-api
+cd D:/Code/xhub-saas/xhub-api
 npm run seed:golive-template     # 1 template GOLIVE-GENERIC (shared, no-RLS)
 npm run seed:tenant-registry     # backfill Tenant.mode: T001=null(exempt), T002–T010=DEMO (non-destructive)
 npm run ensure:demo-baselines    # chụp DEMO_BASELINE bất biến cho T002–T010 (skip nếu đã có)
