@@ -70,7 +70,21 @@
     "test:readiness": "node scripts/readiness-smoke.mjs",
     "ensure:demo-baselines": "node scripts/ensure-demo-baselines.mjs",
     "seed:golive-template": "node scripts/golive-template-seed.mjs",
-    "test:lifecycle": "node scripts/lifecycle-smoke.mjs"
+    "test:lifecycle": "node scripts/lifecycle-smoke.mjs",
+    "seed:work-items": "node scripts/work-items-seed.mjs",
+    "test:work-item": "node scripts/work-item-smoke.mjs",
+    "seed:work-projects": "node scripts/work-projects-seed.mjs",
+    "test:work-project": "node scripts/work-project-smoke.mjs",
+    "test:work-views": "node scripts/work-views-smoke.mjs",
+    "seed:manage": "node scripts/seed-manage.mjs",
+    "test:manage-slice": "node scripts/manage-slice-reset.mjs && node scripts/manage-slice-smoke.mjs",
+    "seed:manage-okr": "node scripts/seed-manage-okr.mjs",
+    "test:manage-okr": "node scripts/manage-okr-smoke.mjs",
+    "seed:manage-industries": "node scripts/seed-manage-industries.mjs",
+    "test:manage-industry": "node scripts/manage-industry-smoke.mjs",
+    "seed:ioc": "node scripts/seed-ioc-twin.mjs",
+    "test:ioc-twin": "node scripts/ioc-twin-smoke.mjs",
+    "test:ioc-data-layer": "node scripts/ioc-data-layer-smoke.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

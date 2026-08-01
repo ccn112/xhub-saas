@@ -13,6 +13,8 @@ import {
   BOT_TEST_UPDATED,
   USER_TEST_ROWS,
   USER_TEST_GROUPS,
+  TEST_ACCOUNTS,
+  TEST_SETUP_GUIDE,
 } from "./test-data";
 
 type Result = "untested" | "pass" | "fail";
@@ -157,6 +159,56 @@ export function TestConsole() {
 
   return (
     <div className="space-y-6">
+      {/* 0. Setup / hướng dẫn cho người test mới */}
+      <SectionCard
+        accent="info"
+        title="Bắt đầu ở đây — dành cho người test mới, chưa biết code"
+        action={<Badge tone="info">Đọc trước khi test</Badge>}
+      >
+        <p className="mb-3 text-sm text-gray-600 dark:text-dark-200">
+          Mở trình duyệt tới <code className="rounded bg-gray-100 px-1 py-0.5 font-mono text-xs dark:bg-dark-700">{TEST_SETUP_GUIDE.appUrl}</code>{" "}
+          (nếu máy chủ chạy ở cổng khác — ví dụ 3001 — đổi số cổng tương ứng). Làm theo các bước dưới, rồi kéo xuống checklist.
+        </p>
+        <ol className="mb-4 list-decimal space-y-1.5 pl-5 text-sm text-gray-700 dark:text-dark-100">
+          {TEST_SETUP_GUIDE.steps.map((s, i) => (
+            <li key={i}>{s}</li>
+          ))}
+        </ol>
+
+        <h4 className="mb-2 text-sm font-semibold text-gray-700 dark:text-dark-100">Tài khoản test</h4>
+        <div className="mb-4 overflow-x-auto rounded-lg border border-gray-200 dark:border-dark-500">
+          <table className="w-full border-collapse text-sm">
+            <thead className="bg-gray-100 dark:bg-dark-800">
+              <tr>
+                <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-dark-100">Nhãn</th>
+                <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-dark-100">Tên</th>
+                <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-dark-100">Email / userId</th>
+                <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-dark-100">Mật khẩu</th>
+                <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-dark-100">Ghi chú</th>
+              </tr>
+            </thead>
+            <tbody>
+              {TEST_ACCOUNTS.map((a) => (
+                <tr key={a.email} className="border-t border-gray-100 align-top dark:border-dark-600">
+                  <td className="px-3 py-2"><Badge tone="primary">{a.tag}</Badge></td>
+                  <td className="px-3 py-2 text-gray-800 dark:text-dark-50">{a.name}</td>
+                  <td className="px-3 py-2 font-mono text-xs text-primary-700 dark:text-primary-300">{a.email}</td>
+                  <td className="px-3 py-2 text-gray-600 dark:text-dark-200">{a.password}</td>
+                  <td className="px-3 py-2 text-xs text-gray-500 dark:text-dark-300">{a.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p className="mb-1 text-xs text-gray-500 dark:text-dark-300">
+          <span className="font-medium">[ENFORCE]:</span> {TEST_SETUP_GUIDE.enforceNote}
+        </p>
+        <p className="text-xs text-gray-500 dark:text-dark-300">
+          <span className="font-medium">Báo cáo kết quả:</span> {TEST_SETUP_GUIDE.reportTo}
+        </p>
+      </SectionCard>
+
       {/* A. Bot-test */}
       <SectionCard
         accent="success"

@@ -17,9 +17,12 @@
     { "roleCode": "SERVICE_DESK_AGENT", "name": "Nhân viên Service Desk", "permissions": ["ticket.read", "assign.self", "ticket.resolve"], "dataScope": "SELF" },
     { "roleCode": "EXECUTIVE", "name": "Ban điều hành", "permissions": ["dashboard.executive", "directive.*", "request.approve"], "dataScope": "TENANT" },
     { "roleCode": "CFO", "name": "Giám đốc Tài chính", "permissions": ["payment.approve", "purchase.approve", "report.finance"], "condition": { "maxAmount": 5000000000 }, "dataScope": "TENANT" },
-    { "roleCode": "DEPARTMENT_HEAD", "name": "Trưởng bộ phận", "permissions": ["request.approve", "task.assign", "directive.receive"], "dataScope": "ORG_UNIT" },
-    { "roleCode": "EMPLOYEE", "name": "Nhân viên", "permissions": ["request.create", "task.self", "document.read"], "dataScope": "SELF" },
-    { "roleCode": "SOLUTION_DELIVERY_MANAGER", "name": "Quản lý triển khai giải pháp (T001)", "permissions": ["delivery.read", "delivery.manage"], "dataScope": "TENANT" }
+    { "roleCode": "DEPARTMENT_HEAD", "name": "Trưởng bộ phận", "permissions": ["request.approve", "task.assign", "directive.receive", "work.item.create", "work.item.update", "work.item.assign", "work.item.comment", "work.view.full"], "dataScope": "ORG_UNIT" },
+    { "roleCode": "EMPLOYEE", "name": "Nhân viên", "permissions": ["request.create", "task.self", "document.read", "work.item.create", "work.item.update", "work.item.assign", "work.item.comment", "work.view.summary"], "dataScope": "SELF" },
+    { "roleCode": "WORK_MANAGER", "name": "Quản lý công việc", "permissions": ["work.*", "work.view.full"], "dataScope": "TENANT" },
+    { "roleCode": "SOLUTION_DELIVERY_MANAGER", "name": "Quản lý triển khai giải pháp (T001)", "permissions": ["delivery.read", "delivery.manage"], "dataScope": "TENANT" },
+    { "roleCode": "IOC_OPERATOR", "name": "Vận hành IOC", "permissions": ["ioc.view"], "dataScope": "TENANT" },
+    { "roleCode": "IOC_TWIN_ADMIN", "name": "Quản trị Twin Studio (IOC)", "permissions": ["ioc.view", "ioc.studio.read", "ioc.studio.write", "ioc.studio.review", "ioc.studio.publish", "ioc.asset.manage", "ioc.datalayer.manage", "ioc.template.manage"], "dataScope": "TENANT" }
   ],
   "_userBindings_note": "USER RoleBindings the seeder ensures so the test admin (user-nam -> usr-cfo) and CEO keep passing every gated endpoint under enforcement via PLATFORM_ADMIN ['*']. Canonical replacement for the legacy ROLE_PLATFORM_ADMIN USER bindings; both coexist this step.",
   "userBindings": [

@@ -87,9 +87,49 @@ npm run test:directives && npm run test:tickets && npm run test:bookings && npm 
 npm run test:tenant-registry && npm run test:platform-console && \
 npm run test:launch-factory && npm run test:catalog && npm run test:delivery && \
 npm run test:t002 && npm run test:backup-schedule && npm run test:demos && \
-npm run test:readiness && npm run test:lifecycle && npm run scan:secrets
+npm run test:readiness && npm run test:lifecycle && npm run test:work-item && npm run test:work-project && npm run test:work-views && \
+npm run test:manage-slice && npm run scan:secrets
 cd D:/Code/xhub-saas/xhub-web && npx tsc --noEmit        # 0 lỗi src/**
 ```
+
+### X.Office Work & Project Management v2 — W1 (Native Work Core) — seed/smoke
+```bash
+cd D:/Code/xhub-saas/xhub-api
+npm run rls:setup                # 60 bảng RLS (thêm NativeWorkItem + WorkItemComment/ChecklistItem/Event + WorkDimension) + GIN index tags/dimensions
+npm run seed:work-items          # WorkDimension catalog + ~15 NativeWorkItem (tenant-xtech), idempotent upsert-by-id
+npm run test:work-item           # smoke self-cleaning (prefix WI-SMOKE-): create→assign(resolver snapshot)→status/progress→comment/checklist/attachment→filter tag+dimension→visibility SUMMARY vs FULL→isolation→403
+```
+> API: `/api/work/items` (module `src/work`) — CRUD + `/:id/{status,assign,progress,comment,checklist,checklist/:itemId/toggle,attachments}`; đọc FULL vs SUMMARY theo actor (owner req #1: owner/assignee/creator/`work.view.full` = FULL, còn lại SUMMARY — KHÔNG lộ description/comments/attachments/children).
+
+### X.Office Work & Project Management v2 — W2 (Execution Project Core) — seed/smoke
+```bash
+cd D:/Code/xhub-saas/xhub-api
+npm run rls:setup                # 67 bảng RLS (+ExecutionProject/Event, WorkDependency, ProjectBaseline, BaselineItem, ProjectRoleAssignment, CoordinationShare)
+npm run seed:work-items          # (chạy trước) — W1 items mà W2 gắn vào WBS
+npm run seed:work-projects       # 3 ExecutionProject (tenant-xtech) + WBS + deps(FS/SS/FF) + baseline v1 + roles + 1 CoordinationShare, idempotent
+npm run test:work-project        # smoke self-cleaning (prefix WP-SMOKE-/WI-WPSMOKE-): create→attach WBS→roll-up(4 method)→dep FS/SS/FF/SF→cycle 409→self 400→baseline immutable→rebaseline→health→role(resolver snapshot)→CoordinationShare SUMMARY vs NONE→isolation→403
+```
+> API: `/api/work/projects` (module `src/work/projects`) — CRUD + `/:id/{items(WBS),recompute,gantt?view=coordination,dependencies,baseline,rebaseline,baselines,roles,shares}` + `DELETE dependencies/:id`. Tiến độ roll-up theo `progressMethod` (MANUAL/TASK_WEIGHTED/MILESTONE_WEIGHTED/DELIVERABLE_WEIGHTED); health tất định theo lệch lịch vs baseline (không AI). WorkDependency có cycle-guard (409) + no self-dep. ProjectBaseline bất biến (rebaseline = version mới). CoordinationShare = seam cho việc xem TÓM TẮT cross-team (chỉ title/progress/dates của việc cha, ẩn con/mô tả/tài liệu). `Engagement.executionProjectId?` nối Solution Delivery dùng chung engine PM. FE: `/work/projects` + `/work/projects/[id]` (Overview/WBS tree roll-up/dependency list/roles/baseline); nav "Dự án thực thi" trong workspace `work` (Gantt/Kanban/Calendar/Portfolio = W3).
+
+### X.Office Work & Project Management v2 — W3 (Management Views) — smoke
+```bash
+cd D:/Code/xhub-saas/xhub-api
+npm run seed:work-items          # (chạy trước) — dimension catalog + items cho stats/portfolio demo
+npm run test:work-views          # smoke self-cleaning (tag WV-SMOKE-TAG / prefix WV-SMOKE-): stats cross-tab (dimension bo_phan + tag, count/progress/overdue + pivot bo_phan×giai_doan) → coordination Gantt SUMMARY vs FULL → portfolio roll-up → kanban status PATCH → gantt schedule PATCH FS-invalid 400
+```
+> API mới: `GET /api/work/stats?groupBy=<tag|dimension:KEY|status|type|priority|project>&col=<axis>&metric=count|progress|overdue&filters` (cross-tab tất định, RLS-scoped, gated `work.report.read`); `GET /api/work/portfolio` (roll-up health/overdue/blocked toàn dự án, gated `work.portfolio.read`); `POST /api/work/items/:id/schedule` (Gantt drag/resize — validate FS predecessor/successor + start≤finish → 400 khi vi phạm; optimistic + rollback ở FE). FE views (workspace `work`): `/work/board` (Kanban dnd-kit, swimlane theo tag/dimension), `/work/calendar` (lịch theo dueAt), `/work/portfolio` (cockpit), `/work/reports` (Thống kê đa chiều — pivot + chart ApexCharts), `/work/projects/[id]/gantt` (timeline planned-vs-actual + dependency edges + milestone + baseline overlay + "Chế độ phối hợp" roll-up cho viewer SUMMARY). Coordination Gantt (owner #1): viewer SUMMARY chỉ nhận `bars` roll-up cha (title/%/dates), KHÔNG con/mô tả — enforce ở service, không lộ về client.
+> tags[] + dimensions(jsonb) first-class (owner req #2); attachments reuse RecordDocument subjectType=WorkItem.
+> UI: workspace Công việc → Tổng quan `/work`, Việc của tôi `/work/tasks`, Tôi giao `/work/tasks/assigned-by-me`, chi tiết `/work/items/[id]`; BFF `src/app/api/work/[[...path]]`.
+
+### X.Office Management Operating System — MG-01 "reference slice" — seed/smoke
+```bash
+cd D:/Code/xhub-saas/xhub-api
+npm run rls:setup                # 73 bảng RLS (thêm StrategicObjective/MetricDefinition/MetricObservation/BusinessReview/DecisionRecord/ActionCommitment)
+npm run seed:manage              # 1 vòng lặp quản trị T001: 4 StrategicObjective (ST-*) + 1 MetricDefinition ACT-CLOSE (sourceSystem=XOFFICE_WORK) + observation TÍNH TỪ NativeWorkItem + 1 MONTHLY_BUSINESS review (pre-read snapshot) + 1 DecisionRecord (RAPID) + 1 ActionCommitment → NativeWorkItem thật (bridge)
+npm run test:manage-slice        # reset && smoke self-cleaning: chứng minh TRỌN vòng lặp resolve (objective→metric observation tính từ Work→review chứa snapshot→decision→action→NativeWorkItem→follow-up) + RLS isolation MUST_NOT_LEAK; giá trị on-time-rate GIẢM khi thêm 1 việc quá hạn (bằng chứng #12 read-model)
+```
+> API: `/api/manage/*` (module `src/manage`, gated `manage.objective|metric|review|decision|action.*`, soft trừ khi AUTH_ENFORCE): objectives (list/get/create/update), metrics (list/get/create + `GET /metrics/:id/observations` compute-from-Work), reviews (list/get/create + `POST /reviews/:id/close` → follow-up), decisions (list/get/create/update), actions (list/get/create — spawn/link NativeWorkItem). MetricObservation là READ MODEL: giá trị `sourceSystem=XOFFICE_WORK` tính từ NativeWorkItem (KHÔNG dual-write, KHÔNG direct-DB #12); ActionCommitment LINK NativeWorkItem (KHÔNG bảng task thứ 3 #13). BSC/Scorecard/OKR/Initiative/Portfolio/Risk/AI nằm NGOÀI slice (MG-03/04/06/07 sau).
+> FE (workspace mới **Quản trị**, đặt sau `home`, gated `manage.*`): `/manage` (health tiles), `/manage/objectives`(+`/[id]`), `/manage/metrics` (chart observation từ Work), `/manage/reviews`(+`/[id]`, hiển thị vòng lặp: pre-read→decision→action→việc thật), `/manage/decisions`. BFF `src/app/api/manage/[[...path]]`; data-lib `src/xoffice/lib/manage-data.ts`. KHÔNG phá 5 workspace cũ, KHÔNG trùng `/work/*`,`/projects`,`/tasks/[id]`.
 
 ### Tenant Lifecycle (DEMO ↔ LIVE + reset-demo + go-live) — seed/backfill idempotent
 ```bash

@@ -159,6 +159,7 @@ Chạy trong `D:/Code/xhub-web`.
 |---|---|---|---|---|
 | 2026-07-30 | Claude (baseline) | 1–3 tự động + UI mẫu | PASS toàn bộ | Baseline khi bàn giao; api PID single :4000; 0 console error |
 | 2026-07-30 | Claude (auto run) | **1–12 (auto)** | **PASS 12/12** | api tsc 0 · web src 0 · 9 smoke + scan:secrets PASS; records/webhook/authz có teardown-noise (đã xác minh pass). UI mục 3 (U1–U15) chờ người confirm |
+| 2026-08-01 | Claude (IOC DT-01→03) | IOC Digital Twin + regression | **PASS** | Mới: `test:ioc-twin` (44 assert) + `test:ioc-data-layer` (45 assert) PASS — AT-001/002/003/004/005/006/009/010/012. Regression: `test:rls` (89 bảng, MUST_NOT_LEAK 0) · work-item · work-project · work-views · manage-slice · smoke · lifecycle · scan:secrets đều PASS. tsc api 0 / web 0. 9 route `/ioc/*` HTTP 200 có nội dung thật (8 polygon SVG dựng ở server). Chưa tự động hoá: AT-007 (fallback 3D→2D, mới chứng minh bằng cấu trúc) · AT-008 (giải phóng bộ nhớ renderer) — cần người tick ở mục UI |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |

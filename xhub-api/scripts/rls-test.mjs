@@ -80,6 +80,45 @@ const TENANT_TABLES = [
   // Solution Delivery Workspace — T001-scoped engagement lifecycle (SaaS step 5).
   'Engagement',
   'EngagementEvent',
+  // X.Office Work & Project Management v2 — W1 (Native Work Core).
+  'NativeWorkItem',
+  'WorkItemComment',
+  'WorkItemChecklistItem',
+  'WorkItemEvent',
+  'WorkDimension',
+  // X.Office Work & Project Management v2 — W2 (Execution Project Core).
+  'ExecutionProject',
+  'ExecutionProjectEvent',
+  'WorkDependency',
+  'ProjectBaseline',
+  'BaselineItem',
+  'ProjectRoleAssignment',
+  'CoordinationShare',
+  // X.Office Management Operating System — MG-01 reference slice.
+  'StrategicObjective',
+  'MetricDefinition',
+  'MetricObservation',
+  'BusinessReview',
+  'DecisionRecord',
+  'ActionCommitment',
+  // X.Office Management Operating System — MG-03 KPI/OKR/Scorecard.
+  'Scorecard',
+  'OKRCycle',
+  'OKRObjective',
+  'KeyResult',
+  'KeyResultCheckIn',
+  // XHub Enterprise IOC — Digital Twin (DT-01 → DT-03). AT-001 / AT-010.
+  'TwinSite',
+  'TwinFloor',
+  'FloorPlanDefinition',
+  'FloorPlanVersion',
+  'TwinScene',
+  'SceneBinding',
+  'TwinSceneVersion',
+  'IconAsset',
+  'DataLayerDefinition',
+  'DashboardDefinition',
+  'DashboardVersion',
 ];
 
 let failed = 0;

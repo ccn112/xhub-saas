@@ -35,10 +35,80 @@ export const BOT_TEST_RESULTS: BotTestRow[] = [
   { cmd: "test:t002", expected: "T002 PASSED — provision + cách ly tenant realestate-demo", note: "PASSED kèm teardown libuv (Windows) — đã xác minh không phải lỗi" },
   { cmd: "test:demos", expected: "DEMOS PASSED — provision + smoke bộ tenant demo" },
   { cmd: "test:backup-schedule", expected: "BACKUP SCHEDULE PASSED — lịch backup định kỳ mỗi tenant" },
+  { cmd: "test:work-item", expected: "WORK ITEM PASSED — NativeWorkItem CRUD + FSM + tag/dimension" },
+  { cmd: "test:work-project", expected: "WORK PROJECT PASSED — ExecutionProject WBS + phụ thuộc FS/SS/FF/SF + baseline" },
+  { cmd: "test:work-views", expected: "WORK VIEWS PASSED — Gantt phối hợp (SUMMARY vs FULL) + Kanban + thống kê đa chiều cross-tab đúng số + reschedule 400 khi phá vỡ phụ thuộc" },
+  { cmd: "test:manage-slice", expected: "MANAGE SLICE PASSED — 28 assertions: Mục tiêu→KPI(từ Work)→Review→Quyết định→Action→NativeWorkItem→Follow-up + cách ly tenant" },
+  { cmd: "test:manage-okr", expected: "MANAGE OKR PASSED — 25 assertions: KPI-tree theo góc nhìn, KPI đỏ không bị điểm gộp che, check-in giữ lịch sử (không sửa/xoá), cách ly tenant" },
+  { cmd: "test:manage-industry", expected: "MANAGE INDUSTRY PASSED — 9 tenant có Mục tiêu/KPI/OKR đúng đặc thù ngành (0 trùng lặp ngoài ACT-CLOSE); T001 không bị ghi đè" },
+  { cmd: "test:ioc-twin", expected: "IOC TWIN PASSED — 44 assertions: mặt bằng/scene/publish-rollback bất biến, gán vùng vào OrgUnit thật, 2D luôn dùng được khi tắt WebGL" },
+  { cmd: "test:ioc-data-layer", expected: "IOC DATA LAYER PASSED — 45 assertions: lớp dữ liệu chiếu từ Work thật (không lưu số riêng), cấm camera/chấm công/sinh trắc học (403), quyền xem cá nhân + audit" },
   { cmd: "scan:secrets", expected: "SECRET SCAN PASSED — 0 secret lộ ngoài .env" },
 ];
 
-export const BOT_TEST_UPDATED = "2026-07-30";
+export const BOT_TEST_UPDATED = "2026-08-01";
+
+// ── Setup / hướng dẫn cho người test mới (chưa biết code) ──────────────────
+export interface TestAccount {
+  tag: string; // badge hiển thị, khớp với [TAG] trong cột "Bước" của USER_TEST_ROWS
+  name: string;
+  email: string;
+  password: string;
+  note: string;
+}
+
+// Tài khoản demo đăng nhập KHÔNG cần mật khẩu (chỉ gõ email, để trống ô Mật khẩu,
+// bấm Đăng nhập — hoặc bấm thẳng tên trong "Chọn nhanh (demo)"). Nguồn thật:
+// xhub-web/src/data/seed/all.seed.json (16 người dùng tenant-xtech) — xem
+// xhub-api/scripts/authz-smoke.mjs, platform-console-smoke.mjs, catalog-smoke.mjs
+// (dùng đúng user-nam làm PLATFORM_ADMIN['*'] cho mọi test tự động).
+export const TEST_ACCOUNTS: TestAccount[] = [
+  {
+    tag: "ADMIN / PLATFORM",
+    name: "Nguyễn Hoài Nam (Giám đốc Công nghệ)",
+    email: "nam.nguyen@xtech.com.vn",
+    password: "(để trống)",
+    note: "Tài khoản có mọi quyền (PLATFORM_ADMIN — quyền '*'). Dùng cho MỌI dòng có nhãn [ADMIN] hoặc [PLATFORM]. Đây cũng là tài khoản mặc định để test các màn không ghi nhãn vai trò.",
+  },
+  {
+    tag: "NHÂN VIÊN THƯỜNG",
+    name: "Trần Thu Hà (Trưởng nhóm Kinh doanh)",
+    email: "ha.tran@xtech.com.vn",
+    password: "(để trống)",
+    note: "Tài khoản KHÔNG có quyền quản trị — dùng để xác nhận khu Quản trị (/admin/*) và Platform Console (/platform/*) KHÔNG hiện ra cho người dùng thường.",
+  },
+  {
+    tag: "T002 (đa tenant)",
+    name: "Admin tenant Chủ đầu tư BĐS Demo (tenant-realestate-demo)",
+    email: "(userId: tenant-realestate-demo-admin)",
+    password: "cần dev cấp — xem ghi chú",
+    note: "Tài khoản này KHÔNG đăng nhập được bằng cách chọn nhanh (không nằm trong danh sách 16 người tenant-xtech). Mật khẩu được sinh ngẫu nhiên mỗi lần chạy `npm run provision:t002` ở xhub-api và chỉ in ra console lúc đó (biến môi trường T002_ADMIN_PASSWORD/T002_EMP_PASSWORD nếu dev đặt trước). Nếu bạn cần test nhóm 'Đa tenant' (U52–U54), hãy nhờ dev cung cấp mật khẩu hiện hành hoặc chạy lại lệnh trên và gửi bạn kết quả.",
+  },
+];
+
+// Ghi chú vai trò dùng trong cột "Bước": [ADMIN] chỉ tài khoản quản trị tenant ·
+// [PLATFORM] chỉ tài khoản vận hành nền tảng (platform-operator) · [ENFORCE] màn
+// này chỉ có thể kiểm tra khi máy chủ đang BẬT chế độ AUTH_ENFORCE=true; ở môi
+// trường demo mặc định (AUTH_ENFORCE=false) các dòng [ENFORCE] không áp dụng
+// được — tick "Chưa test" và ghi chú "N/A demo mode", ĐỪNG tính là FAIL.
+export const TEST_SETUP_GUIDE = {
+  appUrl: "http://localhost:3000",
+  apiUrl: "http://localhost:4000 (backend — không cần mở trực tiếp, chỉ cần đang chạy)",
+  steps: [
+    "Mở trình duyệt tới http://localhost:3000/login (nếu máy chủ chạy ở cổng khác — 3001 — thay số cổng tương ứng, hỏi dev nếu không chắc).",
+    "Ở khung 'Chọn nhanh (demo, không mật khẩu)' phía dưới form, bấm thẳng vào tên tài khoản bạn cần (xem bảng Tài khoản test bên dưới) — KHÔNG cần gõ gì thêm. Hoặc gõ email vào ô 'Email hoặc userId', để trống ô Mật khẩu, bấm Đăng nhập.",
+    "Sau khi vào ứng dụng, mở tab Tài liệu (biểu tượng Doanh nghiệp → Tài liệu, hoặc gõ thẳng /docs) rồi chọn tab 'Kiểm thử' — đây chính là trang bạn đang xem.",
+    "Đi theo từng nhóm từ trên xuống dưới. Với mỗi dòng: bấm 'Mở màn ↗' để mở đúng màn cần test ở tab mới, làm theo cột 'Bước', rồi so kết quả thực tế với cột 'Kỳ vọng'.",
+    "Bấm nút PASS hoặc FAIL cho dòng đó (khung 3 nút bên phải mỗi dòng). Có thể gõ thêm Ghi chú nếu FAIL (mô tả lỗi thấy được, không cần thuật ngữ kỹ thuật).",
+    "Kết quả tự lưu khi bạn tick (badge góc phải bảng: 'Đã lưu máy chủ' = đã đồng bộ, 'Lưu cục bộ (offline)' = máy chủ tạm không phản hồi nhưng dữ liệu vẫn ở trên máy bạn).",
+    "Khi test xong (hoặc xong một phiên), bấm nút 'Sao chép kết quả' — nội dung dạng bảng Markdown được chép vào clipboard, dán vào email/chat gửi cho người phụ trách.",
+    "Gặp màn không mở được, nút không phản hồi, hoặc lỗi hiển thị lạ: chụp màn hình + ghi lại đường dẫn (URL) đang mở, gửi kèm khi báo cáo.",
+  ],
+  enforceNote:
+    "[ENFORCE] = màn/luồng đó chỉ thể hiện đúng khi máy chủ API bật AUTH_ENFORCE=true. Ở môi trường demo mặc định (đa số trường hợp) biến này TẮT — các dòng [ENFORCE] không kiểm tra được, hãy để 'Chưa test' và ghi chú 'N/A demo mode', KHÔNG tính là FAIL.",
+  reportTo:
+    "Gửi kết quả (bấm 'Sao chép kết quả' rồi dán) cho quản trị viên tenant X-TECH phụ trách XHub, hoặc bộ phận IT phụ trách nền tảng. Nếu không rõ người nhận, hỏi người đã gửi bạn tài liệu này.",
+};
 
 export interface UserTestRow {
   id: string;
@@ -121,18 +191,62 @@ export const USER_TEST_ROWS: UserTestRow[] = [
   { id: "U53", group: "Đa tenant", step: "Kiểm tra cách ly khỏi T001 [ENFORCE]", expected: "User T002 KHÔNG thấy bất kỳ bản ghi nào của T001; RLS chặn rò rỉ", link: "/documents" },
   { id: "U54", group: "Đa tenant", step: "Tài liệu T002 vào folder riêng [ENFORCE]", expected: "Tài liệu T002 lưu ở folder/tenant riêng, tách biệt lưu trữ T001", link: "/documents" },
 
+  // ── Công việc (Work v2) ──
+  { id: "U56", group: "Công việc", step: "Danh sách dự án /work/projects → mở 1 dự án", expected: "Thấy danh sách ExecutionProject; mở chi tiết 1 dự án hiển thị WBS/tiến độ/baseline", link: "/work/projects" },
+  { id: "U57", group: "Công việc", step: "Gantt — mở nút 'Gantt' trên chi tiết dự án", expected: "Timeline kéo dài theo ngày; thanh kế hoạch vs thực tế; đường phụ thuộc FS/SS/FF/SF; mốc milestone; cây WBS thu/mở", link: "/work/projects" },
+  { id: "U58", group: "Công việc", step: "Gantt — kéo/resize 1 thanh việc", expected: "Ngày cập nhật ngay (optimistic); nếu đổi ngày phá vỡ phụ thuộc FS → báo lỗi, tự rollback về ngày cũ" },
+  { id: "U59", group: "Công việc", step: "Gantt phối hợp — mở link chia sẻ dạng SUMMARY", expected: "CHỈ thấy thanh việc CHA (tiêu đề + % tiến độ + ngày); KHÔNG thấy việc con, KHÔNG thấy mô tả chi tiết; có badge 'Chia sẻ phối hợp'" },
+  { id: "U60", group: "Công việc", step: "Bảng Kanban /work/board", expected: "Cột theo trạng thái; kéo thẻ đổi cột → trạng thái lưu server (rollback nếu trạng thái không hợp lệ); có thể gom nhóm theo tag/chiều phân tích", link: "/work/board" },
+  { id: "U61", group: "Công việc", step: "Lịch /work/calendar", expected: "Lưới tháng hiện việc theo hạn (dueAt) + milestone; bấm 1 việc mở chi tiết", link: "/work/calendar" },
+  { id: "U62", group: "Công việc", step: "Danh mục dự án /work/portfolio", expected: "Thẻ KPI: số dự án đang chạy/đỏ/quá hạn/nghẽn; biểu đồ sức khỏe; bấm vào bảng dự án chi tiết", link: "/work/portfolio" },
+  { id: "U63", group: "Công việc", step: "Thống kê đa chiều /work/reports", expected: "Chọn trục hàng (tag/chiều/status/loại/ưu tiên/dự án) × trục cột × chỉ số (đếm/tiến độ TB/quá hạn) → bảng pivot + biểu đồ cột đúng số", link: "/work/reports" },
+
+  // ── Quản trị (Management OS) ──
+  { id: "U64", group: "Quản trị", step: "Trang chủ điều hành /manage", expected: "Thẻ sức khỏe: số mục tiêu đúng tiến độ, KPI đỏ, quyết định đang mở, action quá hạn — số liệu thật", link: "/manage" },
+  { id: "U65", group: "Quản trị", step: "Mục tiêu chiến lược /manage/objectives", expected: "4 mục tiêu (Tăng trưởng/Khách hàng/Vận hành/Năng lực) mở chi tiết 1 mục tiêu → thấy chỉ số liên kết", link: "/manage/objectives" },
+  { id: "U66", group: "Quản trị", step: "Chỉ số /manage/metrics — KPI ACT-CLOSE", expected: "Biểu đồ tỷ lệ cam kết đúng hạn tính TỪ dữ liệu Work thật (không nhập tay); giá trị khớp số việc quá hạn thực tế", link: "/manage/metrics" },
+  { id: "U67", group: "Quản trị", step: "Review /manage/reviews — mở 1 review tháng", expected: "Pre-read: snapshot chỉ số + ngoại lệ (RAG) → quyết định RAPID → action; bấm action → sang đúng việc thật /work/items/[id]", link: "/manage/reviews" },
+  { id: "U68", group: "Quản trị", step: "Đóng 1 review", expected: "Trạng thái review chuyển sang 'Follow-up'/'Đã đóng'; follow-up được ghi nhận" },
+  { id: "U69", group: "Quản trị", step: "Quyết định /manage/decisions", expected: "Danh sách quyết định kiểu RAPID (Recommend/Agree/Decide/Input/Perform); có độ tuổi (aging) của quyết định chưa xử lý", link: "/manage/decisions" },
+  { id: "U85", group: "Quản trị", step: "Scorecard /manage/scorecards", expected: "4 góc nhìn (Tài chính/Khách hàng/Vận hành/Năng lực); KPI đỏ hiển thị RÕ RÀNG — không bị điểm gộp/trung bình che đi", link: "/manage/scorecards" },
+  { id: "U86", group: "Quản trị", step: "OKR /manage/okrs — mở chu kỳ 2026Q3", expected: "2 mục tiêu O-001/O-002, mỗi mục tiêu có Key Result kèm % tin cậy; Key Result liên kết Initiative/Action — KHÔNG phải danh sách task thô", link: "/manage/okrs" },
+  { id: "U87", group: "Quản trị", step: "Thêm 1 check-in cho 1 Key Result", expected: "Check-in mới xuất hiện; lịch sử check-in CŨ vẫn còn nguyên (không bị ghi đè/xoá)" },
+
+  // ── Đa tenant · KPI/OKR theo ngành ──
+  { id: "U88", group: "Đa tenant", step: "Đăng nhập tenant T003 (Sản xuất) → /manage/objectives + /manage/metrics", expected: "Mục tiêu/KPI về SẢN XUẤT thật (OEE, tỷ lệ lỗi/phế phẩm, MTBF, OTIF) — KHÔNG phải bộ KPI văn phòng/công nghệ của T001", link: "/manage/objectives" },
+  { id: "U89", group: "Đa tenant", step: "So sánh với tenant T004 (Phân phối/Bán lẻ) → /manage/objectives", expected: "Bộ KPI khác hẳn T003 (vòng quay tồn kho, hàng chết, CAC…) — chỉ trùng đúng 1 chỉ số chung ACT-CLOSE (tính từ Work)", link: "/manage/objectives" },
+
+  // ── IOC — Bản sao số (Digital Twin, DT-01→DT-03) ──
+  { id: "U71", group: "IOC — Bản sao số", step: "Trung tâm điều hành /ioc", expected: "Thẻ: bảng điều khiển đã xuất bản, scene đã xuất bản, số lớp dữ liệu, số phòng ban bận/quá tải — số liệu thật, không phải mẫu", link: "/ioc" },
+  { id: "U72", group: "IOC — Bản sao số", step: "Bản sao số văn phòng /ioc/twin/office", expected: "Mặt bằng 2D hiện 8 vùng với TÊN PHÒNG BAN THẬT (Ban Điều hành, Kinh doanh, Tài chính…) + màu theo mức tải; thẻ KPI khớp số ở bảng bên dưới", link: "/ioc/twin/office" },
+  { id: "U73", group: "IOC — Bản sao số", step: "Bấm tab 'Không gian 3D' ở màn twin", expected: "Hiện khối 3D xoay/zoom được, chiều cao khối theo mức tải; đóng tab về 2D vẫn nguyên dữ liệu" },
+  { id: "U74", group: "IOC — Bản sao số", step: "TẮT WebGL trong trình duyệt rồi mở lại /ioc/twin/office (AT-007)", expected: "Trang VẪN dùng được đầy đủ: mặt bằng 2D + danh sách vùng + KPI hiện đủ; chỉ báo '3D không khả dụng', không có màn trắng/lỗi", link: "/ioc/twin/office" },
+  { id: "U75", group: "IOC — Bản sao số", step: "Twin Studio /ioc/studio", expected: "Chuỗi cấu hình 7 bước + danh sách scene/mặt bằng với trạng thái và số phiên bản", link: "/ioc/studio" },
+  { id: "U76", group: "IOC — Bản sao số", step: "Trình vẽ mặt bằng: chọn 1 vùng, đổi tên, kéo 1 đỉnh", expected: "Lưới 1 m + thước tỷ lệ; kéo đỉnh đổi hình; sau ~1,5s tự lưu, hiện 'Đã lưu bản nháp (revision N)'" },
+  { id: "U77", group: "IOC — Bản sao số", step: "Trình vẽ: công cụ 'Vẽ vùng' → bấm 4 điểm → Hoàn tất; thử vẽ hình nơ (tự cắt)", expected: "Vùng hợp lệ được tạo; hình tự cắt bị chặn kèm thông báo (máy chủ cũng từ chối)" },
+  { id: "U78", group: "IOC — Bản sao số", step: "Trình vẽ: gán 1 vùng cho đơn vị + chọn icon, rồi Hoàn tác/Làm lại", expected: "Nhãn vùng đổi thành tên đơn vị thật + icon; Ctrl+Z / Ctrl+Shift+Z hoạt động" },
+  { id: "U79", group: "IOC — Bản sao số", step: "Trình vẽ: bấm 'Xuất bản phiên bản' 2 lần (có sửa ở giữa)", expected: "Tạo v1 rồi v2 kèm checksum; v1 chuyển SUPERSEDED chứ KHÔNG bị sửa/xoá" },
+  { id: "U80", group: "IOC — Bản sao số", step: "Lớp dữ liệu /ioc/studio/data-layers", expected: "Mỗi lớp hiện kết quả trực tiếp theo phòng ban; phần Catalog ghi rõ hệ thống nguồn (SoR) và cảnh báo cấm camera/chấm công/sinh trắc học", link: "/ioc/studio/data-layers" },
+  { id: "U81", group: "IOC — Bản sao số", step: "Tạo 1 việc mới ở /work/tasks rồi tải lại /ioc/studio/data-layers", expected: "Tổng tải của phòng ban tương ứng TĂNG — chứng tỏ IOC chiếu dữ liệu Work thật, không lưu số riêng", link: "/work/tasks" },
+  { id: "U82", group: "IOC — Bản sao số", step: "Bảng điều khiển /ioc/studio/dashboards", expected: "Xem trước bố cục lưới 12 cột đúng như màn twin; danh mục widget được phép hiển thị đầy đủ", link: "/ioc/studio/dashboards" },
+  { id: "U83", group: "IOC — Bản sao số", step: "Rà soát & xuất bản /ioc/studio/publish", expected: "Bảng lịch sử phiên bản cho mặt bằng/scene/bảng điều khiển kèm checksum + trạng thái PUBLISHED/SUPERSEDED", link: "/ioc/studio/publish" },
+  { id: "U84", group: "IOC — Bản sao số", step: "Icon & asset /ioc/studio/assets", expected: "14 icon dựng sẵn; mục tải asset tuỳ chỉnh ghi rõ CHƯA MỞ kèm lý do an toàn", link: "/ioc/studio/assets" },
+
   // ── Console kỹ thuật ──
-  { id: "U55", group: "Console kỹ thuật", step: "DevTools Console khi lướt tất cả màn", expected: "0 lỗi đỏ (JS error / failed fetch) trên mọi route đã mở" },
+  { id: "U70", group: "Console kỹ thuật", step: "DevTools Console khi lướt tất cả màn", expected: "0 lỗi đỏ (JS error / failed fetch) trên mọi route đã mở" },
 ];
 
 export const USER_TEST_GROUPS = [
   "Điều hướng & UI",
   "Xác thực",
   "Quản trị & Tổ chức",
+  "Công việc",
+  "Quản trị",
   "X.Office",
   "Tài liệu",
   "X.Space",
   "Platform Console",
   "Đa tenant",
+  "IOC — Bản sao số",
   "Console kỹ thuật",
 ] as const;

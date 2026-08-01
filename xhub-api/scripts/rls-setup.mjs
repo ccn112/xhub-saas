@@ -90,6 +90,47 @@ const TENANT_TABLES = [
   // Solution Delivery Workspace — T001-scoped engagement lifecycle (SaaS step 5).
   'Engagement',
   'EngagementEvent',
+  // X.Office Work & Project Management v2 — W1 (Native Work Core).
+  'NativeWorkItem',
+  'WorkItemComment',
+  'WorkItemChecklistItem',
+  'WorkItemEvent',
+  'WorkDimension',
+  // X.Office Work & Project Management v2 — W2 (Execution Project Core).
+  'ExecutionProject',
+  'ExecutionProjectEvent',
+  'WorkDependency',
+  'ProjectBaseline',
+  'BaselineItem',
+  'ProjectRoleAssignment',
+  'CoordinationShare',
+  // X.Office Management Operating System — MG-01 reference slice.
+  'StrategicObjective',
+  'MetricDefinition',
+  'MetricObservation',
+  'BusinessReview',
+  'DecisionRecord',
+  'ActionCommitment',
+  // X.Office Management Operating System — MG-03 (KPI/OKR/Scorecard).
+  'Scorecard',
+  'OKRCycle',
+  'OKRObjective',
+  'KeyResult',
+  'KeyResultCheckIn',
+  // XHub Enterprise IOC — Digital Twin (DT-01 → DT-03). IOC is a projection
+  // surface, but every one of its config tables is tenant-owned, so all of them
+  // are FORCE-RLS with a negative isolation test (Constitution #3, AT-001/AT-010).
+  'TwinSite',
+  'TwinFloor',
+  'FloorPlanDefinition',
+  'FloorPlanVersion',
+  'TwinScene',
+  'SceneBinding',
+  'TwinSceneVersion',
+  'IconAsset',
+  'DataLayerDefinition',
+  'DashboardDefinition',
+  'DashboardVersion',
 ];
 
 const PREDICATE =
@@ -110,6 +151,14 @@ for (const t of TENANT_TABLES) {
   );
   console.log(`  RLS enabled + policy set: ${t}`);
 }
+
+// GIN indexes for NativeWorkItem tag/dimension aggregation (owner requirement
+// #2). Idempotent — created here (not via prisma db push) so `tags @> [...]` and
+// `dimensions @> '{...}'` filters/pivots are indexed. jsonb_path_ops is chosen
+// for the dimensions containment index.
+await client.query(`CREATE INDEX IF NOT EXISTS "NativeWorkItem_tags_gin" ON "NativeWorkItem" USING GIN ("tags")`);
+await client.query(`CREATE INDEX IF NOT EXISTS "NativeWorkItem_dimensions_gin" ON "NativeWorkItem" USING GIN ("dimensions" jsonb_path_ops)`);
+console.log('  GIN indexes ensured: NativeWorkItem(tags), NativeWorkItem(dimensions)');
 
 // Report resulting state.
 const rows = (

@@ -101,6 +101,35 @@ export const XHUB_NAVIGATION: XNavItem[] = [
       { id: "notifications.all", label: "Thông báo", href: "/notifications", icon: "bell", match: ["/notifications"] },
     ],
   },
+  // ---------------------------------------------------------------------------
+  // X.Office Management Operating System — MG-01 "reference slice" (leadership
+  // layer). Placed AFTER home / BEFORE work per UI_ROUTE_PLAN option PA: this is
+  // the executive workspace (BOARD/CEO/EXECUTIVE), distinct from operational
+  // /work/*. Namespace /manage/* — does NOT touch the existing 5 workspaces and
+  // does NOT collide with /work/*, /projects or /tasks/[id]. Gated by manage.*
+  // permissions (soft unless AUTH_ENFORCE): under enforcement, employees without
+  // manage.* don't see the workspace; the demo grants all. Only screens with a
+  // real route are registered (the rest of the 14-screen MOS catalog lands later).
+  // ---------------------------------------------------------------------------
+  {
+    id: "manage",
+    label: "Quản trị",
+    icon: "chart",
+    href: "/manage",
+    match: ["/manage"],
+    permission: "manage.objective.read",
+    children: [
+      { id: "manage.home", label: "Tổng quan điều hành", href: "/manage", icon: "chart", match: ["/manage"], permission: "manage.objective.read" },
+      { id: "manage.objectives", label: "Mục tiêu chiến lược", href: "/manage/objectives", icon: "directive", match: ["/manage/objectives"], permission: "manage.objective.read" },
+      { id: "manage.metrics", label: "Chỉ số / KPI", href: "/manage/metrics", icon: "chart", match: ["/manage/metrics"], permission: "manage.metric.read" },
+      { id: "manage.reviews", label: "Rà soát (Business Review)", href: "/manage/reviews", icon: "calendar", match: ["/manage/reviews"], permission: "manage.review.read" },
+      { id: "manage.decisions", label: "Quyết định (RAPID)", href: "/manage/decisions", icon: "list", match: ["/manage/decisions"], permission: "manage.decision.read" },
+      // MG-03 — KPI/OKR/Scorecard, layered on the reference slice (#3/#9/#13: BSC/
+      // OKR/KPI/task list stay distinct; no blended score may hide a red KPI, #5).
+      { id: "manage.scorecards", label: "Scorecard", href: "/manage/scorecards", icon: "chart", match: ["/manage/scorecards"], permission: "manage.scorecard.read" },
+      { id: "manage.okrs", label: "OKR", href: "/manage/okrs", icon: "directive", match: ["/manage/okrs"], permission: "manage.okr.read" },
+    ],
+  },
   {
     id: "work",
     label: "Công việc",
@@ -112,8 +141,27 @@ export const XHUB_NAVIGATION: XNavItem[] = [
     children: [
       { id: "inbox.unified", label: "Hộp việc hợp nhất", href: "/inbox", icon: "inbox", match: ["/inbox"], badgeKey: "inbox.open" },
       { id: "approvals.center", label: "Trung tâm phê duyệt", href: "/approvals", icon: "approvals", match: ["/approvals"], badgeKey: "approval.pending", permission: "request.approve" },
-      { id: "work.tasks", label: "Công việc & chỉ đạo", href: "/work", icon: "work", match: ["/work"] },
-      { id: "projects.list", label: "Dự án", href: "/projects", icon: "projects", match: ["/projects"] },
+      // X.Office Work & PM v2 — W1 (NativeWorkItem). Overview + My Work + Tôi giao.
+      // No nav permission (open to all authenticated users); write actions are
+      // gated server-side by work.item.* and the read path enforces the summary/
+      // full visibility tier (owner requirement #1).
+      { id: "work.overview", label: "Tổng quan", href: "/work", icon: "chart", match: ["/work"] },
+      { id: "work.myTasks", label: "Việc của tôi", href: "/work/tasks", icon: "work", match: ["/work/tasks"] },
+      { id: "work.assignedByMe", label: "Tôi giao", href: "/work/tasks/assigned-by-me", icon: "approvals", match: ["/work/tasks/assigned-by-me"] },
+      { id: "work.directives", label: "Công việc & chỉ đạo", href: "/office/directives", icon: "directive", match: ["/office/directives"] },
+      // X.Office Work & PM v2 — W2 (ExecutionProject). Delivery projects with WBS
+      // roll-up + baseline + coordination visibility. Open in nav; writes gated
+      // server-side by work.project.*; detail read enforces FULL/SUMMARY per actor.
+      { id: "work.projects", label: "Dự án thực thi", href: "/work/projects", icon: "projects", match: ["/work/projects"] },
+      // X.Office Work & PM v2 — W3 (Management Views). Kanban / Calendar / Portfolio
+      // / multi-dimensional reports. Gantt is reached from project detail
+      // (/work/projects/[id]/gantt). Open in nav; portfolio + reports reads gated
+      // server-side (work.portfolio.read / work.report.read) — soft unless AUTH_ENFORCE.
+      { id: "work.board", label: "Kanban", href: "/work/board", icon: "apps", match: ["/work/board"] },
+      { id: "work.calendar", label: "Lịch công việc", href: "/work/calendar", icon: "calendar", match: ["/work/calendar"] },
+      { id: "work.portfolio", label: "Portfolio", href: "/work/portfolio", icon: "chart", match: ["/work/portfolio"], permission: "work.portfolio.read" },
+      { id: "work.reports", label: "Báo cáo đa chiều", href: "/work/reports", icon: "list", match: ["/work/reports"], permission: "work.report.read" },
+      { id: "projects.list", label: "Dự án (MDM)", href: "/projects", icon: "projects", match: ["/projects"] },
     ],
   },
   {
@@ -291,6 +339,36 @@ export const XHUB_NAVIGATION: XNavItem[] = [
     children: [
       { id: "delivery.overview", label: "Tổng quan pipeline", href: "/delivery", icon: "chart", match: ["/delivery"], permission: "delivery.read" },
       { id: "delivery.engagements", label: "Dự án triển khai", href: "/delivery/engagements", icon: "briefcase", match: ["/delivery/engagements"], permission: "delivery.read" },
+    ],
+  },
+  // -----------------------------------------------------------------------------
+  // XHub ENTERPRISE IOC — DIGITAL TWIN (DT-01..DT-03). An ENTITLED workspace, not
+  // a new rail concept: docs/17_UI_SCREEN_CATALOG.md says "do not create a new
+  // rail at MVP; register IOC as an entitled app/workspace entry", and in this
+  // codebase a top-level XNavItem carrying a `permission` IS that entitlement
+  // mechanism (filterNavByPermissions hides the whole subtree under AUTH_ENFORCE),
+  // exactly as `platform` and `delivery` already do. Namespace /ioc/* — ADDITIVE:
+  // it does not touch the 5 core workspaces, `manage`, `platform` or `delivery`.
+  // Viewer screens are gated by `ioc.view`; every studio screen carries its own
+  // ioc.studio.* / ioc.datalayer.manage gate, so an IOC operator sees the twin
+  // without gaining the right to re-author it. Only screens with a REAL route are
+  // registered — the department/process/people twins (DT-04..06) land later.
+  // -----------------------------------------------------------------------------
+  {
+    id: "ioc",
+    label: "IOC — Bản sao số",
+    icon: "chart",
+    href: "/ioc",
+    match: ["/ioc"],
+    permission: "ioc.view",
+    children: [
+      { id: "ioc.entry", label: "Trung tâm điều hành", href: "/ioc", icon: "chart", match: ["/ioc"], permission: "ioc.view" },
+      { id: "ioc.twin.office", label: "Bản sao số văn phòng", href: "/ioc/twin/office", icon: "business", match: ["/ioc/twin/office"], permission: "ioc.view" },
+      { id: "ioc.studio", label: "Twin Studio", href: "/ioc/studio", icon: "office", match: ["/ioc/studio"], permission: "ioc.studio.read" },
+      { id: "ioc.studio.dataLayers", label: "Lớp dữ liệu", href: "/ioc/studio/data-layers", icon: "list", match: ["/ioc/studio/data-layers"], permission: "ioc.datalayer.manage" },
+      { id: "ioc.studio.dashboards", label: "Bảng điều khiển twin", href: "/ioc/studio/dashboards", icon: "apps", match: ["/ioc/studio/dashboards"], permission: "ioc.studio.read" },
+      { id: "ioc.studio.assets", label: "Icon & asset", href: "/ioc/studio/assets", icon: "folder", match: ["/ioc/studio/assets"], permission: "ioc.asset.manage" },
+      { id: "ioc.studio.publish", label: "Rà soát & xuất bản", href: "/ioc/studio/publish", icon: "settings", match: ["/ioc/studio/publish"], permission: "ioc.studio.publish" },
     ],
   },
 ];
