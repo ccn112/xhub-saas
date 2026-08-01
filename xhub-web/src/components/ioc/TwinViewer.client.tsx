@@ -1,6 +1,6 @@
 "use client";
 
-import { Component, useEffect, useState, type ReactNode } from "react";
+import { Component, useEffect, useRef, useState, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from "@heroicons/react/24/outline";
 import { STATE_FILL, STATE_LABEL, ICON_GLYPHS, type ZoneMetric, type RuntimeScene, type InsightZone, type FlowEdge } from "@/xoffice/lib/ioc-data";
@@ -40,12 +40,20 @@ export function TwinViewer({
   plan2d,
   insightZones = [],
   flows = [],
+  selectedZoneId,
+  onZoneClick,
 }: {
   scene: RuntimeScene;
   zones: ZoneMetric[];
   plan2d: ReactNode;
   insightZones?: InsightZone[];
   flows?: FlowEdge[];
+  /** Zone drill-down (DT-06): which zone is currently selected, and the handler
+   * fired when the user clicks a zone in 2D, 3D, or the accessible list —
+   * all three paths share the same selection so switching view modes never
+   * loses the drill-down panel's context. */
+  selectedZoneId?: string | null;
+  onZoneClick?: (zoneId: string) => void;
 }) {
   const [mode, setMode] = useState<"2d" | "3d">("2d");
   const [threeDError, setThreeDError] = useState<string | null>(null);
@@ -61,6 +69,33 @@ export function TwinViewer({
     setThreeDError(m);
     setMode("2d");
   };
+
+  // Event delegation, not a per-zone onClick: `plan2d` is the SERVER-rendered
+  // SVG passed in as a prop (Constitution #9 — it must stay JS-free on its
+  // own), so TwinPlan2D only tags each zone with `data-zone-id`. One handler
+  // here recovers the id via closest(), same technique either mode needs.
+  const handlePlan2dClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = (e.target as HTMLElement).closest?.("[data-zone-id]");
+    const zoneId = el?.getAttribute("data-zone-id");
+    if (zoneId) onZoneClick?.(zoneId);
+  };
+
+  // `plan2d` is a SERVER-rendered element (Constitution #9) — once it reaches
+  // the client it is inert; re-passing `selectedZoneId` as a prop can't make
+  // Next.js re-invoke that Server Component. So the live highlight is applied
+  // imperatively here, directly on the already-rendered SVG DOM, via the same
+  // `data-zone-id` markers the click handler above reads.
+  const plan2dWrapRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const root = plan2dWrapRef.current;
+    if (!root) return;
+    root.querySelectorAll<SVGGElement>("[data-zone-id]").forEach((g) => {
+      const isSelected = g.getAttribute("data-zone-id") === selectedZoneId;
+      const poly = g.querySelector("polygon");
+      poly?.setAttribute("fill-opacity", isSelected ? "0.34" : "0.16");
+      poly?.setAttribute("stroke-width", isSelected ? "0.32" : "0.12");
+    });
+  }, [selectedZoneId, plan2d]);
 
   // Same fullscreen contract as admin/organization/OrgChart.tsx: refit the
   // renderer on toggle, Esc to exit.
@@ -132,10 +167,25 @@ export function TwinViewer({
       {/* The 2D plan is ALWAYS in the DOM; 3D merely covers it when selected. */}
       {/* In fullscreen the server-rendered SVG must stretch too — an SVG scales
           by viewBox, so overriding its height is enough (no re-render needed). */}
-      <div className={mode === "2d" ? (full ? "[&>svg]:!h-[calc(100dvh-11rem)]" : "") : "hidden"}>{plan2d}</div>
+      <div
+        ref={plan2dWrapRef}
+        onClick={handlePlan2dClick}
+        className={mode === "2d" ? (full ? "[&>svg]:!h-[calc(100dvh-11rem)]" : "") : "hidden"}
+      >
+        {plan2d}
+      </div>
       {mode === "3d" ? (
         <RendererBoundary onError={fail}>
-          <TwinScene3D scene={scene} zones={zones} insightZones={insightZones} flows={flows} height={canvasHeight} onUnavailable={fail} />
+          <TwinScene3D
+            scene={scene}
+            zones={zones}
+            insightZones={insightZones}
+            flows={flows}
+            height={canvasHeight}
+            onUnavailable={fail}
+            onZoneClick={onZoneClick}
+            selectedZoneId={selectedZoneId}
+          />
         </RendererBoundary>
       ) : null}
 
@@ -143,8 +193,16 @@ export function TwinViewer({
       <ul className={`grid gap-2 sm:grid-cols-2 lg:grid-cols-4 ${full ? "hidden" : ""}`}>
         {zones.map((zm) => {
           const iz = insightZones.find((z) => z.zoneId === zm.zone.id);
+          const isSelected = selectedZoneId === zm.zone.id;
           return (
-          <li key={zm.zone.id} className="rounded-lg border border-gray-200 p-2.5 dark:border-dark-600">
+          <li
+            key={zm.zone.id}
+            role={onZoneClick ? "button" : undefined}
+            tabIndex={onZoneClick ? 0 : undefined}
+            onClick={onZoneClick ? () => onZoneClick(zm.zone.id) : undefined}
+            onKeyDown={onZoneClick ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onZoneClick(zm.zone.id); } } : undefined}
+            className={`rounded-lg border p-2.5 dark:border-dark-600 ${onZoneClick ? "cursor-pointer hover:border-primary-400" : ""} ${isSelected ? "border-primary-500 ring-1 ring-primary-500" : "border-gray-200"}`}
+          >
             <div className="flex items-center justify-between gap-2">
               <span className="truncate text-sm font-medium text-gray-800 dark:text-dark-50">
                 {zm.zone.binding?.iconKey ? `${ICON_GLYPHS[zm.zone.binding.iconKey] ?? ""} ` : ""}

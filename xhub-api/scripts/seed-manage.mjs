@@ -96,6 +96,27 @@ try {
   );
   const obsId = obsRow.rows[0].id;
 
+  // 3b) Seed-time DEMO BACKFILL — 2 earlier monthly periods, so the IOC
+  // forecast (insights.service.ts:forecast()) has >= 3 real MetricObservation
+  // rows to trend from for this demo tenant. This is the seed script building
+  // baseline history for a synthetic company (same as every other row in this
+  // file) — NOT the runtime insights service inventing a number for a real
+  // tenant; that rule (refuse below 3 points, no synthetic confidence) is
+  // untouched. Marked confidence=0.5 (vs. 1 for the live-computed current
+  // month) to keep that distinction honest in the data itself.
+  for (let back = 2; back >= 1; back--) {
+    const pStart = new Date(now.getFullYear(), now.getMonth() - back, 1);
+    const pEnd = new Date(now.getFullYear(), now.getMonth() - back + 1, 1);
+    const backfillValue = Math.max(50, Math.min(100, Math.round((value - back * 4) * 10) / 10));
+    const backId = `mg-seed-obs-actclose-${pStart.getFullYear()}${String(pStart.getMonth() + 1).padStart(2, '0')}`;
+    await c.query(
+      `INSERT INTO "MetricObservation" (id,"tenantId","metricId","periodStart","periodEnd",value,source,confidence,"computedAt")
+       VALUES ($1,$2,$3,$4,$5,$6,'XOFFICE_WORK',0.5,now())
+       ON CONFLICT ("tenantId","metricId","periodStart","periodEnd") DO UPDATE SET value=EXCLUDED.value, "computedAt"=now()`,
+      [backId, TENANT, METRIC.id, pStart, pEnd, backfillValue],
+    );
+  }
+
   // 4) Monthly Business Review with the pre-read snapshot.
   await c.query(
     `INSERT INTO "BusinessReview" (id,"tenantId",title,type,"periodStart","periodEnd",status,"ownerId","metricObservationIds","decisionIds","actionIds","createdBy","createdAt","updatedAt")

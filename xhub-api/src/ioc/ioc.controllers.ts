@@ -374,4 +374,19 @@ export class IocRuntimeController {
     const permissions = await heldPermissions(this.identity, id);
     return this.insights.insights(tenant(id), user(id), codeOrId, { permissions });
   }
+
+  /**
+   * Zone drill-down (DT-06): roster + open tasks + zone-scoped alerts for ONE
+   * zone the caller clicked on the twin. Individual-level data — refused
+   * (service-side) unless the caller holds ioc.people.detail, and audited when
+   * allowed. Same `ioc.view` gate at the route as the rest of runtime; the
+   * finer individual-data check happens in the service (matches
+   * IocDataLayersController.execute's scope=individual convention).
+   */
+  @Get('dashboards/:codeOrId/zones/:zoneId/drilldown')
+  @RequirePermission('ioc.view')
+  async zoneDrilldown(@Param('codeOrId') codeOrId: string, @Param('zoneId') zoneId: string, @Identity() id: RequestIdentity) {
+    const permissions = await heldPermissions(this.identity, id);
+    return this.insights.zoneDrilldown(tenant(id), user(id), codeOrId, zoneId, { permissions });
+  }
 }

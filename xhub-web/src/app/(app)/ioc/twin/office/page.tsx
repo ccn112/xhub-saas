@@ -3,7 +3,7 @@ import { SectionCard } from "@/xhub/ui/Card";
 import { StatCard } from "@/xhub/ui/StatCard";
 import { Badge } from "@/xhub/ui/Badge";
 import { TwinPlan2D } from "@/components/ioc/TwinPlan2D";
-import { TwinViewer } from "@/components/ioc/TwinViewer.client";
+import { OfficeTwinWorkspace } from "@/components/ioc/OfficeTwinWorkspace.client";
 import {
   getDashboardRuntime,
   getDashboardInsights,
@@ -153,24 +153,16 @@ export default async function OfficeTwinPage() {
         </SectionCard>
       ) : null}
 
-      {/* ---- the twin + the AI brief, side by side ------------------------- */}
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <SectionCard title="Bản sao số văn phòng" accent="primary" bodyClassName="space-y-3">
-          {rt.scene ? (
-            <TwinViewer
-              scene={rt.scene}
-              zones={zones}
-              insightZones={insightZones}
-              flows={flows}
-              plan2d={<TwinPlan2D scene={rt.scene} zones={zones} insightZones={insightZones} flows={flows} />}
-            />
-          ) : (
-            <p className="text-sm text-gray-400">Scene chưa được xuất bản — hãy xuất bản trong Twin Studio.</p>
-          )}
-        </SectionCard>
-
-        <SectionCard title="AI Twin Brief" accent="primary" bodyClassName="space-y-3">
-          {ins ? (
+      {/* ---- the twin (2D/3D, zone-click drill-down) + the AI brief -------- */}
+      <OfficeTwinWorkspace
+        dashboardCode={rt.dashboard.code}
+        scene={rt.scene}
+        zones={zones}
+        insightZones={insightZones}
+        flows={flows}
+        plan2d={rt.scene ? <TwinPlan2D scene={rt.scene} zones={zones} insightZones={insightZones} flows={flows} /> : null}
+        aiBriefPanel={
+          ins ? (
             <>
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone={ins.brief.source === "live" ? "primary" : "neutral"}>
@@ -198,7 +190,7 @@ export default async function OfficeTwinPage() {
               </div>
 
               <div className="rounded-lg border border-gray-200 p-2.5 dark:border-dark-600">
-                <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Dự báo 24h</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Xu hướng chỉ số (thật)</p>
                 {ins.forecast.available ? (
                   <>
                     <p className="mt-1 text-sm text-gray-700 dark:text-dark-100">
@@ -206,6 +198,17 @@ export default async function OfficeTwinPage() {
                       {ins.forecast.metric.unit} ({ins.forecast.delta >= 0 ? "+" : ""}
                       {ins.forecast.delta} so với kỳ trước)
                     </p>
+                    <div className="mt-2 flex items-end gap-1" aria-hidden="true">
+                      {(() => {
+                        const vals = ins.forecast.points.map((pp) => pp.value);
+                        const max = Math.max(1, ...vals);
+                        const min = Math.min(0, ...vals);
+                        return ins.forecast.points.map((p, i) => {
+                          const h = Math.max(4, Math.round(((p.value - min) / Math.max(1, max - min)) * 32));
+                          return <div key={i} className="w-2.5 rounded-t bg-primary-500/70" style={{ height: h }} title={`${p.value}`} />;
+                        });
+                      })()}
+                    </div>
                     <p className="mt-0.5 text-[11px] text-gray-400">{ins.forecast.method}</p>
                   </>
                 ) : (
@@ -217,9 +220,9 @@ export default async function OfficeTwinPage() {
             </>
           ) : (
             <p className="text-sm text-gray-400">Không lấy được lớp phân tích.</p>
-          )}
-        </SectionCard>
-      </div>
+          )
+        }
+      />
 
       {/* ---- bottom row: status table · load column · pipeline · alerts ---- */}
       <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-4">
@@ -305,6 +308,42 @@ export default async function OfficeTwinPage() {
           </ul>
         </SectionCard>
       </div>
+
+      {/* ---- arrival/departure pattern: REAL AttendanceEvent data (PE-02), or
+              the honest reason it's missing — never the 24h occupancy heatmap
+              this data cannot prove (see the note below the chart). --------- */}
+      <SectionCard
+        title={`Phân bố giờ vào/ra${ins && ins.arrivalPattern.available ? ` (${ins.arrivalPattern.windowDays} ngày qua)` : ""}`}
+        accent="neutral"
+        bodyClassName="space-y-2"
+      >
+        {ins && ins.arrivalPattern.available ? (
+          <>
+            <div className="flex h-24 items-end gap-0.5" aria-hidden="true">
+              {(() => {
+                const ap = ins.arrivalPattern;
+                const max = Math.max(1, ...ap.hours.flatMap((h) => [h.clockIns, h.clockOuts]));
+                return ap.hours.map((h) => (
+                  <div key={h.hour} className="flex flex-1 flex-col items-center justify-end gap-0.5" title={`${h.hour}h: ${h.clockIns} vào · ${h.clockOuts} ra`}>
+                    <div className="flex w-full items-end gap-px" style={{ height: 80 }}>
+                      <div className="flex-1 rounded-t bg-success" style={{ height: `${Math.round((h.clockIns / max) * 80)}px` }} />
+                      <div className="flex-1 rounded-t bg-sky-500" style={{ height: `${Math.round((h.clockOuts / max) * 80)}px` }} />
+                    </div>
+                    <span className="text-[9px] text-gray-400">{h.hour}</span>
+                  </div>
+                ));
+              })()}
+            </div>
+            <div className="flex flex-wrap items-center gap-3 text-[11px] text-gray-500 dark:text-dark-300">
+              <span className="inline-flex items-center gap-1"><span className="size-2 rounded-sm bg-success" /> Vào</span>
+              <span className="inline-flex items-center gap-1"><span className="size-2 rounded-sm bg-sky-500" /> Ra</span>
+            </div>
+            <p className="text-[11px] text-gray-400">{ins.arrivalPattern.note}</p>
+          </>
+        ) : (
+          <p className="text-sm text-gray-400">{ins && !ins.arrivalPattern.available ? ins.arrivalPattern.reason : "Không lấy được lớp phân tích."}</p>
+        )}
+      </SectionCard>
 
       <SectionCard title="Nguồn dữ liệu & những gì KHÔNG được dựng" accent="neutral" bodyClassName="space-y-2">
         <ul className="grid gap-2 sm:grid-cols-3">

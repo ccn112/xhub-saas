@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { DashboardService } from './dashboard.service';
 import { MetricsService } from '../manage/metrics.service';
 import { XofficeService } from '../xoffice/xoffice.service';
+import { AvailabilityService } from '../people/availability.service';
 
 /**
  * IOC command-centre INSIGHTS (DT-05) — the "living operations centre" layer on
@@ -85,6 +86,7 @@ export class IocInsightsService {
     private readonly dashboards: DashboardService,
     private readonly metrics: MetricsService,
     private readonly xoffice: XofficeService,
+    private readonly availability: AvailabilityService,
   ) {}
   private get db() {
     return this.prisma.db;
@@ -248,6 +250,9 @@ export class IocInsightsService {
     // ---- forecast: only from REAL observation history ------------------------
     const forecast = await this.forecast(tenantId);
 
+    // ---- arrival/departure pattern: only from REAL AttendanceEvent rows ------
+    const arrivalPattern = await this.arrivalPattern(tenantId);
+
     // ---- AI Twin Brief (draft-first, advisory only) --------------------------
     const brief = await this.brief(zones, flows, kpi, alerts.length);
 
@@ -281,6 +286,7 @@ export class IocInsightsService {
         available: false,
         reason: 'Chưa có dữ liệu tải theo GIỜ trong nền tảng (không có time-series workload). Hiển thị ảnh chụp hiện tại theo vùng thay vì dựng bản đồ nhiệt 24h không có thật.',
       },
+      arrivalPattern,
       omitted: [
         { key: 'operatingCost', reason: 'Chưa có connector tài chính (FinERP là mock). Một con số chi phí ở đây sẽ là bịa — bỏ hẳn ô KPI thay vì điền số.' },
       ],
@@ -324,6 +330,98 @@ export class IocInsightsService {
       delta: Number((last.value - prev.value).toFixed(2)),
       method: 'Chênh lệch giữa hai kỳ quan trắc THẬT gần nhất (MetricObservation). Không phải mô hình dự báo, không có chỉ số độ tin cậy.',
     } as const;
+  }
+
+  /**
+   * Phân bố giờ vào/ra THẬT trong 30 ngày qua, từ AttendanceEvent (PE-02, chấm
+   * công nhập file). Đây KHÔNG phải bản đồ nhiệt hiện diện 24h — dữ liệu chỉ có
+   * điểm CLOCK_IN/CLOCK_OUT, không có tín hiệu hiện diện giữa ca — nên được đặt
+   * tên và ghi chú tách biệt với `heatmap` (vẫn `available:false` như cũ) để
+   * không thổi phồng những gì dữ liệu thật sự chứng minh được.
+   */
+  private async arrivalPattern(tenantId: string) {
+    const since = new Date(Date.now() - 30 * 86400000);
+    const events = await this.db.attendanceEvent.findMany({
+      where: { tenantId, at: { gte: since } },
+      select: { eventType: true, at: true },
+    });
+    if (!events.length) {
+      return {
+        available: false,
+        reason: 'Chưa có dữ liệu chấm công thật (AttendanceEvent) trong 30 ngày qua — tenant chưa import file chấm công nào.',
+      } as const;
+    }
+    // getUTCHours(), not getHours(): AttendanceImportService.commit() stores
+    // the CSV's HH:MM literally as UTC (`new Date(\`${date}T${clockIn}:00Z\`)`),
+    // so reading back the SAME field must round-trip through UTC too — using
+    // local server time here would silently shift every bucket by the
+    // server's UTC offset.
+    const hours = Array.from({ length: 24 }, (_, hour) => ({ hour, clockIns: 0, clockOuts: 0 }));
+    for (const e of events) {
+      const h = e.at.getUTCHours();
+      if (e.eventType === 'CLOCK_IN') hours[h].clockIns++;
+      else if (e.eventType === 'CLOCK_OUT') hours[h].clockOuts++;
+    }
+    return {
+      available: true,
+      windowDays: 30,
+      hours,
+      note: 'Phân bố giờ vào/ra THẬT từ AttendanceEvent (PE-02, chấm công nhập file) — chỉ điểm vào/ra, không suy ra hiện diện giữa ca.',
+    } as const;
+  }
+
+  /**
+   * Zone drill-down (DT-06): roster + việc đang xử lý + cảnh báo của MỘT vùng.
+   * Đây là dữ liệu CÁ NHÂN (tên thật), khác với phần còn lại của service này
+   * (luôn tổng hợp) — nên đòi `ioc.people.detail` giống hệt
+   * DataLayerService.execute's scope=individual path (Constitution #7 / AT-006):
+   * từ chối thẳng (không lọc bớt) khi thiếu quyền, và ghi audit khi được phép.
+   * Roster/scope ABAC dùng lại AvailabilityService.team — không suy diễn
+   * Position→OrgUnit lần thứ 3 trong codebase này.
+   */
+  async zoneDrilldown(tenantId: string, actorId: string, codeOrId: string, zoneId: string, opts: { permissions?: string[] } = {}) {
+    const perms = opts.permissions ?? [];
+    const allowed = perms.includes('*') || perms.includes('ioc.people.detail');
+    if (!allowed) {
+      throw new ForbiddenException({ code: 'FORBIDDEN', message: 'zone drill-down requires the ioc.people.detail permission (Constitution #7)' });
+    }
+
+    const ins = await this.insights(tenantId, actorId, codeOrId, opts);
+    const zone = ins.zones.find((z) => z.zoneId === zoneId);
+    if (!zone) throw new NotFoundException({ code: 'ZONE_NOT_FOUND' });
+
+    const alerts = ins.alerts.filter((a) => a.zone === zone.label);
+    if (!zone.orgUnitId) {
+      return { zone, roster: [], tasks: [], alerts, note: 'Vùng này chưa gán đơn vị (OrgUnit) nào trong Twin Studio.' };
+    }
+
+    const roster = await this.availability.team(tenantId, actorId, zone.orgUnitId);
+    const personIds = roster.roster.map((r: any) => r.personId);
+    const tasks = personIds.length
+      ? await this.db.nativeWorkItem.findMany({
+          where: {
+            tenantId,
+            status: { notIn: ['DONE', 'CANCELLED'] },
+            OR: [{ ownerId: { in: personIds } }, { assigneeIds: { hasSome: personIds } }],
+          },
+          orderBy: { updatedAt: 'desc' },
+          take: 10,
+          select: { id: true, title: true, status: true, priority: true, dueAt: true, ownerId: true },
+        })
+      : [];
+
+    await this.db.auditLog.create({
+      data: {
+        tenantId,
+        instanceCode: ins.dashboardCode,
+        actorId,
+        action: 'ioc.zone_drilldown',
+        detail: JSON.stringify({ zoneId, orgUnitId: zone.orgUnitId }).slice(0, 500),
+        at: new Date(),
+      },
+    });
+
+    return { zone, roster: roster.roster, tasks, alerts };
   }
 
   /**

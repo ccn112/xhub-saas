@@ -44,6 +44,8 @@ export default function TwinScene3D({
   flows = [],
   height = 460,
   onUnavailable,
+  onZoneClick,
+  selectedZoneId,
 }: {
   scene: RuntimeScene;
   zones: ZoneMetric[];
@@ -53,10 +55,23 @@ export default function TwinScene3D({
   flows?: FlowEdge[];
   height?: number;
   onUnavailable?: (reason: string) => void;
+  /** Zone drill-down (DT-06): fired when a zone volume is clicked/tapped. */
+  onZoneClick?: (zoneId: string) => void;
+  /** Currently selected zone (from the drill-down panel) — brightens its cap. */
+  selectedZoneId?: string | null;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [status, setStatus] = useState<"probing" | "ready" | "unavailable">("probing");
   const [reason, setReason] = useState<string>("");
+  // Kept as refs (not effect deps) so a click callback / selection change never
+  // triggers a full scene rebuild — only the main [scene, zones, ...] effect
+  // below does that.
+  const onZoneClickRef = useRef(onZoneClick);
+  useEffect(() => {
+    onZoneClickRef.current = onZoneClick;
+  }, [onZoneClick]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const capByZoneRef = useRef<Map<string, { capMat: any; colour: any }>>(new Map());
 
   useEffect(() => {
     let disposed = false;
@@ -65,6 +80,7 @@ export default function TwinScene3D({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let babylonScene: any = null;
     let onResize: (() => void) | null = null;
+    capByZoneRef.current.clear();
 
     function fail(msg: string) {
       if (disposed) return;
@@ -283,6 +299,7 @@ export default function TwinScene3D({
           cap.material = capMat;
           cap.isPickable = false;
           shadows.addShadowCaster(cap);
+          capByZoneRef.current.set(zm.zone.id, { capMat, colour });
 
           // Desks + occupancy for THIS zone (real Position numbers).
           const iz = insightById.get(zm.zone.id);
@@ -347,6 +364,17 @@ export default function TwinScene3D({
           label.material = lm;
           label.isPickable = false;
         }
+
+        // --- zone click → drill-down (DT-06) -----------------------------------
+        // The zone volume itself (`zone-${id}`) is left pickable by default (only
+        // the desks/labels/walls/footprints above set isPickable=false), so a tap
+        // just needs to recover the id from the mesh name — no new geometry.
+        babylonScene.onPointerObservable.add((pi: any) => {
+          if (pi.type !== BABYLON.PointerEventTypes.POINTERPICK) return;
+          const meshName: string | undefined = pi.pickInfo?.pickedMesh?.name;
+          if (!meshName?.startsWith('zone-')) return;
+          onZoneClickRef.current?.(meshName.slice('zone-'.length));
+        });
 
         // --- FLOW LAYER: real cross-department handoffs ----------------------
         // One arc per (from → to) pair, bowed above the floor so it clears the
@@ -420,6 +448,16 @@ export default function TwinScene3D({
       }
     };
   }, [scene, zones, insightZones, flows, onUnavailable]);
+
+  // Selection highlight — brighten the selected zone's cap, dim the rest back
+  // to normal. Deliberately just a material tweak (no outline mesh, no
+  // animation) so a click reads instantly without adding render cost.
+  useEffect(() => {
+    if (status !== "ready") return;
+    for (const [zoneId, { capMat, colour }] of capByZoneRef.current.entries()) {
+      capMat.emissiveColor = zoneId === selectedZoneId ? colour : colour.scale(0.45);
+    }
+  }, [selectedZoneId, status]);
 
   if (status === "unavailable") {
     return (

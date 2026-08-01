@@ -42,12 +42,17 @@ export function TwinPlan2D({
   insightZones = [],
   flows = [],
   height = 460,
+  selectedZoneId,
 }: {
   scene: RuntimeScene;
   zones: ZoneMetric[];
   insightZones?: InsightZone[];
   flows?: FlowEdge[];
   height?: number;
+  /** Highlight one zone (DT-06 drill-down). No click handler here — this stays
+   * a server-rendered, JS-free SVG; the click is delegated by the client
+   * TwinViewer via the `data-zone-id` attribute below. */
+  selectedZoneId?: string | null;
 }) {
   const all = scene.zones.flatMap((z) => z.polygon);
   const xs = all.map((p) => p.x);
@@ -100,9 +105,16 @@ export function TwinPlan2D({
         const glyph = zone.binding?.iconKey ? ICON_GLYPHS[zone.binding.iconKey] : undefined;
         const iz = info.get(zone.id);
         const desks = iz ? deskLayout(zone.polygon, iz.seats, iz.filled) : [];
+        const selected = selectedZoneId === zone.id;
         return (
-          <g key={zone.id}>
-            <polygon points={zone.polygon.map((p) => `${p.x},${p.y}`).join(" ")} fill={fill} fillOpacity={0.16} stroke={fill} strokeWidth={0.12} />
+          <g key={zone.id} data-zone-id={zone.id} style={{ cursor: "pointer" }}>
+            <polygon
+              points={zone.polygon.map((p) => `${p.x},${p.y}`).join(" ")}
+              fill={fill}
+              fillOpacity={selected ? 0.34 : 0.16}
+              stroke={fill}
+              strokeWidth={selected ? 0.32 : 0.12}
+            />
 
             {/* Desk rows — the zone reads as an occupied room, not a colour block. */}
             {desks.map((d, i) => (

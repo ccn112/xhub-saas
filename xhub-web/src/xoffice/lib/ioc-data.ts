@@ -281,6 +281,9 @@ export interface IocInsights {
     | { available: false; reason: string }
     | { available: true; metric: { code: string; name: string; unit: string }; points: Array<{ at: string; value: number }>; delta: number; method: string };
   heatmap: { available: boolean; reason: string };
+  arrivalPattern:
+    | { available: false; reason: string }
+    | { available: true; windowDays: number; hours: Array<{ hour: number; clockIns: number; clockOuts: number }>; note: string };
   omitted: Array<{ key: string; reason: string }>;
   brief: {
     source: "live" | "mock";
