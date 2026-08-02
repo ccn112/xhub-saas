@@ -21,6 +21,14 @@ try {
   await c.query(`DELETE FROM "MetricDefinition" WHERE "tenantId"=$1 AND (id LIKE 'mg-seed-%' OR code LIKE 'MG-SMOKE-%')`, [TENANT]);
   await c.query(`DELETE FROM "StrategicObjective" WHERE "tenantId"=$1 AND (id LIKE 'mg-seed-%' OR code LIKE 'MG-SMOKE-%')`, [TENANT]);
   // Work items the slice spawned/linked (bridge) — mg-seed ids + MG-SMOKE- titles.
+  // WorkItemEvent has a RESTRICT fk to NativeWorkItem (event history is never
+  // silently orphaned) — other seed/smoke scripts (e.g. ioc-demo-load-seed.mjs)
+  // may have logged events against these same items since they were created,
+  // so their event rows must go first or the delete below fails.
+  await c.query(
+    `DELETE FROM "WorkItemEvent" WHERE "tenantId"=$1 AND "workItemId" IN (SELECT id FROM "NativeWorkItem" WHERE "tenantId"=$1 AND (id LIKE 'mg-seed-%' OR title LIKE 'MG-SMOKE-%'))`,
+    [TENANT],
+  );
   await c.query(`DELETE FROM "NativeWorkItem" WHERE "tenantId"=$1 AND (id LIKE 'mg-seed-%' OR title LIKE 'MG-SMOKE-%')`, [TENANT]);
 
   await c.query('COMMIT');
