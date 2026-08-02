@@ -122,3 +122,90 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   .org-print-hide { display: none !important; }
   @page { size: A4 landscape; margin: 12mm; }
 }
+
+/* ── X.Office request forms (react-jsonschema-form) ──────────────────────────
+   `@rjsf/core`'s default HTML5 theme emits bare semantic markup (.form-group,
+   .control-label, .form-control, .help-block, …) with NO inline styling of its
+   own — it expects a CSS theme to be layered on top (Bootstrap normally does
+   this). Tailwind's preflight then strips native input/textarea/select chrome
+   entirely, so every request form (U36 FAIL: "form kiểu gì đấy") rendered as
+   flat unstyled text with invisible, borderless fields. This block is that
+   missing theme, scoped to `.xoffice-rjsf` (the wrapper both RequestForm.tsx
+   and the FormBuilder preview use) so it never leaks into unrelated forms. */
+.xoffice-rjsf .form-group { margin-bottom: 1rem; }
+.xoffice-rjsf .control-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-gray-700, #374151);
+}
+.xoffice-rjsf .required { margin-left: 0.125rem; color: var(--color-error, #dc2626); }
+.xoffice-rjsf .field-description {
+  margin-bottom: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--color-gray-400, #9ca3af);
+}
+.xoffice-rjsf .help-block {
+  margin-top: 0.25rem;
+  font-size: 0.6875rem;
+  color: var(--color-gray-400, #9ca3af);
+}
+.xoffice-rjsf .form-control,
+.xoffice-rjsf select.form-control {
+  display: block;
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-gray-300, #d1d5db);
+  background-color: white;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-gray-800, #1f2937);
+}
+.xoffice-rjsf textarea.form-control { min-height: 5.5rem; resize: vertical; }
+.xoffice-rjsf .form-control:focus {
+  outline: none;
+  border-color: var(--color-primary-600);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary-600) 25%, transparent);
+}
+.xoffice-rjsf .checkbox label,
+.xoffice-rjsf .radio label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-gray-700, #374151);
+  font-weight: 400;
+}
+.xoffice-rjsf .array-item {
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-gray-200, #e5e7eb);
+  padding: 0.75rem;
+}
+.xoffice-rjsf .array-item-toolbox button,
+.xoffice-rjsf .btn-add {
+  border-radius: 0.375rem;
+  border: 1px solid var(--color-gray-300, #d1d5db);
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  color: var(--color-gray-600, #4b5563);
+}
+.xoffice-rjsf .error-detail {
+  margin-top: 0.25rem;
+  list-style: none;
+  padding: 0;
+  font-size: 0.75rem;
+  color: var(--color-error, #dc2626);
+}
+:where(.dark) .xoffice-rjsf .control-label { color: var(--color-dark-100, #e5e7eb); }
+:where(.dark) .xoffice-rjsf .field-description,
+:where(.dark) .xoffice-rjsf .help-block { color: var(--color-dark-300, #9ca3af); }
+:where(.dark) .xoffice-rjsf .form-control {
+  background-color: var(--color-dark-700, #1f2937);
+  border-color: var(--color-dark-500, #475569);
+  color: var(--color-dark-50, #f8fafc);
+}
+:where(.dark) .xoffice-rjsf .checkbox label,
+:where(.dark) .xoffice-rjsf .radio label { color: var(--color-dark-100, #e5e7eb); }
+:where(.dark) .xoffice-rjsf .array-item { border-color: var(--color-dark-600, #334155); }
