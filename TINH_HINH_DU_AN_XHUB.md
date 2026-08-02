@@ -1,7 +1,7 @@
 # TÌNH HÌNH DỰ ÁN — XHub / X.Space / X.Office
 
 > **File này để copy sang ChatGPT lên kế hoạch.** Tự‑chứa: đọc riêng file này là đủ hiểu, không cần xem code.
-> **Cập nhật gần nhất:** 2026-08-02 · Chủ đầu tư: X‑TECH (tenant 001) · Trạng thái: SaaS v1.0 (10 tenant, KPI/OKR theo ngành) + Work/PM v2 + **Management OS MG‑01→04** + **People Essentials PE‑01+PE‑02** + **IOC Digital Twin DT‑01→05 (+ đào sâu vùng)** — nền tảng vững, đang mở rộng theo roadmap. Đã git commit + push toàn bộ lên `origin/main`.
+> **Cập nhật gần nhất:** 2026-08-02 (phiên 2) · Chủ đầu tư: X‑TECH (tenant 001) · Trạng thái: SaaS v1.0 (10 tenant, KPI/OKR theo ngành) + Work/PM v2 + **Management OS MG‑01→04** + **People Essentials PE‑01+PE‑02** + **IOC Digital Twin DT‑01→05 (+ đào sâu vùng)** — nền tảng vững, đang mở rộng theo roadmap. Đã git commit + push toàn bộ lên `origin/main`. Backlog UAT‑FAIL còn lại đã đóng gói ở mục 4b để chủ đầu tư sắp xếp lại thứ tự.
 > Tài liệu sâu hơn (nội bộ, xem mục 9 "Tài liệu liên quan" bên dưới để có danh sách đầy đủ).
 
 ---
@@ -71,6 +71,27 @@ Giao diện: rail **10 workspace** — Trang chủ · Điều hành (trước g�
 | P3 | Backup schedule/retention + luồng duyệt khôi phục production | |
 | GATE | **IOC DT‑08** (camera/IoT/sinh trắc học thật) | KHÔNG làm nếu chưa có duyệt pháp lý/an ninh riêng — không tự quyết |
 
+### 4b. Backlog UAT‑FAIL đang chờ chủ đầu tư sắp xếp lại (đóng gói 2026‑08‑02)
+Đây là các mục FAIL do chủ đầu tư tick trực tiếp ở `/docs/test` (không phải roadmap lớn ở bảng trên) — nhóm theo mảng để dễ xếp lịch:
+
+**🔴 Cần chủ đầu tư trả lời trước — chưa thể code:**
+- Card 50% width + link "login as" (U26) — đã hỏi nhưng chưa rõ **màn nào**.
+- U38 FAIL không có ghi chú — cần biết cụ thể lỗi gì.
+- Kiêm nhiệm (1 người 2 vị trí) ảnh hưởng phê duyệt ra sao (U19) — cần thiết kế logic trước.
+- DataScope UX theo góc nhìn người dùng (U21) — cần làm rõ ý muốn UX kiểu gì.
+
+**🟠 Work/PM — mảng lớn nhất, nên gộp 1 đợt (U56, U58, U59‑60, U61, U62‑64):**
+Critical path/chi phí/thành viên‑quyền/vật tư/link thanh toán + progress bar thật · Gantt bấm‑sửa quan hệ + kéo‑nối việc · cột tuỳ biến + metadata dòng · lịch tháng + lọc đơn vị/người/loại việc · báo cáo đa chiều thêm chiều/chi phí/thẻ.
+
+**🟡 Quản trị & phân quyền (U20, U22, U23‑25):**
+Vẽ lại ma trận phân quyền `/admin/roles` (sửa được, nhóm module, "thử vai trò X") · uỷ quyền có điều kiện (phạm vi+hạn mức) · backup/restore rõ phạm vi/khác biệt + chọn lựa + undo.
+
+**🟢 X.Office quy trình (U27, U28, U65‑69/86, U66/69/98):**
+Danh mục quy trình thêm nút tạo mới + quản lý mẫu + uỷ quyền phê duyệt · chi tiết vận hành hiện luồng từng bước + SLA thật · thêm hành động (tạo/sửa/mở lại/đóng) cho màn Management OS · icon trợ giúp giải thích chỉ số/phương pháp luận.
+
+**⚪ Nội dung/chất lượng dữ liệu (U33, U39‑41, phát hiện thêm 2026‑08‑02):**
+Gộp "Thông báo nội bộ" thành CMS (tin tức/sự kiện/kinh doanh/nội bộ) · Tài liệu thêm preview/quyền‑nguồn‑vị trí lưu/nhiều file + sửa lỗi hiển thị khi tải phiên bản mới · dọn nội dung form X.Office (enum thật thay text tự do, tự động điền field, xoá text placeholder "Gợi ý giá trị, giải thích trường..." chưa hoàn thiện — phát hiện khi sửa U36).
+
 ## 5. Cần chủ đầu tư quyết / cấp
 1. Rotate API key (ngay — đã phát hiện 2 lần).
 2. Cấp credential IdP Azure AD (để nối đăng nhập thật + bật bảo mật production).
@@ -112,6 +133,14 @@ Giao diện: rail **10 workspace** — Trang chủ · Điều hành (trước g�
 ---
 
 ## 9. Nhật ký cập nhật (mới nhất trên cùng)
+- **2026-08-02 (phiên 2):** **Dọn tiếp backlog UAT‑FAIL sau khi menu đổi xong — 4 fix thật, đóng gói phần còn lại.**
+  - **Fix `manage-slice-reset.mjs`:** thiếu xoá `WorkItemEvent` trước khi xoá `NativeWorkItem` (FK RESTRICT) — `test:manage-slice` chạy lại được; đã reseed đầy đủ (`seed:manage`+`work-projects`+`manage-portfolio`+`manage-okr`+`manage-industries`) để khôi phục dữ liệu bị dọn theo.
+  - **Gán quyền `booking.manage` cho HR_MANAGER** — quyền này trước đó không thuộc vai trò nào (giống lỗ hổng đã sửa cho PE‑01/MG‑04 trước đây).
+  - **U29 (nút tạo request):** thêm trang chọn quy trình `/office/my-requests/new` (liệt kê quy trình đã publish) — trước đây chỉ có route `/office/workflows/[code]/request` cần biết sẵn mã, không ai bấm tới được vì danh mục quy trình bị khoá quyền admin.
+  - **U36 (form tạo request "trông kiểu gì đấy"):** phát hiện gốc rễ — class `.xoffice-rjsf` được đặt tên trong code nhưng **chưa từng có CSS**, nên toàn bộ field của **~13 quy trình** hiện ra như chữ thường không viền, không giống form. Đã viết CSS theme cho đúng các class RJSF phát ra (`.form-group/.control-label/.form-control/.help-block`...). Phát hiện thêm (chưa sửa, đã ghi vào mục 4b): schema form khai mọi field là `string` dù mô tả gợi ý rõ nên là dropdown, và hầu hết field có chung 1 đoạn `ui:help` giống văn bản nháp chưa điền thật.
+  - **U32 (đặt phòng theo loại):** danh mục tài nguyên (phòng/xe/thiết bị) trước đây **không có màn quản lý nào**, chỉ tồn tại qua script seed — dựng màn "Quản lý danh mục tài nguyên" thật (tạo/xem, gọi đúng endpoint `POST /api/bookable-resources` đã có sẵn ở backend), thêm hạng mục **"Họp lãnh đạo" (EXEC_ROOM)** tách biệt "phòng họp" thường, và nhóm select ở form đặt mới theo loại (optgroup) thay vì danh sách phẳng.
+  - **Đóng gói backlog còn lại** (mục 4b): 4 việc cần chủ đầu tư trả lời trước khi code được (card 50%, U38 không ghi chú, kiêm nhiệm, DataScope UX), rồi nhóm theo Work/PM · Quản trị/phân quyền · X.Office quy trình · Nội dung/dữ liệu — để chủ đầu tư tự sắp lại thứ tự ưu tiên.
+  - Toàn bộ đã `tsc --noEmit` 0 lỗi + regression liên quan xanh (`test:rls`, `test:bookings`, `test:manage-slice`, `test:manage-portfolio`, `test:manage-okr`) + xác nhận qua browser. 4 commit riêng, đã push `origin/main`.
 - **2026-08-02:** **IOC đào sâu vùng (2D/3D click) + Quy hoạch lại menu + rà 3 handoff mới → git commit + push.** Chủ đầu tư trực tiếp yêu cầu nâng cấp IOC văn phòng ("đang rất kỳ vọng"), sau đó phản ánh menu "lộn xộn, không có quy hoạch".
   **IOC:** bấm 1 vùng (2D lẫn 3D, cùng 1 state chọn) → panel "Chi tiết vùng" (roster + việc + cảnh báo thật, gate `ioc.people.detail`+audit, tái dùng `AvailabilityService.team`). Seed thêm lịch sử `MetricObservation` (3 kỳ) nên dự báo hết cảnh "chưa đủ dữ liệu"; seed thêm 14 ngày `AttendanceEvent` thật (qua đúng API import — không ghi tắt DB) cho panel "Phân bố giờ vào/ra" mới. Cố ý KHÔNG vá "chi phí vận hành" bằng connector giả — chờ Work v2 có field cost thật (đúng roadmap #28 UAT).
   **Menu:** rà lại toàn bộ `navigation.model.ts`, phát hiện nhãn **"Quản trị" bị dùng cho 2 workspace khác nhau** (Management OS vs Admin Console) + **1 mục trùng lặp thật** (`work.directives`==`office.directives`, cùng route). So khớp với 1 tài liệu nội bộ trong bộ handoff Ecosystem xác nhận rail đã "trôi" khỏi thiết kế gốc (6 workspace dự kiến → 10 thực tế, không có đợt quy hoạch lại đi kèm 2 workspace phát sinh). Đã relabel (Điều hành / Quản trị hệ thống / Bảng điều khiển nền tảng / Triển khai giải pháp / Nhân sự & Chấm công), xoá mục trùng, tách "Công việc" + "X.Office" thành 2 nhóm con mỗi workspace (dùng lại đúng cơ chế collapse đã chạy ở admin.console/docs, không phát minh mới), thêm caption "Vận hành nền tảng" cho cụm platform‑pinned — **không đổi bất kỳ route/permission nào**. Giao 1 agent nền làm + tự verify qua browser.
