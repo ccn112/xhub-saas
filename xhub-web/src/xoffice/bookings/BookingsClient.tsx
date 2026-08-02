@@ -11,8 +11,10 @@ import {
   BOOKING_STATE_LABEL,
   BOOKING_STATE_TONE,
   RESOURCE_TYPE_LABEL,
+  RESOURCE_TYPE_ORDER,
   fmtRange,
 } from "./booking-states";
+import { ResourceManager } from "./ResourceManager";
 
 const PAGE_SIZE = 10;
 
@@ -163,6 +165,8 @@ export function BookingsClient({
           </div>
         )}
       </SectionCard>
+
+      <ResourceManager resources={resources} />
     </div>
   );
 }
@@ -217,7 +221,15 @@ function NewBookingForm({ resources }: { resources: BookableResourceRow[] }) {
       <div className="grid gap-2 md:grid-cols-2">
         <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Tiêu đề cuộc họp / mục đích" className="h-9 rounded-lg border border-gray-300 px-3 text-sm dark:border-dark-500 dark:bg-dark-700 dark:text-dark-50 md:col-span-2" />
         <select value={resourceId} onChange={(e) => setResourceId(e.target.value)} className="h-9 rounded-lg border border-gray-300 px-3 text-sm dark:border-dark-500 dark:bg-dark-700 dark:text-dark-50">
-          {resources.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+          {RESOURCE_TYPE_ORDER.map((t) => {
+            const inType = resources.filter((r) => r.type === t);
+            if (!inType.length) return null;
+            return (
+              <optgroup key={t} label={RESOURCE_TYPE_LABEL[t] ?? t}>
+                {inType.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+              </optgroup>
+            );
+          })}
         </select>
         <div className="grid grid-cols-2 gap-2">
           <input type="datetime-local" value={startAt} onChange={(e) => setStartAt(e.target.value)} className="h-9 rounded-lg border border-gray-300 px-3 text-sm dark:border-dark-500 dark:bg-dark-700 dark:text-dark-50" />

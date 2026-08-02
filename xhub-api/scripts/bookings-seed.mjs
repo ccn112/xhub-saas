@@ -71,6 +71,20 @@ try {
     else resSkipped++;
   }
 
+  // U32 FAIL: "Đặt mới, cần phân theo loại: Xe, phòng họp, Họp lãnh đạo" — no
+  // pilot booking references a leadership room yet, so seed one directly
+  // (independent of the bookings-derived loop above) so the new EXEC_ROOM
+  // category has a real, visible row in the demo, not just a code path.
+  const execRoom = await c.query(
+    `INSERT INTO "BookableResource"
+       (id, "tenantId", code, name, type, capacity, location, "orgUnitId", active, "createdAt", "updatedAt")
+     VALUES ('res-room-exec',$1,'ROOM-EXEC','Phòng họp Ban điều hành','EXEC_ROOM',8,'Tầng 9',null,true,now(),now())
+     ON CONFLICT ("tenantId", code) DO NOTHING`,
+    [tenantId],
+  );
+  if (execRoom.rowCount > 0) resInserted++;
+  else resSkipped++;
+
   for (const r of rows) {
     const code = r.id; // BOOK-2026-000x — stable, unique per tenant
     const state = STATE_BY_STATUS[r.status] ?? 'REQUESTED';

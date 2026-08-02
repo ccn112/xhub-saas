@@ -41,11 +41,19 @@ export const BOOKING_ALL_STATES = [
   "CANCELLED",
 ];
 
+// U32 FAIL: "Đặt mới, cần phân theo loại: Xe, phòng họp, Họp lãnh đạo — danh
+// mục này công ty sẽ thiết lập." EXEC_ROOM is its own category (not a ROOM
+// subtype) because that's how the request framed it — a leadership meeting
+// room is booked/approved differently in practice than a regular room.
 export const RESOURCE_TYPE_LABEL: Record<string, string> = {
   ROOM: "Phòng họp",
+  EXEC_ROOM: "Họp lãnh đạo",
+  VEHICLE: "Xe",
   ASSET: "Thiết bị",
-  VEHICLE: "Phương tiện",
 };
+
+/** Order to group the resource picker/catalog by — not just object key order. */
+export const RESOURCE_TYPE_ORDER = ["ROOM", "EXEC_ROOM", "VEHICLE", "ASSET"];
 
 export function fmtTime(iso?: string | null): string {
   if (!iso) return "—";
