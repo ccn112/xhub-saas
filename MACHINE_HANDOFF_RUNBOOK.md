@@ -23,11 +23,13 @@ cd D:/Code/xhub-saas/xhub-web && npm ci
 ```
 
 ## 3. Dựng schema + RLS (trong xhub-api)
+Từ 03/08/2026 dùng Prisma Migrate thay `db push` (G0 hardening — có migration history + rollback thay vì đồng bộ trực tiếp). Máy mới (DB rỗng):
 ```bash
-npx prisma db push --schema=prisma/schema.prisma   # KHÔNG dùng --accept-data-loss
+npx prisma migrate deploy   # áp toàn bộ prisma/migrations/ theo thứ tự, có lịch sử
 npx prisma generate
 node scripts/rls-setup.mjs                          # áp RLS policy (FORCE) cho mọi bảng tenant
 ```
+Kiểm tra không lệch schema trước khi deploy/CI: `npx prisma migrate diff --from-migrations prisma/migrations --to-schema prisma/schema.prisma --exit-code` (exit 0 = khớp, exit 2 = có thay đổi chưa đóng gói thành migration — phải chạy `prisma migrate dev` để tạo migration mới, không sửa tay).
 
 ## 4. Seed dữ liệu — THỨ TỰ QUAN TRỌNG
 Khởi động api 1 lần để seed nền (IdentityService seed org/position/people khi boot), rồi chạy các seeder:

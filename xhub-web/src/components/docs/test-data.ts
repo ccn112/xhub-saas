@@ -44,9 +44,11 @@ export const BOT_TEST_RESULTS: BotTestRow[] = [
   { cmd: "test:ioc-twin", expected: "IOC TWIN PASSED — 44 assertions: mặt bằng/scene/publish-rollback bất biến, gán vùng vào OrgUnit thật, 2D luôn dùng được khi tắt WebGL" },
   { cmd: "test:ioc-data-layer", expected: "IOC DATA LAYER PASSED — 45 assertions: lớp dữ liệu chiếu từ Work thật (không lưu số riêng), cấm camera/chấm công/sinh trắc học (403), quyền xem cá nhân + audit" },
   { cmd: "scan:secrets", expected: "SECRET SCAN PASSED — 0 secret lộ ngoài .env" },
+  { cmd: "test:e2e", expected: "2 suite PASS — app root + xoffice-delegation self-grant regression (SEC-002/GAP-002: chặn tự cấp quyền admin qua uỷ quyền + act-on-task)", note: "Mới thêm 03/08/2026 (G0 hardening)" },
+  { cmd: "migrate:status (`npx prisma migrate status`)", expected: "1 migration (baseline) — 'Database schema is up to date!'", note: "Mới thêm 03/08/2026 — chuyển từ `prisma db push` sang Prisma Migrate có lịch sử" },
 ];
 
-export const BOT_TEST_UPDATED = "2026-08-01";
+export const BOT_TEST_UPDATED = "2026-08-03";
 
 // ── Setup / hướng dẫn cho người test mới (chưa biết code) ──────────────────
 export interface TestAccount {

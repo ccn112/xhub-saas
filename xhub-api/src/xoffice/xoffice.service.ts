@@ -2299,6 +2299,12 @@ export class XofficeService implements OnModuleInit {
     return rows.map((r) => this.mapDelegation(r));
   }
 
+  /** Can `actorId` create a delegation with an arbitrary `fromUserId` (not themselves)? */
+  async canGrantDelegationOnBehalf(actorId: string): Promise<{ allowed: boolean; reason: string }> {
+    const decision = await this.identity.can(actorId, 'delegation.grant-any');
+    return { allowed: decision.allowed, reason: decision.reason };
+  }
+
   async createDelegation(
     slug: string,
     actorId: string,

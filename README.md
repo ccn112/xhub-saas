@@ -11,7 +11,7 @@ Nền tảng làm việc hợp nhất **đa‑tenant (SaaS)** do X‑TECH sở h
 Platform 8/8 · PH‑00/01/02 (6 nghiệp vụ văn phòng điện tử) · **SaaS v1.0**: 10 tenant live (T001 chủ nền tảng + T002‑010 demo ngành), Platform Console, Launch Factory, Blueprint/Seed Pack, backup định kỳ per‑tenant, onboarding khách hàng ≥T011, lifecycle DEMO↔LIVE (reset‑demo + go‑live checklist). ~27 gate tự động PASS.
 
 ## Bắt đầu (máy mới)
-> DB Postgres + server + `.env` là **LOCAL** (không theo git). Xem **[MACHINE_HANDOFF_RUNBOOK.md](MACHINE_HANDOFF_RUNBOOK.md)** để dựng lại đầy đủ (env → `prisma db push` → `rls-setup` → seed theo thứ tự → provision tenant → chạy server → verify).
+> DB Postgres + server + `.env` là **LOCAL** (không theo git). Xem **[MACHINE_HANDOFF_RUNBOOK.md](MACHINE_HANDOFF_RUNBOOK.md)** để dựng lại đầy đủ (env → `prisma migrate deploy` → `rls-setup` → seed theo thứ tự → provision tenant → chạy server → verify).
 
 ```bash
 git clone https://github.com/ccn112/xhub-saas.git

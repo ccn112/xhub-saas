@@ -1,0 +1,153 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  xhub-api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: xhub-api
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: xhub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      # CI-only database, isolated from any developer's local dev DB.
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/xhub?schema=public
+      # Disposable — only used by `prisma migrate diff --from-migrations` to
+      # detect schema/migration drift. Never a real dev/prod database.
+      SHADOW_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/xhub_shadow?schema=public
+      AUTH_JWT_SECRET: ci-only-jwt-secret-not-for-any-real-environment
+      BACKUP_ENCRYPTION_KEY: MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE=
+      WEBHOOK_SIGNING_SECRET: ci-only-webhook-secret
+      DEFAULT_TENANT_ID: tenant-xtech
+      DEFAULT_USER_ID: user-nam
+      PORT: 4000
+      # G0: never run CI in STAGING_STRICT — smokes rely on the demo-safe
+      # defaults (default persona, header identity, soft authz + per-request
+      # x-authz-enforce override) to reach 403/401 paths deliberately.
+      STAGING_STRICT: 'false'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: xhub-api/package-lock.json
+
+      - run: npm ci
+
+      - name: Prisma generate
+        run: npx prisma generate
+
+      - name: Clean-bootstrap test — apply migrations to a brand-new DB
+        run: npx prisma migrate deploy
+
+      - name: Migration/schema drift check
+        run: npm run migrate:drift-check
+
+      - name: Apply RLS policies
+        run: node scripts/rls-setup.mjs
+
+      - name: Build
+        run: npm run build
+
+      # ~5.8k pre-existing findings (GAP-XHUB-10, Audit260803) — not introduced
+      # by this workflow. Report-only until paid down as its own initiative;
+      # does not block merges. tsc --noEmit (via `build`) is the real type gate.
+      - name: Lint (report-only — see GAP-XHUB-10)
+        run: npm run lint:ci
+        continue-on-error: true
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: e2e tests (includes xoffice-delegation regression, SEC-002/GAP-002)
+        run: npm run test:e2e
+
+      - name: Boot server once (base identity/org/people seed happens on boot)
+        run: |
+          nohup node dist/src/main.js > server-boot.log 2>&1 &
+          echo $! > server.pid
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:4000/api/xoffice/node-catalog \
+                 -H "x-tenant-id: tenant-xtech" -H "x-user-id: user-nam" > /dev/null; then
+              echo "server ready"; exit 0
+            fi
+            sleep 1
+          done
+          echo "server did not become ready in time"; cat server-boot.log; exit 1
+
+      - name: Seed (documented order — MACHINE_HANDOFF_RUNBOOK.md §4)
+        run: |
+          npm run seed:roles
+          npm run seed:accounts
+          npm run seed:person-avatars
+          npm run seed:tenant-registry
+          npm run seed:platform-roles
+          npm run seed:blueprint-catalog
+          npm run seed:records
+          npm run seed:requests
+          npm run seed:directives
+          npm run seed:tickets
+          npm run seed:bookings
+          npm run seed:announcements
+          npm run seed:backup-schedules
+
+      - name: authz smoke (secure-defaults + delegation/act-on-task regression)
+        run: npm run test:authz
+
+      - name: RLS smoke
+        run: npm run test:rls
+
+      - name: tenant isolation smoke
+        run: npm run test:isolation
+
+      - name: X.Office slice smoke
+        run: npm run test:xoffice
+
+      - name: Dump server log on failure
+        if: failure()
+        run: cat server-boot.log || true
+
+      - name: Stop server
+        if: always()
+        run: kill "$(cat server.pid)" 2>/dev/null || true
+
+  xhub-web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: xhub-web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: xhub-web/package-lock.json
+
+      - run: npm ci
+      # ~103 pre-existing findings (Audit260803) — report-only, see xhub-api's
+      # lint step comment for the same rationale. `build` (tsc via next build)
+      # is the real blocking gate.
+      - name: Lint (report-only — pre-existing findings)
+        run: npm run lint
+        continue-on-error: true
+      - run: npm run build
