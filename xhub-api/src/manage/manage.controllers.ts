@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Patch, Post, Query, UseInterceptors } fro
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 import { ObjectivesService } from './objectives.service';
 import { MetricsService } from './metrics.service';
 import { ReviewsService } from './reviews.service';
@@ -17,7 +17,7 @@ import { BenefitProfilesService } from './benefit-profiles.service';
 
 /**
  * X.Office Management Operating System — MG-01 reference slice API. All routes
- * under /api/manage/*, tenant-scoped via TenantScopeInterceptor (withTenant →
+ * under /api/manage/*, tenant-scoped via XofficeTenantScopeInterceptor (withTenant →
  * RLS), permission-gated through the global PermissionGuard (no-op unless
  * AUTH_ENFORCE). Thin controllers — logic lives in the services.
  */
@@ -29,7 +29,7 @@ function user(id: RequestIdentity): string {
 }
 
 @Controller('api/manage/objectives')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class ObjectivesController {
   constructor(private readonly svc: ObjectivesService) {}
 
@@ -59,7 +59,7 @@ export class ObjectivesController {
 }
 
 @Controller('api/manage/metrics')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class MetricsController {
   constructor(private readonly svc: MetricsService) {}
 
@@ -90,7 +90,7 @@ export class MetricsController {
 }
 
 @Controller('api/manage/reviews')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class ReviewsController {
   constructor(private readonly svc: ReviewsService) {}
 
@@ -120,7 +120,7 @@ export class ReviewsController {
 }
 
 @Controller('api/manage/decisions')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class DecisionsController {
   constructor(private readonly svc: DecisionsService) {}
 
@@ -150,7 +150,7 @@ export class DecisionsController {
 }
 
 @Controller('api/manage/actions')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class ActionsController {
   constructor(private readonly svc: ActionsService) {}
 
@@ -180,7 +180,7 @@ export class ActionsController {
 }
 
 @Controller('api/manage/scorecards')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class ScorecardsController {
   constructor(private readonly svc: ScorecardsService) {}
 
@@ -210,7 +210,7 @@ export class ScorecardsController {
 }
 
 @Controller('api/manage/okr-cycles')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class OkrCyclesController {
   constructor(private readonly svc: OkrService) {}
 
@@ -228,7 +228,7 @@ export class OkrCyclesController {
 }
 
 @Controller('api/manage/okrs')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class OkrsController {
   constructor(private readonly svc: OkrService) {}
 
@@ -270,7 +270,7 @@ export class OkrsController {
 }
 
 @Controller('api/manage/kpis')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class KpiTreeController {
   constructor(private readonly svc: KpiTreeService) {}
 
@@ -290,7 +290,7 @@ export class KpiTreeController {
 // ---- MG-04 — Portfolio & Benefit (LINK layer over ExecutionProject, #17) ----
 
 @Controller('api/manage/portfolios')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class PortfoliosController {
   constructor(private readonly svc: PortfoliosService) {}
 
@@ -320,7 +320,7 @@ export class PortfoliosController {
 }
 
 @Controller('api/manage/initiatives')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class InitiativesController {
   constructor(private readonly svc: InitiativesService) {}
 
@@ -376,7 +376,7 @@ export class InitiativesController {
 }
 
 @Controller('api/manage/benefit-profiles')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class BenefitProfilesController {
   constructor(private readonly svc: BenefitProfilesService) {}
 

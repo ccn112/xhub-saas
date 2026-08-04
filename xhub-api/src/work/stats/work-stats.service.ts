@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { XofficePrismaService } from '../../xoffice-prisma/xoffice-prisma.service';
 import { isOverdue } from '../work.fsm';
 
 /**
@@ -14,7 +14,7 @@ import { isOverdue } from '../work.fsm';
  */
 @Injectable()
 export class WorkStatsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: XofficePrismaService) {}
 
   private get db() {
     return this.prisma.db;

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { IdentityService } from '../identity/identity.service';
 import { XofficeService } from '../xoffice/xoffice.service';
 
@@ -17,7 +17,7 @@ import { XofficeService } from '../xoffice/xoffice.service';
 @Injectable()
 export class LeaveImpactService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly identity: IdentityService,
     private readonly xoffice: XofficeService,
   ) {}

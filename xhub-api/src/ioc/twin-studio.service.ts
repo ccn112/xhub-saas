@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { BINDING_TYPES } from './ioc.catalog';
 import { checksumOf, validateGeometry, areaSqMeters, type Geometry } from './ioc.geometry';
 
@@ -13,12 +13,12 @@ import { checksumOf, validateGeometry, areaSqMeters, type Geometry } from './ioc
  * (Constitution #5, AT-002). Rollback flips `activeVersionNo` back and never
  * deletes (AT-003). Every publish/rollback writes an AuditLog row.
  *
- * Runs inside the caller's withTenant() transaction (TenantScopeInterceptor), so
+ * Runs inside the caller's withTenant() transaction (XofficeTenantScopeInterceptor), so
  * every statement is RLS-scoped; the in-code tenantId filters are defence in depth.
  */
 @Injectable()
 export class TwinStudioService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: XofficePrismaService) {}
   private get db() {
     return this.prisma.db;
   }

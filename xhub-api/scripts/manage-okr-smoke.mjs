@@ -50,7 +50,7 @@ try {
   const metricIdGreen = r.json?.id;
 
   // Insert observations directly (MANUAL source has no compute endpoint) — red one BELOW threshold.
-  const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+  const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
   await c.connect();
   await c.query('BEGIN');
   await c.query("SELECT set_config('app.bypass_rls','on',true)");
@@ -158,7 +158,7 @@ try {
 }
 
 // ---- self-clean (DB, bypass RLS) ------------------------------------------
-const c2 = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c2 = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c2.connect();
 try {
   await c2.query('BEGIN');

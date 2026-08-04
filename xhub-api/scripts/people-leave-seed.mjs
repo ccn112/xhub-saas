@@ -23,7 +23,7 @@ const POLICIES = [
   { id: 'people-seed-policy-remote', code: 'REMOTE', name: 'Làm việc từ xa', paid: true, unit: 'DAY', accrualMethod: 'MONTHLY', accrualPerPeriod: 2, maxCarryOver: 0, opening: 2 },
 ];
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

@@ -3,15 +3,16 @@ import { RecordsService } from './records.service';
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 import type { AddVersionDto, CreateDocumentDto } from './dto/document.dto';
 
 /**
- * Records / Documents API (Mục 8a). Tenant-scoped: TenantScopeInterceptor wraps
- * each handler in prisma.withTenant(tenantId) so every read/write is RLS-scoped.
+ * Records / Documents API (Mục 8a). Tenant-scoped: XofficeTenantScopeInterceptor
+ * wraps each handler in prisma.withTenant(tenantId) so every read/write is
+ * RLS-scoped — on the X.Office database (Phase 1.5 Stage C).
  */
 @Controller('api/records')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class RecordsController {
   constructor(private readonly records: RecordsService) {}
 

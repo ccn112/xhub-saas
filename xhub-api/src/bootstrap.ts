@@ -2,7 +2,8 @@ import { createHash } from 'node:crypto';
 import { NestFactory } from '@nestjs/core';
 import type { Type } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
-import { PrismaService } from './prisma/prisma.service';
+import { IDENTITY_PRISMA } from './identity/identity-prisma.token';
+import type { IdentityPrismaClient } from './identity/identity-prisma.token';
 import { isStagingStrict } from './auth/identity.types';
 
 /**
@@ -91,7 +92,12 @@ export async function bootstrap(rootModule: Type<unknown>, port: number): Promis
   app.use(cookieParser());
   // Frontend (xhub-web) runs on 3000/3001 in dev.
   app.enableCors({ origin: [/localhost:\d+$/], credentials: true });
-  const prisma = app.get(PrismaService);
+  // IDENTITY_PRISMA resolves to whichever Prisma client THIS process actually
+  // uses (PrismaService for Platform, XofficePrismaService for X.Office —
+  // see identity-prisma.token.ts) instead of hardcoding the Platform one,
+  // which would crash the X.Office process now that it no longer imports
+  // PrismaModule directly (Stage C auth follow-up, 2026-08-04).
+  const prisma = app.get<IdentityPrismaClient>(IDENTITY_PRISMA);
   prisma.enableShutdownHooks(app);
   await app.listen(port);
 }

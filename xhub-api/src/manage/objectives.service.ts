@@ -1,17 +1,17 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { OBJECTIVE_STATUSES } from './manage.constants';
 
 /**
  * StrategicObjective aggregate (X.Office Management — MG-01). Mgmt-owned SoR:
  * a strategic direction the tenant steers by — DISTINCT from a Directive and
  * from a KPI (#3). Runs inside the caller's withTenant(tenantId) context
- * (TenantScopeInterceptor) so every read/write is RLS-scoped; the in-code
+ * (XofficeTenantScopeInterceptor) so every read/write is RLS-scoped; the in-code
  * tenantId filter is belt-and-suspenders with RLS.
  */
 @Injectable()
 export class ObjectivesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: XofficePrismaService) {}
   private get db() {
     return this.prisma.db;
   }

@@ -45,7 +45,7 @@ const FINGERPRINT = {
 /** Generic T001 tech codes that must NOT appear in an industry tenant. */
 const TECH_CODES = ['ST-GROWTH', 'ST-CUSTOMER', 'ST-OPS', 'ST-CAP'];
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query("SELECT set_config('app.bypass_rls','on',false)");

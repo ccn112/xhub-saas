@@ -27,9 +27,9 @@ import { TenantLifecycleModule } from './platform/lifecycle/tenant-lifecycle.mod
 @Module({
   imports: [
     PrismaModule,
-    AuthModule,
+    AuthModule.forPlatform(),
     SeedModule,
-    IdentityModule,
+    IdentityModule.forPlatform(),
     ControlplaneModule,
     MdmModule,
     BackupModule,

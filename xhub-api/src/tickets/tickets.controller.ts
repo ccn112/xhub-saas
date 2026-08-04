@@ -3,18 +3,18 @@ import { TicketsService } from './tickets.service';
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 
 /**
  * Service Desk / Ticket API (PH-02c — NX-026). Tenant-scoped via
- * TenantScopeInterceptor (prisma.withTenant). Create is gated by `request.create`
+ * XofficeTenantScopeInterceptor (prisma.withTenant). Create is gated by `request.create`
  * (any employee can raise a ticket). Manage actions (triage/assign) → `ticket.manage`;
  * self-assign (claim) → `assign.self`; resolve → `ticket.resolve`; service
  * catalog writes → `service_catalog.manage`. List/detail/comment/attachment are
  * open (server still scopes by tenant); CSAT is requester-only (enforced in svc).
  */
 @Controller('api')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class TicketsController {
   constructor(private readonly svc: TicketsService) {}
 

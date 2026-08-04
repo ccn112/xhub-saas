@@ -3,7 +3,7 @@ import { BookingsService } from './bookings.service';
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 
 /**
  * Resource Booking API (PH-02d — NX-027). Tenant-scoped via
@@ -15,7 +15,7 @@ import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
  * the service and fires on both create and approve.
  */
 @Controller('api')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class BookingsController {
   constructor(private readonly svc: BookingsService) {}
 

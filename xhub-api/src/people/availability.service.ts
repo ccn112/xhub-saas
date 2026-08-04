@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { IdentityService } from '../identity/identity.service';
 
 /**
@@ -10,7 +10,7 @@ import { IdentityService } from '../identity/identity.service';
 @Injectable()
 export class AvailabilityService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly identity: IdentityService,
   ) {}
   private get db() {

@@ -138,7 +138,7 @@ const forbid = await post('/api/announcements', { title: 'Smoke — cấm', audi
 ok(forbid.status === 403, `non-COMM_ADMIN create → 403 (got ${forbid.status})`);
 
 // ---- self-clean: delete every smoke announcement + children -----------------
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

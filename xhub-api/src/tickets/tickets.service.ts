@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { RecordsService } from '../records/records.service';
 import { AssignmentResolver } from '../identity/assignment-resolver.service';
 import { IdentityService } from '../identity/identity.service';
@@ -27,7 +27,7 @@ const AGENT_ROLE = 'SERVICE_DESK_AGENT';
 @Injectable()
 export class TicketsService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly records: RecordsService,
     private readonly assignment: AssignmentResolver,
     private readonly identity: IdentityService,
@@ -99,6 +99,12 @@ export class TicketsService {
   }
 
   // ==== Ticket create ========================================================
+  /**
+   * `idempotencyKey` is OPTIONAL (Security audit 2026-08-04, SEC-003) — when
+   * supplied, a replayed create with the SAME key returns the original row
+   * instead of creating a duplicate. Callers that omit it get today's
+   * unchanged (non-deduplicated) behavior — backward compatible.
+   */
   async create(
     tenantId: string,
     actorId: string,
@@ -110,9 +116,15 @@ export class TicketsService {
       priority?: string;
       code?: string;
       requesterId?: string;
+      idempotencyKey?: string;
     },
   ) {
     if (!body?.title) throw new BadRequestException('title is required');
+    const idempotencyKey = body.idempotencyKey ? String(body.idempotencyKey) : undefined;
+    if (idempotencyKey) {
+      const existing = await this.db.ticket.findUnique({ where: { tenantId_idempotencyKey: { tenantId, idempotencyKey } } });
+      if (existing) return { ...this.decorate(existing), replayed: true };
+    }
 
     // Derive category + SLA from the catalog item (if given). slaDueAt =
     // now + defaultSlaHours — the SLA is data-driven from the catalog.
@@ -131,20 +143,30 @@ export class TicketsService {
     const code =
       body.code ?? `TK-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
     const requesterId = body.requesterId ?? actorId;
-    const ticket = await this.db.ticket.create({
-      data: {
-        tenantId,
-        code,
-        title: body.title,
-        description: body.description ?? null,
-        requesterId,
-        catalogItemId,
-        category,
-        priority: (body.priority ?? 'MEDIUM').toUpperCase(),
-        state: 'NEW',
-        slaDueAt,
-      },
-    });
+    let ticket;
+    try {
+      ticket = await this.db.ticket.create({
+        data: {
+          tenantId,
+          code,
+          title: body.title,
+          description: body.description ?? null,
+          requesterId,
+          catalogItemId,
+          category,
+          priority: (body.priority ?? 'MEDIUM').toUpperCase(),
+          state: 'NEW',
+          slaDueAt,
+          idempotencyKey: idempotencyKey ?? null,
+        },
+      });
+    } catch (e: any) {
+      if (idempotencyKey && e?.code === 'P2002') {
+        const existing = await this.db.ticket.findUnique({ where: { tenantId_idempotencyKey: { tenantId, idempotencyKey } } });
+        if (existing) return { ...this.decorate(existing), replayed: true };
+      }
+      throw e;
+    }
     await this.event(tenantId, ticket.id, 'created', actorId, { code, state: 'NEW', category, catalogItemId, slaDueAt });
     return this.decorate(ticket);
   }
@@ -213,9 +235,30 @@ export class TicketsService {
   }
 
   // ==== transitions ==========================================================
+  /**
+   * Object-level ownership gate for the transitions below (Security audit
+   * 2026-08-04 — these routes carry no @RequirePermission, so without this any
+   * authenticated tenant member could act on someone else's ticket, a BOLA).
+   * `triage` reaches here already gated by `ticket.manage` at the controller,
+   * so it skips this check (any manager may triage any new ticket).
+   */
+  private async assertTicketActor(t: any, actorId: string, action: TicketAction): Promise<void> {
+    if (action === 'triage') return;
+    if (action === 'cancel') {
+      if (actorId === t.requesterId) return;
+    } else if (actorId === t.assigneeId) {
+      return;
+    }
+    const decision = await this.prisma.withBypass(() => this.identity.can(actorId, 'ticket.manage'));
+    if (!decision.allowed) {
+      throw new ForbiddenException(`Only the assigned agent, the requester (cancel), or ticket.manage may ${action} this ticket.`);
+    }
+  }
+
   /** Generic state-only transition (triage / start / pending / resume / close / cancel). */
   async transition(tenantId: string, actorId: string, id: string, action: TicketAction, opts: { note?: string } = {}) {
     const t = await this.load(tenantId, id);
+    await this.assertTicketActor(t, actorId, action);
     const to = this.assertLegal(action, t.state);
     const data: any = { state: to };
     const updated = await this.db.ticket.update({ where: { id }, data });

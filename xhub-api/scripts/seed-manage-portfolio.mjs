@@ -30,7 +30,7 @@ const BENEFIT1_ID = 'mg04-seed-benefit-actclose';
 const BENEFIT2_ID = 'mg04-seed-benefit-nps';
 const PROJECT_ID = 'ep-seed-internal'; // EP-INT-001, from seed:work-projects
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

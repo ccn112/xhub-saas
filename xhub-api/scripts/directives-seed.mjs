@@ -36,7 +36,7 @@ const OU_BY_CODE = {
   IMPL: 'ou-impl',
 };
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 let inserted = 0;
 let skipped = 0;

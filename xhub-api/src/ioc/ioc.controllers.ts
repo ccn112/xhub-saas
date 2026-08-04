@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseIntercepto
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 import { IdentityService } from '../identity/identity.service';
 import { TwinStudioService } from './twin-studio.service';
 import { DataLayerService } from './data-layer.service';
@@ -12,7 +12,7 @@ import { IocInsightsService } from './insights.service';
 
 /**
  * XHub Enterprise IOC — HTTP surface. All routes under /api/ioc/*, tenant-scoped
- * via TenantScopeInterceptor (withTenant → RLS), permission-gated through the
+ * via XofficeTenantScopeInterceptor (withTenant → RLS), permission-gated through the
  * global PermissionGuard (no-op unless AUTH_ENFORCE). Thin controllers — all
  * logic lives in the services.
  *
@@ -44,7 +44,7 @@ async function heldPermissions(identity: IdentityService, id: RequestIdentity): 
 // ---- Twin Studio: sites / floors / plans ------------------------------------
 
 @Controller('api/ioc/sites')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class IocSitesController {
   constructor(private readonly svc: TwinStudioService) {}
 
@@ -68,7 +68,7 @@ export class IocSitesController {
 }
 
 @Controller('api/ioc/floor-plans')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class IocFloorPlansController {
   constructor(private readonly svc: TwinStudioService) {}
 
@@ -119,7 +119,7 @@ export class IocFloorPlansController {
 // ---- Twin Studio: scenes ----------------------------------------------------
 
 @Controller('api/ioc/scenes')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class IocScenesController {
   constructor(private readonly svc: TwinStudioService) {}
 
@@ -195,7 +195,7 @@ export class IocScenesController {
  * `ioc.studio.write`.
  */
 @Controller('api/ioc/templates')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class IocTemplatesController {
   constructor(private readonly svc: IocTemplateService) {}
 
@@ -220,7 +220,7 @@ export class IocTemplatesController {
 }
 
 @Controller('api/ioc/icons')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class IocIconsController {
   constructor(private readonly svc: TwinStudioService) {}
 
@@ -234,7 +234,7 @@ export class IocIconsController {
 // ---- Data layers ------------------------------------------------------------
 
 @Controller('api/ioc/data-layers')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class IocDataLayersController {
   constructor(
     private readonly svc: DataLayerService,
@@ -298,7 +298,7 @@ export class IocDataLayersController {
 // ---- Dashboards + IOC runtime ----------------------------------------------
 
 @Controller('api/ioc/dashboards')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class IocDashboardsController {
   constructor(private readonly svc: DashboardService) {}
 
@@ -346,7 +346,7 @@ export class IocDashboardsController {
 }
 
 @Controller('api/ioc/runtime')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class IocRuntimeController {
   constructor(
     private readonly svc: DashboardService,

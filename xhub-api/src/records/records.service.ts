@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { StorageService } from './storage.service';
 import { SECRET_FIELD_REGEX, assertNoSecretFields } from '../common/document-guards';
 import type { AddVersionDto, CreateDocumentDto } from './dto/document.dto';
@@ -21,7 +21,7 @@ import type { AddVersionDto, CreateDocumentDto } from './dto/document.dto';
 @Injectable()
 export class RecordsService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly storage: StorageService,
   ) {}
 

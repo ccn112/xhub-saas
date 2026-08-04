@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../prisma/prisma.module';
-import { IdentityModule } from '../identity/identity.module';
+import { XofficePrismaModule } from '../xoffice-prisma/xoffice-prisma.module';
 import { ManageModule } from '../manage/manage.module';
 import { XofficeModule } from '../xoffice/xoffice.module';
 import { PeopleModule } from '../people/people.module';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 import { TwinStudioService } from './twin-studio.service';
 import { DataLayerService } from './data-layer.service';
 import { DashboardService } from './dashboard.service';
@@ -30,11 +29,12 @@ import {
  * MetricObservation) through the compiled governed catalog. No dual-write, no
  * new business SoR, no direct DB access from the frontend.
  *
- * Reuses the shared RLS PrismaService + the XOffice TenantScopeInterceptor, and
- * IdentityService for the privacy gate on individual drill-down.
+ * Reuses the shared RLS XofficePrismaService + the XOffice XofficeTenantScopeInterceptor, and
+ * IdentityService (global provider, Stage C.5) for the privacy gate on
+ * individual drill-down.
  */
 @Module({
-  imports: [PrismaModule, IdentityModule, ManageModule, XofficeModule, PeopleModule],
+  imports: [XofficePrismaModule, ManageModule, XofficeModule, PeopleModule],
   controllers: [
     IocSitesController,
     IocFloorPlansController,
@@ -45,7 +45,7 @@ import {
     IocDashboardsController,
     IocRuntimeController,
   ],
-  providers: [TwinStudioService, DataLayerService, DashboardService, IocTemplateService, IocInsightsService, TenantScopeInterceptor],
+  providers: [TwinStudioService, DataLayerService, DashboardService, IocTemplateService, IocInsightsService, XofficeTenantScopeInterceptor],
   exports: [TwinStudioService, DataLayerService, DashboardService, IocTemplateService, IocInsightsService],
 })
 export class IocModule {}

@@ -41,7 +41,8 @@ const STATE_BY_STATUS = {
   NO_SHOW: 'NO_SHOW',
 };
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+// Phase 1.5 Stage C: Booking/BookableResource now live in the X.Office database.
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 let resInserted = 0;
 let resSkipped = 0;

@@ -51,7 +51,7 @@ const ICON_TENANT_SQL = `
     UNION SELECT "tenantId" FROM "IconAsset"
   ) t`;
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

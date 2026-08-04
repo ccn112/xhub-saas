@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { IdentityService } from '../identity/identity.service';
 import { ShiftService } from './shift.service';
 
@@ -17,7 +17,7 @@ function dateOnly(d: Date): Date {
 @Injectable()
 export class AttendanceDayService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly identity: IdentityService,
     private readonly shift: ShiftService,
   ) {}

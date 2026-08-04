@@ -42,7 +42,7 @@ const STATE_BY_STATUS = {
   CANCELLED: 'CANCELLED',
 };
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 let catInserted = 0;
 let catSkipped = 0;

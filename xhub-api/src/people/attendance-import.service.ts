@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { createHash } from 'node:crypto';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { AttendanceDayService } from './attendance-day.service';
 import { ATTENDANCE_IMPORT_TEMPLATE_VERSION } from './people.constants';
 
@@ -24,7 +24,7 @@ interface PreviewRow {
 @Injectable()
 export class AttendanceImportService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly attendanceDay: AttendanceDayService,
   ) {}
   private get db() {

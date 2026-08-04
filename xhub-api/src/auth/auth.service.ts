@@ -1,13 +1,15 @@
 import {
   BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../prisma/prisma.service';
+import { IDENTITY_PRISMA } from '../identity/identity-prisma.token';
+import type { IdentityPrismaClient } from '../identity/identity-prisma.token';
 import { SeedService } from '../seed/seed.service';
 import {
   DEFAULT_TENANT_ID,
@@ -89,7 +91,7 @@ export interface SessionResult {
 export class AuthService implements OnModuleInit {
   constructor(
     private readonly jwt: JwtService,
-    private readonly prisma: PrismaService,
+    @Inject(IDENTITY_PRISMA) private readonly prisma: IdentityPrismaClient,
     private readonly seed: SeedService,
   ) {}
 
@@ -143,7 +145,7 @@ export class AuthService implements OnModuleInit {
 
   private async membershipsFor(user: SeedUser): Promise<MembershipView[]> {
     // Cross-tenant read (all of a user's memberships) → shared identity plane, bypass RLS.
-    const rows = await this.prisma.withBypass(() =>
+    const rows = await this.prisma.withBypass<any[]>(() =>
       this.prisma.db.membership.findMany({
         where: { userId: user.id },
         orderBy: { createdAt: 'asc' },
@@ -199,9 +201,9 @@ export class AuthService implements OnModuleInit {
   }
 
   /** Resolve a DB-backed account (PersonProfile) by account id or email. */
-  private async findPerson(identifier: string) {
+  private async findPerson(identifier: string): Promise<any> {
     const id = identifier.trim();
-    return this.prisma.withBypass(async () => {
+    return this.prisma.withBypass<any>(async () => {
       const byId = await this.prisma.db.personProfile.findUnique({ where: { id } });
       if (byId) return byId;
       return this.prisma.db.personProfile.findFirst({
@@ -254,7 +256,7 @@ export class AuthService implements OnModuleInit {
     if (!person) throw new UnauthorizedException('Sai tài khoản hoặc mật khẩu');
     const userId = person.id;
     const tenantId = person.tenantId;
-    const cred = await this.prisma.withTenant(tenantId, () =>
+    const cred = await this.prisma.withTenant<any>(tenantId, () =>
       this.prisma.db.userCredential.findUnique({
         where: { tenantId_userId: { tenantId, userId } },
       }),
@@ -303,13 +305,13 @@ export class AuthService implements OnModuleInit {
 
   /** Admin: outstanding (unused, unexpired) INVITE tokens for the tenant. */
   async pendingInvites(tenantId: string): Promise<PendingInvite[]> {
-    return this.prisma.withTenant(tenantId, async () => {
-      const rows = await this.prisma.db.authToken.findMany({
+    return this.prisma.withTenant<PendingInvite[]>(tenantId, async () => {
+      const rows: any[] = await this.prisma.db.authToken.findMany({
         where: { kind: 'INVITE', usedAt: null, expiresAt: { gt: new Date() } },
         orderBy: { createdAt: 'desc' },
       });
       const ids = [...new Set(rows.map((r) => r.personId))];
-      const people = await this.prisma.db.personProfile.findMany({
+      const people: any[] = await this.prisma.db.personProfile.findMany({
         where: { id: { in: ids.length ? ids : ['__none__'] } },
       });
       const byId = new Map(people.map((p) => [p.id, p]));
@@ -324,10 +326,22 @@ export class AuthService implements OnModuleInit {
     });
   }
 
+  /**
+   * List every Membership row for a tenant (Stage C follow-up, 2026-08-04) —
+   * read source for IdentitySyncService's periodic X.Office cache pull.
+   * Mirrors the plain-read convention already used by /api/identity/role-bindings
+   * etc. (tenant-scoped by RLS, no extra permission gate).
+   */
+  async listMemberships(tenantId: string): Promise<Array<{ id: string; tenantId: string; userId: string; roles: string[]; status: string }>> {
+    return this.prisma.withTenant(tenantId, () =>
+      this.prisma.db.membership.findMany({ where: { tenantId } }),
+    );
+  }
+
   /** Look up + validate a raw one-time token (NEVER marks it used). */
   private async loadToken(rawToken: string, kind: 'INVITE' | 'RESET') {
     const hash = hashToken(rawToken);
-    const token = await this.prisma.withBypass(() =>
+    const token = await this.prisma.withBypass<any>(() =>
       this.prisma.db.authToken.findFirst({ where: { tokenHash: hash, kind } }),
     );
     if (!token) throw new BadRequestException('Token không hợp lệ');
@@ -419,7 +433,7 @@ export class AuthService implements OnModuleInit {
    */
   async sessionMembershipActive(userId: string, tenantId: string): Promise<boolean> {
     try {
-      const m = await this.prisma.withBypass(() =>
+      const m = await this.prisma.withBypass<any>(() =>
         this.prisma.db.membership.findFirst({ where: { userId, tenantId } }),
       );
       if (!m) return true;

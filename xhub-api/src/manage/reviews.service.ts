@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { MetricsService } from './metrics.service';
 import { ActionsService } from './actions.service';
 import { REVIEW_STATUSES, REVIEW_TYPES } from './manage.constants';
@@ -15,7 +15,7 @@ import { REVIEW_STATUSES, REVIEW_TYPES } from './manage.constants';
 @Injectable()
 export class ReviewsService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly metrics: MetricsService,
     private readonly actions: ActionsService,
   ) {}

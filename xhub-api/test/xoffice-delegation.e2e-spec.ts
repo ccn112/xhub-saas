@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { AppModule } from '../src/app.module';
-import { PrismaService } from '../src/prisma/prisma.service';
+import { XofficeAppModule } from '../src/xoffice-app.module';
+import { XofficePrismaService } from '../src/xoffice-prisma/xoffice-prisma.service';
 
 /**
  * Regression test for the G0 finding (Audit260803, SEC-002/GAP-002): an
@@ -22,10 +22,20 @@ import { PrismaService } from '../src/prisma/prisma.service';
  * and the `x-authz-enforce` test-only header to prove enforcement without
  * requiring AUTH_ENFORCE=true globally — same technique as
  * scripts/authz-smoke.mjs.
+ *
+ * Boots `XofficeAppModule` (not the legacy all-in-one `AppModule`): since
+ * Phase 1.5 Stage C physically split the DB, `AppModule` binds
+ * `IdentityModule.forPlatform()` while `xoffice.controller.ts` (this test's
+ * target) runs under `XofficeTenantScopeInterceptor`/`XofficePrismaService` —
+ * two different Prisma instances, so `IdentityService`'s `this.prisma.db` is
+ * unscoped/undefined for any call originating from an X.Office route.
+ * `XofficeAppModule` (the same composition root `main-xoffice.ts` boots in
+ * production) binds `IdentityModule.forXoffice()`, matching the interceptor
+ * that's actually active for these routes.
  */
 describe('X.Office delegation self-grant (e2e regression)', () => {
   let app: INestApplication<App>;
-  let prisma: PrismaService;
+  let prisma: XofficePrismaService;
   const createdDelegationIds: string[] = [];
 
   const ADMIN = { 'x-tenant-id': 'tenant-xtech', 'x-user-id': 'user-nam' };
@@ -34,11 +44,11 @@ describe('X.Office delegation self-grant (e2e regression)', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [XofficeAppModule],
     }).compile();
     app = moduleFixture.createNestApplication();
     await app.init();
-    prisma = moduleFixture.get(PrismaService);
+    prisma = moduleFixture.get(XofficePrismaService);
   });
 
   afterAll(async () => {

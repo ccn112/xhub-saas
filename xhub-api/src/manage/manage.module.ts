@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../prisma/prisma.module';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficePrismaModule } from '../xoffice-prisma/xoffice-prisma.module';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 import { ObjectivesService } from './objectives.service';
 import { MetricsService } from './metrics.service';
 import { ReviewsService } from './reviews.service';
@@ -31,12 +31,12 @@ import {
  * X.Office Management Operating System — MG-01 "reference slice". ONE management
  * loop end-to-end (Objective → Metric+Observation → Review → Decision → Action →
  * linked NativeWorkItem → follow-up), greenfield ALONGSIDE Work v2. Additive:
- * reuses the shared RLS PrismaService + XOffice TenantScopeInterceptor. Metric
+ * reuses the shared RLS XofficePrismaService + XOffice XofficeTenantScopeInterceptor. Metric
  * observations are COMPUTED from the existing NativeWorkItem data (read model,
  * #12) — no dual-write; the action bridge LINKS to NativeWorkItem (#13).
  */
 @Module({
-  imports: [PrismaModule],
+  imports: [XofficePrismaModule],
   controllers: [
     ObjectivesController,
     MetricsController,
@@ -63,7 +63,7 @@ import {
     PortfoliosService,
     InitiativesService,
     BenefitProfilesService,
-    TenantScopeInterceptor,
+    XofficeTenantScopeInterceptor,
   ],
   exports: [ObjectivesService, MetricsService, ReviewsService, DecisionsService, ActionsService, ScorecardsService, OkrService, KpiTreeService, PortfoliosService, InitiativesService, BenefitProfilesService],
 })

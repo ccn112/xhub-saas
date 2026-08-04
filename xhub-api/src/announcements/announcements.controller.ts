@@ -3,11 +3,11 @@ import { AnnouncementsService } from './announcements.service';
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 
 /**
  * Internal Announcement API (PH-02e — NX-028). Tenant-scoped via
- * TenantScopeInterceptor (prisma.withTenant). Authoring + lifecycle
+ * XofficeTenantScopeInterceptor (prisma.withTenant). Authoring + lifecycle
  * (create/publish/archive/cancel/remind) is gated by `announcement.publish`
  * (= COMM_ADMIN). Recipient actions (read / acknowledge) + list/detail/report are
  * open — every recipient can act (the server still scopes by tenant + receipt).
@@ -15,7 +15,7 @@ import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
  * AssignmentResolver / identity (never a hardcoded audience).
  */
 @Controller('api')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class AnnouncementsController {
   constructor(private readonly svc: AnnouncementsService) {}
 

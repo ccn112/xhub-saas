@@ -38,6 +38,22 @@ interface InboundInput {
 export class WebhookService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   * Enqueue an OutboxEvent on behalf of a caller in ANOTHER process (Stage
+   * C.5 — OutboxEvent stays Platform-only post-DB-split, so an X.Office
+   * process can no longer write it directly via its own Prisma client; see
+   * `/api/webhooks/outbox` + `src/common/outbox-http.client.ts`).
+   */
+  enqueueOutbox(
+    tenantId: string,
+    aggregateType: string,
+    aggregateId: string,
+    eventType: string,
+    payload: Record<string, unknown>,
+  ) {
+    return enqueueOutboxEvent(this.prisma, tenantId, aggregateType, aggregateId, eventType, payload);
+  }
+
   private get db() {
     return this.prisma.db;
   }

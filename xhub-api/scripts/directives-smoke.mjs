@@ -133,7 +133,7 @@ const forbidden = await post('/api/directives', { title: 'Smoke — enforce', au
 ok(forbidden.status === 403, `non-executive issue → 403 (got ${forbidden.status})`);
 
 // ---- self-clean: delete every smoke-created directive + children ----------
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

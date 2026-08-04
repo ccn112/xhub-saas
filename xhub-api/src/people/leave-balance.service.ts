@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 
 /**
  * LeaveBalanceSnapshot — APPEND-ONLY ledger (PE_SCHEMA_PLAN). Never UPDATEd:
@@ -11,7 +11,7 @@ import { PrismaService } from '../prisma/prisma.service';
  */
 @Injectable()
 export class LeaveBalanceService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: XofficePrismaService) {}
   private get db() {
     return this.prisma.db;
   }

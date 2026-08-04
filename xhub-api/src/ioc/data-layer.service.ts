@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import {
   BANNED_ENTITY_PATTERNS,
   REFRESH_POLICIES,
@@ -47,7 +47,7 @@ interface CompiledFilter {
 
 @Injectable()
 export class DataLayerService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: XofficePrismaService) {}
   private get db() {
     return this.prisma.db;
   }

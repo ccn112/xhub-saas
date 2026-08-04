@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../prisma/prisma.module';
-import { IdentityModule } from '../identity/identity.module';
+import { XofficePrismaModule } from '../xoffice-prisma/xoffice-prisma.module';
 import { XofficeModule } from '../xoffice/xoffice.module';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
+import { OutboxHttpClient } from '../common/outbox-http.client';
 import { PeopleConfigService } from './config.service';
 import { LeavePolicyService } from './leave-policy.service';
 import { LeaveBalanceService } from './leave-balance.service';
@@ -34,12 +34,12 @@ import {
  * People Essentials — PE-01 "Leave & Availability" + PE-02 "Attendance &
  * Correction". Operating mode SME Lite (PE-001, owner-approved 2026-08-01):
  * attendance enters ONLY via file import (no live clock device/connector).
- * Additive: reuses the shared RLS PrismaService, XOffice
- * TenantScopeInterceptor, and IdentityService (DataScope/Position/OrgUnit) —
- * no second ABAC or approval mechanism.
+ * Additive: reuses the shared RLS XofficePrismaService, XOffice
+ * XofficeTenantScopeInterceptor, and IdentityService (DataScope/Position/OrgUnit,
+ * global provider — Stage C.5) — no second ABAC or approval mechanism.
  */
 @Module({
-  imports: [PrismaModule, IdentityModule, XofficeModule],
+  imports: [XofficePrismaModule, XofficeModule],
   controllers: [
     PeopleConfigController,
     LeavePolicyController,
@@ -67,7 +67,8 @@ import {
     AttendanceDayService,
     AttendanceImportService,
     AttendanceCorrectionService,
-    TenantScopeInterceptor,
+    XofficeTenantScopeInterceptor,
+    OutboxHttpClient,
   ],
   exports: [PeopleConfigService, LeaveBalanceService, LeaveService, AvailabilityService, AttendanceDayService],
 })

@@ -4,16 +4,16 @@ import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
 import { isEnforcing } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 
 /**
- * Requests API (PH-02a — NX-020..024). Tenant-scoped via TenantScopeInterceptor
+ * Requests API (PH-02a — NX-020..024). Tenant-scoped via XofficeTenantScopeInterceptor
  * (prisma.withTenant). RBAC/ABAC gated by the global PermissionGuard through
  * @RequirePermission; the approve handler additionally enforces the amount ABAC
  * ceiling inside the service when enforcement is on.
  */
 @Controller('api/requests')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class RequestsController {
   constructor(private readonly svc: RequestsService) {}
 

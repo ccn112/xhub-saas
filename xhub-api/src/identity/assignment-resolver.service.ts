@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { IdentityService } from './identity.service';
+import { IDENTITY_PRISMA } from './identity-prisma.token';
+import type { IdentityPrismaClient } from './identity-prisma.token';
 
 export type SelectorType =
   | 'POSITION'
@@ -52,7 +53,7 @@ export interface ResolutionResult {
 @Injectable()
 export class AssignmentResolver {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject(IDENTITY_PRISMA) private readonly prisma: IdentityPrismaClient,
     private readonly identity: IdentityService,
   ) {}
 

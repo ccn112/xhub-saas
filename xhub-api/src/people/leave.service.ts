@@ -1,9 +1,9 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/xoffice-client';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { IdentityService } from '../identity/identity.service';
 import { XofficeService } from '../xoffice/xoffice.service';
-import { enqueueOutboxEvent } from '../common/outbox';
+import { OutboxHttpClient } from '../common/outbox-http.client';
 import { PeopleConfigService } from './config.service';
 import { LeaveBalanceService } from './leave-balance.service';
 import { LeaveImpactService } from './leave-impact.service';
@@ -14,19 +14,23 @@ import { computeLeaveDuration, resolveActingPerson, resolveApprovalAssignee } fr
  * LeaveRequest — the SoR object under SME Lite (PeopleTenantConfig.leaveMode
  * = XOFFICE). FSM enforced here (LEAVE_TRANSITIONS); overlap + balance +
  * SOR_NOT_XOFFICE guarded on write. Submitting spawns a WorkflowInstance +
- * ApprovalTask + OutboxEvent in the SAME request transaction as the status
- * change (TenantScopeInterceptor already opened one for the whole handler —
+ * ApprovalTask in the SAME request transaction as the status change
+ * (XofficeTenantScopeInterceptor already opened one for the whole handler —
  * see prisma.service.ts `db` getter), so it is never a partial write.
+ * OutboxEvent is enqueued separately via OutboxHttpClient — it stays a
+ * Platform-only table post-DB-split (Stage C.5), so this is a best-effort
+ * cross-process call, not part of the same transaction.
  */
 @Injectable()
 export class LeaveService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly identity: IdentityService,
     private readonly config: PeopleConfigService,
     private readonly balances: LeaveBalanceService,
     private readonly impact: LeaveImpactService,
     private readonly xoffice: XofficeService,
+    private readonly outbox: OutboxHttpClient,
   ) {}
   private get db() {
     return this.prisma.db;
@@ -217,9 +221,9 @@ export class LeaveService {
       sourceLeaveRequestId: leave.id,
     });
     await this.impact.capture(tenantId, userId, leave.id, person.id, startAt, endAt, 'ON_SUBMIT');
-    await enqueueOutboxEvent(
-      this.prisma,
+    await this.outbox.enqueue(
       tenantId,
+      userId,
       'LeaveRequest',
       leave.id,
       'xoffice.people.leave.request.submitted',
@@ -261,9 +265,9 @@ export class LeaveService {
     });
     await this.impact.capture(tenantId, userId, leave.id, leave.personId, leave.startAt, leave.endAt, 'ON_APPROVE');
     await this.closeApprovalTask(tenantId, leave, userId, 'approved');
-    await enqueueOutboxEvent(
-      this.prisma,
+    await this.outbox.enqueue(
       tenantId,
+      userId,
       'LeaveRequest',
       leave.id,
       'xoffice.people.availability.changed',

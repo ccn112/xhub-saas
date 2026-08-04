@@ -161,7 +161,7 @@ const forbidResolve = await post(`/api/tickets/${t4.body?.id}/resolve`, {}, empH
 ok(forbidResolve.status === 403, `non-resolver resolve → 403 (got ${forbidResolve.status})`);
 
 // ---- self-clean: delete every smoke ticket + children + smoke catalog -------
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

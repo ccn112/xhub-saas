@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { METRIC_DIRECTIONS, METRIC_SOURCE_SYSTEMS } from './manage.constants';
 
 /**
@@ -14,7 +14,7 @@ import { METRIC_DIRECTIONS, METRIC_SOURCE_SYSTEMS } from './manage.constants';
  */
 @Injectable()
 export class MetricsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: XofficePrismaService) {}
   private get db() {
     return this.prisma.db;
   }

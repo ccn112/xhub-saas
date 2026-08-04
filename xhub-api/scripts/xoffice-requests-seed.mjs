@@ -24,7 +24,7 @@ const rows = JSON.parse(readFileSync(seedPath, 'utf8'));
 
 const PROC_ROLE = { 'PILOT-02': 'CFO' };
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 let inserted = 0;
 let skipped = 0;

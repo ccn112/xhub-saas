@@ -135,7 +135,7 @@ try {
   r = await api('GET', `/api/ioc/data-layers/${created.layerId}/execute?scope=individual`);
   ok(r.status === 200 && r.json?.scope === 'individual', `AT-006: privileged actor is permitted individual scope (${r.status})`);
   {
-    const c0 = new pg.Client({ connectionString: process.env.DATABASE_URL });
+    const c0 = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
     await c0.connect();
     await c0.query("SELECT set_config('app.bypass_rls','on',false)");
     const n = Number((await c0.query(
@@ -197,7 +197,7 @@ try {
   ok(r.status === 404, `AT-001: other tenant cannot resolve the dashboard (${r.status})`);
 
   // cleanup -------------------------------------------------------------------
-  const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+  const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
   await c.connect();
   await c.query('BEGIN');
   await c.query("SELECT set_config('app.bypass_rls','on',true)");

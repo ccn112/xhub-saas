@@ -47,7 +47,7 @@ const currentValue = (mt) => {
   return Math.round(v * 100) / 100;
 };
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 let totals = { tenants: 0, objectives: 0, metrics: 0, observations: 0, okrObjectives: 0, keyResults: 0 };
 try {

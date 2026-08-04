@@ -22,6 +22,10 @@ import 'dotenv/config';
 import pg from 'pg';
 
 const BASE = process.env.XOFFICE_BASE || 'http://localhost:4000';
+// XOFFICE_BUSINESS tables/routes (OrgUnit/PersonProfile/BookableResource/Booking/
+// Ticket/Announcement + /api/announcements) moved to their own database/process
+// post-Stage-C DB split — see docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md.
+const BUSINESS_BASE = process.env.XOFFICE_BUSINESS_BASE || 'http://localhost:4001';
 const T002 = 'tenant-realestate-demo';
 const T001 = 'tenant-xtech';
 const ADMIN_ID = `${T002}-admin`;
@@ -31,16 +35,21 @@ const SECRET_FIELD_REGEX = /password|secret|token|apikey|api[_-]?key|credential|
 
 let failed = 0;
 const ok = (cond, msg) => { if (cond) console.log('  ✓ ' + msg); else { console.error('  ✗ ' + msg); failed++; } };
-const call = async (path, headers) => {
-  const r = await fetch(BASE + path, { headers });
+const call = async (path, headers, base = BASE) => {
+  const r = await fetch(base + path, { headers });
   const body = await r.json().catch(() => ({}));
   return { status: r.status, body };
 };
 // count under a given tenant's RLS context (bypass off).
 const db = new pg.Client({ connectionString: process.env.DATABASE_URL });
 await db.connect();
-const asTenant = async (tid) => { await db.query("SELECT set_config('app.bypass_rls','off',false)"); await db.query("SELECT set_config('app.current_tenant',$1,false)", [tid]); };
-const countAs = async (tid, sql, params = []) => { await asTenant(tid); return Number((await db.query(sql, params)).rows[0].n); };
+// XOFFICE_BUSINESS tables (OrgUnit/PersonProfile/BookableResource/Booking/
+// Ticket/Announcement) live in their own database post-Stage-C DB split.
+const xoffice = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
+await xoffice.connect();
+const asTenant = async (c, tid) => { await c.query("SELECT set_config('app.bypass_rls','off',false)"); await c.query("SELECT set_config('app.current_tenant',$1,false)", [tid]); };
+const countAs = async (tid, sql, params = []) => { await asTenant(db, tid); return Number((await db.query(sql, params)).rows[0].n); };
+const countAsX = async (tid, sql, params = []) => { await asTenant(xoffice, tid); return Number((await xoffice.query(sql, params)).rows[0].n); };
 
 console.log('T002 smoke @ ' + BASE);
 try {
@@ -52,32 +61,32 @@ try {
   ok(reg.body?.tenantClass === 'VERTICAL_DEMO', `registry class VERTICAL_DEMO (got ${reg.body?.tenantClass})`);
 
   // ---- B. data present (under T002 RLS context) -----------------------------
-  const orgUnits = await countAs(T002, `SELECT count(*)::int n FROM "OrgUnit" WHERE "tenantId"=$1`, [T002]);
+  const orgUnits = await countAsX(T002, `SELECT count(*)::int n FROM "OrgUnit" WHERE "tenantId"=$1`, [T002]);
   ok(orgUnits > 0, `T002 org units > 0 (got ${orgUnits})`);
-  const people = await countAs(T002, `SELECT count(*)::int n FROM "PersonProfile" WHERE "tenantId"=$1`, [T002]);
+  const people = await countAsX(T002, `SELECT count(*)::int n FROM "PersonProfile" WHERE "tenantId"=$1`, [T002]);
   ok(people >= 5, `T002 people (synthetic) present (got ${people})`);
   const apps = await countAs(T002, `SELECT count(*)::int n FROM "TenantApplicationInstance" WHERE "tenantId"=$1 AND status='enabled' AND "applicationCode"=ANY($2)`, [T002, ['x1', 'x2']]);
   ok(apps === 2, `T002 apps x1+x2 enabled (got ${apps})`);
-  const units = await countAs(T002, `SELECT count(*)::int n FROM "BookableResource" WHERE "tenantId"=$1 AND type='UNIT'`, [T002]);
+  const units = await countAsX(T002, `SELECT count(*)::int n FROM "BookableResource" WHERE "tenantId"=$1 AND type='UNIT'`, [T002]);
   ok(units >= 3, `T002 sale/booking units (XBooking proxy) > 0 (got ${units})`);
-  const bookings = await countAs(T002, `SELECT count(*)::int n FROM "Booking" WHERE "tenantId"=$1`, [T002]);
+  const bookings = await countAsX(T002, `SELECT count(*)::int n FROM "Booking" WHERE "tenantId"=$1`, [T002]);
   ok(bookings >= 2, `T002 bookings (giữ chỗ) > 0 (got ${bookings})`);
-  const tickets = await countAs(T002, `SELECT count(*)::int n FROM "Ticket" WHERE "tenantId"=$1`, [T002]);
+  const tickets = await countAsX(T002, `SELECT count(*)::int n FROM "Ticket" WHERE "tenantId"=$1`, [T002]);
   ok(tickets >= 2, `T002 operations tickets (XBuilding proxy) > 0 (got ${tickets})`);
-  const anns = await countAs(T002, `SELECT count(*)::int n FROM "Announcement" WHERE "tenantId"=$1`, [T002]);
+  const anns = await countAsX(T002, `SELECT count(*)::int n FROM "Announcement" WHERE "tenantId"=$1`, [T002]);
   ok(anns >= 2, `T002 operations announcements (XBuilding proxy) > 0 (got ${anns})`);
 
   // ---- C. identity resolution + sees ONLY T002 data (HTTP) ------------------
-  const t002Ann = await call('/api/announcements?scope=all', { 'content-type': 'application/json', 'x-tenant-id': T002, 'x-user-id': ADMIN_ID });
+  const t002Ann = await call('/api/announcements?scope=all', { 'content-type': 'application/json', 'x-tenant-id': T002, 'x-user-id': ADMIN_ID }, BUSINESS_BASE);
   const t002Codes = ((t002Ann.body?.items ?? t002Ann.body?.rows ?? t002Ann.body ?? []) || []).map((a) => a.code);
   ok(t002Ann.status === 200 && t002Codes.includes('TB-2026-001'), `T002 user sees T002 announcements (TB-2026-001) via /api/announcements (got ${t002Ann.status}, codes=${t002Codes.slice(0, 4)})`);
-  const t001Ann = await call('/api/announcements?scope=all', { 'content-type': 'application/json', 'x-tenant-id': T001, 'x-user-id': 'user-nam' });
+  const t001Ann = await call('/api/announcements?scope=all', { 'content-type': 'application/json', 'x-tenant-id': T001, 'x-user-id': 'user-nam' }, BUSINESS_BASE);
   const t001Codes = ((t001Ann.body?.items ?? t001Ann.body?.rows ?? t001Ann.body ?? []) || []).map((a) => a.code);
   ok(!t001Codes.includes('TB-2026-001'), `T001 user does NOT see T002 announcement codes (isolation via app identity)`);
 
   // ---- D. isolation MUST_NOT_LEAK (direct RLS, both directions) -------------
-  const t002SeesT001 = await countAs(T002, `SELECT count(*)::int n FROM "OrgUnit" WHERE "tenantId"=$1`, [T001]);
-  const t001SeesT002 = await countAs(T001, `SELECT count(*)::int n FROM "OrgUnit" WHERE "tenantId"=$1`, [T002]);
+  const t002SeesT001 = await countAsX(T002, `SELECT count(*)::int n FROM "OrgUnit" WHERE "tenantId"=$1`, [T001]);
+  const t001SeesT002 = await countAsX(T001, `SELECT count(*)::int n FROM "OrgUnit" WHERE "tenantId"=$1`, [T002]);
   ok(t002SeesT001 === 0 && t001SeesT002 === 0, `MUST_NOT_LEAK: T002→T001=${t002SeesT001}, T001→T002=${t001SeesT002}`);
 
   // ---- E. backup (own BackupJob) --------------------------------------------
@@ -115,6 +124,7 @@ try {
   failed++;
 } finally {
   await db.end();
+  await xoffice.end();
 }
 
 console.log(failed === 0 ? '\nT002 SMOKE PASSED' : `\nT002 SMOKE FAILED (${failed})`);

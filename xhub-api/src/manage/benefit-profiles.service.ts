@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 
 /**
  * BenefitProfile — MG-04. `status` is ALWAYS derived by this service from
@@ -9,7 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
  */
 @Injectable()
 export class BenefitProfilesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: XofficePrismaService) {}
   private get db() {
     return this.prisma.db;
   }

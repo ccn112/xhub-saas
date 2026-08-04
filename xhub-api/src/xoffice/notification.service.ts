@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { NotificationView } from './xoffice.types';
 
 export interface DispatchInput {
@@ -23,7 +23,7 @@ export interface DispatchInput {
  */
 @Injectable()
 export class NotificationService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: XofficePrismaService) {}
 
   private map(row: any): NotificationView {
     return {

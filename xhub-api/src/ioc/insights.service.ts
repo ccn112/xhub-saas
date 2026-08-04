@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { DashboardService } from './dashboard.service';
 import { MetricsService } from '../manage/metrics.service';
 import { XofficeService } from '../xoffice/xoffice.service';
@@ -82,7 +82,7 @@ export interface ZoneView {
 @Injectable()
 export class IocInsightsService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly dashboards: DashboardService,
     private readonly metrics: MetricsService,
     private readonly xoffice: XofficeService,

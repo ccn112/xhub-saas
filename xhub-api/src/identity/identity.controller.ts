@@ -27,6 +27,16 @@ export class IdentityController {
     return this.identity.orgUnitTree();
   }
 
+  /**
+   * Flat (non-tree) OrgUnit rows — for X.Office's identity-sync job (Phase 1.5
+   * Stage C.4), not for UI rendering. `orgUnits()` above shapes a tree, which
+   * a cache-sync consumer would just have to flatten back out.
+   */
+  @Get('org-units/flat')
+  orgUnitsFlat() {
+    return this.identity.listOrgUnitsFlat();
+  }
+
   @Get('positions')
   positions() {
     return this.identity.listPositions();
@@ -38,6 +48,7 @@ export class IdentityController {
    * cycle-guarded. Backward-compatible with the reparent-only { parentId } call.
    */
   @Patch('org-units/:id')
+  @RequirePermission('org.write')
   updateOrgUnit(
     @Param('id') id: string,
     @Body() body: { name?: string; type?: string; headId?: string | null; parentId?: string | null },
@@ -53,6 +64,7 @@ export class IdentityController {
 
   /** Create a child org unit. Tenant-scoped; 409 on duplicate code. */
   @Post('org-units')
+  @RequirePermission('org.write')
   createOrgUnit(
     @Body() body: { code: string; name: string; type: string; parentId: string | null },
     @Identity() identity: RequestIdentity,
@@ -62,6 +74,7 @@ export class IdentityController {
 
   /** Delete a leaf/empty org unit. Tenant-scoped; 409 if it has children/positions. */
   @Delete('org-units/:id')
+  @RequirePermission('org.write')
   deleteOrgUnit(@Param('id') id: string) {
     return this.identity.deleteOrgUnit(id);
   }
@@ -73,6 +86,7 @@ export class IdentityController {
    * PositionAssignment + syncs holderPersonId). Both may be present.
    */
   @Patch('positions/:id')
+  @RequirePermission('position.write')
   async movePosition(
     @Param('id') id: string,
     @Body() body: { orgUnitId?: string; holderPersonId?: string | null; effectiveFrom?: string | null; reason?: string | null },
@@ -135,6 +149,12 @@ export class IdentityController {
   @Get('role-bindings')
   roleBindings() {
     return this.identity.listRoleBindings();
+  }
+
+  /** Read-only, for X.Office's identity-sync job (Stage C.5) — same pattern as org-units/flat. */
+  @Get('permission-policies')
+  permissionPolicies() {
+    return this.identity.listPermissionPolicies();
   }
 
   /** Create a role binding (NX-011). Validates roleCode + subject; audits. */

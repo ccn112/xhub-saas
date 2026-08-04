@@ -3,17 +3,17 @@ import { DirectivesService } from './directives.service';
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 
 /**
- * Directives API (PH-02b — NX-025). Tenant-scoped via TenantScopeInterceptor
+ * Directives API (PH-02b — NX-025). Tenant-scoped via XofficeTenantScopeInterceptor
  * (prisma.withTenant). Issue/complete/cancel are gated by `directive.issue`
  * (EXECUTIVE) through the global PermissionGuard; assignee (commitment) actions
  * are open so any assigned member can act (server still scopes by tenant). List
  * + detail are readable so assignees can see directives addressed to them.
  */
 @Controller('api/directives')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class DirectivesController {
   constructor(private readonly svc: DirectivesService) {}
 

@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { RecordsService } from '../records/records.service';
 import { AssignmentResolver, Selector } from '../identity/assignment-resolver.service';
 import { IdentityService } from '../identity/identity.service';
@@ -27,12 +27,12 @@ const SUBJECT_TYPE = 'Directive';
  * resolved from org structure (NEVER hardcoded) into per-assignee Commitment
  * rows (DirectiveAssignment). Evidence reuses RecordDocument
  * (subjectType='Directive'). Runs inside the caller's withTenant(tenantId)
- * context (TenantScopeInterceptor) so every read/write is RLS-scoped.
+ * context (XofficeTenantScopeInterceptor) so every read/write is RLS-scoped.
  */
 @Injectable()
 export class DirectivesService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly records: RecordsService,
     private readonly assignment: AssignmentResolver,
     private readonly identity: IdentityService,
@@ -68,6 +68,12 @@ export class DirectivesService {
   }
 
   // ---- create (DRAFT) -------------------------------------------------------
+  /**
+   * `idempotencyKey` is OPTIONAL (Security audit 2026-08-04, SEC-003) — when
+   * supplied, a replayed create with the SAME key returns the original row
+   * instead of creating a duplicate. Callers that omit it get today's
+   * unchanged (non-deduplicated) behavior — backward compatible.
+   */
   async create(
     tenantId: string,
     actorId: string,
@@ -79,6 +85,7 @@ export class DirectivesService {
       priority?: string;
       dueAt?: string | null;
       code?: string;
+      idempotencyKey?: string;
     },
   ) {
     if (!body?.title) throw new BadRequestException('title is required');
@@ -86,22 +93,37 @@ export class DirectivesService {
     if (!['ORG_UNIT', 'POSITION', 'USER', 'GROUP'].includes(audienceType)) {
       throw new BadRequestException(`audienceType must be one of ORG_UNIT/POSITION/USER/GROUP (got ${audienceType})`);
     }
+    const idempotencyKey = body.idempotencyKey ? String(body.idempotencyKey) : undefined;
+    if (idempotencyKey) {
+      const existing = await this.db.directive.findUnique({ where: { tenantId_idempotencyKey: { tenantId, idempotencyKey } } });
+      if (existing) return { ...existing, replayed: true };
+    }
     const code =
       body.code ?? `DIR-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
-    const dir = await this.db.directive.create({
-      data: {
-        tenantId,
-        code,
-        title: body.title,
-        body: body.body ?? null,
-        issuerId: actorId,
-        audienceType,
-        audienceId: body.audienceId ?? null,
-        priority: (body.priority ?? 'NORMAL').toUpperCase(),
-        dueAt: body.dueAt ? new Date(body.dueAt) : null,
-        state: 'DRAFT',
-      },
-    });
+    let dir;
+    try {
+      dir = await this.db.directive.create({
+        data: {
+          tenantId,
+          code,
+          title: body.title,
+          body: body.body ?? null,
+          issuerId: actorId,
+          audienceType,
+          audienceId: body.audienceId ?? null,
+          priority: (body.priority ?? 'NORMAL').toUpperCase(),
+          dueAt: body.dueAt ? new Date(body.dueAt) : null,
+          state: 'DRAFT',
+          idempotencyKey: idempotencyKey ?? null,
+        },
+      });
+    } catch (e: any) {
+      if (idempotencyKey && e?.code === 'P2002') {
+        const existing = await this.db.directive.findUnique({ where: { tenantId_idempotencyKey: { tenantId, idempotencyKey } } });
+        if (existing) return { ...existing, replayed: true };
+      }
+      throw e;
+    }
     await this.event(tenantId, dir.id, 'created', actorId, { code, state: 'DRAFT', audienceType, audienceId: body.audienceId ?? null });
     return dir;
   }
@@ -318,6 +340,22 @@ export class DirectivesService {
   }
 
   // ---- commitment (per-assignee) transitions --------------------------------
+  /**
+   * Object-level ownership gate for acknowledge/start/submit (Security audit
+   * 2026-08-04 — these routes carry no @RequirePermission, so without this any
+   * authenticated tenant member could act on someone else's commitment, a
+   * BOLA). accept/return already require `directive.issue` at the controller
+   * (the issuer reviewing the commitment), so they skip this check.
+   */
+  private async assertCommitmentActor(a: any, actorId: string, action: CommitmentAction): Promise<void> {
+    if (action === 'accept' || action === 'return') return;
+    if (actorId === a.assigneeId) return;
+    const decision = await this.prisma.withBypass(() => this.identity.can(actorId, 'directive.issue'));
+    if (!decision.allowed) {
+      throw new ForbiddenException(`Only the assigned member or directive.issue may ${action} this commitment.`);
+    }
+  }
+
   async commitmentAct(
     tenantId: string,
     actorId: string,
@@ -328,6 +366,7 @@ export class DirectivesService {
   ) {
     const dir = await this.load(tenantId, id);
     const a = await this.loadAssignment(tenantId, id, aid);
+    await this.assertCommitmentActor(a, actorId, action);
     const to = this.assertCommitmentLegal(action, a.state);
 
     const data: any = { state: to };

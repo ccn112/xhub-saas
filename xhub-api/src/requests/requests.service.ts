@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { RecordsService } from '../records/records.service';
 import { AssignmentResolver } from '../identity/assignment-resolver.service';
 import { IdentityService } from '../identity/identity.service';
@@ -15,12 +15,12 @@ const SUBJECT_TYPE = 'Request';
  * hardcoded). Attachments reuse RecordDocument (subjectType='Request'); manual
  * external execution reuses the ExternalExecution MANUAL_TASK boundary (NO
  * fabricated ERP document). Runs inside the caller's withTenant(tenantId) context
- * (TenantScopeInterceptor) so every read/write is RLS-scoped.
+ * (XofficeTenantScopeInterceptor) so every read/write is RLS-scoped.
  */
 @Injectable()
 export class RequestsService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly records: RecordsService,
     private readonly assignment: AssignmentResolver,
     private readonly identity: IdentityService,
@@ -53,6 +53,12 @@ export class RequestsService {
   }
 
   // ---- create (DRAFT) -------------------------------------------------------
+  /**
+   * `idempotencyKey` is OPTIONAL (Security audit 2026-08-04, SEC-003) — when
+   * supplied, a replayed create with the SAME key returns the original row
+   * instead of creating a duplicate. Callers that omit it get today's
+   * unchanged (non-deduplicated) behavior — backward compatible.
+   */
   async create(
     tenantId: string,
     actorId: string,
@@ -66,27 +72,43 @@ export class RequestsService {
       currency?: string;
       orgUnitId?: string;
       payload?: Record<string, unknown>;
+      idempotencyKey?: string;
     },
   ) {
     if (!body?.title) throw new BadRequestException('title is required');
+    const idempotencyKey = body.idempotencyKey ? String(body.idempotencyKey) : undefined;
+    if (idempotencyKey) {
+      const existing = await this.db.request.findUnique({ where: { tenantId_idempotencyKey: { tenantId, idempotencyKey } } });
+      if (existing) return { ...existing, replayed: true };
+    }
     const code = `RQ-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
-    const req = await this.db.request.create({
-      data: {
-        tenantId,
-        code,
-        kind: body.kind ?? body.procedureCode ?? 'GENERIC',
-        procedureCode: body.procedureCode ?? 'GENERIC',
-        procedureName: body.procedureName ?? null,
-        title: body.title,
-        summary: body.summary ?? null,
-        requesterId: actorId,
-        orgUnitId: body.orgUnitId ?? null,
-        amount: body.amount ?? null,
-        currency: body.currency ?? 'VND',
-        state: 'DRAFT',
-        payload: (body.payload ?? {}) as any,
-      },
-    });
+    let req;
+    try {
+      req = await this.db.request.create({
+        data: {
+          tenantId,
+          code,
+          kind: body.kind ?? body.procedureCode ?? 'GENERIC',
+          procedureCode: body.procedureCode ?? 'GENERIC',
+          procedureName: body.procedureName ?? null,
+          title: body.title,
+          summary: body.summary ?? null,
+          requesterId: actorId,
+          orgUnitId: body.orgUnitId ?? null,
+          amount: body.amount ?? null,
+          currency: body.currency ?? 'VND',
+          state: 'DRAFT',
+          payload: (body.payload ?? {}) as any,
+          idempotencyKey: idempotencyKey ?? null,
+        },
+      });
+    } catch (e: any) {
+      if (idempotencyKey && e?.code === 'P2002') {
+        const existing = await this.db.request.findUnique({ where: { tenantId_idempotencyKey: { tenantId, idempotencyKey } } });
+        if (existing) return { ...existing, replayed: true };
+      }
+      throw e;
+    }
     await this.event(tenantId, req.id, 'created', actorId, { code, state: 'DRAFT' });
     return req;
   }
@@ -197,9 +219,11 @@ export class RequestsService {
     opts: { note?: string } = {},
   ) {
     const req = await this.load(tenantId, id);
-    // withdraw is requester-only.
-    if (action === 'withdraw' && req.requesterId !== actorId) {
-      throw new ForbiddenException('Only the requester may withdraw this request.');
+    // withdraw/resubmit/cancel are requester-only (Security audit 2026-08-04 —
+    // request.create is held by every employee, so without this any employee
+    // could withdraw/resubmit/cancel someone else's request, a BOLA).
+    if ((action === 'withdraw' || action === 'resubmit' || action === 'cancel') && req.requesterId !== actorId) {
+      throw new ForbiddenException(`Only the requester may ${action} this request.`);
     }
     const to = this.assertLegal(action, req.state);
     const updated = await this.db.request.update({ where: { id }, data: { state: to } });

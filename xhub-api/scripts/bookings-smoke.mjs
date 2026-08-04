@@ -151,7 +151,9 @@ const forbidRes = await post('/api/bookable-resources', { name: 'Smoke — cấm
 ok(forbidRes.status === 403, `non-manager add resource → 403 (got ${forbidRes.status})`);
 
 // ---- self-clean: delete every smoke booking + children + smoke resources -----
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+// Phase 1.5 Stage C: Booking/BookableResource + RecordDocument/DocumentVersion
+// all now live in the X.Office database.
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

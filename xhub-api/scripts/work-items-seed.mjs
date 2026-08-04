@@ -44,7 +44,7 @@ const items = [
   { id: 'wi-seed-015', type: 'TASK', title: 'Cập nhật runbook seed/test work-item', status: 'DONE', priority: 'LOW', progress: 100, tags: ['docs'], dim: { loai_viec: 'CHORE', giai_doan: 'UAT', nhom_chi_phi: 'OPEX', bo_phan: 'PMO' }, owner: OWNER, assignees: ['usr-cfo'], completedAt: d(-2) },
 ];
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 let dims = 0;
 let inserted = 0;

@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import type { PrismaService } from '../prisma/prisma.service';
+import type { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import type { IdentityService } from '../identity/identity.service';
 
 /**
@@ -50,7 +50,7 @@ export function computeLeaveDuration(
  * still surfaces (as a role queue) instead of being silently dropped.
  */
 export async function resolveApprovalAssignee(
-  prisma: PrismaService,
+  prisma: XofficePrismaService,
   tenantId: string,
   personId: string,
   identity: IdentityService,

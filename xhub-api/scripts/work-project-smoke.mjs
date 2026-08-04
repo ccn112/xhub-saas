@@ -181,7 +181,7 @@ const forbidden = await post('/api/work/projects', { code: `${PPREFIX}enforce`, 
 ok(forbidden.status === 403, `no work.project.create → 403 (got ${forbidden.status})`);
 
 // ---- self-clean -----------------------------------------------------------
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

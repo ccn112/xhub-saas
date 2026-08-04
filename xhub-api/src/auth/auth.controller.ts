@@ -118,6 +118,12 @@ export class AuthController {
     return this.auth.me(identity);
   }
 
+  /** Read source for IdentitySyncService's periodic X.Office cache pull. */
+  @Get('memberships')
+  memberships(@Identity() identity: RequestIdentity) {
+    return this.auth.listMemberships(identity.tenantId);
+  }
+
   /**
    * OIDC login start (SEAM — mock provider only in this build). When enabled,
    * redirects the browser to the IdP authorization URL. With MockOidcProvider

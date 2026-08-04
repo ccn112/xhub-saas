@@ -42,19 +42,29 @@ const createdEngIds = [];
 const createdLaunchIds = [];
 
 async function cleanup() {
+  // Phase 1.5 Stage C: Engagement/EngagementEvent/RecordDocument/DocumentVersion
+  // now live in the X.Office database; TenantLaunch + the throwaway target
+  // tenant's platform-side rows still live in XHub Platform's database (the
+  // Launch Factory itself hasn't migrated — Delivery calls it over HTTP).
+  const xo = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
+  await xo.connect();
+  await xo.query('BEGIN');
+  await xo.query("SELECT set_config('app.bypass_rls','on',true)");
+  const idRows = await xo.query(`SELECT id FROM "Engagement" WHERE id = ANY($1::text[]) OR code LIKE $2`, [createdEngIds, `${PREFIX}%`]);
+  const engIds = [...new Set([...createdEngIds, ...idRows.rows.map((r) => r.id)])];
+  if (engIds.length) {
+    await xo.query(`DELETE FROM "DocumentVersion" WHERE "documentId" IN (SELECT id FROM "RecordDocument" WHERE "subjectType"='Engagement' AND "subjectId" = ANY($1::text[]))`, [engIds]).catch(() => {});
+    await xo.query(`DELETE FROM "RecordDocument" WHERE "subjectType"='Engagement' AND "subjectId" = ANY($1::text[])`, [engIds]).catch(() => {});
+    await xo.query(`DELETE FROM "EngagementEvent" WHERE "engagementId" = ANY($1::text[])`, [engIds]).catch(() => {});
+    await xo.query(`DELETE FROM "Engagement" WHERE id = ANY($1::text[])`, [engIds]).catch(() => {});
+  }
+  await xo.query('COMMIT').catch(() => {});
+  await xo.end();
+
   const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
   await c.connect();
   await c.query('BEGIN');
   await c.query("SELECT set_config('app.bypass_rls','on',true)");
-  // Engagement plane (T001) — match this run's ids PLUS any prefix residue.
-  const idRows = await c.query(`SELECT id FROM "Engagement" WHERE id = ANY($1::text[]) OR code LIKE $2`, [createdEngIds, `${PREFIX}%`]);
-  const engIds = [...new Set([...createdEngIds, ...idRows.rows.map((r) => r.id)])];
-  if (engIds.length) {
-    await c.query(`DELETE FROM "DocumentVersion" WHERE "documentId" IN (SELECT id FROM "RecordDocument" WHERE "subjectType"='Engagement' AND "subjectId" = ANY($1::text[]))`, [engIds]).catch(() => {});
-    await c.query(`DELETE FROM "RecordDocument" WHERE "subjectType"='Engagement' AND "subjectId" = ANY($1::text[])`, [engIds]).catch(() => {});
-    await c.query(`DELETE FROM "EngagementEvent" WHERE "engagementId" = ANY($1::text[])`, [engIds]).catch(() => {});
-    await c.query(`DELETE FROM "Engagement" WHERE id = ANY($1::text[])`, [engIds]).catch(() => {});
-  }
   // Launch + throwaway target tenant plane.
   const launchRows = await c.query(`SELECT id FROM "TenantLaunch" WHERE "targetTenantId" = $1`, [TARGET]);
   const launchIds = [...new Set([...createdLaunchIds, ...launchRows.rows.map((r) => r.id)])];
@@ -149,22 +159,32 @@ try {
   ok((detail2.body?.events ?? []).some((e) => e.type === 'launch-triggered'), 'launch-triggered event in timeline');
 
   // ---- 6. NO DUAL-WRITE proof ----------------------------------------------
+  // Phase 1.5 Stage C: OrgUnit + launch.* AuditLog are written by the Launch
+  // Factory (XHub Platform's own DB); Engagement/EngagementEvent + engagement.*
+  // AuditLog are written by Delivery (X.Office's own DB) — 2 separate
+  // connections, each with its own AuditLog copy.
   const db = new pg.Client({ connectionString: process.env.DATABASE_URL });
   await db.connect();
   await db.query("SELECT set_config('app.bypass_rls','on',false)");
   const n = async (q, p) => Number((await db.query(q, p)).rows[0].n);
   const targetOrg = await n(`SELECT count(*)::int n FROM "OrgUnit" WHERE "tenantId"=$1`, [TARGET]);
   ok(targetOrg > 0, `launch wrote customer tenant business rows (OrgUnit=${targetOrg})`);
-  const engUnderTarget = await n(`SELECT count(*)::int n FROM "Engagement" WHERE "tenantId"=$1`, [TARGET]);
-  const engEvtUnderTarget = await n(`SELECT count(*)::int n FROM "EngagementEvent" WHERE "tenantId"=$1`, [TARGET]);
-  ok(engUnderTarget === 0 && engEvtUnderTarget === 0, `NO dual-write: 0 engagement rows under target tenant (Engagement=${engUnderTarget}, EngagementEvent=${engEvtUnderTarget})`);
-  const engAuditUnderTarget = await n(`SELECT count(*)::int n FROM "AuditLog" WHERE "tenantId"=$1 AND action LIKE 'engagement.%'`, [TARGET]);
   const launchAuditUnderTarget = await n(`SELECT count(*)::int n FROM "AuditLog" WHERE "tenantId"=$1 AND action LIKE 'launch.%'`, [TARGET]);
-  ok(engAuditUnderTarget === 0, `NO dual-write: 0 engagement.* audit under target (got ${engAuditUnderTarget})`);
   ok(launchAuditUnderTarget > 0, `customer tenant rows attributed to the LAUNCH only (launch.* audit=${launchAuditUnderTarget})`);
-  const engAuditUnderT001 = await n(`SELECT count(*)::int n FROM "AuditLog" WHERE "tenantId"='tenant-xtech' AND action='engagement.launch-triggered' AND "instanceCode"=$1`, [id]);
-  ok(engAuditUnderT001 > 0, 'engagement launch audit lives under T001 (not the customer tenant)');
   await db.end();
+
+  const xo2 = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
+  await xo2.connect();
+  await xo2.query("SELECT set_config('app.bypass_rls','on',false)");
+  const nx = async (q, p) => Number((await xo2.query(q, p)).rows[0].n);
+  const engUnderTarget = await nx(`SELECT count(*)::int n FROM "Engagement" WHERE "tenantId"=$1`, [TARGET]);
+  const engEvtUnderTarget = await nx(`SELECT count(*)::int n FROM "EngagementEvent" WHERE "tenantId"=$1`, [TARGET]);
+  ok(engUnderTarget === 0 && engEvtUnderTarget === 0, `NO dual-write: 0 engagement rows under target tenant (Engagement=${engUnderTarget}, EngagementEvent=${engEvtUnderTarget})`);
+  const engAuditUnderTarget = await nx(`SELECT count(*)::int n FROM "AuditLog" WHERE "tenantId"=$1 AND action LIKE 'engagement.%'`, [TARGET]);
+  ok(engAuditUnderTarget === 0, `NO dual-write: 0 engagement.* audit under target (got ${engAuditUnderTarget})`);
+  const engAuditUnderT001 = await nx(`SELECT count(*)::int n FROM "AuditLog" WHERE "tenantId"='tenant-xtech' AND action='engagement.launch-triggered' AND "instanceCode"=$1`, [id]);
+  ok(engAuditUnderT001 > 0, 'engagement launch audit lives under T001 (not the customer tenant)');
+  await xo2.end();
 
   // ---- 7. tenant isolation --------------------------------------------------
   const iso = await call('/api/delivery/engagements?pageSize=200', H('user-nam', { 'x-tenant-id': 'tenant-demo-isolation' }));
@@ -179,11 +199,16 @@ try {
   failed++;
 } finally {
   await cleanup();
+  let residue = 0;
+  const xo3 = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
+  await xo3.connect();
+  await xo3.query("SELECT set_config('app.bypass_rls','on',false)");
+  residue += Number((await xo3.query(`SELECT count(*)::int n FROM "Engagement" WHERE code LIKE $1`, [`${PREFIX}%`])).rows[0].n);
+  await xo3.end();
+
   const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
   await c.connect();
   await c.query("SELECT set_config('app.bypass_rls','on',false)");
-  let residue = 0;
-  residue += Number((await c.query(`SELECT count(*)::int n FROM "Engagement" WHERE code LIKE $1`, [`${PREFIX}%`])).rows[0].n);
   for (const t of ['TenantLaunch', 'OrgUnit', 'PersonProfile', 'Membership', 'BackupJob', 'AuditLog', 'Tenant']) {
     const col = t === 'TenantLaunch' ? 'targetTenantId' : t === 'Tenant' ? 'id' : 'tenantId';
     residue += Number((await c.query(`SELECT count(*)::int n FROM "${t}" WHERE "${col}"=$1`, [TARGET])).rows[0].n);

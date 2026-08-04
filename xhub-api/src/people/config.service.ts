@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { ATTENDANCE_MODES, LEAVE_MODES, PAYROLL_MODES } from './people.constants';
 
 /**
@@ -10,7 +10,7 @@ import { ATTENDANCE_MODES, LEAVE_MODES, PAYROLL_MODES } from './people.constants
  */
 @Injectable()
 export class PeopleConfigService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: XofficePrismaService) {}
   private get db() {
     return this.prisma.db;
   }

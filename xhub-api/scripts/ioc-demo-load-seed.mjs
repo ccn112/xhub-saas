@@ -59,7 +59,7 @@ const HANDOFF_PLAN = [
   { from: 'usr-hr-head', to: 'usr-ceo', n: 2, title: 'Trình duyệt kế hoạch tuyển dụng' },
 ];
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

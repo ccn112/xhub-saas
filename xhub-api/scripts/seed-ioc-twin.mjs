@@ -70,7 +70,7 @@ const PLAN_ID = 'ioc-plan-xtech-hq-f5';
 const SCENE_ID = 'ioc-scene-xtech-hq-f5';
 const DASH_ID = 'ioc-dash-office';
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

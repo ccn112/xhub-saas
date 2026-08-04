@@ -3,16 +3,16 @@ import { WorkProjectsService } from './work-projects.service';
 import { RequirePermission } from '../../auth/require-permission.decorator';
 import { Identity } from '../../auth/identity.decorator';
 import type { RequestIdentity } from '../../auth/identity.types';
-import { TenantScopeInterceptor } from '../../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../../common/xoffice-tenant-scope.interceptor';
 
 /**
  * ExecutionProject API (X.Office Work v2 — W2). Tenant-scoped via
- * TenantScopeInterceptor (prisma.withTenant → RLS). Writes gated by
+ * XofficeTenantScopeInterceptor (prisma.withTenant → RLS). Writes gated by
  * `work.project.*` / `work.item.update`; the detail/gantt reads let the SERVICE
  * decide FULL vs SUMMARY per actor (CoordinationShare — owner requirement #1).
  */
 @Controller('api/work/projects')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class WorkProjectsController {
   constructor(private readonly svc: WorkProjectsService) {}
 

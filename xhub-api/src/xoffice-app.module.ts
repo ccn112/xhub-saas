@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { SeedModule } from './seed/seed.module';
 import { IdentityModule } from './identity/identity.module';
@@ -19,13 +18,16 @@ import { WorkModule } from './work/work.module';
 import { ManageModule } from './manage/manage.module';
 import { IocModule } from './ioc/ioc.module';
 import { PeopleModule } from './people/people.module';
+import { IdentitySyncModule } from './identity-sync/identity-sync.module';
 
 /**
  * X.Office process — Phase 1.5 Stage B composition root. Carries the
  * XOFFICE_BUSINESS module group (workflow engine, requests/directives/
  * tickets/bookings/announcements, records, delivery, work, manage, ioc,
- * people) plus the SHARED library modules (prisma/auth/seed/identity) every
- * process needs for its own guards + tenant/identity resolution. Also carries
+ * people) plus the SHARED library modules (auth/seed/identity — no direct
+ * `PrismaModule` import: nothing here needs the Platform database anymore,
+ * see auth.module.ts's Stage C follow-up note) every process needs for its
+ * own guards + tenant/identity resolution. Also carries
  * the two small AMBIGUOUS modules (preferences, testruns) — low-stakes,
  * revisit placement if it turns out wrong. Boots via `main-xoffice.ts`. See
  * docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md Phase 1.5 Stage B for
@@ -33,10 +35,9 @@ import { PeopleModule } from './people/people.module';
  */
 @Module({
   imports: [
-    PrismaModule,
-    AuthModule,
+    AuthModule.forXoffice(),
     SeedModule,
-    IdentityModule,
+    IdentityModule.forXoffice(),
     PreferencesModule,
     TestRunsModule,
     XofficeModule,
@@ -51,6 +52,7 @@ import { PeopleModule } from './people/people.module';
     ManageModule,
     IocModule,
     PeopleModule,
+    IdentitySyncModule,
   ],
   controllers: [AppController],
   providers: [AppService],

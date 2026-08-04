@@ -7,7 +7,7 @@ import 'dotenv/config';
 import pg from 'pg';
 
 const TENANT = 'tenant-xtech';
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

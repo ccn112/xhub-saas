@@ -51,7 +51,8 @@ const ENGAGEMENTS = [
   },
 ];
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+// Phase 1.5 Stage C: Engagement now lives in the X.Office database.
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 let inserted = 0;
 let skipped = 0;

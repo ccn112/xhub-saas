@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import Anthropic from '@anthropic-ai/sdk';
 import Ajv2020, { ValidateFunction } from 'ajv/dist/2020';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import {
   ApprovalTask,
   AuditEvent,
@@ -64,7 +64,7 @@ export class XofficeService implements OnModuleInit {
   private anthropic?: Anthropic;
 
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly notifications: NotificationService,
     private readonly assignmentResolver: AssignmentResolver,
     private readonly identity: IdentityService,
@@ -101,21 +101,10 @@ export class XofficeService implements OnModuleInit {
     await this.prisma.withBypass(async () => {
     const defs: WorkflowDefinitionDocument[] = read('workflow-definitions.json');
 
-    // Tenants referenced by seed (xtech + the isolation canary).
-    const slugs = new Set<string>();
-    for (const d of defs) slugs.add(d.metadata.tenantSlug);
-    slugs.add('xtech');
-    for (const slug of slugs) {
-      const tenantId = this.tenantId(slug);
-      // The DISPLAY NAME is registry-owned (Tenant registry) — do NOT clobber it
-      // on update; only ensure the row + slug exist. On first create use a
-      // human-friendly default (xtech → "XTech") that the registry can override.
-      await this.prisma.db.tenant.upsert({
-        where: { id: tenantId },
-        update: { slug },
-        create: { id: tenantId, slug, name: slug === 'xtech' ? 'XTech' : slug },
-      });
-    }
+    // Tenant rows themselves are Platform-canonical (Stage C DB split — no
+    // Tenant model in X.Office's own schema) and are already ensured to exist
+    // by Platform's own tenant registry/seed; Workflow.tenantId is a bare
+    // string with no FK (Stage C.1), so seeding here only needs the id.
 
     // Workflows + immutable v1 version.
     for (const d of defs) {
@@ -2314,7 +2303,7 @@ export class XofficeService implements OnModuleInit {
    * X.Office — see the XHub/X.Office boundary-cleanup plan,
    * `docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md` Phase 1.5 Stage A.
    * Caller must run this inside the same request transaction (`this.prisma.db`
-   * already is, via TenantScopeInterceptor) so it commits atomically with the
+   * already is, via XofficeTenantScopeInterceptor) so it commits atomically with the
    * caller's own status change.
    */
   async spawnLightweightApprovalTask(

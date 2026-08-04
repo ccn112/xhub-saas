@@ -6,6 +6,13 @@ on:
     branches: [main]
 
 jobs:
+  # Phase 1.5 Stage C (2026-08-04): XHub Platform and X.Office are now two
+  # physically separate Postgres databases (`xhub`, `xoffice`) as well as two
+  # processes. This job boots ONE Postgres service container hosting BOTH
+  # databases (mirrors local dev: one Postgres server, two DBs, matching
+  # prisma.config.ts / prisma-xoffice.config.ts's separate connection
+  # strings) — see the "Create X.Office database" step below for how the
+  # second database gets created (POSTGRES_DB only auto-creates the first).
   xhub-api:
     runs-on: ubuntu-latest
     defaults:
@@ -31,6 +38,13 @@ jobs:
       # Disposable — only used by `prisma migrate diff --from-migrations` to
       # detect schema/migration drift. Never a real dev/prod database.
       SHADOW_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/xhub_shadow?schema=public
+      # X.Office's own physically separate database (Phase 1.5 Stage C).
+      # Same Postgres server/container as above, different database name —
+      # created explicitly by the "Create X.Office database" step since
+      # POSTGRES_DB only auto-creates `xhub`. Read by prisma-xoffice.config.ts
+      # and by XofficePrismaService directly (src/xoffice-prisma/xoffice-prisma.service.ts).
+      XOFFICE_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/xoffice?schema=public
+      XOFFICE_SHADOW_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/xoffice_shadow?schema=public
       AUTH_JWT_SECRET: ci-only-jwt-secret-not-for-any-real-environment
       BACKUP_ENCRYPTION_KEY: MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE=
       WEBHOOK_SIGNING_SECRET: ci-only-webhook-secret
@@ -58,17 +72,41 @@ jobs:
 
       - run: npm ci
 
+      - name: Secret scan (fails if a secret pattern is found outside .env)
+        run: npm run scan:secrets
+
+      - name: Dependency vulnerability scan (SCA — high/critical gate)
+        run: npm audit --audit-level=high
+
+      # Only `xhub` (POSTGRES_DB above) exists yet. `xoffice`'s own shadow DB
+      # is created on demand by `prisma migrate diff` itself (same as
+      # `xhub_shadow` today) since the `postgres` superuser has CREATEDB.
+      - name: Create X.Office database (Phase 1.5 Stage C — second physical DB)
+        run: PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE xoffice;"
+
       - name: Prisma generate
         run: npx prisma generate
+
+      - name: Prisma generate (X.Office)
+        run: npx prisma generate --config prisma-xoffice.config.ts
 
       - name: Clean-bootstrap test — apply migrations to a brand-new DB
         run: npx prisma migrate deploy
 
+      - name: Clean-bootstrap test — apply X.Office migrations to a brand-new DB
+        run: npx prisma migrate deploy --config prisma-xoffice.config.ts
+
       - name: Migration/schema drift check
         run: npm run migrate:drift-check
 
+      - name: X.Office migration/schema drift check
+        run: npx prisma migrate diff --config prisma-xoffice.config.ts --from-migrations prisma-xoffice/migrations --to-schema prisma-xoffice/schema.prisma --exit-code
+
       - name: Apply RLS policies
         run: node scripts/rls-setup.mjs
+
+      - name: Apply RLS policies (X.Office)
+        run: node scripts/rls-setup-xoffice.mjs
 
       - name: Build
         run: npm run build
@@ -114,6 +152,7 @@ jobs:
           XOFFICE_BASE: http://localhost:4001
         run: |
           npm run seed:roles
+          npm run seed:roles-xoffice
           npm run seed:accounts
           npm run seed:person-avatars
           npm run seed:tenant-registry
@@ -194,7 +233,9 @@ jobs:
       - name: RLS / isolation / roles / misc smokes (no server dependency)
         run: |
           npm run test:rls
+          npm run test:rls-xoffice
           npm run test:isolation
+          npm run test:db-split
           npm run test:xoffice
           npm run test:roles
           npm run test:condition

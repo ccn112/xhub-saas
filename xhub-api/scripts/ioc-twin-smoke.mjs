@@ -16,6 +16,9 @@ import 'dotenv/config';
 import pg from 'pg';
 
 const BASE = process.env.XOFFICE_BASE || 'http://localhost:4000';
+// /api/identity/* is Platform-only post-Stage-C.5 (IdentityController is not
+// registered in the X.Office process) — org-units must be fetched from there.
+const PLATFORM_BASE = process.env.PLATFORM_API_URL || 'http://localhost:4000';
 const TENANT = 'tenant-xtech';
 const OTHER = 'tenant-demo-isolation';
 const H = (t = TENANT) => ({ 'content-type': 'application/json', 'x-tenant-id': t, 'x-user-id': 'user-nam' });
@@ -32,13 +35,19 @@ async function api(method, path, body, tenant = TENANT) {
   let json; try { json = text ? JSON.parse(text) : null; } catch { json = text; }
   return { status: res.status, json };
 }
+async function platformApi(method, path, body, tenant = TENANT) {
+  const res = await fetch(PLATFORM_BASE + path, { method, headers: H(tenant), body: body ? JSON.stringify(body) : undefined });
+  const text = await res.text();
+  let json; try { json = text ? JSON.parse(text) : null; } catch { json = text; }
+  return { status: res.status, json };
+}
 
 const created = { siteId: null, floorId: null, planId: null, sceneId: null };
 console.log(`ioc-twin smoke @ ${BASE} (mark=${MARK})`);
 
 try {
   // 0) real org units (the binding target must be a REAL entity) ---------------
-  let r = await api('GET', '/api/identity/org-units');
+  let r = await platformApi('GET', '/api/identity/org-units');
   const orgUnits = r.json?.items ?? r.json?.orgUnits ?? (Array.isArray(r.json) ? r.json : []);
   ok(Array.isArray(orgUnits) && orgUnits.length >= 2, `identity exposes ${orgUnits.length} org units for binding`);
   const orgA = orgUnits[0];
@@ -185,7 +194,7 @@ try {
   ok(Object.keys(r.json?.dataLayers ?? {}).length >= 3, 'seeded dashboard resolves its 3 data layers');
 
   // 11) publish/rollback are audited -----------------------------------------
-  const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+  const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
   await c.connect();
   await c.query("SELECT set_config('app.bypass_rls','on',false)");
   const audits = (await c.query(

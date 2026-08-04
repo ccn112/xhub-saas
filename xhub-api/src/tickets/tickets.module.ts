@@ -1,21 +1,21 @@
 import { Module } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { TicketsController } from './tickets.controller';
-import { PrismaModule } from '../prisma/prisma.module';
+import { XofficePrismaModule } from '../xoffice-prisma/xoffice-prisma.module';
 import { RecordsModule } from '../records/records.module';
-import { IdentityModule } from '../identity/identity.module';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 
 /**
  * Tickets / Service Desk module (PH-02c — NX-026). Additive. Reuses:
- *  - RecordsModule  → attachments (RecordDocument subjectType=Ticket)
- *  - IdentityModule → AssignmentResolver (agent-queue routing) + IdentityService
- *  - the shared RLS PrismaService (tenant-scoped) + XOffice TenantScopeInterceptor.
+ *  - RecordsModule → attachments (RecordDocument subjectType=Ticket)
+ *  - AssignmentResolver (agent-queue routing) + IdentityService — global
+ *    providers from IdentityModule.forPlatform()/forXoffice() (Stage C.5).
+ *  - the shared RLS XofficePrismaService (tenant-scoped) + XOffice XofficeTenantScopeInterceptor.
  */
 @Module({
-  imports: [PrismaModule, RecordsModule, IdentityModule],
+  imports: [XofficePrismaModule, RecordsModule],
   controllers: [TicketsController],
-  providers: [TicketsService, TenantScopeInterceptor],
+  providers: [TicketsService, XofficeTenantScopeInterceptor],
   exports: [TicketsService],
 })
 export class TicketsModule {}

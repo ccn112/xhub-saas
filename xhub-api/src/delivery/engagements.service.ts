@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { RecordsService } from '../records/records.service';
 import { LaunchFactoryClient } from './launch-factory.client';
 import {
@@ -31,7 +31,7 @@ const SUBJECT_TYPE = 'Engagement';
 @Injectable()
 export class EngagementsService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly records: RecordsService,
     private readonly launch: LaunchFactoryClient,
   ) {}

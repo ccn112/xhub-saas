@@ -34,7 +34,7 @@ const WBS = {
   extra: ['wi-seed-001', 'wi-seed-004'],
 };
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

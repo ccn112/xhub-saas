@@ -154,7 +154,7 @@ const bad2 = await post(`/api/work/items/${A}/schedule`, { plannedStart: new Dat
 ok(bad2.status === 400, `start-after-finish rejected → 400 (got ${bad2.status})`);
 
 // ---- self-clean -----------------------------------------------------------
-const cl = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const cl = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await cl.connect();
 try {
   await cl.query('BEGIN');

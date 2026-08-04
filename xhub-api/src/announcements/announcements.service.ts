@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { RecordsService } from '../records/records.service';
 import { AssignmentResolver } from '../identity/assignment-resolver.service';
 import { IdentityService } from '../identity/identity.service';
@@ -31,7 +31,7 @@ const SUBJECT_TYPE = 'Announcement';
 @Injectable()
 export class AnnouncementsService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly records: RecordsService,
     private readonly assignment: AssignmentResolver,
     private readonly identity: IdentityService,
@@ -83,6 +83,12 @@ export class AnnouncementsService {
   }
 
   // ==== create ===============================================================
+  /**
+   * `idempotencyKey` is OPTIONAL (Security audit 2026-08-04, SEC-003) — when
+   * supplied, a replayed create with the SAME key returns the original row
+   * instead of creating a duplicate. Callers that omit it get today's
+   * unchanged (non-deduplicated) behavior — backward compatible.
+   */
   async create(
     tenantId: string,
     actorId: string,
@@ -97,6 +103,7 @@ export class AnnouncementsService {
       expireAt?: string;
       code?: string;
       authorId?: string;
+      idempotencyKey?: string;
     },
   ) {
     if (!body?.title) throw new BadRequestException('title is required');
@@ -108,24 +115,39 @@ export class AnnouncementsService {
     if (audienceType !== 'ALL' && !body.audienceId) {
       throw new BadRequestException(`audienceId is required for audienceType '${audienceType}'`);
     }
+    const idempotencyKey = body.idempotencyKey ? String(body.idempotencyKey) : undefined;
+    if (idempotencyKey) {
+      const existing = await this.db.announcement.findUnique({ where: { tenantId_idempotencyKey: { tenantId, idempotencyKey } } });
+      if (existing) return { ...this.decorate(existing), replayed: true };
+    }
     const code =
       body.code ?? `ANN-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
-    const ann = await this.db.announcement.create({
-      data: {
-        tenantId,
-        code,
-        title: body.title,
-        body: body.body ?? null,
-        authorId: body.authorId ?? actorId,
-        audienceType,
-        audienceId: audienceType === 'ALL' ? null : body.audienceId ?? null,
-        priority: (body.priority ?? 'NORMAL').toUpperCase(),
-        requireAck: !!body.requireAck,
-        publishAt: body.publishAt ? new Date(body.publishAt) : null,
-        expireAt: body.expireAt ? new Date(body.expireAt) : null,
-        state: 'DRAFT',
-      },
-    });
+    let ann;
+    try {
+      ann = await this.db.announcement.create({
+        data: {
+          tenantId,
+          code,
+          title: body.title,
+          body: body.body ?? null,
+          authorId: body.authorId ?? actorId,
+          audienceType,
+          audienceId: audienceType === 'ALL' ? null : body.audienceId ?? null,
+          priority: (body.priority ?? 'NORMAL').toUpperCase(),
+          requireAck: !!body.requireAck,
+          publishAt: body.publishAt ? new Date(body.publishAt) : null,
+          expireAt: body.expireAt ? new Date(body.expireAt) : null,
+          state: 'DRAFT',
+          idempotencyKey: idempotencyKey ?? null,
+        },
+      });
+    } catch (e: any) {
+      if (idempotencyKey && e?.code === 'P2002') {
+        const existing = await this.db.announcement.findUnique({ where: { tenantId_idempotencyKey: { tenantId, idempotencyKey } } });
+        if (existing) return { ...this.decorate(existing), replayed: true };
+      }
+      throw e;
+    }
     await this.event(tenantId, ann.id, 'created', actorId, { code, audienceType, requireAck: !!body.requireAck });
     return this.decorate(ann);
   }

@@ -3,6 +3,7 @@ import { MdmService } from './mdm.service';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
 import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { RequirePermission } from '../auth/require-permission.decorator';
 
 /**
  * Shared Master Data Hub (MDM) API. Tenant-scoped: TenantScopeInterceptor wraps
@@ -10,6 +11,8 @@ import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
  * tables (SourceRecord / ImportJob / DuplicatePair / TenantMasterOverlay) are
  * RLS-scoped. MasterRecord is the shared platform canonical — its visibility is
  * filtered in the service by tenantId + visibility (never per-tenant duplicated).
+ * Mutations gated by `mdm.manage` (DATA_STEWARD role) — Security audit
+ * 2026-08-04, previously 0/9 routes had any permission gate.
  */
 @Controller('api/mdm')
 @UseInterceptors(TenantScopeInterceptor)
@@ -18,6 +21,7 @@ export class MdmController {
 
   // ---- ingestion -----------------------------------------------------------
   @Post('import-jobs')
+  @RequirePermission('mdm.manage')
   createImportJob(
     @Body()
     body: { sourceSystem?: string; domain?: string; records?: Record<string, any>[] },
@@ -47,6 +51,7 @@ export class MdmController {
   }
 
   @Post('import-jobs/:id/commit')
+  @RequirePermission('mdm.manage')
   commit(@Param('id') jobId: string, @Identity() id: RequestIdentity) {
     return this.mdm.commitJob(id.tenantId, jobId);
   }
@@ -78,6 +83,7 @@ export class MdmController {
   }
 
   @Post('duplicate-pairs/:id/resolve')
+  @RequirePermission('mdm.manage')
   resolveDuplicate(
     @Param('id') pairId: string,
     @Body() body: { decision: 'merge' | 'keep_separate' },
@@ -93,6 +99,7 @@ export class MdmController {
   }
 
   @Put('tenant-overlays')
+  @RequirePermission('mdm.manage')
   putOverlay(
     @Body()
     body: {

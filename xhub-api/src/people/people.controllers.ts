@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Patch, Post, Query, UseInterceptors } fro
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 import { PeopleConfigService } from './config.service';
 import { LeavePolicyService } from './leave-policy.service';
 import { LeaveBalanceService } from './leave-balance.service';
@@ -19,7 +19,7 @@ import { AttendanceCorrectionService } from './attendance-correction.service';
 
 /**
  * People Essentials — PE-01 (Leave & Availability) API. All routes under
- * /api/people/*, tenant-scoped via TenantScopeInterceptor (withTenant → RLS),
+ * /api/people/*, tenant-scoped via XofficeTenantScopeInterceptor (withTenant → RLS),
  * permission-gated through the global PermissionGuard (no-op unless
  * AUTH_ENFORCE). Thin controllers — logic lives in the services. Mirrors
  * ../manage/manage.controllers.ts convention exactly.
@@ -32,7 +32,7 @@ function user(id: RequestIdentity): string {
 }
 
 @Controller('api/people/config')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class PeopleConfigController {
   constructor(private readonly svc: PeopleConfigService) {}
 
@@ -50,7 +50,7 @@ export class PeopleConfigController {
 }
 
 @Controller('api/people/leave-policies')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class LeavePolicyController {
   constructor(private readonly svc: LeavePolicyService) {}
 
@@ -68,7 +68,7 @@ export class LeavePolicyController {
 }
 
 @Controller('api/people/me')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class PeopleMeController {
   constructor(
     private readonly balances: LeaveBalanceService,
@@ -84,7 +84,7 @@ export class PeopleMeController {
 }
 
 @Controller('api/people/leave-requests')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class LeaveRequestsController {
   constructor(private readonly svc: LeaveService) {}
 
@@ -150,7 +150,7 @@ export class LeaveRequestsController {
 }
 
 @Controller('api/people/team')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class PeopleTeamController {
   constructor(
     private readonly leave: LeaveService,
@@ -184,7 +184,7 @@ export class PeopleTeamController {
 }
 
 @Controller('api/people/overtime-requests')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class OvertimeRequestsController {
   constructor(private readonly svc: OvertimeService) {}
 
@@ -216,7 +216,7 @@ export class OvertimeRequestsController {
 // ---- PE-02 — Attendance & Correction ---------------------------------------
 
 @Controller('api/people/work-calendars')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class WorkCalendarController {
   constructor(private readonly svc: WorkCalendarService) {}
 
@@ -234,7 +234,7 @@ export class WorkCalendarController {
 }
 
 @Controller('api/people/shift-patterns')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class ShiftPatternsController {
   constructor(private readonly svc: ShiftService) {}
 
@@ -252,7 +252,7 @@ export class ShiftPatternsController {
 }
 
 @Controller('api/people/shift-assignments')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class ShiftAssignmentsController {
   constructor(private readonly svc: ShiftService) {}
 
@@ -270,7 +270,7 @@ export class ShiftAssignmentsController {
 }
 
 @Controller('api/people/imports')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class AttendanceImportsController {
   constructor(private readonly svc: AttendanceImportService) {}
 
@@ -301,7 +301,7 @@ export class AttendanceImportsController {
 }
 
 @Controller('api/people/attendance')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class AttendanceController {
   constructor(
     private readonly svc: AttendanceDayService,
@@ -317,7 +317,7 @@ export class AttendanceController {
 }
 
 @Controller('api/people/attendance-corrections')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class AttendanceCorrectionsController {
   constructor(private readonly svc: AttendanceCorrectionService) {}
 

@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { validateGeometry } from './ioc.geometry';
 
 /**
@@ -12,7 +12,7 @@ import { validateGeometry } from './ioc.geometry';
  *   • `IocTemplate` is a SHARED / platform-plane catalog row: no tenantId, no
  *     RLS, no tenant data. It holds neutral JSON specs only.
  *   • `clone()` MATERIALISES those specs as fresh, tenant-scoped rows inside the
- *     CALLING tenant's RLS transaction (TenantScopeInterceptor → withTenant).
+ *     CALLING tenant's RLS transaction (XofficeTenantScopeInterceptor → withTenant).
  *     One tenant therefore never reads another tenant's live twin: it reads a
  *     shared spec and gets its OWN copy.
  *
@@ -81,7 +81,7 @@ function fold(s: string): string {
 
 @Injectable()
 export class IocTemplateService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: XofficePrismaService) {}
   private get db() {
     return this.prisma.db;
   }

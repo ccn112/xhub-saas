@@ -38,7 +38,7 @@ async function api(method, path, body, tenant = T1) {
 const clones = []; // { tenant, sceneId, planId, dashboardId, floorId, siteId }
 console.log(`ioc-template-gallery smoke @ ${BASE}`);
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 
 try {
@@ -71,8 +71,13 @@ try {
   ok(!cols.includes('tenantId'), 'IocTemplate has NO tenantId column (shared platform plane, like Blueprint)');
   const rls = (await c.query(`SELECT relrowsecurity FROM pg_class WHERE relname='IocTemplate'`)).rows[0];
   ok(rls && rls.relrowsecurity === false, 'IocTemplate is correctly NOT registered for RLS');
-  const bpRls = (await c.query(`SELECT relrowsecurity FROM pg_class WHERE relname='Blueprint'`)).rows[0];
-  ok(bpRls && bpRls.relrowsecurity === bpRls.relrowsecurity, `posture matches Blueprint (Blueprint rls=${bpRls?.relrowsecurity})`);
+  // Blueprint lives in the Platform database post-Stage-C DB split — a
+  // separate connection is needed to inspect its RLS posture.
+  const platformC = new pg.Client({ connectionString: process.env.DATABASE_URL });
+  await platformC.connect();
+  const bpRls = (await platformC.query(`SELECT relrowsecurity FROM pg_class WHERE relname='Blueprint'`)).rows[0];
+  await platformC.end();
+  ok(bpRls && bpRls.relrowsecurity === false, `posture matches Blueprint (Blueprint rls=${bpRls?.relrowsecurity})`);
   const sceneRls = (await c.query(`SELECT relrowsecurity FROM pg_class WHERE relname='TwinScene'`)).rows[0];
   ok(sceneRls?.relrowsecurity === true, 'the CLONE TARGET (TwinScene) IS still RLS-protected');
 

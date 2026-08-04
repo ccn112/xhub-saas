@@ -36,11 +36,11 @@ model Tenant {
   mode        String? // DEMO | LIVE | null(exempt)
   updatedAt   DateTime @default(now()) @updatedAt
 
-  workflows Workflow[]
-  instances WorkflowInstance[]
-  tasks     ApprovalTask[]
-  events    WorkflowEvent[]
-  auditLogs AuditLog[]
+  // Phase 1.5 Stage C: Workflow/WorkflowInstance/ApprovalTask/WorkflowEvent
+  // (X.Office) and AuditLog (per-app) no longer hold a Prisma @relation to
+  // Tenant — they'll live in a physically separate database. tenantId stays
+  // a plain string on each of those models, matching the convention already
+  // used by Delegation/Notification/CommandLog/WorkflowNode etc.
 }
 
 /// Editable workflow (the "working copy"). Immutable snapshots live in WorkflowVersion.
@@ -57,7 +57,6 @@ model Workflow {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  tenant   Tenant            @relation(fields: [tenantId], references: [id])
   versions WorkflowVersion[]
 
   @@unique([tenantId, code])
@@ -139,7 +138,6 @@ model WorkflowInstance {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 
-  tenant   Tenant             @relation(fields: [tenantId], references: [id])
   version  WorkflowVersion?   @relation(fields: [versionId], references: [id])
   tasks    ApprovalTask[]
   events   WorkflowEvent[]
@@ -228,7 +226,6 @@ model ApprovalTask {
   escalated      Boolean    @default(false)
   escalatedAt    DateTime?
 
-  tenant   Tenant           @relation(fields: [tenantId], references: [id])
   instance WorkflowInstance @relation(fields: [instanceId], references: [id])
 
   @@index([tenantId, status])
@@ -280,7 +277,6 @@ model WorkflowEvent {
   payload    Json
   at         DateTime @default(now())
 
-  tenant   Tenant           @relation(fields: [tenantId], references: [id])
   instance WorkflowInstance @relation(fields: [instanceId], references: [id])
 
   @@index([tenantId, instanceId])
@@ -295,8 +291,6 @@ model AuditLog {
   instanceCode String
   action       String
   detail       String
-
-  tenant Tenant @relation(fields: [tenantId], references: [id])
 
   @@index([tenantId, instanceCode])
 }

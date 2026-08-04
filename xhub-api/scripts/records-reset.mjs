@@ -1,10 +1,12 @@
 // Reset Records runtime state so the smoke is re-runnable. Bypasses RLS to
 // delete DocumentVersion / RecordDocument rows for the test tenants.
 // Run: node scripts/records-reset.mjs  (or via npm run test:records)
+// Phase 1.5 Stage C: RecordDocument/DocumentVersion now live in the X.Office
+// database, not the shared one — connect via XOFFICE_DATABASE_URL.
 import 'dotenv/config';
 import pg from 'pg';
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 await c.query("SELECT set_config('app.bypass_rls','on',false)");
 

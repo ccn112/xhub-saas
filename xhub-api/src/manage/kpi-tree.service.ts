@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 
 /**
  * KPI tree (X.Office Management MG-03) — READ-ONLY projection layered on the
@@ -11,7 +11,7 @@ import { PrismaService } from '../prisma/prisma.service';
  */
 @Injectable()
 export class KpiTreeService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: XofficePrismaService) {}
   private get db() {
     return this.prisma.db;
   }

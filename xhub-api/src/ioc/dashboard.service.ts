@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { DASHBOARD_VIEW_TYPES, WIDGET_TYPES } from './ioc.catalog';
 import { checksumOf } from './ioc.geometry';
 import { DataLayerService } from './data-layer.service';
@@ -23,7 +23,7 @@ import { TwinStudioService } from './twin-studio.service';
 @Injectable()
 export class DashboardService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly dataLayers: DataLayerService,
     private readonly studio: TwinStudioService,
   ) {}

@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { RecordsService } from '../records/records.service';
 import { AssignmentResolver, Selector } from '../identity/assignment-resolver.service';
 import { IdentityService } from '../identity/identity.service';
@@ -15,7 +15,7 @@ const WORK_TYPES = ['TASK', 'SUBTASK', 'ACTION', 'MILESTONE', 'DELIVERABLE', 'FO
  * (never replacing) the workflow-runtime ApprovalTask. Responsibility is
  * resolved through the shared AssignmentResolver into assignmentSnapshot (never
  * hardcoded). Attachments/evidence reuse RecordDocument (subjectType='WorkItem').
- * Runs inside the caller's withTenant(tenantId) context (TenantScopeInterceptor)
+ * Runs inside the caller's withTenant(tenantId) context (XofficeTenantScopeInterceptor)
  * so every read/write is RLS-scoped.
  *
  * Owner requirement #1 — VISIBILITY TIERS: the read path returns a FULL DTO only
@@ -28,7 +28,7 @@ const WORK_TYPES = ['TASK', 'SUBTASK', 'ACTION', 'MILESTONE', 'DELIVERABLE', 'FO
 @Injectable()
 export class WorkService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly records: RecordsService,
     private readonly assignment: AssignmentResolver,
     private readonly identity: IdentityService,

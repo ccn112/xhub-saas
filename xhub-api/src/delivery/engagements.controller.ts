@@ -3,7 +3,7 @@ import { EngagementsService } from './engagements.service';
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 import type { EngagementAction } from './engagements.fsm';
 
 /**
@@ -15,7 +15,7 @@ import type { EngagementAction } from './engagements.fsm';
  * is SKIPPED by the interceptor so the Launch Factory's own contexts are real.
  */
 @Controller('api/delivery')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class EngagementsController {
   constructor(private readonly svc: EngagementsService) {}
 

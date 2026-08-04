@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/xoffice-client';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { IdentityService } from '../identity/identity.service';
 import { XofficeService } from '../xoffice/xoffice.service';
 import { OT_TRANSITIONS } from './people.constants';
@@ -15,7 +15,7 @@ import { resolveActingPerson, resolveApprovalAssignee } from './people.helpers';
 @Injectable()
 export class OvertimeService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly identity: IdentityService,
     private readonly xoffice: XofficeService,
   ) {}

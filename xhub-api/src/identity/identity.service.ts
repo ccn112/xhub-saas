@@ -1,8 +1,9 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { PrismaService } from '../prisma/prisma.service';
 import { permissionMatches } from './permission-match';
+import { IDENTITY_PRISMA, IDENTITY_SEED_ENABLED } from './identity-prisma.token';
+import type { IdentityPrismaClient } from './identity-prisma.token';
 
 /**
  * IdentityService — the SHARED Identity/Organization Core (module src/identity).
@@ -22,9 +23,15 @@ import { permissionMatches } from './permission-match';
  */
 @Injectable()
 export class IdentityService implements OnModuleInit {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(IDENTITY_PRISMA) private readonly prisma: IdentityPrismaClient,
+    @Inject(IDENTITY_SEED_ENABLED) private readonly seedEnabled: boolean,
+  ) {}
 
   async onModuleInit(): Promise<void> {
+    // Seed writes the Tenant row — Platform-only (X.Office's schema has no
+    // Tenant model on purpose; see identity-prisma.token.ts).
+    if (!this.seedEnabled) return;
     try {
       await this.seed();
     } catch {
@@ -282,8 +289,18 @@ export class IdentityService implements OnModuleInit {
     return this.prisma.db.personProfile.findMany({ orderBy: { fullName: 'asc' } });
   }
 
+  /** Flat OrgUnit rows (no tree shaping) — see identity.controller.ts orgUnitsFlat(). */
+  listOrgUnitsFlat() {
+    return this.prisma.db.orgUnit.findMany({ orderBy: { code: 'asc' } });
+  }
+
   listRoleBindings() {
     return this.prisma.db.roleBinding.findMany({ orderBy: { roleCode: 'asc' } });
+  }
+
+  /** All PermissionPolicy rows — for X.Office's identity-sync job (Stage C.5), same as listRoleBindings(). */
+  listPermissionPolicies() {
+    return this.prisma.db.permissionPolicy.findMany({ orderBy: { roleCode: 'asc' } });
   }
 
   listGroups() {

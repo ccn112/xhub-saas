@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { XofficePrismaService } from '../../xoffice-prisma/xoffice-prisma.service';
 import { AssignmentResolver, Selector } from '../../identity/assignment-resolver.service';
 import { IdentityService } from '../../identity/identity.service';
 import { isOverdue } from '../work.fsm';
@@ -30,7 +30,7 @@ export type ProjectAccess = 'FULL' | 'SUMMARY' | 'NONE';
 @Injectable()
 export class WorkProjectsService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly assignment: AssignmentResolver,
     private readonly identity: IdentityService,
   ) {}

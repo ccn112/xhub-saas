@@ -25,7 +25,7 @@ const KR = {
   'KR-004': { id: 'mg03-seed-kr-004', objId: OBJ2_ID, description: 'Giảm action quá hạn sau review', baseline: 35, target: 10, unit: '%', checkin: 22 },
 };
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

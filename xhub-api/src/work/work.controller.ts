@@ -3,16 +3,16 @@ import { WorkService } from './work.service';
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 
 /**
  * NativeWorkItem API (X.Office Work v2 — W1). Tenant-scoped via
- * TenantScopeInterceptor (prisma.withTenant → RLS). create/update/status/assign/
+ * XofficeTenantScopeInterceptor (prisma.withTenant → RLS). create/update/status/assign/
  * progress are gated by `work.item.*` through the global PermissionGuard;
  * reads are open (the SERVICE decides FULL vs SUMMARY per actor — owner req #1).
  */
 @Controller('api/work/items')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class WorkController {
   constructor(private readonly svc: WorkService) {}
 

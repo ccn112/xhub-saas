@@ -2,13 +2,15 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  Inject,
   Injectable,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PrismaService } from '../prisma/prisma.service';
 import { IdentityService } from '../identity/identity.service';
+import { IDENTITY_PRISMA } from '../identity/identity-prisma.token';
+import type { IdentityPrismaClient } from '../identity/identity-prisma.token';
 import type { RequestIdentity } from './identity.types';
 import { isEnforcing, REQUIRE_PERMISSION_KEY } from './identity.types';
 
@@ -29,7 +31,13 @@ import { isEnforcing, REQUIRE_PERMISSION_KEY } from './identity.types';
  *
  * The RBAC/ABAC data is the SHARED identity plane (spans tenants, seeded under
  * bypass) and this guard runs before any withTenant context is opened, so the
- * decision query runs under withBypass — mirroring AuthService.membershipsFor.
+ * decision query runs under withBypass.
+ *
+ * IMPORTANT (Phase 1.5 Stage C.5): `prisma` here MUST be the same
+ * IDENTITY_PRISMA-bound instance IdentityService itself uses, not the
+ * concrete Platform PrismaService — withBypass/.db are per-instance
+ * (AsyncLocalStorage-scoped), so opening bypass on the wrong database's
+ * client would silently no-op the one IdentityService actually queries.
  */
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -38,7 +46,7 @@ export class PermissionGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly identity: IdentityService,
-    private readonly prisma: PrismaService,
+    @Inject(IDENTITY_PRISMA) private readonly prisma: IdentityPrismaClient,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

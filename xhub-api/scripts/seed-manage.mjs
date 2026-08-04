@@ -50,7 +50,7 @@ const DECISION_ID = 'mg-seed-decision-target';
 const ACTION_WI_ID = 'mg-seed-wi-action'; // the REAL NativeWorkItem the action links to
 const ACTION_ID = 'mg-seed-action-otif';
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

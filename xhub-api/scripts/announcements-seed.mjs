@@ -31,7 +31,7 @@ const AUDIENCE_MAP = {
 
 const STATE_BY_STATUS = { PUBLISHED: 'PUBLISHED', DRAFT: 'DRAFT', ARCHIVED: 'ARCHIVED', CANCELLED: 'CANCELLED' };
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 let inserted = 0;
 let skipped = 0;

@@ -92,7 +92,10 @@ memberships (`AuthService.login`) — it never mints an identity for an arbitrar
 The permission decision reuses the shared identity plane and runs under
 `withBypass` (guards run before any tenant transaction is opened).
 
-**Gated endpoints → permission codes** (all codes exist in the identity seed):
+**Gated endpoints → permission codes** (all codes exist in the identity seed).
+Updated 2026-08-04 (security/privacy audit remediation — see
+`../docs/implementation/xoffice-ai/ACCEPTANCE_EVIDENCE.md` (repo root) for the
+full inventory and evidence trail):
 
 | Endpoint | Permission |
 | --- | --- |
@@ -106,11 +109,104 @@ The permission decision reuses the shared identity plane and runs under
 | `POST /api/records/:id/versions` (add version) | `records.manage` |
 | `POST /api/identity/assignment/preview` (writes snapshot) | `identity.manage` |
 | `GET /api/identity/permissions/effective` | `identity.read` |
+| `PATCH/POST/DELETE /api/identity/org-units*` (reparent/create/delete) | `org.write` |
+| `PATCH /api/identity/positions/:id` (move/set holder) | `position.write` |
+| `POST /api/mdm/import-jobs*`, `duplicate-pairs/:id/resolve`, `PUT tenant-overlays` | `mdm.manage` |
+| `POST /api/webhooks/reconcile`, `POST /api/webhooks/dispatch` | `platform.webhook.manage` |
+
+The last four rows were added 2026-08-04: these routes previously had **zero**
+permission gate (any authenticated tenant member could reparent/delete org
+units, move positions, run MDM import/merge, or trigger webhook
+reconcile/dispatch). `org.write`/`position.write`/`mdm.manage` are covered by
+the existing `ORG_ADMIN` (`org.*`, `position.*`) and `DATA_STEWARD` (`mdm.*`)
+roles; `platform.webhook.manage` and `PLATFORM_ADMIN`'s `*` cover the webhook
+routes without any new role-seed change.
+
+### Object-level authorization (BOLA prevention)
+
+A route-level permission (`@RequirePermission`) proves the caller holds a
+ROLE — it does not prove the caller owns the SPECIFIC record being acted on.
+Several lifecycle-transition routes in Request/Ticket/Booking/Directive were
+found (2026-08-04 audit) reachable by ANY authenticated tenant member
+regardless of role, because the underlying generic transition method
+(`RequestsService.act`, `TicketsService.transition`,
+`BookingsService.transition/checkIn/checkOut`,
+`DirectivesService.commitmentAct`) had no actor check at all — a classic BOLA
+(OWASP API1:2023). Fixed by adding an explicit ownership gate inside each of
+those methods: the action is allowed only for the record's own
+requester/assignee, or a caller holding the domain's `*.manage`/`.issue`
+permission as a manager override. See the affected `*.service.ts` files for
+the exact `assert*Actor` helper in each module.
+
+### Tenant context (multi-tenant isolation)
+
+`identity.tenantId` is resolved via the SAME precedence as identity above
+(session → header → default) — there is no separate "tenant" resolution
+mechanism to bypass. Every request is wrapped by `TenantScopeInterceptor`
+(XHub Platform) or `XofficeTenantScopeInterceptor` (X.Office) in
+`prisma.withTenant(identity.tenantId)`, which `SET LOCAL app.current_tenant`
+for the request's transaction — Postgres Row-Level Security is the FINAL
+backstop even if a service forgets to filter by tenant explicitly (a query
+run with no tenant context set returns **zero rows**, fail-safe, never another
+tenant's data).
+
+Since Phase 1.5 Stage C (2026-08-04) the platform runs as **two physically
+separate processes and two separate Postgres databases** (`xhub` for XHub
+Platform, `xoffice` for X.Office) — RLS is enforced independently in each.
+Isolation evidence: `npm run test:rls` (Platform DB, 105 tables),
+`npm run test:rls-xoffice` (X.Office DB, 89 tables), `npm run test:isolation`
+(seed-level MUST_NOT_LEAK guard), `npm run test:db-split` (negative test
+proving the two databases are genuinely separate Postgres instances, not a
+shared schema pretending to be split).
 
 `user-nam` (→ `usr-cfo`) and the CEO (`usr-ceo`) hold the `ROLE_PLATFORM_ADMIN`
 role (seed) which grants all of the above, so an enforced run still lets the
 admin through. A low-privilege person such as `user-huyvu` (→ `usr-it-support`,
 `ROLE_IT_SUPPORT`) is denied.
+
+### Auth/session database independence (fixed 2026-08-04, same day as the DB split)
+
+Stage C's DB split (above) only covered business data and the identity CACHE
+(PersonProfile/OrgUnit/RoleBinding/PermissionPolicy). It missed `AuthModule`:
+`AuthService` was still hardcoded to `PrismaService` (the Platform DB) even
+when running inside the X.Office process. Since `IdentityGuard` (the global
+guard resolving WHO on every single request, in both processes) calls
+`AuthService.sessionMembershipActive()` whenever identity comes from the
+session cookie, **every session-authenticated request to X.Office opened a
+live Postgres connection straight to the Platform database** — a real
+shared-DB dependency the "physical DB split" was supposed to have eliminated
+(this directly matches the ecosystem security handoff's prohibited-shortcut
+rule: *"Do not integrate XHub↔product by shared DB/dual-write"*).
+
+Fixed the same way `IdentityModule`/`IdentityService` were split in Stage C.5:
+- `AuthService` now injects `IDENTITY_PRISMA` (see `identity-prisma.token.ts`)
+  instead of a concrete `PrismaService` — resolves to `PrismaService` in the
+  Platform process, `XofficePrismaService` in X.Office.
+- `Membership` (the table `sessionMembershipActive` reads) is now ALSO a local
+  read cache in X.Office (`prisma-xoffice/schema.prisma`), synced by
+  `IdentitySyncService` every 60s (same mechanism/cadence as
+  PersonProfile/RoleBinding) via a new read route, `GET /api/auth/memberships`.
+- `AuthModule` became a dynamic module (`forPlatform()`/`forXoffice()`,
+  mirroring `IdentityModule`): only `forPlatform()` registers `AuthController`
+  — X.Office never served `/api/auth/login`/`invite`/`activate`/etc. anyway
+  (confirmed: `xhub-web`'s login/me/switch-tenant calls always target
+  `PLATFORM_BASE_SERVER`), and several of those routes touch
+  `UserCredential`/`AuthToken`, which don't exist in X.Office's schema.
+- `xoffice-app.module.ts` no longer imports `PrismaModule` at all — nothing in
+  the X.Office process needs the Platform database anymore. `bootstrap.ts`
+  (shared by all 3 entrypoints) was updated to fetch `IDENTITY_PRISMA` instead
+  of a hardcoded `PrismaService` for its shutdown-hook registration, since that
+  hardcoded lookup would otherwise crash the X.Office process boot.
+
+**Tradeoff accepted:** revoke-on-suspend on the X.Office side now has up to
+~60s staleness (same latency class already accepted for role/permission
+changes) instead of being instant. Verified end-to-end (2026-08-04): suspended
+`user-nam`'s membership via Platform → immediately 401 on Platform (canonical,
+instant) → still 200 on X.Office (stale cache, as designed) → triggered
+`POST /api/identity-sync/run` → immediately 401 on X.Office too. Also verified:
+`npm run test:e2e`, `test:authz`, `test:auth-flow`, `test:rls-xoffice` (90
+tables now, +`Membership`), and the full X.Office domain smoke matrix all pass
+unchanged.
 
 ### Feature flags (`.env.example`)
 

@@ -1,11 +1,13 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { RecordsService } from '../records/records.service';
+import { IdentityService } from '../identity/identity.service';
 import {
   BookingAction,
   BOOKING_ACTIVE,
@@ -32,9 +34,25 @@ const SUBJECT_TYPE = 'Booking';
 @Injectable()
 export class BookingsService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prisma: XofficePrismaService,
     private readonly records: RecordsService,
+    private readonly identity: IdentityService,
   ) {}
+
+  /**
+   * Object-level ownership gate for cancel/check-in/check-out (Security audit
+   * 2026-08-04 — these routes carry no @RequirePermission, so without this any
+   * authenticated tenant member could act on someone else's booking, a BOLA).
+   * approve/reject/no-show already require `booking.manage` at the controller
+   * so they skip this check.
+   */
+  private async assertBookingActor(b: any, actorId: string): Promise<void> {
+    if (actorId === b.requesterId) return;
+    const decision = await this.prisma.withBypass(() => this.identity.can(actorId, 'booking.manage'));
+    if (!decision.allowed) {
+      throw new ForbiddenException('Only the requester or booking.manage may act on this booking.');
+    }
+  }
 
   private get db() {
     return this.prisma.db;
@@ -134,6 +152,13 @@ export class BookingsService {
   }
 
   // ==== Booking create =======================================================
+  /**
+   * `idempotencyKey` is OPTIONAL (Security audit 2026-08-04, SEC-003) — when
+   * supplied, a replayed create with the SAME key returns the original row
+   * (skipping conflict re-check, since it already exists) instead of
+   * creating a duplicate. Callers that omit it get today's unchanged
+   * (non-deduplicated) behavior — backward compatible.
+   */
   async create(
     tenantId: string,
     actorId: string,
@@ -146,11 +171,18 @@ export class BookingsService {
       attendees?: number;
       code?: string;
       requesterId?: string;
+      idempotencyKey?: string;
     },
   ) {
     if (!body?.title) throw new BadRequestException('title is required');
     if (!body?.resourceId) throw new BadRequestException('resourceId is required');
     if (!body?.startAt || !body?.endAt) throw new BadRequestException('startAt and endAt are required');
+
+    const idempotencyKey = body.idempotencyKey ? String(body.idempotencyKey) : undefined;
+    if (idempotencyKey) {
+      const existing = await this.db.booking.findUnique({ where: { tenantId_idempotencyKey: { tenantId, idempotencyKey } } });
+      if (existing) return { ...this.decorate(existing), replayed: true };
+    }
 
     const resource = await this.db.bookableResource.findFirst({ where: { id: body.resourceId, tenantId } });
     if (!resource) throw new BadRequestException(`bookable resource not found: ${body.resourceId}`);
@@ -170,21 +202,31 @@ export class BookingsService {
     const code =
       body.code ?? `BKG-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
     const requesterId = body.requesterId ?? actorId;
-    const booking = await this.db.booking.create({
-      data: {
-        tenantId,
-        code,
-        resourceId: body.resourceId,
-        requesterId,
-        title: body.title,
-        purpose: body.purpose ?? null,
-        startAt,
-        endAt,
-        attendees: Number.isFinite(body.attendees as number) ? Number(body.attendees) : null,
-        orgUnitId: resource.orgUnitId ?? null,
-        state: 'REQUESTED',
-      },
-    });
+    let booking;
+    try {
+      booking = await this.db.booking.create({
+        data: {
+          tenantId,
+          code,
+          resourceId: body.resourceId,
+          requesterId,
+          title: body.title,
+          purpose: body.purpose ?? null,
+          startAt,
+          endAt,
+          attendees: Number.isFinite(body.attendees as number) ? Number(body.attendees) : null,
+          orgUnitId: resource.orgUnitId ?? null,
+          state: 'REQUESTED',
+          idempotencyKey: idempotencyKey ?? null,
+        },
+      });
+    } catch (e: any) {
+      if (idempotencyKey && e?.code === 'P2002') {
+        const existing = await this.db.booking.findUnique({ where: { tenantId_idempotencyKey: { tenantId, idempotencyKey } } });
+        if (existing) return { ...this.decorate(existing), replayed: true };
+      }
+      throw e;
+    }
     await this.event(tenantId, booking.id, 'created', actorId, { code, state: 'REQUESTED', resourceId: body.resourceId, startAt, endAt });
     return this.decorate(booking);
   }
@@ -271,6 +313,7 @@ export class BookingsService {
   /** Generic state-only transition (reject / cancel). */
   async transition(tenantId: string, actorId: string, id: string, action: BookingAction, opts: { note?: string } = {}) {
     const b = await this.load(tenantId, id);
+    await this.assertBookingActor(b, actorId);
     const to = this.assertLegal(action, b.state);
     const updated = await this.db.booking.update({ where: { id }, data: { state: to } });
     await this.event(tenantId, id, action, actorId, { to, note: opts.note ?? null });
@@ -285,6 +328,7 @@ export class BookingsService {
   /** check-in — attendee arrives; stamps checkedInAt. */
   async checkIn(tenantId: string, actorId: string, id: string, opts: { note?: string } = {}) {
     const b = await this.load(tenantId, id);
+    await this.assertBookingActor(b, actorId);
     const to = this.assertLegal('check-in', b.state);
     const updated = await this.db.booking.update({ where: { id }, data: { state: to, checkedInAt: new Date() } });
     await this.event(tenantId, id, 'check-in', actorId, { to, note: opts.note ?? null });
@@ -294,6 +338,7 @@ export class BookingsService {
   /** check-out — attendee leaves / releases the resource; stamps checkedOutAt. */
   async checkOut(tenantId: string, actorId: string, id: string, opts: { note?: string } = {}) {
     const b = await this.load(tenantId, id);
+    await this.assertBookingActor(b, actorId);
     const to = this.assertLegal('check-out', b.state);
     const updated = await this.db.booking.update({ where: { id }, data: { state: to, checkedOutAt: new Date() } });
     await this.event(tenantId, id, 'check-out', actorId, { to, note: opts.note ?? null });

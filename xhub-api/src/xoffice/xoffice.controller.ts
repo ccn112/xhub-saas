@@ -4,7 +4,7 @@ import { WorkflowDefinitionDocument } from './xoffice.types';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
 import { isStagingStrict } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
+import { XofficeTenantScopeInterceptor } from '../common/xoffice-tenant-scope.interceptor';
 import { RequirePermission } from '../auth/require-permission.decorator';
 
 /**
@@ -44,7 +44,7 @@ function paginate<T>(
  * demo (tenant-xtech/user-nam). All reads/writes are tenant-scoped.
  */
 @Controller('api/xoffice')
-@UseInterceptors(TenantScopeInterceptor)
+@UseInterceptors(XofficeTenantScopeInterceptor)
 export class XofficeController {
   constructor(private readonly svc: XofficeService) {}
 

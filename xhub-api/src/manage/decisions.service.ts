@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { XofficePrismaService } from '../xoffice-prisma/xoffice-prisma.service';
 import { DECISION_STATUSES } from './manage.constants';
 
 /**
@@ -11,7 +11,7 @@ import { DECISION_STATUSES } from './manage.constants';
  */
 @Injectable()
 export class DecisionsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: XofficePrismaService) {}
   private get db() {
     return this.prisma.db;
   }

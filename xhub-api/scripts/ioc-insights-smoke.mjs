@@ -36,7 +36,7 @@ const insights = async () => {
 const edgeVolume = (j, from, to) => j.flows.find((f) => f.fromZoneId === from && f.toZoneId === to)?.items ?? 0;
 
 console.log(`ioc-insights smoke @ ${BASE}`);
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 
 try {

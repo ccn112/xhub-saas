@@ -12,7 +12,7 @@ const CALENDAR_ID = 'people-seed-calendar-default';
 const PATTERN_ID = 'people-seed-shift-standard';
 const PEOPLE = ['usr-cfo', 'usr-accountant', 'usr-sales-01', 'usr-tech-head', 'usr-hr-01'];
 
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
+const c = new pg.Client({ connectionString: process.env.XOFFICE_DATABASE_URL });
 await c.connect();
 try {
   await c.query('BEGIN');

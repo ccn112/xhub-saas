@@ -29,8 +29,32 @@ import { ManageModule } from './manage/manage.module';
 import { IocModule } from './ioc/ioc.module';
 import { PeopleModule } from './people/people.module';
 
+/**
+ * "All-in-one" composition root (boots via `main.ts` / `npm start`).
+ *
+ * BROKEN for any X.Office business flow that calls into IdentityService,
+ * as of Phase 1.5 Stage C (2026-08-04). This module binds
+ * `IdentityModule.forPlatform()` (IDENTITY_PRISMA → `PrismaService`, the
+ * `xhub` database), but the business modules it also imports (XofficeModule,
+ * RequestsModule, TicketsModule, ...) run under
+ * `XofficeTenantScopeInterceptor`, which opens its `withTenant`/`withBypass`
+ * transaction on the DIFFERENT `XofficePrismaService` instance (the `xoffice`
+ * database). Any call from a business route into IdentityService
+ * (e.g. `createDelegation`, approver resolution) finds `this.prisma.db`
+ * unscoped/undefined on the platform-bound instance and throws.
+ *
+ * There is no fix that keeps this module correct for BOTH module groups at
+ * once — IDENTITY_PRISMA is a single DI token bound once per module tree, and
+ * the two groups now live in physically separate databases. Use the real
+ * process split instead: `PlatformAppModule` (`npm run start:platform`) for
+ * XHUB_PLATFORM routes, `XofficeAppModule` (`npm run start:xoffice`) for
+ * XOFFICE_BUSINESS routes. This module is kept only because
+ * platform-only routes (controlplane/mdm/backup/webhook/...) still work
+ * under it and `test/app.e2e-spec.ts` boots it for a trivial smoke check —
+ * do not rely on it for any X.Office flow.
+ */
 @Module({
-  imports: [PrismaModule, AuthModule, SeedModule, PreferencesModule, IdentityModule, XofficeModule, ControlplaneModule, MdmModule, BackupModule, RecordsModule, WebhookModule, TestRunsModule, RequestsModule, DirectivesModule, TicketsModule, BookingsModule, AnnouncementsModule, PlatformModule, TenantLaunchModule, CatalogModule, OnboardingModule, DeliveryModule, TenantLifecycleModule, WorkModule, ManageModule, IocModule, PeopleModule],
+  imports: [PrismaModule, AuthModule.forPlatform(), SeedModule, PreferencesModule, IdentityModule.forPlatform(), XofficeModule, ControlplaneModule, MdmModule, BackupModule, RecordsModule, WebhookModule, TestRunsModule, RequestsModule, DirectivesModule, TicketsModule, BookingsModule, AnnouncementsModule, PlatformModule, TenantLaunchModule, CatalogModule, OnboardingModule, DeliveryModule, TenantLifecycleModule, WorkModule, ManageModule, IocModule, PeopleModule],
   controllers: [AppController],
   providers: [AppService],
 })
