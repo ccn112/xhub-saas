@@ -1,6 +1,6 @@
 // FE proxy → xhub-api /api/service-catalog/* (Service Desk catalog, PH-02c).
 // FE never touches the DB. Mirrors src/app/api/tickets.
-import { forwardGet, forwardPost, readJson } from "../../admin/_forward";
+import { forwardGet, forwardPost, readJson } from "../../_xoffice-forward";
 
 function target(path: string[] | undefined, search: string): string {
   const suffix = path && path.length ? `/${path.join("/")}` : "";

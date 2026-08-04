@@ -2,7 +2,7 @@
 // Availability). Catch-all: GET/POST/PATCH under /api/people is forwarded to
 // the API base with the canonical identity headers. FE never touches the DB.
 // Mirrors src/app/api/manage.
-import { forwardGet, forwardPost, forwardPatch, readJson } from "../../admin/_forward";
+import { forwardGet, forwardPost, forwardPatch, readJson } from "../../_xoffice-forward";
 
 function target(path: string[] | undefined, search: string): string {
   const suffix = path && path.length ? `/${path.join("/")}` : "/leave-requests";

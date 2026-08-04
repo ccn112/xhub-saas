@@ -1,7 +1,7 @@
 // FE proxy → xhub-api /api/announcements/* (Announcement module, PH-02e — NX-028).
 // Catch-all: any GET/POST under /api/announcements is forwarded to the API base
 // with the canonical identity headers. FE never touches the DB. Mirrors bookings.
-import { forwardGet, forwardPost, readJson } from "../../admin/_forward";
+import { forwardGet, forwardPost, readJson } from "../../_xoffice-forward";
 
 function target(path: string[] | undefined, search: string): string {
   const suffix = path && path.length ? `/${path.join("/")}` : "";

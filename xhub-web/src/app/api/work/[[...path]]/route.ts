@@ -2,7 +2,7 @@
 // W1). Catch-all: GET/POST/PATCH under /api/work is forwarded to the API base
 // with the canonical identity headers. FE never touches the DB. Mirrors
 // src/app/api/directives.
-import { forwardGet, forwardPost, forwardPatch, forwardDelete, readJson } from "../../admin/_forward";
+import { forwardGet, forwardPost, forwardPatch, forwardDelete, readJson } from "../../_xoffice-forward";
 
 function target(path: string[] | undefined, search: string): string {
   const suffix = path && path.length ? `/${path.join("/")}` : "/items";

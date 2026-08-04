@@ -3,7 +3,7 @@
 // with the canonical identity headers. The FE NEVER touches the DB and never
 // composes SQL or a Prisma filter — it only posts catalog references, which the
 // backend re-validates (Constitution #6). Mirrors src/app/api/manage.
-import { forwardGet, forwardPost, forwardPatch, forwardDelete, readJson } from "../../admin/_forward";
+import { forwardGet, forwardPost, forwardPatch, forwardDelete, readJson } from "../../_xoffice-forward";
 
 function target(path: string[] | undefined, search: string): string {
   const suffix = path && path.length ? `/${path.join("/")}` : "/scenes";

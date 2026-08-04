@@ -1,5 +1,5 @@
 // FE proxy → xhub-api POST /api/records/:id/versions (append immutable version).
-import { forwardPost, readJson } from "../../../admin/_forward";
+import { forwardPost, readJson } from "../../../_xoffice-forward";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

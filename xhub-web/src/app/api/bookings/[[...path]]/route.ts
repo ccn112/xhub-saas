@@ -1,7 +1,7 @@
 // FE proxy → xhub-api /api/bookings/* (Booking / resource booking module, PH-02d).
 // Catch-all: any GET/POST under /api/bookings is forwarded to the API base with
 // the canonical identity headers. FE never touches the DB. Mirrors src/app/api/tickets.
-import { forwardGet, forwardPost, readJson } from "../../admin/_forward";
+import { forwardGet, forwardPost, readJson } from "../../_xoffice-forward";
 
 function target(path: string[] | undefined, search: string): string {
   const suffix = path && path.length ? `/${path.join("/")}` : "";

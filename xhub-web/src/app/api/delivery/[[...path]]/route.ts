@@ -2,7 +2,7 @@
 // Catch-all: any GET/POST under /api/delivery is forwarded to the API base with
 // the canonical T001 identity headers. FE never touches the DB. Mirrors the
 // tickets / platform proxies.
-import { forwardGet, forwardPost, readJson } from "../../admin/_forward";
+import { forwardGet, forwardPost, readJson } from "../../_xoffice-forward";
 
 function target(path: string[] | undefined, search: string): string {
   const suffix = path && path.length ? `/${path.join("/")}` : "";

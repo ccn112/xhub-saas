@@ -1,7 +1,7 @@
 // FE proxy → xhub-api /api/directives/* (Directive module, PH-02b). Catch-all:
 // any GET/POST under /api/directives is forwarded to the API base with the
 // canonical identity headers. FE never touches the DB. Mirrors src/app/api/requests.
-import { forwardGet, forwardPost, readJson } from "../../admin/_forward";
+import { forwardGet, forwardPost, readJson } from "../../_xoffice-forward";
 
 function target(path: string[] | undefined, search: string): string {
   const suffix = path && path.length ? `/${path.join("/")}` : "";
