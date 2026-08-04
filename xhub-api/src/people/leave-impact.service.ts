@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { IdentityService } from '../identity/identity.service';
+import { XofficeService } from '../xoffice/xoffice.service';
 
 /**
  * LeaveImpactSnapshot — X.Office-owned, ALWAYS computed (never hand-entered).
@@ -18,6 +19,7 @@ export class LeaveImpactService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly identity: IdentityService,
+    private readonly xoffice: XofficeService,
   ) {}
   private get db() {
     return this.prisma.db;
@@ -41,9 +43,7 @@ export class LeaveImpactService {
     ];
 
     const approvalTasks = actingUserId
-      ? await this.db.approvalTask.findMany({
-          where: { tenantId, assigneeUserId: actingUserId, status: 'open' },
-        })
+      ? await this.xoffice.listOpenApprovalTasksForAssignee(tenantId, actingUserId)
       : [];
     const impactedApprovalTaskIds = approvalTasks.map((t: any) => t.id);
 

@@ -25,7 +25,7 @@ interface MappingRow {
   required: boolean;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 function configMappings(node: WFNode): MappingRow[] {
   const raw = (node.data.config as Record<string, unknown>).mappings;

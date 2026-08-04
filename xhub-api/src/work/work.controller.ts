@@ -3,7 +3,7 @@ import { WorkService } from './work.service';
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 
 /**
  * NativeWorkItem API (X.Office Work v2 — W1). Tenant-scoped via

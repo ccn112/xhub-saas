@@ -2,8 +2,9 @@ import { BadRequestException, ConflictException, ForbiddenException, Injectable,
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { IdentityService } from '../identity/identity.service';
+import { XofficeService } from '../xoffice/xoffice.service';
 import { OT_TRANSITIONS } from './people.constants';
-import { resolveActingPerson, resolveApprovalAssignee, spawnApprovalTask } from './people.helpers';
+import { resolveActingPerson, resolveApprovalAssignee } from './people.helpers';
 
 /**
  * OvertimeRequest — X.Office is SoR of the REQUEST regardless of payrollMode
@@ -16,6 +17,7 @@ export class OvertimeService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly identity: IdentityService,
+    private readonly xoffice: XofficeService,
   ) {}
   private get db() {
     return this.prisma.db;
@@ -95,8 +97,7 @@ export class OvertimeService {
     }
 
     const assignee = await resolveApprovalAssignee(this.prisma, tenantId, person.id, this.identity);
-    const { workflowInstanceId, approvalTaskId } = await spawnApprovalTask(
-      this.prisma,
+    const { workflowInstanceId, approvalTaskId } = await this.xoffice.spawnLightweightApprovalTask(
       tenantId,
       'PEOPLE_OVERTIME_APPROVAL',
       `Tăng ca — ${person.fullName}`,
@@ -125,7 +126,7 @@ export class OvertimeService {
       data: { status: 'APPROVED', decidedAt: new Date(), decidedBy: userId },
     });
     if (ot.approvalTaskId) {
-      await this.db.approvalTask.update({ where: { id: ot.approvalTaskId }, data: { status: 'approved', actedAt: new Date(), actorId: userId } });
+      await this.xoffice.closeLightweightApprovalTask(ot.approvalTaskId, 'approved', userId);
     }
     await this.audit(tenantId, userId, 'approve', id);
     return updated;
@@ -141,7 +142,7 @@ export class OvertimeService {
       data: { status: 'REJECTED', decidedAt: new Date(), decidedBy: userId, decisionNote: body?.note ?? null },
     });
     if (ot.approvalTaskId) {
-      await this.db.approvalTask.update({ where: { id: ot.approvalTaskId }, data: { status: 'rejected', actedAt: new Date(), actorId: userId } });
+      await this.xoffice.closeLightweightApprovalTask(ot.approvalTaskId, 'rejected', userId);
     }
     await this.audit(tenantId, userId, 'reject', id);
     return updated;

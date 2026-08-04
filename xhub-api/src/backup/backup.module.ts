@@ -4,7 +4,7 @@ import { BackupController } from './backup.controller';
 import { BackupSchedulerService } from './backup-scheduler.service';
 import { BackupScheduleService } from './backup-schedule.service';
 import { BackupScheduleController } from './backup-schedule.controller';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 import { PrismaModule } from '../prisma/prisma.module';
 
 /**

@@ -3,7 +3,7 @@ import { DirectivesService } from './directives.service';
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 
 /**
  * Directives API (PH-02b — NX-025). Tenant-scoped via TenantScopeInterceptor

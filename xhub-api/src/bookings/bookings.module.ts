@@ -3,7 +3,7 @@ import { BookingsService } from './bookings.service';
 import { BookingsController } from './bookings.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { RecordsModule } from '../records/records.module';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 
 /**
  * Bookings / resource booking module (PH-02d — NX-027). Additive. Reuses:

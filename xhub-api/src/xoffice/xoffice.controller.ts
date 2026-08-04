@@ -4,7 +4,7 @@ import { WorkflowDefinitionDocument } from './xoffice.types';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
 import { isStagingStrict } from '../auth/identity.types';
-import { TenantScopeInterceptor } from './tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 import { RequirePermission } from '../auth/require-permission.decorator';
 
 /**

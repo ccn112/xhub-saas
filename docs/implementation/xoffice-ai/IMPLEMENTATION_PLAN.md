@@ -64,8 +64,16 @@ Commit `b576adc` trên branch `security/g0-secure-foundation`, fast-forward merg
 
 **Insight:** một khi tách thật, X.Office kiến trúc GIỐNG HỆT X1/X2 — dùng đúng cơ chế Identity-P0 đã thiết kế sẵn (`ExternalIdentity`/`AppAccountBinding`/canonical tenant context/link-only adapter), không cần thiết kế cơ chế mới.
 
-### Giai đoạn A — Dọn ranh giới nội bộ (rủi ro thấp, vài ngày)
+### Giai đoạn A — Dọn ranh giới nội bộ (rủi ro thấp, vài ngày) — ✅ DONE 2026-08-04
 Vẫn 1 process/1 DB: di dời `TenantScopeInterceptor` sang `src/common/`; People bỏ raw write vào Workflow/ApprovalTask/OutboxEvent (gọi qua service); quyết định chủ sở hữu `Delegation`; bỏ raw read `Workflow` trong Identity; thêm ESLint boundary rule; gom 3 biến API client frontend thành 1 module.
+
+**Bằng chứng hoàn thành (branch `refactor/xoffice-boundary-cleanup`):**
+1. `TenantScopeInterceptor` chuyển sang `xhub-api/src/common/tenant-scope.interceptor.ts`, import ở toàn bộ 27 module cập nhật lại.
+2. `People` (leave/overtime/attendance-correction) không còn raw write `WorkflowInstance`/`ApprovalTask` — thêm `XofficeService.spawnLightweightApprovalTask()` (tạo) + `XofficeService.closeLightweightApprovalTask()` (đóng khi approve/reject). `leave-impact.service.ts` cũng hết raw read `ApprovalTask` — thêm `XofficeService.listOpenApprovalTasksForAssignee()`.
+3. `Delegation`: chốt thuộc `IdentityService`; `xoffice.service.ts.createDelegation()` giờ gọi `identity.createDelegation(...)` thay vì raw Prisma (đọc vẫn ở XOffice cho `findValidDelegate`/`listDelegations` — chấp nhận, đã đưa vào allowlist của ESLint rule).
+4. Raw read `Workflow` ở `identity.controller.ts:241` — giữ nguyên có chủ đích (residual đã ghi chú, xem comment tại chỗ + `eslint-disable-next-line`), vì XofficeModule đã import IdentityModule nên chiều ngược lại cần `forwardRef()` — việc này sẽ thành lời gọi HTTP thật ở Giai đoạn C, làm `forwardRef()` bây giờ là công sức bỏ đi.
+5. ESLint boundary rule: `eslint.config.mjs` — `no-restricted-syntax` chặn `<x>.db.workflow/workflowVersion/workflowInstance/approvalTask` (ngoài `src/xoffice/`), `<x>.db.delegation` (ngoài `src/xoffice/`+`src/identity/`), `<x>.db.outboxEvent` (ngoài `src/webhook/`). Đã verify bắt được 1 vi phạm test cố tình tạo ra, rồi xoá. **Bắt được 4 vi phạm THẬT còn sót lại** từ đợt sửa trước (raw `approvalTask.update` trong `leave.service.ts`/`overtime.service.ts`/`attendance-correction.service.ts`, raw read trong `leave-impact.service.ts`) — đã sửa cả 4, verify lại bằng `npm run test:people-leave` (26/26 pass) và `npm run test:people-attendance` (đã pass đúng nhánh liên quan; 1 fail còn lại là flake tính giờ đi trễ có từ trước, không liên quan).
+6. Frontend: gom 3 biến (`XHUB_API_URL`, `NEXT_PUBLIC_XHUB_API_URL`, `XOFFICE_API_BASE`) thành 1 module `xhub-web/src/lib/api-base.ts` (export `API_BASE_SERVER`/`API_BASE_CLIENT`), áp dụng cho 47 file. Tiện thể sửa luôn bug thật: `XOFFICE_API_BASE` chưa từng khai báo trong `.env.example`, nên ~14 file `xoffice/lib/*-data.ts` luôn âm thầm rơi về `localhost:4000` bất kể `XHUB_API_URL` cấu hình gì trên môi trường thật — giờ tất cả đọc đúng `XHUB_API_URL`. Verify: `npx tsc --noEmit` sạch, `npm run build` sạch, xác nhận `NEXT_PUBLIC_XHUB_API_URL` vẫn được Next.js inline đúng vào client bundle.
 
 ### Giai đoạn B — Tách process (2 NestJS app, vẫn 1 Postgres DB)
 2 app riêng (module group riêng + package `identity`/`auth`/`prisma` dùng chung), vẫn 1 DB, `AUTH_JWT_SECRET` dùng chung (SSO không đổi).

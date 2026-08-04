@@ -14,7 +14,7 @@ import { SectionCard } from "@/xhub/ui/Card";
 import { Badge } from "@/xhub/ui/Badge";
 import type { Identity } from "@/xoffice/monitor/actions.client";
 
-const API_BASE = process.env.NEXT_PUBLIC_XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 interface CreatedRequest {
   instance: {

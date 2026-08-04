@@ -4,7 +4,7 @@ import { RequestsController } from './requests.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { RecordsModule } from '../records/records.module';
 import { IdentityModule } from '../identity/identity.module';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 
 /**
  * Requests module (PH-02a — NX-020..024). Additive. Reuses:

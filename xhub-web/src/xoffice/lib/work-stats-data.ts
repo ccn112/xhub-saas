@@ -3,7 +3,7 @@
 // backend-down (no fake data). X.Office Work v2 — W3.
 import { xofficeContext, type XOfficeContext } from "./workflow-data";
 
-const API_BASE = process.env.XOFFICE_API_BASE ?? "http://localhost:4000";
+import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 export type StatMetric = "count" | "progress" | "overdue";
 

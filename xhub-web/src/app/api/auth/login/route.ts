@@ -6,7 +6,7 @@
 import { cookies } from "next/headers";
 import { SESSION_COOKIE } from "@/xhub/lib/session.server";
 
-const API_BASE = process.env.XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
 const MAX_AGE = 60 * 60 * 8; // 8h, matches backend expiry
 
 export async function POST(request: Request) {

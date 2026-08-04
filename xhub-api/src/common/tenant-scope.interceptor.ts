@@ -9,14 +9,20 @@ import { PrismaService } from '../prisma/prisma.service';
 import type { RequestIdentity } from '../auth/identity.types';
 
 /**
- * Wraps every X.Office request handler in `prisma.withTenant(identity.tenantId)`
- * so all reads/writes it performs run inside a transaction that SET LOCAL
+ * Wraps every request handler in `prisma.withTenant(identity.tenantId)` so all
+ * reads/writes it performs run inside a transaction that SET LOCAL
  * app.current_tenant — activating Postgres RLS scoping for the whole handler
  * (controller → service → private helpers → notification service all join the
  * same tenant transaction via `prisma.db`).
  *
  * Identity is resolved earlier by the global IdentityGuard (guards run before
  * interceptors), so `req.identity.tenantId` is available here.
+ *
+ * Lives in `common/` (not `xoffice/`) because every module in the app uses it,
+ * both XHub-Platform (controlplane/mdm/backup/webhook) and X.Office-Business
+ * (xoffice/requests/tickets/bookings/directives/announcements/records/work/
+ * manage/people/ioc/delivery) — see the XHub/X.Office boundary-cleanup plan in
+ * `docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md`, Phase 1.5 Stage A.
  *
  * SKIPPED handlers:
  *  - `schedulerTick`: the sweep is intentionally CROSS-tenant and manages its

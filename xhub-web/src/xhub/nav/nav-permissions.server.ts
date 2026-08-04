@@ -9,7 +9,7 @@
 // OFF (dev default), the fetch fails, or the caller holds `*`, the FULL tree is
 // used — an admin/dev always sees everything and there is never a whole-menu
 // blackout.
-const API_BASE = process.env.XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 export interface ResolvedNavPermissions {
   /** Effective permission codes for the caller (may include wildcards / `"*"`). */

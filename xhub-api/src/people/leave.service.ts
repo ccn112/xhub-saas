@@ -2,11 +2,13 @@ import { BadRequestException, ConflictException, ForbiddenException, Injectable,
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { IdentityService } from '../identity/identity.service';
+import { XofficeService } from '../xoffice/xoffice.service';
+import { WebhookService } from '../webhook/webhook.service';
 import { PeopleConfigService } from './config.service';
 import { LeaveBalanceService } from './leave-balance.service';
 import { LeaveImpactService } from './leave-impact.service';
 import { LEAVE_TRANSITIONS } from './people.constants';
-import { computeLeaveDuration, resolveActingPerson, resolveApprovalAssignee, spawnApprovalTask } from './people.helpers';
+import { computeLeaveDuration, resolveActingPerson, resolveApprovalAssignee } from './people.helpers';
 
 /**
  * LeaveRequest — the SoR object under SME Lite (PeopleTenantConfig.leaveMode
@@ -24,6 +26,8 @@ export class LeaveService {
     private readonly config: PeopleConfigService,
     private readonly balances: LeaveBalanceService,
     private readonly impact: LeaveImpactService,
+    private readonly xoffice: XofficeService,
+    private readonly webhook: WebhookService,
   ) {}
   private get db() {
     return this.prisma.db;
@@ -195,8 +199,7 @@ export class LeaveService {
     }
 
     const assignee = await resolveApprovalAssignee(this.prisma, tenantId, person.id, this.identity);
-    const { workflowInstanceId, approvalTaskId } = await spawnApprovalTask(
-      this.prisma,
+    const { workflowInstanceId, approvalTaskId } = await this.xoffice.spawnLightweightApprovalTask(
       tenantId,
       'PEOPLE_LEAVE_APPROVAL',
       `Nghỉ phép — ${person.fullName} (${policy.name})`,
@@ -215,16 +218,13 @@ export class LeaveService {
       sourceLeaveRequestId: leave.id,
     });
     await this.impact.capture(tenantId, userId, leave.id, person.id, startAt, endAt, 'ON_SUBMIT');
-    await this.db.outboxEvent.create({
-      data: {
-        tenantId,
-        aggregateType: 'LeaveRequest',
-        aggregateId: leave.id,
-        eventType: 'xoffice.people.leave.request.submitted',
-        payload: { leaveRequestId: leave.id, personId: person.id, leavePolicyId: policy.id, durationValue, startAt, endAt } as any,
-        nextAttemptAt: new Date(),
-      },
-    });
+    await this.webhook.enqueueOutboxEvent(
+      tenantId,
+      'LeaveRequest',
+      leave.id,
+      'xoffice.people.leave.request.submitted',
+      { leaveRequestId: leave.id, personId: person.id, leavePolicyId: policy.id, durationValue, startAt, endAt },
+    );
     await this.audit(tenantId, userId, 'submit', leave.id, { personId: person.id, durationValue });
     return leave;
   }
@@ -238,10 +238,7 @@ export class LeaveService {
 
   private async closeApprovalTask(tenantId: string, leave: any, actorId: string, outcome: 'approved' | 'rejected') {
     if (!leave.approvalTaskId) return;
-    await this.db.approvalTask.update({
-      where: { id: leave.approvalTaskId },
-      data: { status: outcome === 'approved' ? 'approved' : 'rejected', actedAt: new Date(), actorId },
-    });
+    await this.xoffice.closeLightweightApprovalTask(leave.approvalTaskId, outcome, actorId);
   }
 
   async approve(tenantId: string, userId: string, id: string, body: any) {
@@ -264,16 +261,13 @@ export class LeaveService {
     });
     await this.impact.capture(tenantId, userId, leave.id, leave.personId, leave.startAt, leave.endAt, 'ON_APPROVE');
     await this.closeApprovalTask(tenantId, leave, userId, 'approved');
-    await this.db.outboxEvent.create({
-      data: {
-        tenantId,
-        aggregateType: 'LeaveRequest',
-        aggregateId: leave.id,
-        eventType: 'xoffice.people.availability.changed',
-        payload: { personId: leave.personId, leaveRequestId: leave.id, capacityDeltaHours: leave.durationValue * 8 } as any,
-        nextAttemptAt: new Date(),
-      },
-    });
+    await this.webhook.enqueueOutboxEvent(
+      tenantId,
+      'LeaveRequest',
+      leave.id,
+      'xoffice.people.availability.changed',
+      { personId: leave.personId, leaveRequestId: leave.id, capacityDeltaHours: leave.durationValue * 8 },
+    );
     await this.audit(tenantId, userId, 'approve', id);
     return updated;
   }

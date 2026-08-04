@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ControlplaneService } from './controlplane.service';
 import { ControlplaneController } from './controlplane.controller';
 import { AppAdapterService } from './app-adapter.service';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 import { PrismaModule } from '../prisma/prisma.module';
 import { IdentityModule } from '../identity/identity.module';
 

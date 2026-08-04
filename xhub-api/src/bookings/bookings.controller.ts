@@ -3,7 +3,7 @@ import { BookingsService } from './bookings.service';
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 
 /**
  * Resource Booking API (PH-02d — NX-027). Tenant-scoped via

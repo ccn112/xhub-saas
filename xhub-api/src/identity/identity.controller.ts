@@ -6,7 +6,7 @@ import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
 import { isEnforcing } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 
 /**
  * Identity/Org Core API. Tenant-scoped: TenantScopeInterceptor wraps every
@@ -228,6 +228,17 @@ export class IdentityController {
     @Identity() id: RequestIdentity,
   ) {
     const tenantId = id.tenantId;
+    // KNOWN BOUNDARY RESIDUAL (Phase 1.5 Stage A, XHub/X.Office cleanup):
+    // `Workflow` is owned by X.Office (`xoffice.service.ts`), not Identity.
+    // Not extracted to a XofficeService call in this pass because XofficeModule
+    // already imports IdentityModule (for `identity.can()`/delegation), so the
+    // reverse call would require a forwardRef() circular module dependency —
+    // and this same read has to become a real cross-process HTTP call once
+    // Stage C splits Identity/XOffice into separate services anyway, making a
+    // forwardRef() here throwaway work. Left as a flagged, read-only exception;
+    // fix properly when Stage C's HTTP boundary exists.
+    // See docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md Phase 1.5.
+    // eslint-disable-next-line no-restricted-syntax -- documented residual above, not a new violation
     const wf = await this.prisma.db.workflow.findFirst({ where: { code: body.workflowCode } });
     if (!wf) return { error: 'workflow not found', workflowCode: body.workflowCode };
 

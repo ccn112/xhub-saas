@@ -4,7 +4,7 @@
 import seedCatalog from "@/data/xoffice/connector-catalog.json";
 import seedRoles from "@/data/xoffice/role-bindings.json";
 
-const API_BASE = process.env.NEXT_PUBLIC_XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 export interface ConnectorTargetField {
   key: string;

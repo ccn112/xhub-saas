@@ -1,6 +1,6 @@
 // FE proxy → xhub-api GET /api/records/:id/versions/:versionNo/content.
 // Returns the stored content (base64 + metadata) for a "Tải nội dung" action.
-const API = process.env.XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_SERVER as API } from "@/lib/api-base";
 const HEADERS = { "x-tenant-id": "tenant-xtech", "x-user-id": "user-nam" };
 
 export async function GET(

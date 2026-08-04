@@ -2,7 +2,7 @@
 // Forwards to the BFF with the canonical admin identity headers so results are
 // stored server-side (JSON file per tenant+user). On any failure we return 502
 // so TestConsole degrades to its localStorage cache. FE never touches the DB.
-const API = process.env.XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_SERVER as API } from "@/lib/api-base";
 const HEADERS = {
   "content-type": "application/json",
   "x-tenant-id": "tenant-xtech",

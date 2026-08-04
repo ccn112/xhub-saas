@@ -2,16 +2,14 @@
 // Backend: X.Office notifications API on XHUB_API_URL, scoped by
 // x-user-id / x-tenant-id headers (same demo identity used elsewhere).
 import { CANONICAL_TENANT_ID } from "./seed";
+import { API_BASE_SERVER, API_BASE_CLIENT } from "@/lib/api-base";
 
 // Demo identity — mirrors inbox/page.tsx and preferences fetches.
 export const NOTIF_USER_ID = "user-nam";
 export const NOTIF_TENANT_ID = CANONICAL_TENANT_ID; // tenant-xtech
 
-// Server components read XHUB_API_URL; client components read the public var.
-export const NOTIF_API_SERVER =
-  process.env.XHUB_API_URL ?? "http://localhost:4000";
-export const NOTIF_API_CLIENT =
-  process.env.NEXT_PUBLIC_XHUB_API_URL ?? "http://localhost:4000";
+export const NOTIF_API_SERVER = API_BASE_SERVER;
+export const NOTIF_API_CLIENT = API_BASE_CLIENT;
 
 export interface XNotification {
   id: string;

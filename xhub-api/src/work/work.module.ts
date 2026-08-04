@@ -9,7 +9,7 @@ import { WorkPortfolioController } from './stats/work-portfolio.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { RecordsModule } from '../records/records.module';
 import { IdentityModule } from '../identity/identity.module';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 
 /**
  * Work module (X.Office Work & PM v2 — W1, NativeWorkItem core). Additive.

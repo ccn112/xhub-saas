@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Put, Query, UseInterceptors } from 
 import { MdmService } from './mdm.service';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 
 /**
  * Shared Master Data Hub (MDM) API. Tenant-scoped: TenantScopeInterceptor wraps

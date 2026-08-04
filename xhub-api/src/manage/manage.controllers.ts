@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Patch, Post, Query, UseInterceptors } fro
 import { RequirePermission } from '../auth/require-permission.decorator';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 import { ObjectivesService } from './objectives.service';
 import { MetricsService } from './metrics.service';
 import { ReviewsService } from './reviews.service';

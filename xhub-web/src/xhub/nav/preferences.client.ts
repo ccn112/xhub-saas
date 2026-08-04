@@ -4,8 +4,7 @@
 // we still pass the demo identity headers so the backend can scope the write.
 import type { PatchMyUiPreferencesRequest } from "./preferences.contract";
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 /** PATCH /api/me/ui-preferences. Throws on failure so callers can roll back. */
 export async function patchUiPreferences(

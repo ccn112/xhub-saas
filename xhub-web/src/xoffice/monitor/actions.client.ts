@@ -2,8 +2,7 @@
 
 // WF-10 runtime mutations. Client-side fetch with the demo identity headers so
 // the backend can scope the write (same pattern as nav preferences).
-const API_BASE =
-  process.env.NEXT_PUBLIC_XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 export interface Identity {
   tenantId: string;

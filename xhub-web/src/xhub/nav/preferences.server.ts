@@ -3,7 +3,7 @@
 import type { GetMyUiPreferencesResponse } from "./preferences.contract";
 import type { NavigationMode } from "./types";
 
-const API_BASE = process.env.XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
 const PLATFORM_DEFAULT: NavigationMode = "rail-context";
 
 export interface ResolvedPreferences extends GetMyUiPreferencesResponse {

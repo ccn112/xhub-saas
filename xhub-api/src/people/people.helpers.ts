@@ -69,49 +69,8 @@ export async function resolveApprovalAssignee(
   return { assigneeRole: 'ROLE_DIRECT_MANAGER', assigneeUserId: managerUserId ?? null };
 }
 
-/**
- * Spawn a lightweight WorkflowInstance + ApprovalTask pair for a People
- * request (leave/overtime submit) — reuses the SAME two tables the generic
- * BPMN engine writes (xoffice.service.ts) so the task surfaces in /approvals
- * and /inbox, WITHOUT running the full node/edge engine (PE_SOR_MATRIX_DELTA
- * §"Option B"). Caller must run this inside the same request transaction
- * (this.db already is, via TenantScopeInterceptor) so it commits atomically
- * with the LeaveRequest/OvertimeRequest status change.
- */
-export async function spawnApprovalTask(
-  prisma: PrismaService,
-  tenantId: string,
-  workflowCode: string,
-  title: string,
-  requesterEmail: string,
-  assigneeRole: string,
-  assigneeUserId: string | null,
-): Promise<{ workflowInstanceId: string; approvalTaskId: string }> {
-  const instanceCode = `${workflowCode}-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 1000)
-    .toString()
-    .padStart(3, '0')}`;
-  const instance = await prisma.db.workflowInstance.create({
-    data: {
-      tenantId,
-      workflowCode,
-      instanceCode,
-      title,
-      requesterEmail,
-      variables: {},
-      status: 'running',
-      currentNodeId: 'approval',
-    },
-  });
-  const task = await prisma.db.approvalTask.create({
-    data: {
-      tenantId,
-      instanceId: instance.id,
-      nodeId: 'approval',
-      nodeName: 'Duyệt',
-      assigneeRole,
-      assigneeUserId,
-      status: 'open',
-    },
-  });
-  return { workflowInstanceId: instance.id, approvalTaskId: task.id };
-}
+// `spawnApprovalTask` moved to `XofficeService.spawnLightweightApprovalTask`
+// (2026-08-03, XHub/X.Office boundary cleanup — WorkflowInstance/ApprovalTask
+// are owned by X.Office, not People; see
+// `docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md` Phase 1.5 Stage A).
+// Callers now inject XofficeService directly instead of importing this helper.

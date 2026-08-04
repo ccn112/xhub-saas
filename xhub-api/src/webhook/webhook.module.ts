@@ -3,7 +3,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { WebhookService } from './webhook.service';
 import { WebhookController } from './webhook.controller';
 import { OutboxDispatcher } from './webhook.dispatcher';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 import { PrismaModule } from '../prisma/prisma.module';
 
 /**

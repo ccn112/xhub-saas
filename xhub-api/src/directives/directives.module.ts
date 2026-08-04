@@ -4,7 +4,7 @@ import { DirectivesController } from './directives.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { RecordsModule } from '../records/records.module';
 import { IdentityModule } from '../identity/identity.module';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 
 /**
  * Directives module (PH-02b — NX-025). Additive. Reuses:

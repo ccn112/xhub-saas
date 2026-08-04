@@ -4,7 +4,7 @@ import { EngagementsController } from './engagements.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { RecordsModule } from '../records/records.module';
 import { TenantLaunchModule } from '../platform/launch/tenant-launch.module';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 
 /**
  * Solution Delivery module (SaaS step 5 — E2). The THIRD workspace type (T001 as

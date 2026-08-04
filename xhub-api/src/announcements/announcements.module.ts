@@ -4,7 +4,7 @@ import { AnnouncementsController } from './announcements.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { RecordsModule } from '../records/records.module';
 import { IdentityModule } from '../identity/identity.module';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 
 /**
  * Announcements / read-acknowledgement module (PH-02e — NX-028). Additive. Reuses:

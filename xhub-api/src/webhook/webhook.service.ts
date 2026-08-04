@@ -41,6 +41,36 @@ export class WebhookService {
     return this.prisma.db;
   }
 
+  /**
+   * Enqueue an OutboxEvent for a caller that owns its own aggregate (e.g. the
+   * People module publishing `xoffice.people.*` domain events) but does not
+   * own the outbox/dispatch mechanism — that lives here, in the platform
+   * webhook module. Same-transaction call (`this.prisma.db` already is, via
+   * TenantScopeInterceptor) so it commits atomically with the caller's own
+   * write. See the XHub/X.Office boundary-cleanup plan,
+   * `docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md` Phase 1.5 Stage A.
+   */
+  async enqueueOutboxEvent(
+    tenantId: string,
+    aggregateType: string,
+    aggregateId: string,
+    eventType: string,
+    payload: Record<string, unknown>,
+  ) {
+    return this.db.outboxEvent.create({
+      data: {
+        tenantId,
+        aggregateType,
+        aggregateId,
+        eventType,
+        payload: payload as any,
+        status: 'pending',
+        attempts: 0,
+        nextAttemptAt: new Date(),
+      },
+    });
+  }
+
   // ---- inbound --------------------------------------------------------------
   async receive(tenantId: string, input: InboundInput) {
     if (!verifySignature(input.rawBody, input.signature)) {

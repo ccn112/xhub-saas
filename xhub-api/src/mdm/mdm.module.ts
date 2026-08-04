@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MdmService } from './mdm.service';
 import { MdmController } from './mdm.controller';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 import { PrismaModule } from '../prisma/prisma.module';
 
 /**

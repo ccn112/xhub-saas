@@ -13,7 +13,7 @@ import type { Request } from 'express';
 import { WebhookService } from './webhook.service';
 import { Identity } from '../auth/identity.decorator';
 import type { RequestIdentity } from '../auth/identity.types';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 import { WEBHOOK_ID_HEADER, WEBHOOK_SIGNATURE_HEADER } from './hmac.util';
 
 /**

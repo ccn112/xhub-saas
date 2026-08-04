@@ -4,7 +4,7 @@ import { IdentityModule } from '../identity/identity.module';
 import { ManageModule } from '../manage/manage.module';
 import { XofficeModule } from '../xoffice/xoffice.module';
 import { PeopleModule } from '../people/people.module';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 import { TwinStudioService } from './twin-studio.service';
 import { DataLayerService } from './data-layer.service';
 import { DashboardService } from './dashboard.service';

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { RecordsService } from './records.service';
 import { RecordsController } from './records.controller';
 import { StorageService } from './storage.service';
-import { TenantScopeInterceptor } from '../xoffice/tenant-scope.interceptor';
+import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 import { PrismaModule } from '../prisma/prisma.module';
 
 /**

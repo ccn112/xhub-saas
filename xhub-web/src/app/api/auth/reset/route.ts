@@ -1,7 +1,7 @@
 // FE reset-password proxy (PH-00b). Forwards { token, password } to the backend,
 // which validates + consumes the single-use RESET token and stores the new
 // argon2 hash. No cookie is set here — the user then signs in from /login.
-const API_BASE = process.env.XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 export async function POST(request: Request) {
   let body: { token?: string; password?: string } = {};

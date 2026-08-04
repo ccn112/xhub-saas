@@ -2,8 +2,9 @@ import { BadRequestException, ConflictException, ForbiddenException, Injectable,
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { IdentityService } from '../identity/identity.service';
+import { XofficeService } from '../xoffice/xoffice.service';
 import { CORRECTION_TRANSITIONS } from './people.constants';
-import { resolveActingPerson, resolveApprovalAssignee, spawnApprovalTask } from './people.helpers';
+import { resolveActingPerson, resolveApprovalAssignee } from './people.helpers';
 
 function dateOnly(d: Date): Date {
   return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
@@ -22,6 +23,7 @@ export class AttendanceCorrectionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly identity: IdentityService,
+    private readonly xoffice: XofficeService,
   ) {}
   private get db() {
     return this.prisma.db;
@@ -94,8 +96,7 @@ export class AttendanceCorrectionService {
     }
 
     const assignee = await resolveApprovalAssignee(this.prisma, tenantId, person.id, this.identity);
-    const { workflowInstanceId, approvalTaskId } = await spawnApprovalTask(
-      this.prisma,
+    const { workflowInstanceId, approvalTaskId } = await this.xoffice.spawnLightweightApprovalTask(
       tenantId,
       'PEOPLE_ATTENDANCE_CORRECTION',
       `Báo sai chấm công — ${person.fullName} (${body.workDate})`,
@@ -143,7 +144,7 @@ export class AttendanceCorrectionService {
       },
     });
     if (req.approvalTaskId) {
-      await this.db.approvalTask.update({ where: { id: req.approvalTaskId }, data: { status: 'approved', actedAt: new Date(), actorId: userId } });
+      await this.xoffice.closeLightweightApprovalTask(req.approvalTaskId, 'approved', userId);
     }
     await this.audit(tenantId, userId, 'approve', id);
     return updated;
@@ -159,7 +160,7 @@ export class AttendanceCorrectionService {
       data: { status: 'REJECTED', decidedAt: new Date(), decidedBy: userId, decisionNote: body?.note ?? null },
     });
     if (req.approvalTaskId) {
-      await this.db.approvalTask.update({ where: { id: req.approvalTaskId }, data: { status: 'rejected', actedAt: new Date(), actorId: userId } });
+      await this.xoffice.closeLightweightApprovalTask(req.approvalTaskId, 'rejected', userId);
     }
     await this.audit(tenantId, userId, 'reject', id);
     return updated;

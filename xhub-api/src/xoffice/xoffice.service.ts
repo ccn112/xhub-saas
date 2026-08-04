@@ -2305,6 +2305,92 @@ export class XofficeService implements OnModuleInit {
     return { allowed: decision.allowed, reason: decision.reason };
   }
 
+  /**
+   * Spawn a lightweight WorkflowInstance + ApprovalTask pair for a caller that
+   * needs an approval surfaced in /approvals + /inbox WITHOUT running the full
+   * node/edge BPMN engine (e.g. People module leave/overtime/attendance-
+   * correction requests — PE_SOR_MATRIX_DELTA §"Option B"). Lives here (not in
+   * the calling module) because WorkflowInstance/ApprovalTask are owned by
+   * X.Office — see the XHub/X.Office boundary-cleanup plan,
+   * `docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md` Phase 1.5 Stage A.
+   * Caller must run this inside the same request transaction (`this.prisma.db`
+   * already is, via TenantScopeInterceptor) so it commits atomically with the
+   * caller's own status change.
+   */
+  async spawnLightweightApprovalTask(
+    tenantId: string,
+    workflowCode: string,
+    title: string,
+    requesterEmail: string,
+    assigneeRole: string,
+    assigneeUserId: string | null,
+  ): Promise<{ workflowInstanceId: string; approvalTaskId: string }> {
+    const instanceCode = `${workflowCode}-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 1000)
+      .toString()
+      .padStart(3, '0')}`;
+    const instance = await this.prisma.db.workflowInstance.create({
+      data: {
+        tenantId,
+        workflowCode,
+        instanceCode,
+        title,
+        requesterEmail,
+        variables: {},
+        status: 'running',
+        currentNodeId: 'approval',
+      },
+    });
+    const task = await this.prisma.db.approvalTask.create({
+      data: {
+        tenantId,
+        instanceId: instance.id,
+        nodeId: 'approval',
+        nodeName: 'Duyệt',
+        assigneeRole,
+        assigneeUserId,
+        status: 'open',
+      },
+    });
+    return { workflowInstanceId: instance.id, approvalTaskId: task.id };
+  }
+
+  /**
+   * Close the ApprovalTask half of a lightweight pair spawned by
+   * `spawnLightweightApprovalTask` (People module leave/overtime/attendance-
+   * correction decisions). Deliberately does NOT touch WorkflowInstance or run
+   * the node/edge engine — these lightweight instances have no real
+   * definition to advance; the caller's own request row is the source of
+   * truth for the outcome. See `docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md`
+   * Phase 1.5 Stage A.
+   */
+  async closeLightweightApprovalTask(approvalTaskId: string, outcome: 'approved' | 'rejected', actorId: string): Promise<void> {
+    await this.prisma.db.approvalTask.update({
+      where: { id: approvalTaskId },
+      data: { status: outcome, actedAt: new Date(), actorId },
+    });
+  }
+
+  /**
+   * Open ApprovalTasks assigned to `userId` — used by People's leave-impact
+   * preview (PE-01) to warn a requester which approvals would be stranded
+   * while they're away. Read-only; ApprovalTask stays owned by X.Office.
+   */
+  async listOpenApprovalTasksForAssignee(tenantId: string, userId: string): Promise<{ id: string }[]> {
+    return this.prisma.db.approvalTask.findMany({
+      where: { tenantId, assigneeUserId: userId, status: 'open' },
+      select: { id: true },
+    });
+  }
+
+  /**
+   * Delegation CRUD is owned by `IdentityService` (which already enforces
+   * self-delegation/overlap/cycle guards — `identity.service.ts` `createDelegation`)
+   * — this method resolves the same fromAt/toAt defaults X.Office callers have
+   * always relied on, then hands the write to Identity instead of maintaining
+   * a second, weaker Prisma write here. See the XHub/X.Office boundary-cleanup
+   * plan, `docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md` Phase 1.5
+   * Stage A.
+   */
   async createDelegation(
     slug: string,
     actorId: string,
@@ -2314,23 +2400,10 @@ export class XofficeService implements OnModuleInit {
     const tenantId = this.tenantId(slug);
     const fromAt = body.fromAt ? new Date(body.fromAt) : new Date();
     const toAt = body.toAt ? new Date(body.toAt) : new Date(Date.now() + 7 * 24 * 3_600_000);
-    const row = await this.prisma.db.delegation.create({
-      data: {
-        tenantId,
-        fromUserId: body.fromUserId,
-        toUserId: body.toUserId,
-        fromAt,
-        toAt,
-        reason: body.reason ?? null,
-      },
-    });
-    await this.appendAudit(
+    const row = await this.identity.createDelegation(
+      { fromUserId: body.fromUserId, toUserId: body.toUserId, fromAt: fromAt.toISOString(), toAt: toAt.toISOString(), reason: body.reason ?? null },
       tenantId,
-      '-',
       actorId,
-      'delegation.created',
-      `Ủy quyền ${body.fromUserId} → ${body.toUserId} [${fromAt.toISOString()}..${toAt.toISOString()}]` +
-        (body.reason ? ` — ${body.reason}` : ''),
     );
     return this.mapDelegation(row);
   }

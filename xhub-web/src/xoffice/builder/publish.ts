@@ -5,7 +5,7 @@
 // backend is offline we synthesize a local checksum so the panel still responds.
 import type { WorkflowDefinitionDocument } from "@/xoffice/workflow-types";
 
-const API_BASE = process.env.NEXT_PUBLIC_XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 export interface PublishResult {
   version: number | string;

@@ -4,7 +4,7 @@
 // TA-01 overview connectors/provisioning card and the connectors screens.
 import "server-only";
 
-const API = process.env.XHUB_API_URL || "http://localhost:4000";
+import { API_BASE_SERVER as API } from "@/lib/api-base";
 const HEADERS = { "x-tenant-id": "tenant-xtech", "x-user-id": "user-nam" } as const;
 
 export type Source = "live" | "demo";

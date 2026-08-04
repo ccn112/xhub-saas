@@ -1,7 +1,7 @@
 // FE forgot-password proxy (PH-00b). Forwards { email|userId } to the backend,
 // which returns a SURFACED reset token + link for `.local` accounts (no email
 // delivery in the internal pilot). We pass that straight back to the page.
-const API_BASE = process.env.XHUB_API_URL ?? "http://localhost:4000";
+import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 export async function POST(request: Request) {
   let body: { email?: string; userId?: string } = {};
