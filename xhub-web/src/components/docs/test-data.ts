@@ -46,9 +46,13 @@ export const BOT_TEST_RESULTS: BotTestRow[] = [
   { cmd: "scan:secrets", expected: "SECRET SCAN PASSED — 0 secret lộ ngoài .env" },
   { cmd: "test:e2e", expected: "2 suite PASS — app root + xoffice-delegation self-grant regression (SEC-002/GAP-002: chặn tự cấp quyền admin qua uỷ quyền + act-on-task)", note: "Mới thêm 03/08/2026 (G0 hardening)" },
   { cmd: "migrate:status (`npx prisma migrate status`)", expected: "1 migration (baseline) — 'Database schema is up to date!'", note: "Mới thêm 03/08/2026 — chuyển từ `prisma db push` sang Prisma Migrate có lịch sử" },
+  { cmd: "boot split (`start:platform` + `start:xoffice`, build 1 lần)", expected: "Cả 2 process lên khoẻ song song (:4000 + :4001); mỗi process CHỈ serve đúng route nhóm mình — /api/platform/* → 404 ở xoffice, /api/xoffice/* → 404 ở platform", note: "Mới 04/08/2026 (Phase 1.5 Stage B) — xác nhận qua request 404 chéo, không đoán" },
+  { cmd: "test:delivery (trỏ base :4001, xoffice process)", expected: "DELIVERY PASSED — bao gồm 'POST launch' + 'launch ran to COMPLETED' + 'detail embeds live launch progress': Delivery (process xoffice) gọi HTTP THẬT sang Launch Factory (process platform, :4000) qua route /api/platform/launches", note: "Mới 04/08/2026 — bằng chứng chính cho việc 2 process tách thật, không chỉ tách port" },
+  { cmd: "test:platform-console (đã sửa cho cấu hình 2-process)", expected: "PLATFORM CONSOLE SMOKE PASSED — assertion 'platform op DENIED 403 trên route business' giờ trỏ đúng sang process xoffice để test guard thật (trước khi sửa: 404 vì route không còn tồn tại ở process platform)", note: "Mới 04/08/2026 — phát hiện + sửa 1 test giả định sai cấu hình 1-process" },
+  { cmd: "full smoke run 39 script trên cấu hình 2-process", expected: "39/39 PASS, trừ 2 flake xác nhận KHÔNG liên quan Stage B", note: "test:people-attendance: bug tính giờ đi trễ có từ trước (đã ghi từ Stage A) · test:smoke (xoffice-e2e): 62 dòng Delegation tồn đọng từ chạy tay lặp lại trên DB dev cũ, không phải do code — CI luôn chạy DB mới nên không gặp lại" },
 ];
 
-export const BOT_TEST_UPDATED = "2026-08-03";
+export const BOT_TEST_UPDATED = "2026-08-04";
 
 // ── Setup / hướng dẫn cho người test mới (chưa biết code) ──────────────────
 export interface TestAccount {
@@ -256,6 +260,35 @@ export const USER_TEST_ROWS: UserTestRow[] = [
 
   // ── Console kỹ thuật ──
   { id: "U70", group: "Console kỹ thuật", step: "DevTools Console khi lướt tất cả màn", expected: "0 lỗi đỏ (JS error / failed fetch) trên mọi route đã mở" },
+
+  // ── Vận hành — Tách process XHub/X.Office (Phase 1.5 Stage B, 04/08/2026) ──
+  // Khác các nhóm trên: cần quyền mở terminal (không chỉ trình duyệt), dành cho
+  // dev/kỹ thuật xác nhận backend đã tách 2 process thật, không chỉ tách port.
+  { id: "U106", group: "Vận hành — Tách process", step: "[DEV] Ở xhub-api: `npm run build` rồi mở 2 terminal chạy `npm run start:platform:prod` và `npm run start:xoffice:prod`", expected: "Cả 2 process lên khoẻ, không báo lỗi EADDRINUSE; log mỗi process chỉ liệt kê route của đúng nhóm mình (platform: /api/platform, /api/controlplane, /api/mdm, /api/backup, /api/webhooks... — xoffice: /api/xoffice, /api/requests, /api/people...)" },
+  { id: "U107", group: "Vận hành — Tách process", step: "Sửa `xhub-web/.env.local`: `XHUB_API_URL`/`NEXT_PUBLIC_XHUB_API_URL=http://localhost:4000`, `XOFFICE_API_URL`/`NEXT_PUBLIC_XOFFICE_API_URL=http://localhost:4001`, khởi động lại `npm run dev`, mở /platform/tenants", expected: "Danh sách 10 tenant tải bình thường — xác nhận màn Platform Console lấy dữ liệu từ process platform (:4000)", link: "/platform/tenants" },
+  { id: "U108", group: "Vận hành — Tách process", step: "Mở /office/requests (giữ nguyên cấu hình U107)", expected: "Danh sách yêu cầu tải bình thường (>100 dòng) — xác nhận màn X.Office lấy dữ liệu từ process xoffice (:4001), KHÔNG phải process platform", link: "/office/requests" },
+  { id: "U109", group: "Vận hành — Tách process", step: "Mở /delivery, chọn 1 engagement đã tới giai đoạn GO_LIVE, bấm 'Khởi chạy tenant'", expected: "Tiến trình 8 bước chạy tới COMPLETED — ĐÂY LÀ BẰNG CHỨNG CHÍNH: request đi từ process xoffice (Delivery) sang process platform (Launch Factory) qua HTTP thật, không phải gọi hàm nội bộ", link: "/delivery" },
+  { id: "U110", group: "Vận hành — Tách process", step: "[DEV] Tắt process platform (Ctrl+C ở terminal :4000), thử mở lại /platform/tenants, rồi mở /office/requests", expected: "/platform/tenants báo lỗi kết nối rõ ràng (không phải màn trắng); /office/requests VẪN hoạt động bình thường — chứng minh 2 process độc lập thật, không phải 1 process giả lập 2 port" },
+  { id: "U111", group: "Vận hành — Tách process", step: "[DEV] Tắt cả 2 process, chạy lại `npm run start:dev` (chế độ all-in-one, 1 process duy nhất :4000) ở xhub-api", expected: "Toàn bộ app hoạt động bình thường như trước khi tách — chế độ dev nhanh (1 lệnh, khỏi mở 2 terminal) không bị phá vỡ" },
+];
+
+// Phase 1.5 Stage D (2026-08-04) — /docs được nhân bản thành 2 bộ theo đúng
+// ranh giới backend đã tách (Stage C): các nhóm dưới đây được XOFFICE_BUSINESS
+// process (:4001) phục vụ — kể cả "Quản trị" (Management OS /manage/*, KHÁC
+// với "Quản trị & Tổ chức" /admin/* của Platform) và "IOC — Bản sao số" (module
+// con của khối điều hành/quản lý văn phòng trong X.Office). Bộ tài liệu riêng
+// của X.Office (/office/docs/test) CHỈ hiện các nhóm này. Bộ tài liệu gốc
+// (/docs/test) hiện PHẦN CÒN LẠI — trở thành trung tâm tài liệu chung (kiểm
+// thử + phát triển + backlog + change request) cho toàn bộ phần mềm khác
+// (Platform, X.Space, X1, X2…).
+export const XOFFICE_TEST_GROUPS = [
+  "X.Office",
+  "Tài liệu",
+  "Công việc",
+  "Quản trị",
+  "IOC — Bản sao số",
+  "Nhân sự & Công",
+  "Đa tenant",
 ];
 
 export const USER_TEST_GROUPS = [
@@ -272,4 +305,11 @@ export const USER_TEST_GROUPS = [
   "Nhân sự & Công",
   "IOC — Bản sao số",
   "Console kỹ thuật",
+  "Vận hành — Tách process",
 ] as const;
+
+// Phần còn lại sau khi đã tách các nhóm X.Office ra /office/docs/test — dùng
+// cho bộ tài liệu gốc /docs/test (trung tâm chung cho phần mềm còn lại).
+export const PLATFORM_TEST_GROUPS = USER_TEST_GROUPS.filter(
+  (g) => !(XOFFICE_TEST_GROUPS as readonly string[]).includes(g),
+);

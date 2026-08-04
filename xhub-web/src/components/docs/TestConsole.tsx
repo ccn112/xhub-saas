@@ -40,8 +40,17 @@ const RESULT_OPTIONS: { value: Result; label: string; active: string }[] = [
   { value: "fail", label: "FAIL", active: "bg-error text-white" },
 ];
 
-export function TestConsole() {
+export function TestConsole({
+  groups = USER_TEST_GROUPS as unknown as string[],
+  showBotTests = true,
+}: {
+  /** Which USER_TEST_GROUPS to render + count toward stats — defaults to all. */
+  groups?: string[];
+  /** Bot-test (automated `test:*` CI results) section — off for the X.Office-scoped console. */
+  showBotTests?: boolean;
+}) {
   const toast = useToast();
+  const rows = useMemo(() => USER_TEST_ROWS.filter((r) => groups.includes(r.group)), [groups]);
   const [store, setStore] = useState<Store>({});
   const [hydrated, setHydrated] = useState(false);
   const [sync, setSync] = useState<"local" | "saving" | "saved" | "offline">("local");
@@ -114,14 +123,14 @@ export function TestConsole() {
 
   const stats = useMemo(() => {
     let pass = 0, fail = 0, tested = 0;
-    for (const row of USER_TEST_ROWS) {
+    for (const row of rows) {
       const r = get(row.id).result;
       if (r === "pass") { pass++; tested++; }
       else if (r === "fail") { fail++; tested++; }
     }
-    return { pass, fail, tested, total: USER_TEST_ROWS.length };
+    return { pass, fail, tested, total: rows.length };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [store]);
+  }, [store, rows]);
 
   const pct = Math.round((stats.tested / stats.total) * 100);
 
@@ -141,7 +150,7 @@ export function TestConsole() {
       `| ID | Nhóm | Bước | Kết quả | Ghi chú |`,
       `| --- | --- | --- | --- | --- |`,
     ];
-    for (const row of USER_TEST_ROWS) {
+    for (const row of rows) {
       const st = get(row.id);
       const label =
         st.result === "pass" ? "PASS" : st.result === "fail" ? "FAIL" : "Chưa test";
@@ -210,41 +219,43 @@ export function TestConsole() {
       </SectionCard>
 
       {/* A. Bot-test */}
-      <SectionCard
-        accent="success"
-        title="Bot-test — kết quả tự động"
-        action={<Badge tone="success">Cập nhật: {BOT_TEST_UPDATED} · {BOT_TEST_RESULTS.length}/{BOT_TEST_RESULTS.length} PASS</Badge>}
-      >
-        <p className="mb-3 text-sm text-gray-500 dark:text-dark-300">
-          Kết quả các cổng tự động ở lần chạy mới nhất (chỉ đọc).
-        </p>
-        <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-dark-500">
-          <table className="w-full border-collapse text-sm">
-            <thead className="bg-gray-100 dark:bg-dark-800">
-              <tr>
-                <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-dark-100">Kết quả</th>
-                <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-dark-100">Lệnh</th>
-                <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-dark-100">Kỳ vọng</th>
-              </tr>
-            </thead>
-            <tbody>
-              {BOT_TEST_RESULTS.map((r) => (
-                <tr key={r.cmd} className="border-t border-gray-100 dark:border-dark-600">
-                  <td className="px-3 py-2 align-top"><Badge tone="success">PASS</Badge></td>
-                  <td className="px-3 py-2 align-top font-mono text-xs text-primary-700 dark:text-primary-300">{r.cmd}</td>
-                  <td className="px-3 py-2 align-top text-gray-600 dark:text-dark-200">
-                    {r.expected}
-                    {r.note && <span className="mt-0.5 block text-xs text-gray-400 dark:text-dark-400">* {r.note}</span>}
-                  </td>
+      {showBotTests && (
+        <SectionCard
+          accent="success"
+          title="Bot-test — kết quả tự động"
+          action={<Badge tone="success">Cập nhật: {BOT_TEST_UPDATED} · {BOT_TEST_RESULTS.length}/{BOT_TEST_RESULTS.length} PASS</Badge>}
+        >
+          <p className="mb-3 text-sm text-gray-500 dark:text-dark-300">
+            Kết quả các cổng tự động ở lần chạy mới nhất (chỉ đọc).
+          </p>
+          <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-dark-500">
+            <table className="w-full border-collapse text-sm">
+              <thead className="bg-gray-100 dark:bg-dark-800">
+                <tr>
+                  <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-dark-100">Kết quả</th>
+                  <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-dark-100">Lệnh</th>
+                  <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-dark-100">Kỳ vọng</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="mt-2 text-xs text-gray-400 dark:text-dark-400">
-          * Một số cổng in PASSED kèm assertion teardown libuv trên Windows — đã xác minh không phải lỗi.
-        </p>
-      </SectionCard>
+              </thead>
+              <tbody>
+                {BOT_TEST_RESULTS.map((r) => (
+                  <tr key={r.cmd} className="border-t border-gray-100 dark:border-dark-600">
+                    <td className="px-3 py-2 align-top"><Badge tone="success">PASS</Badge></td>
+                    <td className="px-3 py-2 align-top font-mono text-xs text-primary-700 dark:text-primary-300">{r.cmd}</td>
+                    <td className="px-3 py-2 align-top text-gray-600 dark:text-dark-200">
+                      {r.expected}
+                      {r.note && <span className="mt-0.5 block text-xs text-gray-400 dark:text-dark-400">* {r.note}</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-2 text-xs text-gray-400 dark:text-dark-400">
+            * Một số cổng in PASSED kèm assertion teardown libuv trên Windows — đã xác minh không phải lỗi.
+          </p>
+        </SectionCard>
+      )}
 
       {/* B. User test */}
       <SectionCard
@@ -277,14 +288,14 @@ export function TestConsole() {
         </div>
 
         <div className="space-y-5">
-          {USER_TEST_GROUPS.map((group) => (
+          {groups.map((group) => (
             <div key={group}>
               <h3 className="mb-2 flex items-center gap-2 font-heading text-sm font-semibold text-gray-700 dark:text-dark-100">
                 <span className="h-4 w-1 rounded-full bg-primary-600" />
                 {group}
               </h3>
               <div className="space-y-2">
-                {USER_TEST_ROWS.filter((r) => r.group === group).map((row) => {
+                {rows.filter((r) => r.group === group).map((row) => {
                   const st = get(row.id);
                   return (
                     <Card key={row.id} className="p-3">

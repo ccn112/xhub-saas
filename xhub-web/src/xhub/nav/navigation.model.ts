@@ -261,7 +261,7 @@ export const XHUB_NAVIGATION: XNavItem[] = [
     label: "X.Office",
     icon: "office",
     href: "/office/workflows",
-    match: ["/office"],
+    match: ["/office", "/ioc"],
     // Rail open to all; workflow admin screens gated (WORKFLOW_ADMIN → workflow.*).
     children: [
       {
@@ -296,6 +296,34 @@ export const XHUB_NAVIGATION: XNavItem[] = [
           { id: "office.workflows", label: "Danh mục quy trình", href: "/office/workflows", icon: "office", match: ["/office/workflows"], permission: "workflow.*" },
           { id: "office.instances", label: "Vận hành (Instances)", href: "/office/instances", icon: "work", match: ["/office/instances"], permission: "workflow.*" },
           { id: "office.monitor", label: "Giám sát vận hành", href: "/office/monitor", icon: "chart", match: ["/office/monitor"], permission: "workflow.*" },
+          // Bộ tài liệu kiểm thử RIÊNG của X.Office (Phase 1.5 Stage D, 2026-08-04)
+          // — tách khỏi /docs/test chung, chỉ phủ các nhóm do process xoffice phục vụ.
+          { id: "office.docs.test", label: "Kiểm thử X.Office", href: "/office/docs/test", icon: "test", match: ["/office/docs/test"] },
+          // Tài liệu phát triển + backlog RIÊNG của X.Office (2026-08-04) — nhân
+          // bản từ /docs/developer + /docs/backlog, đang chờ chuẩn hoá nội dung.
+          { id: "office.docs.developer", label: "Tài liệu phát triển", href: "/office/docs/developer", icon: "office", match: ["/office/docs/developer"] },
+          { id: "office.docs.backlog", label: "Backlog X.Office", href: "/office/docs/backlog", icon: "list", match: ["/office/docs/backlog"] },
+        ],
+      },
+      // XHub Enterprise IOC — Digital Twin (DT-01..DT-03), module con của khối
+      // điều hành/quản lý văn phòng trong X.Office (2026-08-04 — dời từ rail
+      // top-level riêng vào đây theo đúng ranh giới sản phẩm X.Office). Viewer
+      // gated bởi ioc.view; mỗi màn studio giữ nguyên gate riêng
+      // (ioc.studio.* / ioc.datalayer.manage) như trước khi dời.
+      {
+        id: "office.ioc",
+        label: "IOC — Bản sao số",
+        href: "/ioc",
+        icon: "chart",
+        children: [
+          { id: "ioc.entry", label: "Trung tâm điều hành", href: "/ioc", icon: "chart", match: ["/ioc"], permission: "ioc.view" },
+          { id: "ioc.twin.office", label: "Bản sao số văn phòng", href: "/ioc/twin/office", icon: "business", match: ["/ioc/twin/office"], permission: "ioc.view" },
+          { id: "ioc.studio.templates", label: "Thư viện mẫu (nhân bản)", href: "/ioc/studio/templates", icon: "folder", match: ["/ioc/studio/templates"], permission: "ioc.studio.read" },
+          { id: "ioc.studio", label: "Twin Studio", href: "/ioc/studio", icon: "office", match: ["/ioc/studio"], permission: "ioc.studio.read" },
+          { id: "ioc.studio.dataLayers", label: "Lớp dữ liệu", href: "/ioc/studio/data-layers", icon: "list", match: ["/ioc/studio/data-layers"], permission: "ioc.datalayer.manage" },
+          { id: "ioc.studio.dashboards", label: "Bảng điều khiển twin", href: "/ioc/studio/dashboards", icon: "apps", match: ["/ioc/studio/dashboards"], permission: "ioc.studio.read" },
+          { id: "ioc.studio.assets", label: "Icon & asset", href: "/ioc/studio/assets", icon: "folder", match: ["/ioc/studio/assets"], permission: "ioc.asset.manage" },
+          { id: "ioc.studio.publish", label: "Rà soát & xuất bản", href: "/ioc/studio/publish", icon: "settings", match: ["/ioc/studio/publish"], permission: "ioc.studio.publish" },
         ],
       },
     ],
@@ -444,38 +472,6 @@ export const XHUB_NAVIGATION: XNavItem[] = [
     children: [
       { id: "delivery.overview", label: "Tổng quan pipeline", href: "/delivery", icon: "chart", match: ["/delivery"], permission: "delivery.read" },
       { id: "delivery.engagements", label: "Dự án triển khai", href: "/delivery/engagements", icon: "briefcase", match: ["/delivery/engagements"], permission: "delivery.read" },
-    ],
-  },
-  // -----------------------------------------------------------------------------
-  // XHub ENTERPRISE IOC — DIGITAL TWIN (DT-01..DT-03). An ENTITLED workspace, not
-  // a new rail concept: docs/17_UI_SCREEN_CATALOG.md says "do not create a new
-  // rail at MVP; register IOC as an entitled app/workspace entry", and in this
-  // codebase a top-level XNavItem carrying a `permission` IS that entitlement
-  // mechanism (filterNavByPermissions hides the whole subtree under AUTH_ENFORCE),
-  // exactly as `platform` and `delivery` already do. Namespace /ioc/* — ADDITIVE:
-  // it does not touch the 5 core workspaces, `manage`, `platform` or `delivery`.
-  // Viewer screens are gated by `ioc.view`; every studio screen carries its own
-  // ioc.studio.* / ioc.datalayer.manage gate, so an IOC operator sees the twin
-  // without gaining the right to re-author it. Only screens with a REAL route are
-  // registered — the department/process/people twins (DT-04..06) land later.
-  // -----------------------------------------------------------------------------
-  {
-    id: "ioc",
-    label: "IOC — Bản sao số",
-    icon: "chart",
-    href: "/ioc",
-    match: ["/ioc"],
-    permission: "ioc.view",
-    group: "platform",
-    children: [
-      { id: "ioc.entry", label: "Trung tâm điều hành", href: "/ioc", icon: "chart", match: ["/ioc"], permission: "ioc.view" },
-      { id: "ioc.twin.office", label: "Bản sao số văn phòng", href: "/ioc/twin/office", icon: "business", match: ["/ioc/twin/office"], permission: "ioc.view" },
-      { id: "ioc.studio.templates", label: "Thư viện mẫu (nhân bản)", href: "/ioc/studio/templates", icon: "folder", match: ["/ioc/studio/templates"], permission: "ioc.studio.read" },
-      { id: "ioc.studio", label: "Twin Studio", href: "/ioc/studio", icon: "office", match: ["/ioc/studio"], permission: "ioc.studio.read" },
-      { id: "ioc.studio.dataLayers", label: "Lớp dữ liệu", href: "/ioc/studio/data-layers", icon: "list", match: ["/ioc/studio/data-layers"], permission: "ioc.datalayer.manage" },
-      { id: "ioc.studio.dashboards", label: "Bảng điều khiển twin", href: "/ioc/studio/dashboards", icon: "apps", match: ["/ioc/studio/dashboards"], permission: "ioc.studio.read" },
-      { id: "ioc.studio.assets", label: "Icon & asset", href: "/ioc/studio/assets", icon: "folder", match: ["/ioc/studio/assets"], permission: "ioc.asset.manage" },
-      { id: "ioc.studio.publish", label: "Rà soát & xuất bản", href: "/ioc/studio/publish", icon: "settings", match: ["/ioc/studio/publish"], permission: "ioc.studio.publish" },
     ],
   },
 ];
