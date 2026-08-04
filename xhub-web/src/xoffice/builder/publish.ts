@@ -5,7 +5,7 @@
 // backend is offline we synthesize a local checksum so the panel still responds.
 import type { WorkflowDefinitionDocument } from "@/xoffice/workflow-types";
 
-import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 export interface PublishResult {
   version: number | string;

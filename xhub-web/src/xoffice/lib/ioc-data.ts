@@ -5,7 +5,7 @@
 // it posts only catalog references, which the backend re-validates.
 import { xofficeContext, type XOfficeContext } from "./workflow-data";
 
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 // ---- contracts (mirror contracts/*.schema.json) -----------------------------
 

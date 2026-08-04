@@ -5,7 +5,7 @@
 // fields for a summary viewer. X.Office Work v2 — W2.
 import { xofficeContext, type XOfficeContext } from "./workflow-data";
 
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 export interface ProjectRow {
   id: string;

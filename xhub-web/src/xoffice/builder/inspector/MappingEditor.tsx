@@ -25,7 +25,7 @@ interface MappingRow {
   required: boolean;
 }
 
-import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 function configMappings(node: WFNode): MappingRow[] {
   const raw = (node.data.config as Record<string, unknown>).mappings;

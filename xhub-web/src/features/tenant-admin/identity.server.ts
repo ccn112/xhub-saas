@@ -9,7 +9,7 @@ import {
   type OrgUnit, type Position, type AdminUser, type ExternalIdentity,
 } from "./data";
 
-import { API_BASE_SERVER as API } from "@/lib/api-base";
+import { PLATFORM_BASE_SERVER as API } from "@/lib/api-base";
 // Canonical admin session identity for server-side fetches (soft IdentityGuard),
 // same convention as backup.server.ts / inbox page.tsx.
 const HEADERS = { "x-tenant-id": "tenant-xtech", "x-user-id": "user-nam" } as const;

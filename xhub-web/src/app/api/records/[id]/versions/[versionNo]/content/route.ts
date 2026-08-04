@@ -1,6 +1,6 @@
 // FE proxy → xhub-api GET /api/records/:id/versions/:versionNo/content.
 // Returns the stored content (base64 + metadata) for a "Tải nội dung" action.
-import { API_BASE_SERVER as API } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API } from "@/lib/api-base";
 const HEADERS = { "x-tenant-id": "tenant-xtech", "x-user-id": "user-nam" };
 
 export async function GET(

@@ -1,7 +1,7 @@
 // WF-10 runtime monitor — server-side data access (:4000, tenant-scoped).
 import { xofficeContext, type XOfficeContext } from "./workflow-data";
 
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 export interface RuntimeInstance {
   tenantSlug: string;

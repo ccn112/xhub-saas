@@ -3,7 +3,7 @@
 // the list simply degrades to an empty array with source='offline' (dev only).
 import { xofficeContext, type XOfficeContext } from "./workflow-data";
 
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 export interface RequestRow {
   id: string;

@@ -9,7 +9,7 @@ import type {
   NodeCatalogEntry,
 } from "@/xoffice/workflow-types";
 
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 const SEED_DEFS = seedDefinitions as unknown as WorkflowDefinitionDocument[];
 const SEED_CATALOG = seedCatalog as unknown as NodeCatalogEntry[];

@@ -5,7 +5,7 @@ import seedForms from "@/data/xoffice/form-definitions.json";
 import { xofficeContext } from "./workflow-data";
 import type { WorkflowDefinitionDocument, WorkflowNodeDoc } from "@/xoffice/workflow-types";
 
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 export interface FormDefinition {
   code: string;

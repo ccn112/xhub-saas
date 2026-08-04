@@ -3,7 +3,7 @@
 import type { GetMyUiPreferencesResponse } from "./preferences.contract";
 import type { NavigationMode } from "./types";
 
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API_BASE } from "@/lib/api-base";
 const PLATFORM_DEFAULT: NavigationMode = "rail-context";
 
 export interface ResolvedPreferences extends GetMyUiPreferencesResponse {

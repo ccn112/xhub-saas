@@ -4,7 +4,7 @@
 // we still pass the demo identity headers so the backend can scope the write.
 import type { PatchMyUiPreferencesRequest } from "./preferences.contract";
 
-import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 /** PATCH /api/me/ui-preferences. Throws on failure so callers can roll back. */
 export async function patchUiPreferences(

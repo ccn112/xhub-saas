@@ -5,7 +5,7 @@
 import "server-only";
 import { collection } from "@/xhub/lib/seed";
 
-import { API_BASE_SERVER as API } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API } from "@/lib/api-base";
 const HEADERS = { "x-tenant-id": "tenant-xtech", "x-user-id": "user-nam" } as const;
 
 export type Source = "live" | "demo";

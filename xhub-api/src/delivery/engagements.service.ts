@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RecordsService } from '../records/records.service';
-import { TenantLaunchService } from '../platform/launch/tenant-launch.service';
+import { LaunchFactoryClient } from './launch-factory.client';
 import {
   EngagementAction,
   engagementLegalActions,
@@ -33,7 +33,7 @@ export class EngagementsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly records: RecordsService,
-    private readonly launch: TenantLaunchService,
+    private readonly launch: LaunchFactoryClient,
   ) {}
 
   private get db() {
@@ -175,7 +175,7 @@ export class EngagementsService {
   }
 
   // ==== detail (timeline + attachments + linked launch) ======================
-  async get(tenantId: string, id: string) {
+  async get(tenantId: string, id: string, actorId: string) {
     const engagement = await this.load(tenantId, id);
     const [events, attachments] = await Promise.all([
       this.db.engagementEvent.findMany({ where: { tenantId, engagementId: id }, orderBy: { createdAt: 'asc' } }),
@@ -185,7 +185,7 @@ export class EngagementsService {
     // launch lives on the platform plane. We only READ it (no dual-write).
     let launch: any = null;
     if (engagement.launchId) {
-      launch = await this.launch.detail(engagement.launchId).catch(() => null);
+      launch = await this.launch.detail(tenantId, actorId, engagement.launchId).catch(() => null);
     }
     return { engagement: this.decorate(engagement), events, attachments, launch };
   }
@@ -293,7 +293,9 @@ export class EngagementsService {
     }
 
     // Trigger the REAL launch factory (platform plane) — reuse, no new engine.
-    const created = await this.launch.create({
+    // createdBy is NOT set here: the platform-side controller derives it from
+    // the forwarded x-user-id identity (see LaunchFactoryClient).
+    const created = await this.launch.create(tenantId, actorId, {
       targetTenantId,
       targetTenantNo: body.targetTenantNo ?? e.prospectTenantNo ?? null,
       blueprintId: body.blueprintCode ?? e.blueprintCode ?? null,
@@ -302,9 +304,8 @@ export class EngagementsService {
       tenantClass: body.tenantClass ?? 'CUSTOMER',
       tenantKey: targetTenantId,
       request: body.request ?? {},
-      createdBy: actorId,
     });
-    const ran = await this.launch.run(created.id);
+    const ran = await this.launch.run(tenantId, actorId, created.id);
 
     // Record the reference on the engagement (tenant-scoped write) — reference
     // only, never the customer tenant's business data.

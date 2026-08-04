@@ -4,7 +4,7 @@
 // (owner requirement #1) — the FE never receives hidden fields for summary rows.
 import { xofficeContext, type XOfficeContext } from "./workflow-data";
 
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 export type WorkTier = "FULL" | "SUMMARY";
 

@@ -8,7 +8,7 @@ import { InboxClient, type InboxItem } from "./InboxClient";
 export const metadata = { title: "Hộp việc hợp nhất · XHub" };
 export const dynamic = "force-dynamic"; // reads the live SoR projection
 
-import { API_BASE_SERVER as API } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API } from "@/lib/api-base";
 const STATUS_MAP: Record<string, string> = { open: "needs_action", pending: "needs_action", waiting: "in_progress" };
 
 interface ProjectionItem {

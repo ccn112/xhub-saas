@@ -4,7 +4,7 @@
 // current definition + test data and returns the traced execution path.
 import type { WorkflowDefinitionDocument } from "@/xoffice/workflow-types";
 
-import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 export interface SimulationStep {
   nodeId: string;

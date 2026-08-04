@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { IdentityService } from '../identity/identity.service';
 import { XofficeService } from '../xoffice/xoffice.service';
-import { WebhookService } from '../webhook/webhook.service';
+import { enqueueOutboxEvent } from '../common/outbox';
 import { PeopleConfigService } from './config.service';
 import { LeaveBalanceService } from './leave-balance.service';
 import { LeaveImpactService } from './leave-impact.service';
@@ -27,7 +27,6 @@ export class LeaveService {
     private readonly balances: LeaveBalanceService,
     private readonly impact: LeaveImpactService,
     private readonly xoffice: XofficeService,
-    private readonly webhook: WebhookService,
   ) {}
   private get db() {
     return this.prisma.db;
@@ -218,7 +217,8 @@ export class LeaveService {
       sourceLeaveRequestId: leave.id,
     });
     await this.impact.capture(tenantId, userId, leave.id, person.id, startAt, endAt, 'ON_SUBMIT');
-    await this.webhook.enqueueOutboxEvent(
+    await enqueueOutboxEvent(
+      this.prisma,
       tenantId,
       'LeaveRequest',
       leave.id,
@@ -261,7 +261,8 @@ export class LeaveService {
     });
     await this.impact.capture(tenantId, userId, leave.id, leave.personId, leave.startAt, leave.endAt, 'ON_APPROVE');
     await this.closeApprovalTask(tenantId, leave, userId, 'approved');
-    await this.webhook.enqueueOutboxEvent(
+    await enqueueOutboxEvent(
+      this.prisma,
       tenantId,
       'LeaveRequest',
       leave.id,

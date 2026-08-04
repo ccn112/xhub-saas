@@ -5,7 +5,7 @@
 import "server-only";
 import { CANONICAL_TENANT_ID, DEMO_BACKUPS, DEMO_RESTORES, type BackupJob, type RestoreJob } from "./data";
 
-import { API_BASE_SERVER as API } from "@/lib/api-base";
+import { PLATFORM_BASE_SERVER as API } from "@/lib/api-base";
 
 export type Source = "api" | "demo";
 

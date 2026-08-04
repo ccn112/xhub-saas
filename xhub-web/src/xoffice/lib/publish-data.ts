@@ -4,7 +4,7 @@ import { xofficeContext } from "./workflow-data";
 import { getVersionHistory, type WorkflowVersion } from "./versions-data";
 import type { WorkflowDefinitionDocument } from "@/xoffice/workflow-types";
 
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 export interface AffectedRole {
   nodeId: string;

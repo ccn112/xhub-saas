@@ -4,7 +4,7 @@
 // session so callers keep the demo default actor (app stays usable logged-out).
 import { cookies } from "next/headers";
 
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { PLATFORM_BASE_SERVER as API_BASE } from "@/lib/api-base";
 export const SESSION_COOKIE = "xhub_session";
 
 export interface SessionActor {

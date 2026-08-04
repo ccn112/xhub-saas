@@ -32,16 +32,21 @@ export default tseslint.config(
       "prettier/prettier": ["error", { endOfLine: "auto" }],
     },
   },
-  // ---- XHub/X.Office boundary guard (Phase 1.5 Stage A) --------------------
-  // Workflow/ApprovalTask/WorkflowInstance/Delegation/OutboxEvent are each
-  // owned by exactly one module (xoffice/identity/webhook) after the 2026-08-03
-  // cleanup — see docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md
-  // Phase 1.5. Any OTHER module reaching `<x>.db.<table>` (the raw Prisma
-  // pattern the cleanup just removed from src/people/*) is the exact
-  // regression this guard exists to catch before it lands again. Legitimate
-  // cross-module access must go through the owning service's public method
-  // instead (e.g. `xofficeService.spawnLightweightApprovalTask(...)`,
-  // `webhookService.enqueueOutboxEvent(...)`).
+  // ---- XHub/X.Office boundary guard (Phase 1.5 Stage A/B) -------------------
+  // Workflow/ApprovalTask/WorkflowInstance/Delegation are each owned by exactly
+  // one module (xoffice/identity) — see
+  // docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md Phase 1.5. Any OTHER
+  // module reaching `<x>.db.<table>` (the raw Prisma pattern the Stage A
+  // cleanup removed from src/people/*) is the exact regression this guard
+  // exists to catch before it lands again. Legitimate cross-module access must
+  // go through the owning service's public method instead (e.g.
+  // `xofficeService.spawnLightweightApprovalTask(...)`).
+  //
+  // OutboxEvent is deliberately NOT restricted here (Stage B): it's a
+  // transactional-outbox table by design — any module/process may enqueue a
+  // row via the shared `common/outbox.ts` helper; only `webhook/` polls and
+  // dispatches. Restricting writers here would fight the pattern, not protect
+  // it.
   //
   // NOTE: flat config does NOT merge array-valued rule options across config
   // objects — a later block's `no-restricted-syntax` entry replaces an earlier
@@ -61,35 +66,24 @@ export default tseslint.config(
       message:
         'Delegation writes are owned by IdentityService (src/identity/) — call identityService.createDelegation(...)/deleteDelegation(...) instead of writing the table directly.',
     };
-    const outboxSelector = {
-      selector: "MemberExpression[object.property.name='db'][property.name='outboxEvent']",
-      message:
-        'OutboxEvent is owned by WebhookService (src/webhook/) — call webhookService.enqueueOutboxEvent(...) instead of writing the table directly.',
-    };
     return [
       {
-        // everyone else: none of these tables are theirs to touch directly
+        // everyone else: neither table is theirs to touch directly
         files: ['src/**/*.ts'],
-        ignores: ['src/xoffice/**', 'src/identity/**', 'src/webhook/**', 'src/**/*.spec.ts'],
-        rules: { 'no-restricted-syntax': ['warn', workflowSelector, delegationSelector, outboxSelector] },
+        ignores: ['src/xoffice/**', 'src/identity/**', 'src/**/*.spec.ts'],
+        rules: { 'no-restricted-syntax': ['warn', workflowSelector, delegationSelector] },
       },
       {
         // xoffice owns Workflow*/ApprovalTask (write+read) and still reads Delegation directly
         files: ['src/xoffice/**/*.ts'],
         ignores: ['src/xoffice/**/*.spec.ts'],
-        rules: { 'no-restricted-syntax': ['warn', outboxSelector] },
+        rules: {},
       },
       {
-        // identity owns Delegation; Workflow/OutboxEvent are still off-limits
+        // identity owns Delegation; Workflow is still off-limits
         files: ['src/identity/**/*.ts'],
         ignores: ['src/identity/**/*.spec.ts'],
-        rules: { 'no-restricted-syntax': ['warn', workflowSelector, outboxSelector] },
-      },
-      {
-        // webhook owns OutboxEvent; Workflow/Delegation are still off-limits
-        files: ['src/webhook/**/*.ts'],
-        ignores: ['src/webhook/**/*.spec.ts'],
-        rules: { 'no-restricted-syntax': ['warn', workflowSelector, delegationSelector] },
+        rules: { 'no-restricted-syntax': ['warn', workflowSelector] },
       },
     ];
   })(),

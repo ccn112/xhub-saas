@@ -2,7 +2,7 @@
 
 // WF-10 runtime mutations. Client-side fetch with the demo identity headers so
 // the backend can scope the write (same pattern as nav preferences).
-import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 export interface Identity {
   tenantId: string;

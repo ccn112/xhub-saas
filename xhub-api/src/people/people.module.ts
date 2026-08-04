@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { PrismaModule } from '../prisma/prisma.module';
 import { IdentityModule } from '../identity/identity.module';
 import { XofficeModule } from '../xoffice/xoffice.module';
-import { WebhookModule } from '../webhook/webhook.module';
 import { TenantScopeInterceptor } from '../common/tenant-scope.interceptor';
 import { PeopleConfigService } from './config.service';
 import { LeavePolicyService } from './leave-policy.service';
@@ -40,7 +39,7 @@ import {
  * no second ABAC or approval mechanism.
  */
 @Module({
-  imports: [PrismaModule, IdentityModule, XofficeModule, WebhookModule],
+  imports: [PrismaModule, IdentityModule, XofficeModule],
   controllers: [
     PeopleConfigController,
     LeavePolicyController,

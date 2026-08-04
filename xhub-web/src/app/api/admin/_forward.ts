@@ -2,7 +2,7 @@
 // in src/app/api/admin/assignment-preview/route.ts: forward to xhub-api with the
 // canonical admin identity headers. FE never touches the DB — writes always go
 // through the API base (XHUB_API_URL).
-import { API_BASE_SERVER as API } from "@/lib/api-base";
+import { PLATFORM_BASE_SERVER as API } from "@/lib/api-base";
 const HEADERS = { "content-type": "application/json", "x-tenant-id": "tenant-xtech", "x-user-id": "user-nam" } as const;
 
 /** Forward a GET to the BFF. Returns the upstream JSON + status, or 502 on failure. */

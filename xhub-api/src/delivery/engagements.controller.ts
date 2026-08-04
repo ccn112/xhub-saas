@@ -64,7 +64,7 @@ export class EngagementsController {
   @Get('engagements/:id')
   @RequirePermission('delivery.read')
   get(@Param('id') id: string, @Identity() ident: RequestIdentity) {
-    return this.svc.get(this.tenant(ident), id);
+    return this.svc.get(this.tenant(ident), id, this.user(ident));
   }
 
   // ---- lifecycle transitions (one endpoint per stage action) ----------------

@@ -1,6 +1,6 @@
 // FE admin pending-invites proxy (PH-00b). Lists outstanding (unused, unexpired)
 // invites for the tenant. Forwarded with the canonical admin identity headers.
-import { API_BASE_SERVER as API } from "@/lib/api-base";
+import { PLATFORM_BASE_SERVER as API } from "@/lib/api-base";
 const HEADERS = { "content-type": "application/json", "x-tenant-id": "tenant-xtech", "x-user-id": "user-nam" } as const;
 
 export async function GET() {

@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { verifySignature } from './hmac.util';
+import { enqueueOutboxEvent } from '../common/outbox';
 
 interface InboundInput {
   source: string;
@@ -39,36 +40,6 @@ export class WebhookService {
 
   private get db() {
     return this.prisma.db;
-  }
-
-  /**
-   * Enqueue an OutboxEvent for a caller that owns its own aggregate (e.g. the
-   * People module publishing `xoffice.people.*` domain events) but does not
-   * own the outbox/dispatch mechanism — that lives here, in the platform
-   * webhook module. Same-transaction call (`this.prisma.db` already is, via
-   * TenantScopeInterceptor) so it commits atomically with the caller's own
-   * write. See the XHub/X.Office boundary-cleanup plan,
-   * `docs/implementation/xoffice-ai/IMPLEMENTATION_PLAN.md` Phase 1.5 Stage A.
-   */
-  async enqueueOutboxEvent(
-    tenantId: string,
-    aggregateType: string,
-    aggregateId: string,
-    eventType: string,
-    payload: Record<string, unknown>,
-  ) {
-    return this.db.outboxEvent.create({
-      data: {
-        tenantId,
-        aggregateType,
-        aggregateId,
-        eventType,
-        payload: payload as any,
-        status: 'pending',
-        attempts: 0,
-        nextAttemptAt: new Date(),
-      },
-    });
   }
 
   // ---- inbound --------------------------------------------------------------
@@ -113,18 +84,14 @@ export class WebhookService {
     });
 
     // Same-transaction outbox enqueue (transactional outbox, no dual-write).
-    const outbox = await this.db.outboxEvent.create({
-      data: {
-        tenantId,
-        aggregateType: 'WebhookEvent',
-        aggregateId: event.id,
-        eventType: `webhook.${input.source}.${eventType ?? 'received'}`,
-        payload: input.parsed as any,
-        status: 'pending',
-        attempts: 0,
-        nextAttemptAt: new Date(),
-      },
-    });
+    const outbox = await enqueueOutboxEvent(
+      this.prisma,
+      tenantId,
+      'WebhookEvent',
+      event.id,
+      `webhook.${input.source}.${eventType ?? 'received'}`,
+      input.parsed as Record<string, unknown>,
+    );
 
     // Inbound handling done (recorded + enqueued).
     const processed = await this.db.webhookEvent.update({

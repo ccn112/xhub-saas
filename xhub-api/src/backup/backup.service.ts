@@ -3,14 +3,8 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { PrismaService } from '../prisma/prisma.service';
-import {
-  BACKUP_TABLES,
-  EXCLUDED_DATA,
-  FK_REFS,
-  SUBJECT_TYPE_MODEL,
-  assertNoSecretFields,
-  contentChecksum,
-} from './backup.tables';
+import { BACKUP_TABLES, EXCLUDED_DATA, FK_REFS, SUBJECT_TYPE_MODEL } from './backup.tables';
+import { assertNoSecretFields, contentChecksum } from '../common/document-guards';
 import {
   BACKUP_ALGORITHM,
   BACKUP_KEY_REFERENCE,

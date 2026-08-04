@@ -2,7 +2,7 @@
 // under T001). The THIRD workspace type (X-TECH as solution provider). Reads the
 // delivery API with the canonical T001 operator identity. Degrades gracefully to
 // an empty result with source='offline' (dev only) — never demo data.
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API_BASE } from "@/lib/api-base";
 // user-nam holds the tenant PLATFORM_ADMIN=['*'] grant, which satisfies
 // delivery.read/manage in dev (mirrors platform-data.ts).
 const HEADERS = { "content-type": "application/json", "x-tenant-id": "tenant-xtech", "x-user-id": "user-nam" } as const;

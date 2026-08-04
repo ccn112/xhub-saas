@@ -14,7 +14,7 @@ import { SectionCard } from "@/xhub/ui/Card";
 import { Badge } from "@/xhub/ui/Badge";
 import type { Identity } from "@/xoffice/monitor/actions.client";
 
-import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 interface CreatedRequest {
   instance: {

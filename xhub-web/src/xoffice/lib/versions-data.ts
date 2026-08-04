@@ -2,7 +2,7 @@
 import { xofficeContext } from "./workflow-data";
 import type { WorkflowDefinitionDocument } from "@/xoffice/workflow-types";
 
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_SERVER as API_BASE } from "@/lib/api-base";
 
 export interface WorkflowVersion {
   version: number | string;

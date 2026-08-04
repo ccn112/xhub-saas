@@ -1,7 +1,7 @@
 // Platform Console — server-side data access (:4000, platform plane).
 // Reads the SHARED Tenant registry via the platform API. Degrades gracefully to
 // an empty result with source='offline' (dev only) — never demo data.
-import { API_BASE_SERVER as API_BASE } from "@/lib/api-base";
+import { PLATFORM_BASE_SERVER as API_BASE } from "@/lib/api-base";
 // Canonical platform-operator identity for server reads. user-nam holds the
 // tenant PLATFORM_ADMIN=['*'] grant, which satisfies platform.* in dev.
 const HEADERS = { "content-type": "application/json", "x-tenant-id": "tenant-xtech", "x-user-id": "user-nam" } as const;

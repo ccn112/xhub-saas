@@ -17,6 +17,11 @@ import 'dotenv/config';
 import pg from 'pg';
 
 const BASE = process.env.XOFFICE_BASE || 'http://localhost:4000';
+// Phase 1.5 Stage B: /api/platform/* now lives ONLY on the platform process
+// (BASE); /api/requests/* (used below to probe the tenant-business boundary)
+// lives ONLY on the xoffice process — a separate base is required so that
+// check still hits a real PermissionGuard instead of a route-not-found 404.
+const BUSINESS_BASE = process.env.XOFFICE_BUSINESS_BASE || 'http://localhost:4001';
 const H = (user, extra = {}) => ({
   'content-type': 'application/json',
   'x-tenant-id': 'tenant-xtech',
@@ -33,8 +38,8 @@ const ok = (cond, msg) => {
   if (cond) console.log('  ✓ ' + msg);
   else { console.error('  ✗ ' + msg); failed++; }
 };
-const call = async (path, headers, opts = {}) => {
-  const r = await fetch(BASE + path, { headers, ...opts });
+const call = async (path, headers, opts = {}, base = BASE) => {
+  const r = await fetch(base + path, { headers, ...opts });
   const body = await r.json().catch(() => ({}));
   return { status: r.status, body };
 };
@@ -71,9 +76,9 @@ try {
   //    the platform operator even though it passes every /api/platform route.
   //    (The guard resolves the PLT_ plane in a clean pre-interceptor withBypass;
   //    the '*'-holding tenant super-admin, by contrast, would pass.)
-  const opBiz = await call('/api/requests/__none__/approve', OP, { method: 'POST', body: JSON.stringify({}) });
+  const opBiz = await call('/api/requests/__none__/approve', OP, { method: 'POST', body: JSON.stringify({}) }, BUSINESS_BASE);
   ok(opBiz.status === 403, `platform op DENIED 403 on tenant business (request.approve) (got ${opBiz.status})`);
-  const superBiz = await call('/api/requests/__none__/approve', SUPER, { method: 'POST', body: JSON.stringify({}) });
+  const superBiz = await call('/api/requests/__none__/approve', SUPER, { method: 'POST', body: JSON.stringify({}) }, BUSINESS_BASE);
   ok(superBiz.status !== 403, `tenant super-admin (*) is NOT denied by request.approve gate (got ${superBiz.status})`);
 
   // 5. Tenant super-admin PLATFORM_ADMIN=['*'] still passes every platform route.

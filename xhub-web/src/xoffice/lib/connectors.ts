@@ -4,7 +4,7 @@
 import seedCatalog from "@/data/xoffice/connector-catalog.json";
 import seedRoles from "@/data/xoffice/role-bindings.json";
 
-import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 export interface ConnectorTargetField {
   key: string;

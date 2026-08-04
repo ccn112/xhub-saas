@@ -3,7 +3,7 @@
 // here; we forward to the BFF with the canonical admin identity headers. On any
 // failure we return 502 so the client degrades to its local demo resolver.
 // FE never touches the DB.
-import { API_BASE_SERVER as API } from "@/lib/api-base";
+import { PLATFORM_BASE_SERVER as API } from "@/lib/api-base";
 const HEADERS = { "content-type": "application/json", "x-tenant-id": "tenant-xtech", "x-user-id": "user-nam" };
 
 export async function POST(request: Request) {

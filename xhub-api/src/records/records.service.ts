@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { StorageService } from './storage.service';
-import { SECRET_FIELD_REGEX, assertNoSecretFields } from '../backup/backup.tables';
+import { SECRET_FIELD_REGEX, assertNoSecretFields } from '../common/document-guards';
 import type { AddVersionDto, CreateDocumentDto } from './dto/document.dto';
 
 /**

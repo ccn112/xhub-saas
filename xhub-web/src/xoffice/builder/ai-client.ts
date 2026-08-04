@@ -5,7 +5,7 @@
 // Draft-first: the patch is ONLY applied after an explicit human confirm.
 import type { WorkflowDefinitionDocument } from "@/xoffice/workflow-types";
 
-import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 export interface PatchOperation {
   op: "add" | "replace" | "remove" | "move";

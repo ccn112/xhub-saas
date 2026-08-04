@@ -18,7 +18,7 @@ import {
 } from "./fields";
 import { inputClass, labelClass } from "@/xoffice/builder/inspector/ui";
 
-import { API_BASE_CLIENT as API_BASE } from "@/lib/api-base";
+import { XOFFICE_BASE_CLIENT as API_BASE } from "@/lib/api-base";
 
 export interface FormTemplate {
   code: string;

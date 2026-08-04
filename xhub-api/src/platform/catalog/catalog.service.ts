@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ControlplaneService } from '../../controlplane/controlplane.service';
-import { assertNoSecretFields, contentChecksum } from '../../backup/backup.tables';
+import { assertNoSecretFields, contentChecksum } from '../../common/document-guards';
 
 /**
  * Blueprint & Seed Pack catalog (SaaS step 4 — E5). SHARED / platform-plane
