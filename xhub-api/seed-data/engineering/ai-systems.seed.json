@@ -1,0 +1,15 @@
+{
+  "_note": "DG-10 AI System Registry — seeded with the ONLY real AI system currently in this codebase (X.Office workflow AI draft, xoffice.service.ts aiDraft()/aiDraftLive()). Not a hypothetical inventory — deliberately just 1 row, honest about scope.",
+  "systems": [
+    {
+      "code": "AI-XOFFICE-WORKFLOW-DRAFT",
+      "productCode": "PRD-XOFFICE",
+      "name": "X.Office Workflow AI Draft/Copilot",
+      "purpose": "Sinh đề xuất patch (diff) cho định nghĩa workflow (node/edge) từ mô tả ngôn ngữ tự nhiên của người dùng, trong màn Workflow Builder (WF-03).",
+      "provider": "Anthropic Claude (qua @anthropic-ai/sdk, model cấu hình qua XOFFICE_AI_MODEL)",
+      "riskTier": "LIMITED",
+      "humanOversight": "Người dùng phải xem preview/diff và bấm \"Áp dụng\" (apply) thủ công trước khi patch có hiệu lực trên workflow definition thật — AI KHÔNG tự động áp dụng thay đổi. Nguồn: xhub-api/src/xoffice/xoffice.service.ts (aiDraft/aiDraftLive), xhub-web AI panel (ai/draft → preview/diff → apply human-confirm).",
+      "standardsRefs": ["ISO-42001", "NIST-AIRMF", "Luat-AI-134-2025-QH15"]
+    }
+  ]
+}

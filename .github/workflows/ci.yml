@@ -153,6 +153,12 @@ jobs:
         run: |
           npm run seed:roles
           npm run seed:roles-xoffice
+          npm run seed:engineering-products
+          npm run seed:engineering-tests
+          npm run seed:engineering-docs
+          npm run seed:engineering-controls
+          npm run seed:engineering-ai-governance
+          npm run seed:engineering-privacy
           npm run seed:accounts
           npm run seed:person-avatars
           npm run seed:tenant-registry
@@ -178,6 +184,16 @@ jobs:
         run: |
           npm run test:authz
           npm run test:auth-flow
+          npm run test:engineering-products
+          npm run test:engineering-backlog
+          npm run test:engineering-docs
+          npm run test:engineering-tests
+          npm run test:engineering-defects
+          npm run test:engineering-ci
+          npm run test:engineering-controls
+          npm run test:engineering-ai-governance
+          npm run test:engineering-privacy
+          npm run test:engineering-evidence
           npm run test:controlplane
           npm run test:mdm
           npm run test:backup
@@ -240,6 +256,16 @@ jobs:
           npm run test:roles
           npm run test:condition
           npm run test:demos
+
+      # DG-06 — real cross-software proof: this SAME CI pipeline reports its
+      # own build result back into the Engineering Hub it just verified,
+      # over the signature-verified public contract (INTEGRATION_CONTRACT_CI.md)
+      # — the exact path any external repo (X1/X2/FinERP/X.Space) would use.
+      # Best-effort: must never fail the pipeline over a reporting hiccup.
+      - name: Report build status to Engineering Hub (DG-06)
+        if: always()
+        run: npm run report:ci-build -- ${{ job.status == 'success' && 'SUCCESS' || 'FAILURE' }}
+        continue-on-error: true
 
       - name: Dump server logs on failure
         if: failure()

@@ -2495,21 +2495,21 @@ model IocTemplate {
 /// via PE-001 (SME Lite for T001 today); upgradeable per-field without a schema
 /// migration when a real FinERP/Frappe HR adapter exists (PE-08).
 model PeopleTenantConfig {
-  id                       String   @id @default(cuid())
-  tenantId                 String
-  attendanceMode           String   @default("FILE_IMPORT") // XOFFICE|FRAPPE_HR|DEVICE|FILE_IMPORT
-  leaveMode                String   @default("XOFFICE") // XOFFICE|FRAPPE_HR
-  payrollMode              String   @default("FILE_IMPORT") // FINERP|EXTERNAL_API|FILE_IMPORT
-  timesheetEnabled         Boolean  @default(true)
-  performanceBridgeEnabled Boolean  @default(false)
-  iocCapacityEnabled       Boolean  @default(false)
-  workCalendarId           String?
-  externalSystemId         String?
-  defaultStandardHoursPerDay Float  @default(8)
-  workingWeekdays          Int[]    @default([1, 2, 3, 4, 5])
-  createdBy                String
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
+  id                         String   @id @default(cuid())
+  tenantId                   String
+  attendanceMode             String   @default("FILE_IMPORT") // XOFFICE|FRAPPE_HR|DEVICE|FILE_IMPORT
+  leaveMode                  String   @default("XOFFICE") // XOFFICE|FRAPPE_HR
+  payrollMode                String   @default("FILE_IMPORT") // FINERP|EXTERNAL_API|FILE_IMPORT
+  timesheetEnabled           Boolean  @default(true)
+  performanceBridgeEnabled   Boolean  @default(false)
+  iocCapacityEnabled         Boolean  @default(false)
+  workCalendarId             String?
+  externalSystemId           String?
+  defaultStandardHoursPerDay Float    @default(8)
+  workingWeekdays            Int[]    @default([1, 2, 3, 4, 5])
+  createdBy                  String
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
 
   @@unique([tenantId])
   @@index([tenantId])
@@ -2552,27 +2552,27 @@ model LeavePolicyRef {
 /// next `sequence` for the same person+policy+period). `available` is the
 /// snapshot value at that sequence; current balance = latest sequence per key.
 model LeaveBalanceSnapshot {
-  id                    String    @id @default(cuid())
-  tenantId              String
-  personId              String
-  leavePolicyId         String
-  periodCode            String // "2026" | "2026-08"
-  openingBalance        Float     @default(0)
-  accrued               Float     @default(0)
-  used                  Float     @default(0)
-  pending               Float     @default(0)
-  adjusted              Float     @default(0)
-  carriedOver           Float     @default(0)
-  available             Float     @default(0)
-  unit                  String    @default("DAY")
-  sequence              Int       @default(1)
-  reason                String // ACCRUAL|LEAVE_SUBMITTED|LEAVE_APPROVED|LEAVE_CANCELLED|LEAVE_REJECTED|HR_ADJUSTMENT|CARRY_OVER|INITIAL
-  sourceLeaveRequestId  String?
-  sourceSystem          String?
-  sourceVersion         String?
-  syncedAt              DateTime?
-  createdBy             String
-  createdAt             DateTime  @default(now())
+  id                   String    @id @default(cuid())
+  tenantId             String
+  personId             String
+  leavePolicyId        String
+  periodCode           String // "2026" | "2026-08"
+  openingBalance       Float     @default(0)
+  accrued              Float     @default(0)
+  used                 Float     @default(0)
+  pending              Float     @default(0)
+  adjusted             Float     @default(0)
+  carriedOver          Float     @default(0)
+  available            Float     @default(0)
+  unit                 String    @default("DAY")
+  sequence             Int       @default(1)
+  reason               String // ACCRUAL|LEAVE_SUBMITTED|LEAVE_APPROVED|LEAVE_CANCELLED|LEAVE_REJECTED|HR_ADJUSTMENT|CARRY_OVER|INITIAL
+  sourceLeaveRequestId String?
+  sourceSystem         String?
+  sourceVersion        String?
+  syncedAt             DateTime?
+  createdBy            String
+  createdAt            DateTime  @default(now())
 
   @@unique([tenantId, personId, leavePolicyId, periodCode, sequence])
   @@index([tenantId, personId])
@@ -2656,29 +2656,29 @@ model LeaveImpactSnapshot {
 /// (FinERP, when connected, is SoR of the OT *payout* — a different object).
 /// hours is server-computed from startAt/endAt, never client-trusted.
 model OvertimeRequest {
-  id                String    @id @default(cuid())
-  tenantId          String
-  personId          String
-  orgUnitId         String?
-  workDate          DateTime
-  startAt           DateTime
-  endAt             DateTime
-  hours             Float     @default(0) // server-computed only
-  otType            String    @default("NORMAL") // NORMAL|WEEKEND|HOLIDAY|NIGHT
-  reason            String?
-  relatedWorkItemId String?
-  relatedProjectId  String?
-  status            String    @default("DRAFT") // DRAFT|SUBMITTED|IN_REVIEW|APPROVED|REJECTED|CANCELLED
-  submittedAt       DateTime?
-  decidedAt         DateTime?
-  decidedBy         String?
-  decisionNote      String?
+  id                 String    @id @default(cuid())
+  tenantId           String
+  personId           String
+  orgUnitId          String?
+  workDate           DateTime
+  startAt            DateTime
+  endAt              DateTime
+  hours              Float     @default(0) // server-computed only
+  otType             String    @default("NORMAL") // NORMAL|WEEKEND|HOLIDAY|NIGHT
+  reason             String?
+  relatedWorkItemId  String?
+  relatedProjectId   String?
+  status             String    @default("DRAFT") // DRAFT|SUBMITTED|IN_REVIEW|APPROVED|REJECTED|CANCELLED
+  submittedAt        DateTime?
+  decidedAt          DateTime?
+  decidedBy          String?
+  decisionNote       String?
   workflowInstanceId String?
-  approvalTaskId    String?
-  idempotencyKey    String
-  createdBy         String
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  approvalTaskId     String?
+  idempotencyKey     String
+  createdBy          String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   @@unique([tenantId, idempotencyKey])
   @@index([tenantId, personId])
@@ -2814,15 +2814,15 @@ model ShiftPattern {
 /// Which ShiftPattern + WorkCalendar apply to a person over an effective
 /// window. Latest non-expired row per person is authoritative.
 model ShiftAssignment {
-  id              String    @id @default(cuid())
-  tenantId        String
-  personId        String
-  shiftPatternId  String
-  workCalendarId  String
-  effectiveFrom   DateTime
-  effectiveTo     DateTime?
-  createdBy       String
-  createdAt       DateTime  @default(now())
+  id             String    @id @default(cuid())
+  tenantId       String
+  personId       String
+  shiftPatternId String
+  workCalendarId String
+  effectiveFrom  DateTime
+  effectiveTo    DateTime?
+  createdBy      String
+  createdAt      DateTime  @default(now())
 
   @@index([tenantId, personId])
   @@index([tenantId, personId, effectiveFrom])
@@ -2876,19 +2876,19 @@ model AttendanceEvent {
 /// AttendanceCorrectionRequest (correctionApplied=true then, and recompute no
 /// longer overwrites the corrected fields for that day).
 model AttendanceDay {
-  id                String   @id @default(cuid())
+  id                String    @id @default(cuid())
   tenantId          String
   personId          String
   workDate          DateTime
   shiftPatternId    String?
   firstIn           DateTime?
   lastOut           DateTime?
-  workedMinutes     Int      @default(0)
-  lateMinutes       Int      @default(0)
-  status            String   @default("ABSENT") // PRESENT|LATE|HALF_DAY|ABSENT|LEAVE|HOLIDAY|WEEKEND
-  correctionApplied Boolean  @default(false)
-  sourceEventIds    String[] @default([])
-  recomputedAt      DateTime @default(now())
+  workedMinutes     Int       @default(0)
+  lateMinutes       Int       @default(0)
+  status            String    @default("ABSENT") // PRESENT|LATE|HALF_DAY|ABSENT|LEAVE|HOLIDAY|WEEKEND
+  correctionApplied Boolean   @default(false)
+  sourceEventIds    String[]  @default([])
+  recomputedAt      DateTime  @default(now())
 
   @@unique([tenantId, personId, workDate])
   @@index([tenantId, workDate])
@@ -2900,25 +2900,627 @@ model AttendanceDay {
 /// approval mechanism. On approve, the requested fields overwrite the
 /// AttendanceDay row and correctionApplied is set true.
 model AttendanceCorrectionRequest {
-  id                String    @id @default(cuid())
-  tenantId          String
-  personId          String
-  workDate          DateTime
-  reason            String
-  requestedStatus   String?
-  requestedFirstIn  DateTime?
-  requestedLastOut  DateTime?
-  status            String    @default("SUBMITTED") // SUBMITTED|APPROVED|REJECTED
-  decidedAt         DateTime?
-  decidedBy         String?
-  decisionNote      String?
+  id                 String    @id @default(cuid())
+  tenantId           String
+  personId           String
+  workDate           DateTime
+  reason             String
+  requestedStatus    String?
+  requestedFirstIn   DateTime?
+  requestedLastOut   DateTime?
+  status             String    @default("SUBMITTED") // SUBMITTED|APPROVED|REJECTED
+  decidedAt          DateTime?
+  decidedBy          String?
+  decisionNote       String?
   workflowInstanceId String?
-  approvalTaskId    String?
-  idempotencyKey    String
-  createdBy         String
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  approvalTaskId     String?
+  idempotencyKey     String
+  createdBy          String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   @@unique([tenantId, idempotencyKey])
   @@index([tenantId, personId, workDate])
+}
+
+// ============================================================================
+// ENGINEERING GOVERNANCE — "Phát triển & Chất lượng" (DG-01, 2026-08-05)
+// ---------------------------------------------------------------------------
+// Product/Version registry for the whole ecosystem (XHub/X.Office/X2/X1/
+// FinERP/X.Space). Platform-wide, NOT tenant-scoped — same category as
+// Tenant/ApplicationDefinition/Blueprint above: one canonical row per
+// product, not one per tenant. Deliberately excluded from RLS
+// (scripts/rls-setup.mjs TENANT_TABLES) — see
+// docs/implementation/engineering-hub/ADR_SCOPE_MODEL.md. Read routes are
+// open; writes gated by @RequirePermission('engineering.product.manage'/
+// 'engineering.version.manage'). DG-01 scope only: registry core (Product/
+// Component/Repository/Environment/Version/ReleaseTrain). Feature/Backlog/
+// Test/Defect/AIWorkOrder are later DG phases (see IMPLEMENTATION_PLAN.md),
+// not modeled here yet.
+// ============================================================================
+
+/// A product in the ecosystem (e.g. "XHUB", "X2/XBuilding"). Canonical
+/// registry entry — see data/SEED_PRODUCTS.csv for the seeded set + rollout
+/// order. `code` matches the ID convention PRD-XHUB (docs/04).
+model Product {
+  id            String   @id @default(cuid())
+  code          String   @unique // e.g. "PRD-XHUB"
+  name          String
+  type          String   @default("SAAS_PRODUCT") // PLATFORM | SAAS_PRODUCT | DOMAIN_PRODUCT
+  ownerRole     String? // e.g. "PLT_PRODUCT_OWNER" — informational, not an FK
+  versionPolicy String   @default("SEMVER") // SEMVER | CALVER | CUSTOM
+  description   String?
+  scopeType     String   @default("PLATFORM")
+  rolloutOrder  Int? // seed ordering only, see data/SEED_PRODUCTS.csv
+  sourceSystem  String   @default("xhub-saas")
+  sourceRef     String?
+  correlationId String?
+  createdBy     String?
+  updatedBy     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  components    ProductComponent[]
+  versions      ProductVersion[]
+  releaseTrains ReleaseTrain[]
+  environments  Environment[]
+  features      Feature[]
+  backlogItems  BacklogItem[]
+  documents     EngineeringDocument[]
+  testSuites    TestSuite[]
+  defects       Defect[]
+  buildRecords  BuildRecord[]
+  controlImplementations ControlImplementation[]
+  aiSystems               AISystem[]
+  processingActivities    ProcessingActivity[]
+
+  @@index([type])
+}
+
+/// A deployable/buildable unit inside a Product (e.g. "XHUB-WEB", "XHUB-API").
+/// One-to-many under Product — matches contracts/product-manifest.schema.json's
+/// `components[]` shape.
+model ProductComponent {
+  id        String   @id @default(cuid())
+  productId String
+  code      String // e.g. "XHUB-API"
+  name      String?
+  type      String   @default("SERVICE") // SERVICE | WEB | MOBILE | LIBRARY | JOB
+  scopeType String   @default("PLATFORM")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product      Product                @relation(fields: [productId], references: [id])
+  repositories RepositoryConnection[]
+
+  @@unique([productId, code])
+  @@index([productId])
+}
+
+/// Metadata-only link to a source repository (no live Git API calls yet —
+/// that's DG-06). provider/repoFullName/defaultBranch mirror
+/// contracts/product-manifest.schema.json's component shape.
+model RepositoryConnection {
+  id                 String   @id @default(cuid())
+  productComponentId String
+  provider           String   @default("GITHUB") // GITHUB | GITLAB | OTHER
+  repoFullName       String? // e.g. "ccn112/xhub-saas"
+  defaultBranch      String   @default("main")
+  connectorStatus    String   @default("NOT_CONNECTED") // NOT_CONNECTED | READ_ONLY | CONNECTED
+  scopeType          String   @default("PLATFORM")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  component ProductComponent @relation(fields: [productComponentId], references: [id])
+
+  @@index([productComponentId])
+}
+
+/// Deployment environment class for a product (LOCAL/DEV/STAGING/PILOT/
+/// PRODUCTION). Registry-only in DG-01 — no live deployment tracking yet
+/// (DeploymentRecord is a later DG-06 model).
+model Environment {
+  id        String   @id @default(cuid())
+  productId String
+  name      String // LOCAL | DEV | STAGING | PILOT | PRODUCTION
+  label     String?
+  scopeType String   @default("PLATFORM")
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([productId, name])
+  @@index([productId])
+}
+
+/// A named grouping of ProductVersions sharing a release cadence (e.g.
+/// "2026 Q3 train"). Deliberately minimal for DG-01 — ReleaseCandidate/
+/// Release/BuildRecord/DeploymentRecord are DG-05/06 models, not this one.
+model ReleaseTrain {
+  id        String   @id @default(cuid())
+  productId String
+  name      String
+  cadence   String? // e.g. "monthly", "on-demand"
+  scopeType String   @default("PLATFORM")
+  createdAt DateTime @default(now())
+
+  product  Product          @relation(fields: [productId], references: [id])
+  versions ProductVersion[]
+
+  @@index([productId])
+}
+
+/// A version of a Product. Immutable once RELEASED — any further change is a
+/// new ProductVersion row, never an in-place edit of a released one (enforced
+/// in EngineeringVersionsService, not just documented here).
+model ProductVersion {
+  id             String    @id @default(cuid())
+  productId      String
+  releaseTrainId String?
+  version        String // semver/calver string, e.g. "1.1.0" or "1.1.0-rc.1"
+  status         String    @default("DRAFT")
+  // DRAFT | PLANNING | IN_DEVELOPMENT | CODE_FREEZE | UAT | RELEASE_CANDIDATE
+  // | RELEASED | DEPRECATED | END_OF_LIFE
+  releaseChannel String? // pilot | stable | lts
+  releasedAt     DateTime?
+  scopeType      String    @default("PLATFORM")
+  sourceSystem   String    @default("xhub-saas")
+  sourceRef      String?
+  correlationId  String?
+  createdBy      String?
+  updatedBy      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  product      Product       @relation(fields: [productId], references: [id])
+  releaseTrain ReleaseTrain? @relation(fields: [releaseTrainId], references: [id])
+  features     Feature[]
+  backlogItems BacklogItem[]
+  testResults  TestResult[]
+
+  @@unique([productId, version])
+  @@index([productId])
+  @@index([productId, status])
+}
+
+// ============================================================================
+// ENGINEERING GOVERNANCE — DG-02 (Feature/Backlog), DG-03-lite (Docs),
+// DG-04-lite (Test hierarchy) — 2026-08-05
+// ---------------------------------------------------------------------------
+// Same platform-wide/no-RLS posture as DG-01 (see ADR_SCOPE_MODEL.md).
+// `standardsRefs` (Feature/Doc/TestCase — user-requested, 2026-08-05): free-
+// form string codes citing the specific external standard/control a
+// document or test case verifies against, e.g.
+// "OWASP-API-Security-Top10-2023:API1" (Broken Object Level Authorization —
+// the exact class of bug this codebase found+fixed this session, see
+// xhub-api/SECURITY.md "Object-level authorization (BOLA prevention)"),
+// "ISO/IEC-27001:A.9" (Access control), "ISO/IEC-27701" (Privacy Information
+// Management), "ISO/IEC-25010" (software quality model), "NIST-SP-800-53",
+// "GDPR"/"NĐ13-2023-BVDLCN" (Vietnam Personal Data Protection Decree). This
+// records WHICH standard a control maps to for traceability — it is NOT a
+// certification claim; per the security handoff's own G8 gate, "chứng nhận
+// ISO không thay thế pentest/product evidence" (an ISO reference here means
+// "we designed against this standard's control", not "we are certified").
+// ============================================================================
+
+/// A planned unit of work for a Product, optionally targeting a specific
+/// ProductVersion. Lightweight status (not the full BacklogItem FSM) — a
+/// Feature groups BacklogItems; PLANNING/tracking happens on the items.
+model Feature {
+  id              String   @id @default(cuid())
+  productId       String
+  code            String   @unique // e.g. "FEA-XHUB-DQH-001"
+  title           String
+  description     String?
+  status          String   @default("PROPOSED") // PROPOSED | PLANNED | IN_PROGRESS | DONE | CANCELLED
+  targetVersionId String?
+  standardsRefs   String[] @default([])
+  scopeType       String   @default("PLATFORM")
+  sourceSystem    String   @default("xhub-saas")
+  correlationId   String?
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  product       Product         @relation(fields: [productId], references: [id])
+  targetVersion ProductVersion? @relation(fields: [targetVersionId], references: [id])
+  backlogItems  BacklogItem[]
+
+  @@index([productId])
+}
+
+/// A single backlog entry (feature/story/task/defect/etc.). FSM guard lives
+/// in BacklogService (mirrors VersionsService's pattern) — see
+/// data/STATE_MACHINES.csv (BacklogItem rows) in the source handoff.
+model BacklogItem {
+  id              String   @id @default(cuid())
+  productId       String
+  featureId       String?
+  code            String   @unique // e.g. "BLG-XHUB-000101"
+  title           String
+  description     String?
+  type            String   @default("TASK")
+  // FEATURE | STORY | TASK | DEFECT | SECURITY_FINDING | TECH_DEBT
+  // | DOCUMENTATION | TEST_GAP | UPGRADE_MIGRATION | COMPLIANCE_ACTION
+  status          String   @default("IDEA")
+  // IDEA | TRIAGED | READY | IN_PROGRESS | IN_REVIEW | READY_FOR_TEST | TESTING
+  // | ACCEPTED | RELEASED | BLOCKED | REJECTED | DUPLICATE | DEFERRED | CANCELLED
+  priority        String   @default("P2") // P0 | P1 | P2 | P3
+  targetVersionId String?
+  scopeType       String   @default("PLATFORM")
+  sourceSystem    String   @default("xhub-saas")
+  sourceRef       String?
+  correlationId   String?
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  product       Product         @relation(fields: [productId], references: [id])
+  feature       Feature?        @relation(fields: [featureId], references: [id])
+  targetVersion ProductVersion? @relation(fields: [targetVersionId], references: [id])
+
+  @@index([productId])
+  @@index([productId, status])
+  @@index([featureId])
+}
+
+/// Engineering-owned document (distinct from X.Office's RecordDocument — see
+/// ADR_MODULE_OWNERSHIP.md). DG-03-lite: XHUB_OWNED content stored inline
+/// (`body`), no repo-sync/manifest connector yet (that's the harder part of
+/// full DG-03, deferred) and no separate version-history sub-table yet
+/// (`version` is a simple counter bumped on edit) — both explicitly
+/// simplifications to revisit when DG-03 is fully scoped.
+model EngineeringDocument {
+  id             String    @id @default(cuid())
+  productId      String
+  code           String    @unique // e.g. "XHUB-ARCH"
+  title          String
+  documentType   String    @default("OTHER")
+  // ARCHITECTURE | DOMAIN_SOR | API_EVENT | DATA_MIGRATION | SECURITY_PRIVACY
+  // | DEV_GUIDE | TEST_ACCEPTANCE | OPERATIONS_RUNBOOK | USER_GUIDE | TRAINING
+  // | RELEASE_NOTES | UPGRADE_ROLLBACK | OTHER
+  ownershipMode  String    @default("XHUB_OWNED") // XHUB_OWNED | REPOSITORY_OWNED (latter not wired yet)
+  status         String    @default("DRAFT") // DRAFT | REVIEW | APPROVED | PUBLISHED | DEPRECATED | ARCHIVED
+  classification String    @default("INTERNAL") // PUBLIC | INTERNAL | CONFIDENTIAL | RESTRICTED
+  body           String?
+  version        Int       @default(1)
+  standardsRefs  String[]  @default([])
+  ownerRole      String?
+  reviewDueAt    DateTime?
+  scopeType      String    @default("PLATFORM")
+  sourceSystem   String    @default("xhub-saas")
+  createdBy      String?
+  updatedBy      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([productId])
+  @@index([productId, documentType])
+}
+
+/// A "module" grouping of test cases for a Product — matches the existing
+/// USER_TEST_GROUPS topical categories already used by `/docs/test`
+/// (Điều hướng & UI, Phân quyền, Work/PM, IOC — Bản sao số, ...), NOT a
+/// deployable ProductComponent. Named `TestSuite` per the source handoff's
+/// domain model (docs/04); the product UI labels it "Module" per the
+/// user's own request.
+model TestSuite {
+  id        String   @id @default(cuid())
+  productId String
+  name      String
+  scopeType String   @default("PLATFORM")
+  createdAt DateTime @default(now())
+
+  product Product    @relation(fields: [productId], references: [id])
+  cases   TestCase[]
+
+  @@unique([productId, name])
+  @@index([productId])
+}
+
+/// A single test case inside a TestSuite ("Module"). `externalLegacyCode`
+/// exists now so a future DG-04 migration can map old `U#` codes onto it
+/// (CLAUDE.md §6) — not populated by this pass, which only creates NEW test
+/// cases for the Engineering Hub's own reference-slice dogfooding.
+model TestCase {
+  id                 String   @id @default(cuid())
+  testSuiteId        String
+  code               String   @unique // e.g. "TST-XHUB-UAT-000456"
+  title              String
+  expectedResult     String?
+  deepLinkTemplate   String?
+  externalLegacyCode String? // future U# migration target, not populated yet
+  level              String   @default("UAT") // UAT | UNIT | INTEGRATION | E2E | SECURITY | VISUAL
+  requiredForRelease Boolean  @default(false)
+  standardsRefs      String[] @default([])
+  scopeType          String   @default("PLATFORM")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  suite   TestSuite    @relation(fields: [testSuiteId], references: [id])
+  results TestResult[]
+
+  @@index([testSuiteId])
+}
+
+/// One recorded outcome of running a TestCase against a specific
+/// ProductVersion. Append-only by convention (service never updates an
+/// existing row — recording a new result is always a new TestResult, so
+/// history is never lost; matches "test result không sửa lịch sử" from the
+/// source handoff's 8 invariants).
+model TestResult {
+  id               String   @id @default(cuid())
+  testCaseId       String
+  productVersionId String?
+  status           String // NOT_RUN | PASS | FAIL | BLOCKED | NOT_APPLICABLE | NEEDS_CLARIFICATION
+  actualResult     String?
+  notes            String?
+  environment      String?
+  testerUserId     String?
+  testedAt         DateTime @default(now())
+  scopeType        String   @default("PLATFORM")
+  createdAt        DateTime @default(now())
+
+  testCase       TestCase        @relation(fields: [testCaseId], references: [id])
+  productVersion ProductVersion? @relation(fields: [productVersionId], references: [id])
+
+  @@index([testCaseId])
+  @@index([testCaseId, testedAt])
+  @@index([productVersionId])
+}
+
+/// DG-05. A defect against a Product, optionally spawned from a failed
+/// TestResult. `testCaseId`/`testResultId`/`backlogItemId` are deliberately
+/// plain string refs (no @relation) — same convention as other loose
+/// cross-references in this schema (e.g. `personId`) — so filing a defect
+/// never requires touching the append-only TestResult/TestCase models.
+/// `testResultId` is @unique so "file defect from this FAIL" is naturally
+/// idempotent (DefectsService.create returns the existing row on repeat).
+model Defect {
+  id               String   @id @default(cuid())
+  code             String   @unique // e.g. "DEF-XHUB-0001"
+  productId        String
+  productVersionId String?
+  testCaseId       String?
+  testResultId     String?  @unique
+  backlogItemId    String?
+  title            String
+  description      String?
+  severity         String   @default("P2") // P0 | P1 | P2 | P3
+  status           String   @default("NEW")
+  // NEW | TRIAGED | IN_PROGRESS | FIX_READY | VERIFYING | CLOSED | WONT_FIX
+  // | DUPLICATE | REOPENED
+  rootCause        String? // mandatory (app-enforced) before P0/P1 -> CLOSED
+  standardsRefs    String[] @default([])
+  scopeType        String   @default("PLATFORM")
+  sourceSystem     String   @default("xhub-saas")
+  sourceRef        String?
+  correlationId    String?
+  createdBy        String?
+  updatedBy        String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([productId])
+  @@index([productId, status])
+}
+
+/// DG-06. One reported CI/build run for a Product, ingested via the
+/// signature-verified `/api/engineering/ci/callback` endpoint (see
+/// CiService) — NOT written by any interactive user action. Unlike
+/// TestResult (append-only), a BuildRecord is upserted in place keyed by
+/// (productId, source, externalId): the same CI run reports QUEUED, then
+/// RUNNING, then SUCCESS/FAILURE against the same externalId, and each
+/// report just updates the current state of that one run.
+model BuildRecord {
+  id             String    @id @default(cuid())
+  productId      String
+  source         String // e.g. "github-actions", "xhub-ci"
+  externalId     String // e.g. workflow run id — dedupe/update key
+  commitSha      String
+  branch         String?
+  status         String // QUEUED | RUNNING | SUCCESS | FAILURE | CANCELLED
+  workflowRunUrl String?
+  triggeredBy    String?
+  startedAt      DateTime?
+  finishedAt     DateTime?
+  metadata       Json?
+  scopeType      String    @default("PLATFORM")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([productId, source, externalId])
+  @@index([productId])
+  @@index([productId, status])
+}
+
+// ============================================================================
+// DG-09/10/11/12 — Unified Control Framework, AI Governance, Privacy/DPIA,
+// Evidence Ledger (2026-08-05). Additive layer per the reconciliation
+// decision in ADR_GOVERNANCE_RECONCILIATION.md: the source handoff
+// (XHUB_SOFTWARE_AI_GOVERNANCE_AUDIT_READY_HANDOFF_20260805)'s own
+// Product/Backlog/Version/Test/Defect redesign was REJECTED (conflicts with
+// the already-live DG-01/02/04/05 schema above); only the genuinely-new
+// domains (control catalog, AI system registry, privacy/DPIA registry,
+// evidence ledger) are adopted here, in this codebase's own conventions
+// (loose string refs, simple status enums, platform-wide no-RLS, per
+// ADR_SCOPE_MODEL.md).
+// ============================================================================
+
+/// A control from the Unified Control Framework catalog (DG-09) — a curated
+/// subset of the source handoff's 80-row CONTROL_CATALOG.csv, not a full
+/// copy. `frameworkFamilies` cites which external framework clause(s) this
+/// control maps to (e.g. "ISO27001:A.9", "NIST-CSF2:PR.AA") — a citation
+/// tag, same spirit as `standardsRefs` elsewhere, not a certification claim.
+model Control {
+  id                String   @id @default(cuid())
+  code              String   @unique // e.g. "CTL-ACCESS-01"
+  domain            String // e.g. "Access Control", "Vulnerability Management"
+  title             String
+  description       String?
+  frameworkFamilies String[] @default([])
+  scopeType         String   @default("PLATFORM")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  implementations ControlImplementation[]
+
+  @@index([domain])
+}
+
+/// One Product's implementation status for one Control (DG-09).
+/// `evidenceRefs` is a loose pointer list (file paths, doc codes, test
+/// names) — richer, queryable evidence should go in the `Evidence` ledger
+/// below via `subjectType='ControlImplementation'`.
+model ControlImplementation {
+  id           String   @id @default(cuid())
+  controlId    String
+  productId    String
+  status       String   @default("PROPOSED")
+  // PROPOSED | IN_PLACE | PARTIAL | NOT_APPLICABLE | RETIRED
+  evidenceRefs String[] @default([])
+  notes        String?
+  scopeType    String   @default("PLATFORM")
+  createdBy    String?
+  updatedBy    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  control Control @relation(fields: [controlId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([controlId, productId])
+  @@index([productId])
+  @@index([controlId])
+}
+
+/// An AI system/use case registered in the ecosystem (DG-10). Registry-only
+/// — no evaluation-run/model-card tracking yet (future extension). Seeded
+/// with REAL AI usage already in this codebase (X.Office's workflow AI
+/// draft via Anthropic SDK) — not a placeholder inventory.
+model AISystem {
+  id             String   @id @default(cuid())
+  code           String   @unique // e.g. "AI-XOFFICE-WORKFLOW-DRAFT"
+  productId      String
+  name           String
+  purpose        String?
+  provider       String? // e.g. "Anthropic Claude"
+  riskTier       String   @default("MINIMAL") // MINIMAL | LIMITED | HIGH | UNACCEPTABLE
+  status         String   @default("REGISTERED")
+  // REGISTERED | ASSESSING | APPROVED | RESTRICTED | RETIRED
+  humanOversight String? // free text: how a human stays in the loop
+  standardsRefs  String[] @default([])
+  scopeType      String   @default("PLATFORM")
+  createdBy      String?
+  updatedBy      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  product           Product               @relation(fields: [productId], references: [id])
+  impactAssessments AIImpactAssessment[]
+
+  @@index([productId])
+}
+
+/// An impact assessment for one AISystem (DG-10). Approval requires a human
+/// actor with `engineering.ai-governance.manage` — matches this codebase's
+/// standing principle that AI never self-approves its own governance record.
+model AIImpactAssessment {
+  id              String    @id @default(cuid())
+  aiSystemId      String
+  status          String    @default("DRAFT")
+  // DRAFT | IN_REVIEW | APPROVED | REJECTED | NEEDS_UPDATE
+  risksIdentified String?
+  mitigations     String?
+  approverRole    String?
+  approvedAt      DateTime?
+  scopeType       String    @default("PLATFORM")
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  aiSystem AISystem @relation(fields: [aiSystemId], references: [id])
+
+  @@index([aiSystemId])
+}
+
+/// A personal-data processing activity (DG-11) — the "what data, why, what
+/// legal basis" registry the source handoff calls for. Seeded with REAL
+/// activities already happening in xoffice (identity directory,
+/// attendance/leave) — not a hypothetical inventory.
+model ProcessingActivity {
+  id             String   @id @default(cuid())
+  code           String   @unique // e.g. "PA-IDENTITY-DIRECTORY"
+  productId      String
+  name           String
+  purpose        String?
+  dataCategories String[] @default([])
+  legalBasis     String?
+  status         String   @default("ACTIVE") // ACTIVE | UNDER_REVIEW | RETIRED
+  standardsRefs  String[] @default([])
+  scopeType      String   @default("PLATFORM")
+  createdBy      String?
+  updatedBy      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  product     Product                   @relation(fields: [productId], references: [id])
+  assessments PrivacyImpactAssessment[]
+
+  @@index([productId])
+}
+
+/// A DPIA for one ProcessingActivity (DG-11). Same human-approval principle
+/// as AIImpactAssessment above.
+model PrivacyImpactAssessment {
+  id                    String    @id @default(cuid())
+  processingActivityId  String
+  status                String    @default("DRAFT")
+  // DRAFT | IN_REVIEW | APPROVED | REJECTED | NEEDS_UPDATE
+  risksIdentified       String?
+  mitigations           String?
+  approverRole          String?
+  approvedAt            DateTime?
+  scopeType             String    @default("PLATFORM")
+  createdBy             String?
+  updatedBy             String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  processingActivity ProcessingActivity @relation(fields: [processingActivityId], references: [id])
+
+  @@index([processingActivityId])
+}
+
+/// Evidence ledger (DG-12-lite) — a maturity-tagged pointer to proof for ANY
+/// governance object above (or Defect/EngineeringDocument), via a loose
+/// (subjectType, subjectId) pair rather than a hard relation, since it must
+/// cross many unrelated tables. `level` is this codebase's own 6-step
+/// interpretation of the source handoff's E1->E6 evidence-maturity concept
+/// (E1/E6 names confirmed from the handoff; E2-E5 are this session's own
+/// reasonable staging, not a verbatim reproduction of copyrighted text).
+model Evidence {
+  id          String   @id @default(cuid())
+  code        String   @unique // e.g. "EVD-0001"
+  level       String   @default("E1_DECLARED")
+  // E1_DECLARED | E2_DOCUMENTED | E3_LINKED_ARTIFACT | E4_TEST_EXECUTED
+  // | E5_PEER_REVIEWED | E6_INDEPENDENTLY_VERIFIED
+  subjectType String // "ControlImplementation" | "AIImpactAssessment" | "PrivacyImpactAssessment" | "Defect" | "EngineeringDocument"
+  subjectId   String
+  description String
+  sourceRef   String? // file path, URL, or test/command name
+  recordedBy  String?
+  scopeType   String   @default("PLATFORM")
+  createdAt   DateTime @default(now())
+
+  @@index([subjectType, subjectId])
 }

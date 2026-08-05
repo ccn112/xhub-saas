@@ -1,0 +1,23 @@
+{
+  "_note": "DG-11 Processing Activity Registry — seeded with 2 REAL data-processing activities already happening in this ecosystem (identity directory on Platform, attendance/leave in X.Office People module). Not a hypothetical inventory.",
+  "activities": [
+    {
+      "code": "PA-IDENTITY-DIRECTORY",
+      "productCode": "PRD-XHUB",
+      "name": "Danh bạ nhân sự (Identity Directory)",
+      "purpose": "Lưu trữ thông tin định danh nhân sự (PersonProfile/OrgUnit/Position) làm nền tảng RBAC/ABAC và điều phối công việc trong toàn hệ sinh thái.",
+      "dataCategories": ["Họ tên", "Email", "Số điện thoại", "Vị trí/OrgUnit", "Ảnh đại diện"],
+      "legalBasis": "Hợp đồng lao động / quan hệ nội bộ tổ chức",
+      "standardsRefs": ["Luat-BVDLCN-91-2025-QH15", "ISO27701:6.9"]
+    },
+    {
+      "code": "PA-ATTENDANCE-LEAVE",
+      "productCode": "PRD-XOFFICE",
+      "name": "Chấm công & nghỉ phép",
+      "purpose": "Ghi nhận thời gian chấm công (AttendanceEvent/AttendanceDay) và xử lý yêu cầu nghỉ phép (LeaveRequest) phục vụ tính công/lương.",
+      "dataCategories": ["Thời gian chấm công (giờ vào/ra)", "Lý do nghỉ phép (có thể gồm dữ liệu sức khoẻ)"],
+      "legalBasis": "Hợp đồng lao động / nghĩa vụ pháp luật lao động",
+      "standardsRefs": ["Luat-BVDLCN-91-2025-QH15"]
+    }
+  ]
+}

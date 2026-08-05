@@ -1,0 +1,41 @@
+{
+  "_note": "DG-09 Unified Control Framework — a curated real subset (16 controls), not a copy of the source handoff's 80-row CONTROL_CATALOG.csv. Every implementation row below points to evidence that already exists in this codebase (files/commands/test results verified this session), same discipline as documents.seed.json's XHUB-SEC-STANDARDS doc.",
+  "controls": [
+    { "code": "CTL-ACCESS-01", "domain": "Access Control", "title": "RBAC/ABAC quyền theo vai trò + data scope", "frameworkFamilies": ["ISO27001:A.9", "NIST-CSF2:PR.AA"] },
+    { "code": "CTL-ACCESS-02", "domain": "Access Control", "title": "Cách ly dữ liệu theo tenant (Postgres RLS)", "frameworkFamilies": ["ISO27001:A.9.4", "NIST-CSF2:PR.AA"] },
+    { "code": "CTL-SESSION-01", "domain": "Session Management", "title": "Thu hồi phiên khi suspend tài khoản", "frameworkFamilies": ["OWASP-ASVS-4.0:V3.3"] },
+    { "code": "CTL-SECRET-01", "domain": "Secrets Management", "title": "Không lưu secret trong source ngoài .env", "frameworkFamilies": ["OWASP-ASVS-4.0:V6.4", "CWE-798"] },
+    { "code": "CTL-DEP-01", "domain": "Vulnerability Management", "title": "Quét lỗ hổng dependency (SCA) bắt buộc trong CI", "frameworkFamilies": ["OWASP-ASVS-4.0:V14.2", "ISO27001:A.12.6", "NIST-SSDF"] },
+    { "code": "CTL-NET-01", "domain": "Network Security", "title": "Tách vật lý database Platform / X.Office", "frameworkFamilies": ["ISO27001:A.13.1"] },
+    { "code": "CTL-API-01", "domain": "API Security", "title": "Kiểm soát object-level authorization (chống BOLA)", "frameworkFamilies": ["OWASP-API-Security-Top10-2023:API1"] },
+    { "code": "CTL-WEBHOOK-01", "domain": "API Security", "title": "Xác thực chữ ký webhook/CI callback (HMAC)", "frameworkFamilies": ["CWE-347"] },
+    { "code": "CTL-PRIV-01", "domain": "Privacy", "title": "Kiểm soát truy cập dữ liệu cá nhân theo data scope", "frameworkFamilies": ["ISO27701:6.9", "ISO27701:7.2"] },
+    { "code": "CTL-CLASS-01", "domain": "Data Governance", "title": "Phân loại dữ liệu (classification) trên tài liệu/hệ thống", "frameworkFamilies": ["ISO27701"] },
+    { "code": "CTL-QUALITY-01", "domain": "Software Quality", "title": "Truy vết Product→Version→Test→Defect", "frameworkFamilies": ["ISO/IEC-25010"] },
+    { "code": "CTL-AI-01", "domain": "AI Governance", "title": "Con người xác nhận trước khi áp dụng thay đổi do AI đề xuất", "frameworkFamilies": ["ISO-42001", "NIST-AIRMF"] },
+    { "code": "CTL-PDP-01", "domain": "Privacy", "title": "Tuân thủ pháp luật bảo vệ dữ liệu cá nhân Việt Nam", "frameworkFamilies": ["Luat-BVDLCN-91-2025-QH15"] },
+    { "code": "CTL-BACKUP-01", "domain": "Business Continuity", "title": "Sao lưu/khôi phục có kiểm chứng (sandbox restore)", "frameworkFamilies": ["ISO-22301"] },
+    { "code": "CTL-CI-01", "domain": "Secure SDLC", "title": "Cổng kiểm soát CI/CD bắt buộc trước merge", "frameworkFamilies": ["NIST-SSDF", "ISO27001:A.12.6"] },
+    { "code": "CTL-MIGRATION-01", "domain": "Secure SDLC", "title": "Kỷ luật migration DB có phiên bản (không db push tuỳ tiện)", "frameworkFamilies": ["NIST-SSDF"] }
+  ],
+  "implementations": {
+    "PRD-XHUB": [
+      { "controlCode": "CTL-ACCESS-01", "status": "IN_PLACE", "evidenceRefs": ["xhub-api/src/auth/permission.guard.ts", "xhub-api/src/identity/identity.service.ts (can())"] },
+      { "controlCode": "CTL-ACCESS-02", "status": "IN_PLACE", "evidenceRefs": ["npm run test:rls", "npm run test:rls-xoffice", "xhub-api/scripts/rls-setup.mjs"] },
+      { "controlCode": "CTL-SESSION-01", "status": "IN_PLACE", "evidenceRefs": ["xhub-api/src/auth/auth.service.ts (sessionMembershipActive)", "npm run test:auth-flow"] },
+      { "controlCode": "CTL-SECRET-01", "status": "IN_PLACE", "evidenceRefs": ["xhub-api/scripts/secret-scan.mjs", ".github/workflows/ci.yml (scan:secrets gate)"] },
+      { "controlCode": "CTL-DEP-01", "status": "IN_PLACE", "evidenceRefs": ["npm audit --audit-level=high", ".github/workflows/ci.yml (SCA gate)"] },
+      { "controlCode": "CTL-NET-01", "status": "IN_PLACE", "evidenceRefs": ["xhub-api/prisma/schema.prisma vs prisma-xoffice/schema.prisma", "npm run test:db-split"] },
+      { "controlCode": "CTL-API-01", "status": "IN_PLACE", "evidenceRefs": ["xhub-api/SECURITY.md (Object-level authorization)", "docs/implementation/xoffice-ai/ACCEPTANCE_EVIDENCE.md"] },
+      { "controlCode": "CTL-WEBHOOK-01", "status": "IN_PLACE", "evidenceRefs": ["xhub-api/src/webhook/hmac.util.ts", "npm run test:webhook", "npm run test:engineering-ci"] },
+      { "controlCode": "CTL-PRIV-01", "status": "IN_PLACE", "evidenceRefs": ["xhub-api/src/identity DataScope resolver", "IOC zone drilldown scope check (browser-verified 2026-08-04)"] },
+      { "controlCode": "CTL-CLASS-01", "status": "IN_PLACE", "evidenceRefs": ["EngineeringDocument.classification field"] },
+      { "controlCode": "CTL-QUALITY-01", "status": "IN_PLACE", "evidenceRefs": ["xhub-api/src/engineering/* module (DG-01/02/04/05)"] },
+      { "controlCode": "CTL-AI-01", "status": "PARTIAL", "evidenceRefs": ["xhub-api/src/xoffice/xoffice.service.ts (aiDraft, human-confirm apply)"], "notes": "Chỉ 1 AI system đã đăng ký (DG-10); chưa rà soát toàn hệ sinh thái." },
+      { "controlCode": "CTL-PDP-01", "status": "PARTIAL", "evidenceRefs": ["seed-data/engineering/documents.seed.json (XHUB-SEC-STANDARDS mục 6)"], "notes": "Mới cập nhật trích dẫn luật 2026-08-05; chưa có rà soát pháp lý đầy đủ." },
+      { "controlCode": "CTL-BACKUP-01", "status": "IN_PLACE", "evidenceRefs": ["npm run test:backup", "npm run test:backup-schedule"] },
+      { "controlCode": "CTL-CI-01", "status": "IN_PLACE", "evidenceRefs": [".github/workflows/ci.yml"] },
+      { "controlCode": "CTL-MIGRATION-01", "status": "IN_PLACE", "evidenceRefs": ["xhub-api/prisma/migrations/*", "npm run migrate:drift-check"] }
+    ]
+  }
+}

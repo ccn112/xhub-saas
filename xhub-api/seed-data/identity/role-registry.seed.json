@@ -23,7 +23,8 @@
     { "roleCode": "WORK_MANAGER", "name": "Quản lý công việc", "permissions": ["work.*", "work.view.full"], "dataScope": "TENANT" },
     { "roleCode": "SOLUTION_DELIVERY_MANAGER", "name": "Quản lý triển khai giải pháp (T001)", "permissions": ["delivery.read", "delivery.manage", "platform.launch.read", "platform.launch.manage"], "dataScope": "TENANT" },
     { "roleCode": "IOC_OPERATOR", "name": "Vận hành IOC", "permissions": ["ioc.view"], "dataScope": "TENANT" },
-    { "roleCode": "IOC_TWIN_ADMIN", "name": "Quản trị Twin Studio (IOC)", "permissions": ["ioc.view", "ioc.studio.read", "ioc.studio.write", "ioc.studio.review", "ioc.studio.publish", "ioc.asset.manage", "ioc.datalayer.manage", "ioc.template.manage"], "dataScope": "TENANT" }
+    { "roleCode": "IOC_TWIN_ADMIN", "name": "Quản trị Twin Studio (IOC)", "permissions": ["ioc.view", "ioc.studio.read", "ioc.studio.write", "ioc.studio.review", "ioc.studio.publish", "ioc.asset.manage", "ioc.datalayer.manage", "ioc.template.manage"], "dataScope": "TENANT" },
+    { "roleCode": "PLT_ENGINEERING_ADMIN", "name": "Quản trị Phát triển & Chất lượng", "permissions": ["engineering.*"], "dataScope": "ALL" }
   ],
   "_userBindings_note": "USER RoleBindings the seeder ensures so the test admin (user-nam -> usr-cfo) and CEO keep passing every gated endpoint under enforcement via PLATFORM_ADMIN ['*']. Canonical replacement for the legacy ROLE_PLATFORM_ADMIN USER bindings; both coexist this step.",
   "userBindings": [

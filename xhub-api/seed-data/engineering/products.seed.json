@@ -1,0 +1,11 @@
+{
+  "_note": "Mirrors handoff data/SEED_PRODUCTS.csv (XHUB_DEVELOPMENT_QUALITY_HUB_HANDOFF_20260805). code follows the ID convention in that handoff's docs/04_DOMAIN_MODEL_AND_TRACEABILITY.md (PRD-<CODE>). rolloutOrder is seed ordering only per DECISIONS_LOG.md item #10 — it does not mean products 2-6 have any live integration in this pass (DG-01 registry rows only).",
+  "products": [
+    { "code": "PRD-XHUB", "name": "XHub Platform", "type": "PLATFORM", "ownerRole": "PLT_PRODUCT_OWNER", "versionPolicy": "SEMVER", "initialVersion": "1.0.0", "rolloutOrder": 1 },
+    { "code": "PRD-XOFFICE", "name": "X.Office", "type": "SAAS_PRODUCT", "ownerRole": "PLT_PRODUCT_OWNER", "versionPolicy": "SEMVER", "initialVersion": "1.0.0", "rolloutOrder": 2 },
+    { "code": "PRD-X2", "name": "X2 / XBuilding", "type": "DOMAIN_PRODUCT", "ownerRole": "PLT_PRODUCT_OWNER", "versionPolicy": "SEMVER", "initialVersion": "0.1.0", "rolloutOrder": 3 },
+    { "code": "PRD-X1", "name": "X1 / XBooking", "type": "DOMAIN_PRODUCT", "ownerRole": "PLT_PRODUCT_OWNER", "versionPolicy": "SEMVER", "initialVersion": "0.1.0", "rolloutOrder": 4 },
+    { "code": "PRD-FINERP", "name": "FinERP", "type": "DOMAIN_PRODUCT", "ownerRole": "PLT_PRODUCT_OWNER", "versionPolicy": "CUSTOM", "initialVersion": "0.1.0", "rolloutOrder": 5 },
+    { "code": "PRD-XSPACE", "name": "X.Space", "type": "SAAS_PRODUCT", "ownerRole": "PLT_PRODUCT_OWNER", "versionPolicy": "SEMVER", "initialVersion": "0.1.0", "rolloutOrder": 6 }
+  ]
+}

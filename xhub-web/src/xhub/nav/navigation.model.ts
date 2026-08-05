@@ -474,4 +474,36 @@ export const XHUB_NAVIGATION: XNavItem[] = [
       { id: "delivery.engagements", label: "Dự án triển khai", href: "/delivery/engagements", icon: "briefcase", match: ["/delivery/engagements"], permission: "delivery.read" },
     ],
   },
+  // -----------------------------------------------------------------------------
+  // ENGINEERING GOVERNANCE workspace (DG-01, 2026-08-05) — Product/Version
+  // registry for the whole ecosystem (XHub/X.Office/X2/X1/FinERP/X.Space).
+  // Platform-only concern (see docs/implementation/engineering-hub/ADR_*.md),
+  // pinned alongside platform/delivery. Gated by `engineering.product.read`
+  // (nav-visibility only — the backend read routes are intentionally open;
+  // this just hides the workspace from normal tenant users). Does NOT
+  // rename/replace the existing "Tài liệu & Kiểm thử" nav group — that
+  // migration is DG-04, not this pass.
+  // -----------------------------------------------------------------------------
+  {
+    id: "engineering",
+    label: "Phát triển & Chất lượng",
+    icon: "office",
+    href: "/engineering",
+    match: ["/engineering"],
+    permission: "engineering.product.read",
+    group: "platform",
+    children: [
+      { id: "engineering.overview", label: "Tổng quan", href: "/engineering", icon: "chart", match: ["/engineering"], permission: "engineering.product.read" },
+      { id: "engineering.products", label: "Sản phẩm & Repository", href: "/engineering/products", icon: "business", match: ["/engineering/products"], permission: "engineering.product.read" },
+      { id: "engineering.versions", label: "Phiên bản & Phát hành", href: "/engineering/versions", icon: "list", match: ["/engineering/versions"], permission: "engineering.product.read" },
+      { id: "engineering.backlog", label: "Backlog", href: "/engineering/backlog", icon: "list", match: ["/engineering/backlog"], permission: "engineering.product.read" },
+      { id: "engineering.docs", label: "Tài liệu", href: "/engineering/docs", icon: "docs", match: ["/engineering/docs"], permission: "engineering.product.read" },
+      { id: "engineering.tests", label: "Kiểm thử", href: "/engineering/tests", icon: "test", match: ["/engineering/tests"], permission: "engineering.product.read" },
+      { id: "engineering.defects", label: "Lỗi (Defect)", href: "/engineering/defects", icon: "alert", match: ["/engineering/defects"], permission: "engineering.product.read" },
+      { id: "engineering.controls", label: "Khung kiểm soát", href: "/engineering/controls", icon: "list", match: ["/engineering/controls"], permission: "engineering.product.read" },
+      { id: "engineering.ai-systems", label: "Quản trị AI", href: "/engineering/ai-systems", icon: "chart", match: ["/engineering/ai-systems"], permission: "engineering.product.read" },
+      { id: "engineering.privacy", label: "Bảo vệ dữ liệu", href: "/engineering/privacy", icon: "docs", match: ["/engineering/privacy"], permission: "engineering.product.read" },
+      { id: "engineering.audit-room", label: "Phòng kiểm toán", href: "/engineering/audit-room", icon: "briefcase", match: ["/engineering/audit-room"], permission: "engineering.product.read" },
+    ],
+  },
 ];

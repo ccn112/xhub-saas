@@ -1,0 +1,108 @@
+{
+  "_note": "TestSuite ('Module') seed for DG-04-lite. Names match the EXISTING USER_TEST_GROUPS/XOFFICE_TEST_GROUPS in xhub-web/src/components/docs/test-data.ts exactly, for continuity with the legacy /docs/test checklist (not a migration of that data — these are NEW TestCase rows, a representative sample, not the full 110 U# codes; full migration is DG-04's later, higher-risk phase). standardsRefs are populated only where a case genuinely verifies a security/tenancy control already evidenced elsewhere in this codebase (see docs/implementation/engineering-hub/SECURITY_STANDARDS_XHUB.md for the citation list).",
+  "suites": [
+    {
+      "productCode": "PRD-XHUB",
+      "name": "Điều hướng & UI",
+      "cases": [
+        { "code": "TST-XHUB-UAT-U1", "title": "Menu rail hiển thị đúng workspace", "expectedResult": "Rail hiện đúng nhóm workspace theo quyền, không vỡ layout khi thu gọn", "externalLegacyCode": "U1", "level": "UAT" }
+      ]
+    },
+    {
+      "productCode": "PRD-XHUB",
+      "name": "Xác thực",
+      "cases": [
+        { "code": "TST-XHUB-UAT-U8", "title": "Đăng nhập /login", "expectedResult": "Form login render; đăng nhập đúng vào app, sai báo lỗi rõ", "externalLegacyCode": "U8", "deepLinkTemplate": "/login", "level": "UAT" },
+        { "code": "TST-XHUB-UAT-U11", "title": "Thu hồi phiên khi treo tài khoản", "expectedResult": "Suspend user ở /admin/users → phiên hiện tại của user đó bị vô hiệu ngay (đăng xuất buộc)", "externalLegacyCode": "U11", "deepLinkTemplate": "/admin/users", "level": "SECURITY", "requiredForRelease": true, "standardsRefs": ["OWASP-ASVS-4.0:V3.3-Session-Termination", "ISO/IEC-27001:A.9.2.6"] },
+        { "code": "TST-XHUB-SEC-SESSION-DB", "title": "Session/Membership độc lập DB (X.Office không query thẳng Platform)", "expectedResult": "Suspend qua Platform → Platform revoke ngay; X.Office chỉ cache tối đa 60s, không mở kết nối Postgres sống sang DB Platform", "level": "SECURITY", "requiredForRelease": true, "standardsRefs": ["OWASP-API-Security-Top10-2023:API1", "ISO/IEC-27001:A.13.1"] }
+      ]
+    },
+    {
+      "productCode": "PRD-XHUB",
+      "name": "Quản trị & Tổ chức",
+      "cases": [
+        { "code": "TST-XHUB-UAT-U19", "title": "Kiêm nhiệm 1 người 2 vị trí", "expectedResult": "Người giữ 2 vị trí vẫn được resolve đúng người duyệt theo từng vai trò", "externalLegacyCode": "U19", "level": "UAT" }
+      ]
+    },
+    {
+      "productCode": "PRD-XHUB",
+      "name": "X.Space",
+      "cases": [
+        { "code": "TST-XHUB-UAT-XSPACE-01", "title": "Kênh X.Space gắn dự án/khách hàng", "expectedResult": "Tạo kênh, gắn đúng dự án, thấy trong danh sách kênh của dự án đó", "level": "UAT" }
+      ]
+    },
+    {
+      "productCode": "PRD-XHUB",
+      "name": "Platform Console",
+      "cases": [
+        { "code": "TST-XHUB-UAT-PLATFORM-01", "title": "Sổ đăng ký tenant /platform/tenants", "expectedResult": "Danh sách 10 tenant cố định + tenant khách hàng mới tạo, tenantNo bất biến", "deepLinkTemplate": "/platform/tenants", "level": "UAT" },
+        { "code": "TST-XHUB-SEC-TENANT-ISO", "title": "Cách ly tenant (RLS) — không rò dữ liệu chéo tenant", "expectedResult": "Query không có app.current_tenant → 0 dòng; tenant A không thấy dữ liệu tenant B ở bất kỳ bảng nào", "level": "SECURITY", "requiredForRelease": true, "standardsRefs": ["OWASP-API-Security-Top10-2023:API1", "ISO/IEC-27001:A.9.4", "ISO/IEC-27701:6.9"] }
+      ]
+    },
+    {
+      "productCode": "PRD-XHUB",
+      "name": "Console kỹ thuật",
+      "cases": [
+        { "code": "TST-XHUB-SEC-SECRETS", "title": "Không có secret lộ trong source", "expectedResult": "npm run scan:secrets PASS (0 secret ngoài .env)", "level": "SECURITY", "requiredForRelease": true, "standardsRefs": ["OWASP-ASVS-4.0:V6.4", "CWE-798"] },
+        { "code": "TST-XHUB-SEC-SCA", "title": "Không có lỗ hổng dependency mức high/critical", "expectedResult": "npm audit --audit-level=high PASS (0 vulnerability)", "level": "SECURITY", "requiredForRelease": true, "standardsRefs": ["OWASP-ASVS-4.0:V14.2", "ISO/IEC-27001:A.12.6"] }
+      ]
+    },
+    {
+      "productCode": "PRD-XHUB",
+      "name": "Vận hành — Tách process",
+      "cases": [
+        { "code": "TST-XHUB-UAT-2PROC-01", "title": "2 process boot độc lập", "expectedResult": "Platform :4000 và X.Office :4001 cùng chạy, mỗi bên chỉ phục vụ đúng route của mình", "level": "INTEGRATION" }
+      ]
+    },
+    {
+      "productCode": "PRD-XOFFICE",
+      "name": "X.Office",
+      "cases": [
+        { "code": "TST-XOFFICE-UAT-U27", "title": "Danh mục quy trình", "expectedResult": "Danh sách quy trình đã publish, bấm vào xem chi tiết node/edge", "externalLegacyCode": "U27", "level": "UAT" }
+      ]
+    },
+    {
+      "productCode": "PRD-XOFFICE",
+      "name": "Tài liệu",
+      "cases": [
+        { "code": "TST-XOFFICE-UAT-U33", "title": "Tải phiên bản mới cho tài liệu", "expectedResult": "Upload version mới, version cũ giữ nguyên (immutable), checksum hiển thị đúng", "externalLegacyCode": "U33", "level": "UAT" }
+      ]
+    },
+    {
+      "productCode": "PRD-XOFFICE",
+      "name": "Công việc",
+      "cases": [
+        { "code": "TST-XOFFICE-UAT-WORK-01", "title": "Tạo việc + gán người + cập nhật trạng thái", "expectedResult": "Việc mới hiện đúng ở Kanban/Gantt, đổi trạng thái lưu được", "level": "UAT" }
+      ]
+    },
+    {
+      "productCode": "PRD-XOFFICE",
+      "name": "Quản trị",
+      "cases": [
+        { "code": "TST-XOFFICE-UAT-MG-01", "title": "Vòng Mục tiêu → KPI → Review → Quyết định", "expectedResult": "KPI tính từ Work thật, không nhập tay; Review tạo Quyết định RAPID", "level": "UAT" }
+      ]
+    },
+    {
+      "productCode": "PRD-XOFFICE",
+      "name": "IOC — Bản sao số",
+      "cases": [
+        { "code": "TST-XOFFICE-UAT-U72", "title": "Bản sao số văn phòng /ioc/twin/office", "expectedResult": "Mặt bằng 2D hiện 8 vùng với tên phòng ban thật + màu theo mức tải, thẻ KPI khớp bảng bên dưới", "externalLegacyCode": "U72", "deepLinkTemplate": "/ioc/twin/office", "level": "UAT" },
+        { "code": "TST-XOFFICE-SEC-IOC-SCOPE", "title": "Chi tiết vùng tôn trọng DataScope (ABAC)", "expectedResult": "Người xem không có DataScope phủ vùng đó nhận đúng lỗi 'outside caller scope', không rò dữ liệu cá nhân", "level": "SECURITY", "requiredForRelease": true, "standardsRefs": ["ISO/IEC-27701:7.2", "OWASP-API-Security-Top10-2023:API1"] }
+      ]
+    },
+    {
+      "productCode": "PRD-XOFFICE",
+      "name": "Nhân sự & Công",
+      "cases": [
+        { "code": "TST-XOFFICE-UAT-PE-01", "title": "Gửi đơn nghỉ phép + xem trước ảnh hưởng", "expectedResult": "Xem trước công việc/booking/chỉ đạo bị ảnh hưởng trước khi gửi; duyệt xong số dư trừ đúng", "level": "UAT" }
+      ]
+    },
+    {
+      "productCode": "PRD-XOFFICE",
+      "name": "Đa tenant",
+      "cases": [
+        { "code": "TST-XOFFICE-SEC-DEMO-ISO", "title": "Tenant demo-isolation không thấy dữ liệu tenant khác", "expectedResult": "demo-isolation sees 0 xtech rows across all tables", "level": "SECURITY", "requiredForRelease": true, "standardsRefs": ["OWASP-API-Security-Top10-2023:API1", "ISO/IEC-27001:A.9.4"] }
+      ]
+    }
+  ]
+}

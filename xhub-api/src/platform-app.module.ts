@@ -14,6 +14,7 @@ import { TenantLaunchModule } from './platform/launch/tenant-launch.module';
 import { CatalogModule } from './platform/catalog/catalog.module';
 import { OnboardingModule } from './platform/onboarding/onboarding.module';
 import { TenantLifecycleModule } from './platform/lifecycle/tenant-lifecycle.module';
+import { EngineeringModule } from './engineering/engineering.module';
 
 /**
  * XHub Platform process — Phase 1.5 Stage B composition root. Carries the
@@ -39,6 +40,7 @@ import { TenantLifecycleModule } from './platform/lifecycle/tenant-lifecycle.mod
     CatalogModule,
     OnboardingModule,
     TenantLifecycleModule,
+    EngineeringModule,
   ],
   controllers: [AppController],
   providers: [AppService],

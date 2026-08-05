@@ -55,3 +55,32 @@ function sortDeep(value: unknown): unknown {
 export function contentChecksum(value: unknown): string {
   return createHash('sha256').update(canonicalize(value)).digest('hex');
 }
+
+/**
+ * Secret-shaped VALUE patterns (not field names — see SECRET_FIELD_REGEX
+ * above) found in free text. Subset of scripts/secret-scan.mjs's PATTERNS,
+ * reused here so EngineeringDocument bodies (DG-03) get the same guard
+ * applied to source files, instead of a second ad hoc rule set.
+ */
+const SECRET_VALUE_PATTERNS = [
+  { name: 'anthropic-key', re: /sk-ant-[A-Za-z0-9_-]{20,}/g },
+  { name: 'openai-key', re: /sk-[A-Za-z0-9]{32,}/g },
+  { name: 'aws-access-key', re: /AKIA[0-9A-Z]{16}/g },
+  { name: 'private-key-block', re: /-----BEGIN (?:RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----/g },
+  { name: 'google-api-key', re: /AIza[0-9A-Za-z_-]{35}/g },
+];
+
+/**
+ * MUST_NOT_LEAK for free-text document bodies (DG-03 EngineeringDocument):
+ * throws if the text contains anything shaped like a real secret VALUE.
+ * Complements assertNoSecretFields (which only checks structured object
+ * KEYS) — a markdown doc has no keys, only prose, so it needs its own check.
+ */
+export function assertNoSecretValues(text: string): void {
+  for (const { name, re } of SECRET_VALUE_PATTERNS) {
+    re.lastIndex = 0;
+    if (re.test(text)) {
+      throw new Error(`MUST_NOT_LEAK: content matches a ${name} secret pattern — remove it before saving`);
+    }
+  }
+}
