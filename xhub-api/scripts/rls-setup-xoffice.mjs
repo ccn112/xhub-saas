@@ -42,6 +42,13 @@ const TENANT_TABLES = [
   'Initiative', 'Portfolio', 'BenefitProfile',
   'WorkCalendar', 'ShiftPattern', 'ShiftAssignment', 'AttendanceImportBatch',
   'AttendanceEvent', 'AttendanceDay', 'AttendanceCorrectionRequest',
+  // Phase 2 — Revenue & Contract MVP, slice 1 (2026-08-05).
+  'Customer', 'Contact', 'CustomerEvent',
+  // Phase 2 — Revenue & Contract MVP, slices 2-8 (2026-08-05).
+  'Opportunity', 'OpportunityEvent', 'CommercialCatalogItem',
+  'Proposal', 'ProposalLine', 'ProposalEvent',
+  'Contract', 'ContractLine', 'ContractSignature', 'ContractObligation',
+  'BillingRequest', 'ContractEvent',
 ];
 
 const PREDICATE =

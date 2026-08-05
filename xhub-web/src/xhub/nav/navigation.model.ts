@@ -288,6 +288,23 @@ export const XHUB_NAVIGATION: XNavItem[] = [
         ],
       },
       {
+        id: "office.sales",
+        label: "Kinh doanh",
+        href: "/office/customers",
+        icon: "customer",
+        children: [
+          // Phase 2 — Revenue & Contract MVP (BO-0201..0209). Reads open
+          // (any tenant member browses); writes gated server-side by
+          // customer.manage/opportunity.manage/catalog.manage/proposal.manage/
+          // contract.manage (SALES_MANAGER/CONTRACT_MANAGER).
+          { id: "office.customers", label: "Khách hàng", href: "/office/customers", icon: "customer", match: ["/office/customers"] },
+          { id: "office.opportunities", label: "Cơ hội bán hàng", href: "/office/opportunities", icon: "chart", match: ["/office/opportunities"] },
+          { id: "office.catalog", label: "Danh mục thương mại", href: "/office/catalog", icon: "list", match: ["/office/catalog"] },
+          { id: "office.contracts", label: "Hợp đồng", href: "/office/contracts", icon: "docs", match: ["/office/contracts"] },
+          { id: "office.revenue-kpi", label: "KPI Kinh doanh", href: "/office/revenue-kpi", icon: "chart", match: ["/office/revenue-kpi"] },
+        ],
+      },
+      {
         id: "office.workflowAdmin",
         label: "Quản trị quy trình",
         href: "/office/workflows",

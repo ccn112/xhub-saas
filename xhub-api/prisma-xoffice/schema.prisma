@@ -445,20 +445,20 @@ model RequestEvent {
 /// AssignmentResolver / Org Core — NEVER a hardcoded assignee. Evidence reuses
 /// RecordDocument (subjectType='Directive'). SLA via dueAt + overdue compute.
 model Directive {
-  id           String    @id @default(cuid())
-  tenantId     String
-  code         String // human code e.g. DIR-2026-001
-  title        String
-  body         String?
-  issuerId     String // EXECUTIVE who issued (session userId)
-  audienceType String    @default("ORG_UNIT") // ORG_UNIT|POSITION|USER|GROUP
-  audienceId   String?
-  priority     String    @default("NORMAL") // LOW|NORMAL|HIGH|URGENT
-  dueAt        DateTime?
-  state        String    @default("DRAFT")
+  id             String    @id @default(cuid())
+  tenantId       String
+  code           String // human code e.g. DIR-2026-001
+  title          String
+  body           String?
+  issuerId       String // EXECUTIVE who issued (session userId)
+  audienceType   String    @default("ORG_UNIT") // ORG_UNIT|POSITION|USER|GROUP
+  audienceId     String?
+  priority       String    @default("NORMAL") // LOW|NORMAL|HIGH|URGENT
+  dueAt          DateTime?
+  state          String    @default("DRAFT")
   idempotencyKey String? // optional client-supplied replay guard (Security audit 2026-08-04)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   assignments DirectiveAssignment[]
   events      DirectiveEvent[]
@@ -535,25 +535,25 @@ model ServiceCatalogItem {
 /// linked catalog item's defaultSlaHours. csatScore/csatComment captured on
 /// resolution by the requester.
 model Ticket {
-  id            String    @id @default(cuid())
-  tenantId      String
-  code          String // human code e.g. IT-2026-0001
-  title         String
-  description   String?
-  requesterId   String
-  catalogItemId String?
-  category      String
-  priority      String    @default("MEDIUM") // LOW|MEDIUM|HIGH|URGENT
-  state         String    @default("NEW")
-  assigneeId    String?
-  orgUnitId     String? // queue / owning org unit
-  slaDueAt      DateTime?
-  resolvedAt    DateTime?
-  csatScore     Int? // 1..5
-  csatComment   String?
+  id             String    @id @default(cuid())
+  tenantId       String
+  code           String // human code e.g. IT-2026-0001
+  title          String
+  description    String?
+  requesterId    String
+  catalogItemId  String?
+  category       String
+  priority       String    @default("MEDIUM") // LOW|MEDIUM|HIGH|URGENT
+  state          String    @default("NEW")
+  assigneeId     String?
+  orgUnitId      String? // queue / owning org unit
+  slaDueAt       DateTime?
+  resolvedAt     DateTime?
+  csatScore      Int? // 1..5
+  csatComment    String?
   idempotencyKey String? // optional client-supplied replay guard (Security audit 2026-08-04)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   events TicketEvent[]
 
@@ -607,24 +607,24 @@ model BookableResource {
 /// bookings.fsm.ts: REQUESTED → APPROVED → (CHECKED_IN → CHECKED_OUT | NO_SHOW),
 /// plus REJECTED / CANCELLED. Attachments reuse RecordDocument (subjectType=Booking).
 model Booking {
-  id           String    @id @default(cuid())
-  tenantId     String
-  code         String // human code e.g. BOOK-2026-0001
-  resourceId   String
-  requesterId  String
-  title        String
-  purpose      String?
-  startAt      DateTime
-  endAt        DateTime
-  state        String    @default("REQUESTED")
-  attendees    Int?
-  checkedInAt  DateTime?
-  checkedOutAt DateTime?
-  noShow       Boolean   @default(false)
-  orgUnitId    String?
+  id             String    @id @default(cuid())
+  tenantId       String
+  code           String // human code e.g. BOOK-2026-0001
+  resourceId     String
+  requesterId    String
+  title          String
+  purpose        String?
+  startAt        DateTime
+  endAt          DateTime
+  state          String    @default("REQUESTED")
+  attendees      Int?
+  checkedInAt    DateTime?
+  checkedOutAt   DateTime?
+  noShow         Boolean   @default(false)
+  orgUnitId      String?
   idempotencyKey String? // optional client-supplied replay guard (Security audit 2026-08-04)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   resource BookableResource @relation(fields: [resourceId], references: [id])
   events   BookingEvent[]
@@ -662,22 +662,22 @@ model BookingEvent {
 /// recipients. Lifecycle in announcements.fsm.ts: DRAFT → PUBLISHED → (ARCHIVED),
 /// plus CANCELLED. Attachments reuse RecordDocument (subjectType='Announcement').
 model Announcement {
-  id           String    @id @default(cuid())
-  tenantId     String
-  code         String // human code e.g. ANN-2026-001
-  title        String
-  body         String?
-  authorId     String // COMM_ADMIN who authored (session userId)
-  audienceType String    @default("ALL") // ALL|ORG_UNIT|POSITION|GROUP|USER
-  audienceId   String?
-  priority     String    @default("NORMAL") // LOW|NORMAL|HIGH|URGENT
-  requireAck   Boolean   @default(false)
-  publishAt    DateTime?
-  expireAt     DateTime?
-  state        String    @default("DRAFT")
+  id             String    @id @default(cuid())
+  tenantId       String
+  code           String // human code e.g. ANN-2026-001
+  title          String
+  body           String?
+  authorId       String // COMM_ADMIN who authored (session userId)
+  audienceType   String    @default("ALL") // ALL|ORG_UNIT|POSITION|GROUP|USER
+  audienceId     String?
+  priority       String    @default("NORMAL") // LOW|NORMAL|HIGH|URGENT
+  requireAck     Boolean   @default(false)
+  publishAt      DateTime?
+  expireAt       DateTime?
+  state          String    @default("DRAFT")
   idempotencyKey String? // optional client-supplied replay guard (Security audit 2026-08-04)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   receipts AnnouncementReceipt[]
   events   AnnouncementEvent[]
@@ -1663,21 +1663,21 @@ model IocTemplate {
 /// via PE-001 (SME Lite for T001 today); upgradeable per-field without a schema
 /// migration when a real FinERP/Frappe HR adapter exists (PE-08).
 model PeopleTenantConfig {
-  id                       String   @id @default(cuid())
-  tenantId                 String
-  attendanceMode           String   @default("FILE_IMPORT") // XOFFICE|FRAPPE_HR|DEVICE|FILE_IMPORT
-  leaveMode                String   @default("XOFFICE") // XOFFICE|FRAPPE_HR
-  payrollMode              String   @default("FILE_IMPORT") // FINERP|EXTERNAL_API|FILE_IMPORT
-  timesheetEnabled         Boolean  @default(true)
-  performanceBridgeEnabled Boolean  @default(false)
-  iocCapacityEnabled       Boolean  @default(false)
-  workCalendarId           String?
-  externalSystemId         String?
-  defaultStandardHoursPerDay Float  @default(8)
-  workingWeekdays          Int[]    @default([1, 2, 3, 4, 5])
-  createdBy                String
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
+  id                         String   @id @default(cuid())
+  tenantId                   String
+  attendanceMode             String   @default("FILE_IMPORT") // XOFFICE|FRAPPE_HR|DEVICE|FILE_IMPORT
+  leaveMode                  String   @default("XOFFICE") // XOFFICE|FRAPPE_HR
+  payrollMode                String   @default("FILE_IMPORT") // FINERP|EXTERNAL_API|FILE_IMPORT
+  timesheetEnabled           Boolean  @default(true)
+  performanceBridgeEnabled   Boolean  @default(false)
+  iocCapacityEnabled         Boolean  @default(false)
+  workCalendarId             String?
+  externalSystemId           String?
+  defaultStandardHoursPerDay Float    @default(8)
+  workingWeekdays            Int[]    @default([1, 2, 3, 4, 5])
+  createdBy                  String
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
 
   @@unique([tenantId])
   @@index([tenantId])
@@ -1720,27 +1720,27 @@ model LeavePolicyRef {
 /// next `sequence` for the same person+policy+period). `available` is the
 /// snapshot value at that sequence; current balance = latest sequence per key.
 model LeaveBalanceSnapshot {
-  id                    String    @id @default(cuid())
-  tenantId              String
-  personId              String
-  leavePolicyId         String
-  periodCode            String // "2026" | "2026-08"
-  openingBalance        Float     @default(0)
-  accrued               Float     @default(0)
-  used                  Float     @default(0)
-  pending               Float     @default(0)
-  adjusted              Float     @default(0)
-  carriedOver           Float     @default(0)
-  available             Float     @default(0)
-  unit                  String    @default("DAY")
-  sequence              Int       @default(1)
-  reason                String // ACCRUAL|LEAVE_SUBMITTED|LEAVE_APPROVED|LEAVE_CANCELLED|LEAVE_REJECTED|HR_ADJUSTMENT|CARRY_OVER|INITIAL
-  sourceLeaveRequestId  String?
-  sourceSystem          String?
-  sourceVersion         String?
-  syncedAt              DateTime?
-  createdBy             String
-  createdAt             DateTime  @default(now())
+  id                   String    @id @default(cuid())
+  tenantId             String
+  personId             String
+  leavePolicyId        String
+  periodCode           String // "2026" | "2026-08"
+  openingBalance       Float     @default(0)
+  accrued              Float     @default(0)
+  used                 Float     @default(0)
+  pending              Float     @default(0)
+  adjusted             Float     @default(0)
+  carriedOver          Float     @default(0)
+  available            Float     @default(0)
+  unit                 String    @default("DAY")
+  sequence             Int       @default(1)
+  reason               String // ACCRUAL|LEAVE_SUBMITTED|LEAVE_APPROVED|LEAVE_CANCELLED|LEAVE_REJECTED|HR_ADJUSTMENT|CARRY_OVER|INITIAL
+  sourceLeaveRequestId String?
+  sourceSystem         String?
+  sourceVersion        String?
+  syncedAt             DateTime?
+  createdBy            String
+  createdAt            DateTime  @default(now())
 
   @@unique([tenantId, personId, leavePolicyId, periodCode, sequence])
   @@index([tenantId, personId])
@@ -1824,29 +1824,29 @@ model LeaveImpactSnapshot {
 /// (FinERP, when connected, is SoR of the OT *payout* — a different object).
 /// hours is server-computed from startAt/endAt, never client-trusted.
 model OvertimeRequest {
-  id                String    @id @default(cuid())
-  tenantId          String
-  personId          String
-  orgUnitId         String?
-  workDate          DateTime
-  startAt           DateTime
-  endAt             DateTime
-  hours             Float     @default(0) // server-computed only
-  otType            String    @default("NORMAL") // NORMAL|WEEKEND|HOLIDAY|NIGHT
-  reason            String?
-  relatedWorkItemId String?
-  relatedProjectId  String?
-  status            String    @default("DRAFT") // DRAFT|SUBMITTED|IN_REVIEW|APPROVED|REJECTED|CANCELLED
-  submittedAt       DateTime?
-  decidedAt         DateTime?
-  decidedBy         String?
-  decisionNote      String?
+  id                 String    @id @default(cuid())
+  tenantId           String
+  personId           String
+  orgUnitId          String?
+  workDate           DateTime
+  startAt            DateTime
+  endAt              DateTime
+  hours              Float     @default(0) // server-computed only
+  otType             String    @default("NORMAL") // NORMAL|WEEKEND|HOLIDAY|NIGHT
+  reason             String?
+  relatedWorkItemId  String?
+  relatedProjectId   String?
+  status             String    @default("DRAFT") // DRAFT|SUBMITTED|IN_REVIEW|APPROVED|REJECTED|CANCELLED
+  submittedAt        DateTime?
+  decidedAt          DateTime?
+  decidedBy          String?
+  decisionNote       String?
   workflowInstanceId String?
-  approvalTaskId    String?
-  idempotencyKey    String
-  createdBy         String
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  approvalTaskId     String?
+  idempotencyKey     String
+  createdBy          String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   @@unique([tenantId, idempotencyKey])
   @@index([tenantId, personId])
@@ -1891,15 +1891,15 @@ model ShiftPattern {
 /// Which ShiftPattern + WorkCalendar apply to a person over an effective
 /// window. Latest non-expired row per person is authoritative.
 model ShiftAssignment {
-  id              String    @id @default(cuid())
-  tenantId        String
-  personId        String
-  shiftPatternId  String
-  workCalendarId  String
-  effectiveFrom   DateTime
-  effectiveTo     DateTime?
-  createdBy       String
-  createdAt       DateTime  @default(now())
+  id             String    @id @default(cuid())
+  tenantId       String
+  personId       String
+  shiftPatternId String
+  workCalendarId String
+  effectiveFrom  DateTime
+  effectiveTo    DateTime?
+  createdBy      String
+  createdAt      DateTime  @default(now())
 
   @@index([tenantId, personId])
   @@index([tenantId, personId, effectiveFrom])
@@ -1953,19 +1953,19 @@ model AttendanceEvent {
 /// AttendanceCorrectionRequest (correctionApplied=true then, and recompute no
 /// longer overwrites the corrected fields for that day).
 model AttendanceDay {
-  id                String   @id @default(cuid())
+  id                String    @id @default(cuid())
   tenantId          String
   personId          String
   workDate          DateTime
   shiftPatternId    String?
   firstIn           DateTime?
   lastOut           DateTime?
-  workedMinutes     Int      @default(0)
-  lateMinutes       Int      @default(0)
-  status            String   @default("ABSENT") // PRESENT|LATE|HALF_DAY|ABSENT|LEAVE|HOLIDAY|WEEKEND
-  correctionApplied Boolean  @default(false)
-  sourceEventIds    String[] @default([])
-  recomputedAt      DateTime @default(now())
+  workedMinutes     Int       @default(0)
+  lateMinutes       Int       @default(0)
+  status            String    @default("ABSENT") // PRESENT|LATE|HALF_DAY|ABSENT|LEAVE|HOLIDAY|WEEKEND
+  correctionApplied Boolean   @default(false)
+  sourceEventIds    String[]  @default([])
+  recomputedAt      DateTime  @default(now())
 
   @@unique([tenantId, personId, workDate])
   @@index([tenantId, workDate])
@@ -1977,24 +1977,24 @@ model AttendanceDay {
 /// approval mechanism. On approve, the requested fields overwrite the
 /// AttendanceDay row and correctionApplied is set true.
 model AttendanceCorrectionRequest {
-  id                String    @id @default(cuid())
-  tenantId          String
-  personId          String
-  workDate          DateTime
-  reason            String
-  requestedStatus   String?
-  requestedFirstIn  DateTime?
-  requestedLastOut  DateTime?
-  status            String    @default("SUBMITTED") // SUBMITTED|APPROVED|REJECTED
-  decidedAt         DateTime?
-  decidedBy         String?
-  decisionNote      String?
+  id                 String    @id @default(cuid())
+  tenantId           String
+  personId           String
+  workDate           DateTime
+  reason             String
+  requestedStatus    String?
+  requestedFirstIn   DateTime?
+  requestedLastOut   DateTime?
+  status             String    @default("SUBMITTED") // SUBMITTED|APPROVED|REJECTED
+  decidedAt          DateTime?
+  decidedBy          String?
+  decisionNote       String?
   workflowInstanceId String?
-  approvalTaskId    String?
-  idempotencyKey    String
-  createdBy         String
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  approvalTaskId     String?
+  idempotencyKey     String
+  createdBy          String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   @@unique([tenantId, idempotencyKey])
   @@index([tenantId, personId, workDate])
@@ -2196,4 +2196,402 @@ model AuditLog {
   detail       String
 
   @@index([tenantId, instanceCode])
+}
+
+// ============================================================================
+// Phase 2 — Revenue & Contract MVP, slice 1 (BO-0201): Customer/Contact
+// account model + 360 view (2026-08-05). Business-Ops domain, tenant-scoped
+// (RLS), X.Office process only — distinct from the Platform-wide, no-RLS
+// engineering-governance module in xhub-api's OTHER Prisma schema
+// (prisma/schema.prisma). Modeled directly on the real source contracts
+// (handoff/Xhub/XOFFICE_BUSINESS_OPERATIONS_AI_CAMERA_AGENT_HANDOFF_20260803/
+// contracts/customer-account.schema.json + contact.schema.json), field names
+// kept faithful (status enum incl. BLOCKED, ownerIdentityId, industryCode,
+// privacyClass, contactPreference, consentEvidenceRef) — a few Prisma-side
+// additions beyond the source contract (code, taxCode, role, isPrimary,
+// idempotencyKey, notes) are called out inline. `canonicalCustomerId` is
+// reserved for a future MDM cross-reference (src/mdm) — NOT wired this pass,
+// no MasterRecord actually created/linked. Later slices (BO-0202 Opportunity,
+// BO-0203 Catalog, BO-0204+ Proposal/Contract) are NOT part of this pass.
+// ============================================================================
+
+/// Maps to the source contract's `CustomerAccount`. `code`/`taxCode`/`notes`/
+/// `idempotencyKey` are Prisma-side additions not in the source JSON Schema.
+/// `status` is a simple set (not a full FSM — stage GOVERNANCE belongs to
+/// Opportunity, a later slice, not the account record itself).
+model Customer {
+  id                  String   @id @default(cuid())
+  tenantId            String
+  code                String // Prisma-side addition: short human code (CUS-0001)
+  canonicalCustomerId String? // reserved for future MDM MasterRecord link — NOT wired this pass
+  name                String
+  status              String   @default("PROSPECT") // PROSPECT | ACTIVE | INACTIVE | BLOCKED (matches source contract exactly)
+  ownerIdentityId     String? // account owner (sales rep) — plain ref, no FK
+  industryCode        String?
+  privacyClass        String? // e.g. PUBLIC | INTERNAL | CONFIDENTIAL — data classification, source contract field
+  taxCode             String? // Prisma-side addition: mã số thuế (VN), organization only
+  addressLine         String? // Prisma-side addition
+  website             String? // Prisma-side addition
+  notes               String? // Prisma-side addition
+  idempotencyKey      String? // Prisma-side addition
+  createdBy           String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  contacts      Contact[]
+  events        CustomerEvent[]
+  opportunities Opportunity[]
+  contracts     Contract[]
+
+  @@unique([tenantId, code])
+  @@unique([tenantId, idempotencyKey])
+  @@index([tenantId])
+  @@index([tenantId, status])
+}
+
+/// Maps to the source contract's `Contact`. `role`/`isPrimary`/`notes` are
+/// Prisma-side additions. `contactPreference` is the source contract's
+/// channel-preference array (EMAIL/SMS/CALL/ZALO/NONE — ZALO because this is
+/// a Vietnam-market product). `consentEvidenceRef` is a loose pointer to
+/// proof of contact-consent (privacy) — not yet wired to the Evidence
+/// ledger in the OTHER (engineering-governance) Prisma schema.
+model Contact {
+  id                 String   @id @default(cuid())
+  tenantId           String
+  customerId         String // source contract calls this customerAccountId
+  displayName        String
+  role               String? // Prisma-side addition: chức danh, e.g. "Giám đốc mua hàng"
+  email              String?
+  phone              String?
+  contactPreference  String[] @default([]) // EMAIL | SMS | CALL | ZALO | NONE
+  consentEvidenceRef String?
+  isPrimary          Boolean  @default(false) // Prisma-side addition
+  notes              String? // Prisma-side addition
+  createdBy          String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, customerId])
+}
+
+/// Append-only activity timeline for a Customer (created/status-changed/
+/// contact-added/note) — the 360 view's "lịch sử" tab, and the BO-0201
+/// acceptance criterion "timeline". Mirrors the AnnouncementEvent pattern
+/// (event + AuditLog written together).
+model CustomerEvent {
+  id         String   @id @default(cuid())
+  tenantId   String
+  customerId String
+  type       String
+  actorId    String
+  data       Json?
+  createdAt  DateTime @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  @@index([tenantId, customerId])
+}
+
+// ============================================================================
+// Phase 2 — Revenue & Contract MVP, slices 2-8 (BO-0202..0209), 2026-08-05.
+// Faithful to the real source contracts (handoff/Xhub/
+// XOFFICE_BUSINESS_OPERATIONS_AI_CAMERA_AGENT_HANDOFF_20260803/contracts/
+// {opportunity,commercial-catalog-item,proposal,contract,contract-line,
+// billing-request}.schema.json). Money is stored as (amount: String,
+// currency: String) pairs, matching the source contracts' own
+// string-pattern-validated decimal representation (avoids float precision
+// issues for VND amounts in the billions) — NOT a Prisma Decimal type,
+// deliberately kept simple. ContractObligation and the KPI provenance model
+// are this session's own design (no dedicated source contract for
+// "obligation/alert engine" — only the BO-0208 backlog description exists).
+// Out of scope this pass (different backlog stream, not requested):
+// ChangeRequest (ties to Delivery/BO-01xx projectId), CollectionCase,
+// Subscription lifecycle beyond the Contract itself, FinERP-dependent KPIs
+// (KPI-FIN-002, KPI-LEAK-001 — noted as N/A in the KPI endpoint, not faked).
+// ============================================================================
+
+/// Maps to source contract `Opportunity`. FSM below; WON/LOST are terminal.
+/// Deliberately does NOT create any Contract/revenue record automatically on
+/// WON — T-REV-001 ("Deal Won is not revenue") requires only Contract/
+/// BillingRequest to affect revenue-side KPIs, never Opportunity.stage alone.
+model Opportunity {
+  id                String    @id @default(cuid())
+  tenantId          String
+  customerId        String // source contract calls this customerAccountId
+  title             String
+  stage             String    @default("LEAD")
+  // LEAD | QUALIFIED | DISCOVERY | PROPOSAL | NEGOTIATION | WON | LOST
+  expectedAmount    String // decimal-as-string, e.g. "5000000000"
+  currency          String    @default("VND")
+  probability       Float? // 0..1
+  expectedCloseDate DateTime?
+  ownerIdentityId   String?
+  lostReason        String? // required by service when transitioning to LOST
+  idempotencyKey    String?
+  createdBy         String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  customer  Customer           @relation(fields: [customerId], references: [id])
+  proposals Proposal[]
+  contracts Contract[]
+  events    OpportunityEvent[]
+
+  @@unique([tenantId, idempotencyKey])
+  @@index([tenantId])
+  @@index([tenantId, stage])
+  @@index([customerId])
+}
+
+model OpportunityEvent {
+  id            String   @id @default(cuid())
+  tenantId      String
+  opportunityId String
+  type          String
+  actorId       String
+  data          Json?
+  createdAt     DateTime @default(now())
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id])
+
+  @@index([tenantId, opportunityId])
+}
+
+/// Maps to source contract `CommercialCatalogItem`. `version` is Prisma-side
+/// Int (auto-increment on edit, matching EngineeringDocument's pattern) —
+/// the source contract typed it as a free string; this is a deliberate
+/// simplification, noted as a deviation.
+model CommercialCatalogItem {
+  id                String   @id @default(cuid())
+  tenantId          String
+  code              String
+  name              String
+  commercialType    String // PRODUCT | SERVICE | SUBSCRIPTION | IMPLEMENTATION | SUPPORT | TRAINING
+  xhubAppCatalogRef String? // loose ref to xhub-api engineering Product.code — NOT a cross-DB FK
+  priceModel        String? // ONE_TIME | RECURRING | USAGE | TIME_MATERIAL | MILESTONE
+  version           Int      @default(1)
+  active            Boolean  @default(true)
+  createdBy         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  proposalLines ProposalLine[]
+  contractLines ContractLine[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+}
+
+/// Maps to source contract `Proposal`. `version` numbers a NEW row per
+/// revision for the same Opportunity (append pattern, unique on
+/// (opportunityId, version)) — history is never overwritten, matching this
+/// codebase's TestResult/EngineeringDocument precedent for "versioned"
+/// entities.
+model Proposal {
+  id                 String    @id @default(cuid())
+  tenantId           String
+  opportunityId      String
+  version            Int       @default(1)
+  status             String    @default("DRAFT")
+  // DRAFT | IN_REVIEW | APPROVED | SENT | ACCEPTED | REJECTED | EXPIRED
+  totalAmount        String    @default("0") // cached sum of lines, recomputed on line change
+  currency           String    @default("VND")
+  validUntil         DateTime?
+  approvalInstanceId String? // loose ref, reserved — no generic workflow-engine wiring this pass
+  documentRecordId   String? // loose ref to RecordDocument (records module) — not wired this pass
+  requiresApproval   Boolean   @default(false) // set true when a line's discount exceeds threshold (BO-0205)
+  createdBy          String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  opportunity Opportunity     @relation(fields: [opportunityId], references: [id])
+  lines       ProposalLine[]
+  events      ProposalEvent[]
+
+  @@unique([tenantId, opportunityId, version])
+  @@index([tenantId])
+  @@index([opportunityId])
+}
+
+model ProposalLine {
+  id              String   @id @default(cuid())
+  tenantId        String
+  proposalId      String
+  catalogItemId   String
+  description     String?
+  quantity        Int      @default(1)
+  unitPrice       String // decimal-as-string
+  discountPercent Float    @default(0) // 0..100 — BO-0205 threshold check reads this
+  lineTotal       String // decimal-as-string, service-computed: quantity * unitPrice * (1 - discountPercent/100)
+  createdAt       DateTime @default(now())
+
+  proposal    Proposal              @relation(fields: [proposalId], references: [id])
+  catalogItem CommercialCatalogItem @relation(fields: [catalogItemId], references: [id])
+
+  @@index([tenantId, proposalId])
+}
+
+model ProposalEvent {
+  id         String   @id @default(cuid())
+  tenantId   String
+  proposalId String
+  type       String
+  actorId    String
+  data       Json?
+  createdAt  DateTime @default(now())
+
+  proposal Proposal @relation(fields: [proposalId], references: [id])
+
+  @@index([tenantId, proposalId])
+}
+
+/// Maps to source contract `Contract`. FSM below; ContractLine mutation is
+/// blocked once status reaches SIGNING or beyond — T-CON-001 "Contract
+/// version immutable after signature" (edit rejected; amendment required —
+/// amendment/ChangeRequest itself is out of scope this pass).
+/// `sourceOpportunityId` is deliberately NOT unique — T-CON-002 "one deal to
+/// multiple contracts/lines" must remain possible.
+model Contract {
+  id                  String    @id @default(cuid())
+  tenantId            String
+  contractNo          String
+  sourceOpportunityId String?
+  customerId          String
+  status              String    @default("DRAFT")
+  // DRAFT | REVIEW | NEGOTIATION | APPROVED | SIGNING | EFFECTIVE | SUSPENDED
+  // | EXPIRED | TERMINATED | COMPLETED
+  effectiveFrom       DateTime?
+  effectiveTo         DateTime?
+  totalAmount         String    @default("0") // cached sum of lines
+  currency            String    @default("VND")
+  recordId            String? // loose ref to RecordDocument — not wired this pass
+  createdBy           String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  customer        Customer             @relation(fields: [customerId], references: [id])
+  opportunity     Opportunity?         @relation(fields: [sourceOpportunityId], references: [id])
+  lines           ContractLine[]
+  signatures      ContractSignature[]
+  obligations     ContractObligation[]
+  billingRequests BillingRequest[]
+  events          ContractEvent[]
+
+  @@unique([tenantId, contractNo])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([customerId])
+}
+
+model ContractLine {
+  id                  String   @id @default(cuid())
+  tenantId            String
+  contractId          String
+  catalogItemId       String
+  deliveryMethod      String // PROJECT | SUBSCRIPTION | WORK_ORDER | DELIVERY_ONLY
+  billingMethod       String // ADVANCE | MILESTONE | TIME_MATERIAL | RECURRING | FIXED_COMPLETION
+  lineValue           String // decimal-as-string
+  currency            String   @default("VND")
+  acceptanceRequired  Boolean  @default(false)
+  projectTemplateCode String?
+  createdAt           DateTime @default(now())
+
+  contract    Contract              @relation(fields: [contractId], references: [id])
+  catalogItem CommercialCatalogItem @relation(fields: [catalogItemId], references: [id])
+
+  @@index([tenantId, contractId])
+}
+
+/// Provider-neutral e-signature seam (BO-0207) — "ref/validation/timestamp/
+/// hash", provider MOCK only (no real DocuSign/HelloSign integration this
+/// pass, same "mock vs live" honesty pattern as xoffice.service.ts's AI
+/// draft feature).
+model ContractSignature {
+  id           String    @id @default(cuid())
+  tenantId     String
+  contractId   String
+  provider     String    @default("MOCK")
+  envelopeRef  String
+  documentHash String?
+  signedAt     DateTime  @default(now())
+  validatedAt  DateTime?
+  signerName   String?
+  createdBy    String?
+
+  contract Contract @relation(fields: [contractId], references: [id])
+
+  @@index([tenantId, contractId])
+}
+
+/// Contract obligation + alert engine (BO-0208) — this session's own design,
+/// no dedicated source contract exists (only the backlog description
+/// "Dates/owners/evidence/escalation generated"). Auto-generated from
+/// ContractLine.billingMethod when a Contract transitions to EFFECTIVE (see
+/// ContractsService.transition). `status` is computed at read time
+/// (PENDING/DUE_SOON/OVERDUE vs dueDate) except COMPLETED/WAIVED which are
+/// explicit actions.
+model ContractObligation {
+  id              String    @id @default(cuid())
+  tenantId        String
+  contractId      String
+  contractLineId  String?
+  type            String // MILESTONE_BILLING | DELIVERY_DEADLINE | RENEWAL | SLA_REVIEW
+  title           String
+  dueDate         DateTime
+  ownerIdentityId String?
+  billingPercent  Int? // for MILESTONE_BILLING obligations, matches source seed's milestone breakdown
+  status          String    @default("PENDING") // PENDING | COMPLETED | WAIVED (OVERDUE/DUE_SOON computed, not stored)
+  evidenceRef     String?
+  escalatedAt     DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+
+  contract Contract @relation(fields: [contractId], references: [id])
+
+  @@index([tenantId, contractId])
+  @@index([tenantId, status])
+}
+
+/// Maps to source contract `BillingRequest` — the "Ready-to-Bill" bridge to
+/// FinERP (KPI-BIL-001). `idempotencyKey` is REQUIRED in the source contract
+/// (not optional like elsewhere in this codebase) — this is the one entity
+/// where a duplicate submission to FinERP would be a real financial risk.
+model BillingRequest {
+  id                String   @id @default(cuid())
+  tenantId          String
+  contractId        String
+  contractLineId    String?
+  status            String   @default("DRAFT")
+  // DRAFT | BLOCKED | READY | SUBMITTED | ACCEPTED_BY_ERP | REJECTED_BY_ERP | CANCELLED
+  requestedAmount   String
+  currency          String   @default("VND")
+  idempotencyKey    String
+  finerpDocumentRef String? // NOT wired to a real FinERP this pass — stays null until that integration exists
+  blockers          String[] @default([])
+  createdBy         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  contract Contract @relation(fields: [contractId], references: [id])
+
+  @@unique([tenantId, idempotencyKey])
+  @@index([tenantId, contractId])
+  @@index([tenantId, status])
+}
+
+model ContractEvent {
+  id         String   @id @default(cuid())
+  tenantId   String
+  contractId String
+  type       String
+  actorId    String
+  data       Json?
+  createdAt  DateTime @default(now())
+
+  contract Contract @relation(fields: [contractId], references: [id])
+
+  @@index([tenantId, contractId])
 }

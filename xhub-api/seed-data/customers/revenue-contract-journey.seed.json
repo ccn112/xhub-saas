@@ -1,0 +1,47 @@
+{
+  "_note": "BO-0210 — full T001 X-TECH sales scenario, faithful to seed/t001-reference-journey.seed.json in the source handoff (opportunity code OPP-2026-001, contract XTECH-RIVERSIDE-2026-001, 4 catalog items, 4 milestones MS-01..04). Line/milestone amount SPLITS are this session's own reasonable allocation (source only gives the contract TOTAL, 4.8B VND, and per-milestone billing PERCENT, not a per-catalog-item breakdown) — noted here, not fabricated as if verbatim.",
+  "tenantId": "tenant-xtech",
+  "customerCode": "CUS-T002",
+  "catalogItems": [
+    { "code": "XHUB-ENT", "name": "XHub Enterprise Subscription", "commercialType": "SUBSCRIPTION", "priceModel": "RECURRING" },
+    { "code": "XOFFICE-IMP", "name": "Triển khai X.Office Business Operations", "commercialType": "IMPLEMENTATION", "priceModel": "MILESTONE" },
+    { "code": "X2-IMP", "name": "Triển khai X2 Building Operations", "commercialType": "IMPLEMENTATION", "priceModel": "MILESTONE" },
+    { "code": "AI-PILOT", "name": "AI Agent & Vision Pilot", "commercialType": "SERVICE", "priceModel": "ONE_TIME" }
+  ],
+  "opportunity": {
+    "title": "Triển khai XHub + X.Office + X2",
+    "stage": "NEGOTIATION",
+    "expectedAmount": "5000000000",
+    "currency": "VND",
+    "probability": 0.75
+  },
+  "proposal": {
+    "version": 1,
+    "status": "APPROVED",
+    "requiresApproval": true,
+    "lines": [
+      { "catalogCode": "XHUB-ENT", "quantity": 1, "unitPrice": "850000000", "discountPercent": 0 },
+      { "catalogCode": "XOFFICE-IMP", "quantity": 1, "unitPrice": "2500000000", "discountPercent": 20 },
+      { "catalogCode": "X2-IMP", "quantity": 1, "unitPrice": "1650000000", "discountPercent": 0 },
+      { "catalogCode": "AI-PILOT", "quantity": 1, "unitPrice": "400000000", "discountPercent": 0 }
+    ]
+  },
+  "contract": {
+    "contractNo": "XTECH-RIVERSIDE-2026-001",
+    "status": "EFFECTIVE",
+    "effectiveFrom": "2026-08-01",
+    "lines": [
+      { "catalogCode": "XHUB-ENT", "deliveryMethod": "SUBSCRIPTION", "billingMethod": "RECURRING", "lineValue": "800000000" },
+      { "catalogCode": "XOFFICE-IMP", "deliveryMethod": "PROJECT", "billingMethod": "MILESTONE", "lineValue": "2000000000", "acceptanceRequired": true, "projectTemplateCode": "XOFFICE-STANDARD" },
+      { "catalogCode": "X2-IMP", "deliveryMethod": "PROJECT", "billingMethod": "MILESTONE", "lineValue": "1600000000", "acceptanceRequired": true, "projectTemplateCode": "X2-STANDARD" },
+      { "catalogCode": "AI-PILOT", "deliveryMethod": "DELIVERY_ONLY", "billingMethod": "FIXED_COMPLETION", "lineValue": "400000000" }
+    ],
+    "signature": { "provider": "MOCK", "envelopeRef": "MOCK-ENV-XTECH-RIVERSIDE-2026-001", "signerName": "Nguyễn Thị Mai Anh" },
+    "milestones": [
+      { "code": "MS-01", "title": "Khảo sát & Blueprint", "billingPercent": 20, "dueOffsetDays": 30, "completed": true },
+      { "code": "MS-02", "title": "Cấu hình & Migration", "billingPercent": 30, "dueOffsetDays": 90, "completed": false },
+      { "code": "MS-03", "title": "UAT & Go-live", "billingPercent": 30, "dueOffsetDays": 150, "completed": false },
+      { "code": "MS-04", "title": "Hypercare & Nghiệm thu", "billingPercent": 20, "dueOffsetDays": 210, "completed": false }
+    ]
+  }
+}

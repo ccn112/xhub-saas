@@ -1,0 +1,28 @@
+{
+  "_note": "Phase 2 (BO-0201, BO-0210) T001 X-TECH sales scenario — the ONE reference customer from the actual source handoff (handoff/Xhub/XOFFICE_BUSINESS_OPERATIONS_AI_CAMERA_AGENT_HANDOFF_20260803/seed/t001-reference-journey.seed.json): tenant-xtech (T001, X-TECH itself) selling XHub/X.Office/X2 to 'Công ty Cổ phần Đầu tư Riverside' (referenced there as customer code CUS-T002, since Riverside will later onboard as SaaS tenant T002). The contact person below is NOT in the source (it only specifies company-level fields) — added as a plausible illustrative primary contact, clearly noted here as this session's own addition, not copied from source.",
+  "tenantId": "tenant-xtech",
+  "customers": [
+    {
+      "code": "CUS-T002",
+      "name": "Công ty Cổ phần Đầu tư Riverside",
+      "status": "ACTIVE",
+      "industryCode": "REAL_ESTATE",
+      "privacyClass": "INTERNAL",
+      "taxCode": "0301234567",
+      "addressLine": "12 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh",
+      "website": "https://riverside-invest.example.vn",
+      "notes": "Khách hàng tham chiếu T001 (X-TECH) — đang triển khai XHub + X.Office + X2 (xem seed/t001-reference-journey.seed.json của gói handoff gốc). Sẽ lên tenant T002 sau khi go-live.",
+      "contacts": [
+        {
+          "displayName": "Nguyễn Thị Mai Anh",
+          "role": "Giám đốc Đầu tư",
+          "email": "maianh.nguyen@riverside-invest.example.vn",
+          "phone": "0909123456",
+          "contactPreference": ["EMAIL", "ZALO"],
+          "isPrimary": true,
+          "notes": "Đầu mối liên hệ minh hoạ — KHÔNG có trong seed gốc, do phiên này tự thêm cho đầy đủ 360 view."
+        }
+      ]
+    }
+  ]
+}

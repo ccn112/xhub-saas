@@ -170,6 +170,8 @@ jobs:
           npm run seed:tickets
           npm run seed:bookings
           npm run seed:announcements
+          npm run seed:customers
+          npm run seed:revenue-contract-journey
           npm run seed:backup-schedules
           npm run seed:manage-portfolio
 
@@ -217,6 +219,12 @@ jobs:
           npm run test:tickets
           npm run test:bookings
           npm run test:announcements
+          npm run test:customers
+          npm run test:opportunities
+          npm run test:commercial-catalog
+          npm run test:proposals
+          npm run test:contracts
+          npm run test:revenue-kpi
           npm run test:records
           npm run test:work-item
           npm run test:work-project

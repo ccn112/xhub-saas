@@ -19,6 +19,12 @@ import { ManageModule } from './manage/manage.module';
 import { IocModule } from './ioc/ioc.module';
 import { PeopleModule } from './people/people.module';
 import { IdentitySyncModule } from './identity-sync/identity-sync.module';
+import { CustomersModule } from './customers/customers.module';
+import { OpportunitiesModule } from './opportunities/opportunities.module';
+import { CommercialCatalogModule } from './commercial-catalog/commercial-catalog.module';
+import { ProposalsModule } from './proposals/proposals.module';
+import { ContractsModule } from './contracts/contracts.module';
+import { RevenueKpiModule } from './revenue-kpi/revenue-kpi.module';
 
 /**
  * X.Office process — Phase 1.5 Stage B composition root. Carries the
@@ -53,6 +59,12 @@ import { IdentitySyncModule } from './identity-sync/identity-sync.module';
     IocModule,
     PeopleModule,
     IdentitySyncModule,
+    CustomersModule,
+    OpportunitiesModule,
+    CommercialCatalogModule,
+    ProposalsModule,
+    ContractsModule,
+    RevenueKpiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

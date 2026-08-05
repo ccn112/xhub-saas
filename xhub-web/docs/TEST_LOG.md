@@ -161,7 +161,43 @@ Chạy trong `D:/Code/xhub-web`.
 | U110 | [DEV] Tắt process platform, thử `/platform/tenants` rồi `/office/requests` | `/platform/tenants` báo lỗi kết nối rõ ràng; `/office/requests` vẫn hoạt động — 2 process độc lập thật | |
 | U111 | [DEV] Tắt cả 2, chạy lại `start:dev` (all-in-one 1 process) | App hoạt động bình thường như trước khi tách — chế độ dev nhanh không bị phá vỡ | |
 
-> 🔄 **Đồng bộ tự động:** trang `/docs/test` giờ lưu kết quả tick về máy chủ (`/api/testruns` → `storage/testruns/<tenant>/<user>.json`), badge "Đã lưu máy chủ". Khi bạn tick, tôi pull được để cập nhật nhật ký §5.
+### 3k. Kinh doanh — Doanh thu & Hợp đồng (Revenue & Contract MVP, BO-0201→0210, 05/08/2026)
+> Chỉ hiện ở `/office/docs/test` (X.Office). Có sẵn dữ liệu mẫu T001 X-TECH (seed) để test không cần tự tạo mới từ đầu.
+
+| # | Bước | Kỳ vọng | Kết quả |
+|---|---|---|---|
+| U112 | `/office/customers` tạo khách hàng mới (tên gần giống 1 khách đã có) | Tạo thành công; hiện gợi ý "có thể trùng"; 360 view đúng liên hệ + timeline | |
+| U113 | `/office/opportunities` tạo cơ hội, chuyển LEAD→…→NEGOTIATION | Chỉ chuyển đúng thứ tự cho phép, không nhảy cóc | |
+| U114 | Chuyển 1 cơ hội sang LOST không nhập lý do | Bị từ chối, bắt buộc `lostReason` | |
+| U115 | Chuyển 1 cơ hội sang WON | Thành công nhưng KHÔNG tự sinh hợp đồng/doanh thu | |
+| U116 | `/office/catalog` xem danh mục thương mại | Tên/loại/mô hình giá đúng; version tăng khi sửa | |
+| U117 | Tạo báo giá theo cơ hội, thêm dòng chiết khấu >15% | Tổng tiền tự tính đúng; tự chuyển "cần duyệt" | |
+| U118 | Duyệt báo giá "cần duyệt" mà không nhập ghi chú | Bị từ chối (400), bắt buộc ghi chú người duyệt | |
+| U119 | `/office/contracts` tạo hợp đồng từ báo giá, thêm dòng, chuyển tới SIGNING | Tên khách hàng + tổng tiền đúng; khoá sửa dòng từ SIGNING trở đi | |
+| U120 | "Ký hợp đồng (mock)" rồi chuyển EFFECTIVE | Ghi nhận 1 chữ ký MOCK; chỉ chuyển EFFECTIVE khi đã ký | |
+| U121 | Mở tab Nghĩa vụ & cảnh báo sau khi EFFECTIVE | Tự sinh nghĩa vụ theo mốc; cảnh báo đúng theo hạn | |
+| U122 | Hoàn thành nghĩa vụ, bấm "Tạo yêu cầu xuất hoá đơn" 2 lần liên tiếp | Không tạo trùng yêu cầu (idempotent) | |
+| U123 | `/office/revenue-kpi` xem 6 chỉ số | Mỗi KPI có công thức + nguồn; 2 chỉ số cần FinERP ghi "chưa sẵn sàng" | |
+
+### 3l. Phát triển & Chất lượng — Engineering Governance Hub (DG-01..12, 05/08/2026)
+> Chỉ hiện ở `/docs/test` (platform, KHÔNG theo tenant).
+
+| # | Bước | Kỳ vọng | Kết quả |
+|---|---|---|---|
+| U124 | `/engineering` tổng quan | Đúng 6 sản phẩm theo thứ tự rollout | |
+| U125 | Mở PRD-XHUB — Product 360 | Version/repo/CI-Build đúng; mục "Chưa xây" liệt kê rõ | |
+| U126 | `/engineering/versions` bảng version 6 sản phẩm | XHub/X.Office = 1.0.0, còn lại = 0.1.0 | |
+| U127 | `/engineering/backlog` lọc theo sản phẩm + trạng thái | Lọc đúng, đúng chuỗi FSM | |
+| U128 | `/engineering/docs` lọc PRD-XHUB | Thấy tài liệu chuẩn bảo mật (SECURITY_PRIVACY) | |
+| U129 | `/engineering/tests` ghi kết quả 1 test case | Trạng thái + thời điểm cập nhật ngay | |
+| U130 | Ở case FAIL, bấm "Báo lỗi" | Tạo Defect liên kết đúng test case | |
+| U131 | `/engineering/defects` tìm lại lỗi vừa báo | Có nhãn "(từ kết quả kiểm thử)", trạng thái NEW | |
+| U132 | `/engineering/controls` chọn PRD-XHUB | 16 kiểm soát, đa số IN_PLACE, 2 mục PARTIAL | |
+| U133 | `/engineering/ai-systems` | Đúng 1 hệ thống AI đã đăng ký, rủi ro LIMITED | |
+| U134 | `/engineering/privacy` | Đúng 2 hoạt động xử lý dữ liệu cá nhân | |
+| U135 | `/engineering/audit-room` bấm từng thẻ | Số liệu đúng; nhảy đúng trang chi tiết | |
+
+> 🔄 **Đồng bộ tự động:** trang `/docs/test` giờ lưu kết quả tick về máy chủ (`/api/testruns` → `storage/testruns/<tenant>/<user>.json`), badge "Đã lưu máy chủ". Khi bạn tick, tôi pull được để cập nhật nhật ký §5. **Mới 05/08/2026:** ô ghi chú mỗi dòng nhận dán ảnh (Ctrl+V) trực tiếp làm bằng chứng — không cần chọn file, tự tải lên và hiện thumbnail.
 
 ---
 
@@ -180,6 +216,7 @@ Chạy trong `D:/Code/xhub-web`.
 | 2026-08-01 | Claude (PE-01 + MG-04, song song) | People Essentials PE-01 + Management OS MG-04 + regression | **PASS** | Máy mới: dựng lại Postgres local + `.env` + `npm install` từ đầu (chưa có sẵn). Mới: `test:people-leave` (26 assert: idempotency/overlap/SOR guard/approve→balance/cancel-refund/team-scope ABAC/overtime/cross-tenant 400) + `test:manage-portfolio` (20 assert: gate FSM/link-project 404/benefit realization từ MetricObservation thật/cross-tenant 404) đều PASS. RLS 89→**98 bảng** (`test:rls` MUST_NOT_LEAK 0/98). Regression: manage-slice · manage-okr · manage-industry · ioc-twin · ioc-insights · smoke · scan:secrets đều PASS. tsc api 0 / web 0. Verify tay qua browser (Chrome pane): tạo đơn nghỉ thật `/people/leave` → xem trước ảnh hưởng → gửi → duyệt ở `/people/team/availability` (scope ABAC đúng: mặc định về ou-fin, chọn ou-tech ngoài phạm vi trả 403 rõ ràng) → số dư đổi đúng; `/manage/portfolio` tạo initiative → gắn `EP-INT-001` → "Xem thực thi" deep-link đúng trang `/work/projects/ep-seed-internal`. Dữ liệu test tay đã dọn sạch khỏi DB sau khi verify. |
 | 2026-08-03 | Claude (G0 Secure Foundation — theo Audit260803 + handoff Business-Ops/Identity-P0) | Security fix xoffice.controller.ts + Prisma migration baseline + CI mới, branch `security/g0-secure-foundation` | **PASS (phần tự verify được)** | Vá 28/28 route `xoffice.controller.ts` bằng `@RequirePermission` (trước đó 0/28, đây là lỗ hổng CRITICAL SEC-002/GAP-002 — tự cấp quyền admin qua uỷ quyền, đã chứng minh khai thác được trong audit). Regression test mới `test:e2e` PASS. `main.ts` thêm `assertSecureStartup()` — hard-fail khi `STAGING_STRICT=true` mà secret vẫn lộ / `AUTH_ENFORCE≠true` / `AUTH_ALLOW_HEADER_IDENTITY≠false` (không đổi hành vi demo mặc định). Chuyển `prisma db push` → Prisma Migrate (1 migration baseline, DB dev không mất dữ liệu, 13 tenant còn nguyên). CI mới `.github/workflows/ci.yml` (chưa push lên GitHub để chạy thật — chỉ verify local). Regression: `test:authz` · `test:rls` (98 bảng) · `test:isolation` · `test:xoffice` đều PASS sau khi thêm permission gate — không phá vỡ hành vi demo hiện có. tsc api 0, build api+web sạch. **Chưa verify**: CI thật trên GitHub Actions (chưa push), toàn bộ chuỗi seed 13 bước trên DB hoàn toàn trống (máy này không có quyền CREATEDB để tạo DB nháp), rotate `ANTHROPIC_API_KEY` (cần chủ tài khoản làm thủ công). Đây là fix backend/permission — không có màn hình UI mới; test tay nên tập trung xác nhận U27/U33–U37 (X.Office) vẫn hoạt động y hệt trước (regression), vì mọi route chỉ được gắn permission ở chế độ soft (chưa bật `AUTH_ENFORCE`), không đổi trải nghiệm demo. |
 | 2026-08-04 | Claude (Phase 1.5 Stage A+B — XHub/X.Office boundary cleanup + process split) | Stage A: dọn hết raw cross-schema write/read + ESLint boundary rule + gom API client frontend. Stage B: tách xhub-api thành 2 process (platform :4000 + xoffice :4001, 1 DB chung). Commit local `main` (chưa push, chờ review) | **PASS** | **Stage A**: `TenantScopeInterceptor` → `src/common/`; People hết raw write Workflow/ApprovalTask/OutboxEvent (qua `XofficeService`); `Delegation` hợp nhất về `IdentityService`; ESLint rule tự viết (`no-restricted-syntax`, không thêm dependency) bắt được 4 vi phạm THẬT sót lại từ đợt sửa trước, đã sửa; frontend gom 3 biến API-base cũ thành 1 module, vá luôn bug thật (`XOFFICE_API_BASE` chưa từng khai báo, luôn âm thầm rơi về localhost). **Stage B**: 3 phụ thuộc chéo còn lại xử lý xong (di dời `backup.tables`→`common`, tách `outbox.ts` shared, Delivery→Launch chuyển từ in-process sang HTTP client thật qua `/api/platform/launches`) — phát hiện + sửa 1 lỗ hổng authz ẩn (`SOLUTION_DELIVERY_MANAGER` launch tenant được hôm nay chỉ vì bypass guard, đã cấp đúng quyền `platform.launch.*` để đi qua guard thật). 2 composition root mới (`platform-app.module.ts`/`xoffice-app.module.ts`) cùng `src/` tree, không di dời thư mục. Verify thật: build cả 2 process từ 1 `dist/`, chạy song song, xác nhận boundary qua 404 chéo; `test:delivery` trỏ `:4001` xác nhận Delivery gọi HTTP thật sang `:4000`; browser thật xác nhận `/platform/tenants` qua `:4000` và `/office/requests` qua `:4001`. Full smoke 39 script PASS trừ 2 flake xác nhận không liên quan (attendance lateness có từ trước; Delegation tồn đọng từ chạy tay lặp — dọn sạch thì pass, CI DB mới không gặp lại). Thêm nhóm test tay mới **3j "Vận hành — Tách process"** (U106–U111, cần terminal, dành cho dev/kỹ thuật) — CHƯA có ai tick, cần người review chạy qua. |
+| 2026-08-05 | Claude (Engineering Governance Hub DG-09→12 + Revenue & Contract MVP trọn vẹn BO-0201→0210 + Console kiểm thử đính kèm ảnh) | Chưa commit — build xong toàn bộ, đang chờ chủ đầu tư tự test 1 lượt qua UI | **PASS (phần tự động)** | DG-09→12 (Control Framework/AI Governance/Privacy-DPIA/Evidence, XHub Platform): 4 smoke mới PASS, build+tsc 2 process sạch. Revenue & Contract MVP (X.Office, +12 bảng RLS →105): 6 smoke mới PASS (customers/opportunities/commercial-catalog/proposals/contracts 25 assertion/revenue-kpi), seed T001 chạy 2 lần xác nhận idempotent, verify tay qua browser (Customer→Opportunity→Proposal→Contract→ký mock→nghĩa vụ→xuất hoá đơn→KPI, số liệu đối chiếu khớp) — 2 bug tự phát hiện qua smoke/browser đã sửa (dò trùng khách hàng sai chiều; Contract detail thiếu tên khách hàng do thiếu include). 2 smoke cũ (`announcements`/`requests`) từng báo lỗi hàng loạt khi chạy gộp — xác minh lại là do quên set `XOFFICE_BASE` khi tự chạy tay thủ công (không phải regression, CI thật set biến này per-step nên không bị). Console kiểm thử: thêm paste-ảnh (Ctrl+V) làm bằng chứng + 2 nhóm checklist mới **3k "Kinh doanh"** (U112–U123) và **3l "Phát triển & Chất lượng"** (U124–U135) — CHƯA có ai tick, đang chờ chủ đầu tư test theo đúng yêu cầu. |
 |  |  |  |  |  |
 
 > Cách dùng: mỗi lần test thêm 1 dòng. Nếu FAIL, ghi mục # + thông báo lỗi + môi trường; mở issue/giao lại cho dev kèm dòng nhật ký này.

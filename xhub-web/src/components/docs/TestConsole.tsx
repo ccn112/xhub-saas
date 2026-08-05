@@ -18,11 +18,25 @@ import {
 } from "./test-data";
 
 type Result = "untested" | "pass" | "fail";
-interface RowState { result: Result; notes: string }
+interface RowState { result: Result; notes: string; images?: string[] }
 type Store = Record<string, RowState>;
 
 const STORAGE_KEY = "xhub-usertest-v1";
-const EMPTY: RowState = { result: "untested", notes: "" };
+const EMPTY: RowState = { result: "untested", notes: "", images: [] };
+const MAX_EVIDENCE_MB = 8;
+
+function readFileBase64(file: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const res = String(reader.result);
+      const comma = res.indexOf(",");
+      resolve(comma >= 0 ? res.slice(comma + 1) : res);
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
 
 function loadStore(): Store {
   if (typeof window === "undefined") return {};
@@ -120,6 +134,45 @@ export function TestConsole({
     setStore((s) => ({ ...s, [id]: { ...(s[id] ?? EMPTY), result } }));
   const setNotes = (id: string, notes: string) =>
     setStore((s) => ({ ...s, [id]: { ...(s[id] ?? EMPTY), notes } }));
+  const addImage = (id: string, url: string) =>
+    setStore((s) => ({ ...s, [id]: { ...(s[id] ?? EMPTY), images: [...(s[id]?.images ?? []), url] } }));
+  const removeImage = (id: string, url: string) =>
+    setStore((s) => ({
+      ...s,
+      [id]: { ...(s[id] ?? EMPTY), images: (s[id]?.images ?? []).filter((u) => u !== url) },
+    }));
+
+  // Paste-to-attach: copy a screenshot anywhere, paste it into a row's notes
+  // field, and it uploads as evidence + shows a thumbnail — no file picker.
+  const handlePasteEvidence = async (e: React.ClipboardEvent<HTMLInputElement>, rowId: string) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    const imageItem = Array.from(items).find((it) => it.type.startsWith("image/"));
+    if (!imageItem) return; // plain text paste — let the input handle it normally.
+    e.preventDefault();
+    const file = imageItem.getAsFile();
+    if (!file) return;
+    if (file.size > MAX_EVIDENCE_MB * 1024 * 1024) {
+      toast.error(`Ảnh quá lớn (tối đa ${MAX_EVIDENCE_MB}MB)`);
+      return;
+    }
+    try {
+      const contentBase64 = await readFileBase64(file);
+      const res = await fetch("/api/testruns/evidence", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ testCaseId: rowId, contentBase64, mimeType: file.type || "image/png" }),
+      });
+      if (!res.ok) throw new Error("upload failed");
+      const { userId, testCaseId, filename } = (await res.json()) as {
+        userId: string; testCaseId: string; filename: string;
+      };
+      addImage(rowId, `/api/testruns/evidence/${userId}/${testCaseId}/${filename}`);
+      toast.success("Đã đính kèm ảnh");
+    } catch {
+      toast.error("Không tải lên được ảnh — kiểm tra kết nối máy chủ");
+    }
+  };
 
   const stats = useMemo(() => {
     let pass = 0, fail = 0, tested = 0;
@@ -147,15 +200,16 @@ export function TestConsole({
       `- Thời điểm: ${ts}`,
       `- Tiến độ: ${stats.tested}/${stats.total} đã test · ${stats.pass} PASS · ${stats.fail} FAIL`,
       ``,
-      `| ID | Nhóm | Bước | Kết quả | Ghi chú |`,
-      `| --- | --- | --- | --- | --- |`,
+      `| ID | Nhóm | Bước | Kết quả | Ghi chú | Ảnh minh chứng |`,
+      `| --- | --- | --- | --- | --- | --- |`,
     ];
     for (const row of rows) {
       const st = get(row.id);
       const label =
         st.result === "pass" ? "PASS" : st.result === "fail" ? "FAIL" : "Chưa test";
       const notes = st.notes.replace(/\|/g, "\\|").replace(/\n/g, " ") || "";
-      lines.push(`| ${row.id} | ${row.group} | ${row.step.replace(/\|/g, "\\|")} | ${label} | ${notes} |`);
+      const images = (st.images ?? []).length > 0 ? `${st.images!.length} ảnh` : "";
+      lines.push(`| ${row.id} | ${row.group} | ${row.step.replace(/\|/g, "\\|")} | ${label} | ${notes} | ${images} |`);
     }
     const md = lines.join("\n");
     try {
@@ -273,6 +327,9 @@ export function TestConsole({
           </div>
         }
       >
+        <p className="mb-3 text-xs text-gray-500 dark:text-dark-300">
+          💡 Chụp màn hình (Print Screen / Snipping Tool), bấm <strong>Ctrl+V</strong> ngay trong ô ghi chú của từng dòng để đính kèm ảnh minh chứng — không cần chọn file.
+        </p>
         <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <StatCard label="Đã test" value={`${stats.tested}/${stats.total}`} icon="🧪" tone="primary" />
           <StatCard label="PASS" value={String(stats.pass)} icon="✅" tone="success" />
@@ -334,9 +391,33 @@ export function TestConsole({
                       <input
                         value={st.notes}
                         onChange={(e) => setNotes(row.id, e.target.value)}
-                        placeholder="Ghi chú (tuỳ chọn)…"
+                        onPaste={(e) => handlePasteEvidence(e, row.id)}
+                        placeholder="Ghi chú — dán (Ctrl+V) ảnh chụp màn hình vào đây để đính kèm…"
                         className="mt-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/40 dark:border-dark-500 dark:bg-dark-700 dark:text-dark-50"
                       />
+                      {(st.images?.length ?? 0) > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {st.images!.map((url) => (
+                            <div key={url} className="group relative">
+                              <a href={url} target="_blank" rel="noreferrer">
+                                <img
+                                  src={url}
+                                  alt="Ảnh minh chứng test"
+                                  className="h-16 w-16 rounded-lg border border-gray-200 object-cover dark:border-dark-500"
+                                />
+                              </a>
+                              <button
+                                type="button"
+                                onClick={() => removeImage(row.id, url)}
+                                title="Xoá ảnh"
+                                className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-error text-xs font-bold text-white opacity-0 shadow transition-opacity group-hover:opacity-100"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </Card>
                   );
                 })}

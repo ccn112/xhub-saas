@@ -270,6 +270,185 @@ export const USER_TEST_ROWS: UserTestRow[] = [
   { id: "U109", group: "Vận hành — Tách process", step: "Mở /delivery, chọn 1 engagement đã tới giai đoạn GO_LIVE, bấm 'Khởi chạy tenant'", expected: "Tiến trình 8 bước chạy tới COMPLETED — ĐÂY LÀ BẰNG CHỨNG CHÍNH: request đi từ process xoffice (Delivery) sang process platform (Launch Factory) qua HTTP thật, không phải gọi hàm nội bộ", link: "/delivery" },
   { id: "U110", group: "Vận hành — Tách process", step: "[DEV] Tắt process platform (Ctrl+C ở terminal :4000), thử mở lại /platform/tenants, rồi mở /office/requests", expected: "/platform/tenants báo lỗi kết nối rõ ràng (không phải màn trắng); /office/requests VẪN hoạt động bình thường — chứng minh 2 process độc lập thật, không phải 1 process giả lập 2 port" },
   { id: "U111", group: "Vận hành — Tách process", step: "[DEV] Tắt cả 2 process, chạy lại `npm run start:dev` (chế độ all-in-one, 1 process duy nhất :4000) ở xhub-api", expected: "Toàn bộ app hoạt động bình thường như trước khi tách — chế độ dev nhanh (1 lệnh, khỏi mở 2 terminal) không bị phá vỡ" },
+
+  // ── Kinh doanh — Doanh thu & Hợp đồng (Phase 2 Revenue & Contract MVP,
+  // BO-0201..0210, 05/08/2026) — hành trình đầy đủ Khách hàng → Cơ hội →
+  // Danh mục thương mại → Báo giá → Hợp đồng → Ký → Nghĩa vụ → Xuất hoá đơn →
+  // KPI. Đã có sẵn dữ liệu mẫu T001 X-TECH (seed) để test không cần tự tạo mới
+  // từ đầu — có thể test trên dữ liệu mẫu HOẶC tự tạo mới, cả hai đều được.
+  {
+    id: "U112",
+    group: "Kinh doanh",
+    step: "Khách hàng /office/customers — tạo khách hàng mới (tên gần giống 1 khách đã có), xem gợi ý trùng, mở 360 view",
+    expected: "Tạo thành công; hiện gợi ý 'có thể trùng' với khách hàng tên gần giống (so khớp theo từ khoá, không cần trùng y hệt); trang 360 view hiển thị đúng liên hệ + dòng thời gian sự kiện của khách hàng vừa tạo",
+    link: "/office/customers",
+  },
+  {
+    id: "U113",
+    group: "Kinh doanh",
+    step: "Cơ hội bán hàng /office/opportunities — tạo cơ hội gắn với 1 khách hàng, chuyển trạng thái LEAD→QUALIFIED→DISCOVERY→PROPOSAL→NEGOTIATION",
+    expected: "Chỉ chuyển được đúng thứ tự cho phép (không nhảy cóc, ví dụ không thể LEAD→NEGOTIATION thẳng); mỗi lần chuyển có ghi log lịch sử",
+    link: "/office/opportunities",
+  },
+  {
+    id: "U114",
+    group: "Kinh doanh",
+    step: "Chuyển 1 cơ hội khác sang LOST mà KHÔNG nhập lý do",
+    expected: "Bị từ chối, bắt buộc nhập lý do (lostReason) mới chuyển được sang LOST",
+    link: "/office/opportunities",
+  },
+  {
+    id: "U115",
+    group: "Kinh doanh",
+    step: "Chuyển 1 cơ hội sang WON (thắng)",
+    expected: "Chuyển trạng thái thành công nhưng KHÔNG tự sinh hợp đồng/doanh thu nào — 'Thắng cơ hội' không đồng nghĩa 'đã có doanh thu' (phải tạo Hợp đồng riêng ở bước sau)",
+    link: "/office/opportunities",
+  },
+  {
+    id: "U116",
+    group: "Kinh doanh",
+    step: "Danh mục thương mại /office/catalog — xem danh sách gói dịch vụ/sản phẩm để chào bán",
+    expected: "Hiển thị đúng tên, loại, mô hình giá của từng mục; version tăng lên khi có mục nào được sửa",
+    link: "/office/catalog",
+  },
+  {
+    id: "U117",
+    group: "Kinh doanh",
+    step: "Báo giá — tạo báo giá theo 1 cơ hội, thêm 1 dòng chiết khấu > 15%",
+    expected: "Tổng tiền báo giá tự tính đúng bằng tổng các dòng; báo giá tự chuyển sang 'cần duyệt' vì chiết khấu vượt ngưỡng 15%",
+  },
+  {
+    id: "U118",
+    group: "Kinh doanh",
+    step: "Duyệt báo giá 'cần duyệt' ở trên mà KHÔNG nhập ghi chú người duyệt",
+    expected: "Bị từ chối (400) — báo giá có chiết khấu vượt ngưỡng bắt buộc phải có ghi chú người duyệt mới chuyển được sang trạng thái Đã duyệt",
+  },
+  {
+    id: "U119",
+    group: "Kinh doanh",
+    step: "Hợp đồng /office/contracts — tạo hợp đồng từ báo giá đã duyệt, thêm dòng hợp đồng, chuyển trạng thái tới SIGNING (chờ ký)",
+    expected: "Tên khách hàng + tổng tiền hiển thị đúng ở đầu trang; từ khi vào SIGNING trở đi, KHÔNG sửa/thêm được dòng hợp đồng nữa (phải làm phụ lục — tính năng để sau)",
+    link: "/office/contracts",
+  },
+  {
+    id: "U120",
+    group: "Kinh doanh",
+    step: "Bấm 'Ký hợp đồng (mock)', sau đó thử chuyển sang EFFECTIVE (có hiệu lực)",
+    expected: "Ghi nhận đúng 1 chữ ký (nhà cung cấp MOCK — CHƯA nối DocuSign/HelloSign thật); chỉ chuyển được sang EFFECTIVE sau khi đã có ít nhất 1 chữ ký, thử chuyển khi chưa ký sẽ bị từ chối",
+    link: "/office/contracts",
+  },
+  {
+    id: "U121",
+    group: "Kinh doanh",
+    step: "Sau khi hợp đồng EFFECTIVE, mở tab Nghĩa vụ & cảnh báo",
+    expected: "Tự sinh nghĩa vụ cho các dòng thanh toán theo mốc (billingMethod = MILESTONE); trạng thái cảnh báo hiển thị đúng theo hạn (Đang chờ/Sắp đến hạn/Trễ hạn)",
+    link: "/office/contracts",
+  },
+  {
+    id: "U122",
+    group: "Kinh doanh",
+    step: "Hoàn thành 1 nghĩa vụ (nhập bằng chứng), sau đó bấm 'Tạo yêu cầu xuất hoá đơn' 2 LẦN LIÊN TIẾP",
+    expected: "Nghĩa vụ chuyển 'Hoàn thành'; yêu cầu xuất hoá đơn KHÔNG bị tạo trùng khi bấm lại lần 2 (idempotent) — chỉ có đúng 1 yêu cầu",
+    link: "/office/contracts",
+  },
+  {
+    id: "U123",
+    group: "Kinh doanh",
+    step: "KPI doanh thu /office/revenue-kpi — xem 6 chỉ số",
+    expected: "Mỗi KPI có công thức + nguồn dữ liệu rõ ràng; 2 chỉ số cần hệ thống FinERP thật hiển thị đúng là 'chưa sẵn sàng' (không bịa số ảo)",
+    link: "/office/revenue-kpi",
+  },
+
+  // ── Phát triển & Chất lượng — Engineering Governance Hub (DG-01..12,
+  // 2026-08-05) — trung tâm quản trị phát triển toàn hệ sinh thái (registry
+  // sản phẩm/phiên bản, backlog, tài liệu, kiểm thử, lỗi, khung kiểm soát,
+  // quản trị AI, bảo vệ dữ liệu, phòng kiểm toán). Thuộc XHub Platform
+  // (process :4000), KHÔNG theo tenant — chỉ hiện ở /docs/test (bộ chung),
+  // không hiện ở /office/docs/test.
+  {
+    id: "U124",
+    group: "Phát triển & Chất lượng",
+    step: "Tổng quan /engineering — xem 4 thẻ số liệu + danh sách sản phẩm",
+    expected: "Đúng 6 sản phẩm theo thứ tự rollout: XHub Platform → X.Office → X2/XBuilding → X1/XBooking → FinERP → X.Space; mỗi thẻ hiện version mới nhất + trạng thái",
+    link: "/engineering",
+  },
+  {
+    id: "U125",
+    group: "Phát triển & Chất lượng",
+    step: "Mở sản phẩm PRD-XHUB — xem 'Product 360' (Tổng quan, phiên bản, repository, CI/Build)",
+    expected: "Version 1.0.0 hiển thị đúng; danh sách repository/component; mục CI/Build đọc từ BuildRecord (chỉ ghi qua callback CI có ký HMAC, KHÔNG có nút tạo tay); mục 'Chưa xây' liệt kê rõ Release readiness/Triển khai/Audit — không giả vờ đã có",
+    link: "/engineering/products",
+  },
+  {
+    id: "U126",
+    group: "Phát triển & Chất lượng",
+    step: "Phiên bản & Phát hành /engineering/versions — xem bảng version của cả 6 sản phẩm",
+    expected: "Sắp xếp mới nhất trước; đúng version khởi tạo mỗi sản phẩm (XHub Platform/X.Office = 1.0.0, 4 sản phẩm còn lại = 0.1.0)",
+    link: "/engineering/versions",
+  },
+  {
+    id: "U127",
+    group: "Phát triển & Chất lượng",
+    step: "Backlog /engineering/backlog — lọc theo sản phẩm rồi theo trạng thái",
+    expected: "Danh sách lọc đúng theo pill đã chọn; trạng thái đúng chuỗi FSM (IDEA→TRIAGED→READY→IN_PROGRESS→IN_REVIEW→READY_FOR_TEST→TESTING→ACCEPTED→RELEASED, có nhánh BLOCKED)",
+    link: "/engineering/backlog",
+  },
+  {
+    id: "U128",
+    group: "Phát triển & Chất lượng",
+    step: "Tài liệu /engineering/docs — lọc theo sản phẩm PRD-XHUB",
+    expected: "Thấy tài liệu 'Chuẩn bảo mật & quyền riêng tư' (loại SECURITY_PRIVACY, phân loại INTERNAL) kèm chip trích dẫn chuẩn/luật",
+    link: "/engineering/docs",
+  },
+  {
+    id: "U129",
+    group: "Phát triển & Chất lượng",
+    step: "Kiểm thử /engineering/tests — chọn 1 sản phẩm → phiên bản → module, ghi kết quả 1 test case (PASS hoặc FAIL)",
+    expected: "Bấm 1 trạng thái rồi 'Ghi kết quả' → trạng thái + thời điểm cập nhật ngay trên bảng, không cần tải lại trang (kết quả append-only, không đè bản trước)",
+    link: "/engineering/tests",
+  },
+  {
+    id: "U130",
+    group: "Phát triển & Chất lượng",
+    step: "Ở 1 case vừa ghi FAIL, bấm nút 'Báo lỗi'",
+    expected: "Tạo Lỗi (Defect) mới, tự đặt tiêu đề 'Lỗi: <tên case>', liên kết đúng test case + kết quả kiểm thử vừa ghi; nút đổi thành link 'Đã báo lỗi <mã lỗi> →'",
+    link: "/engineering/tests",
+  },
+  {
+    id: "U131",
+    group: "Phát triển & Chất lượng",
+    step: "Lỗi (Defect) /engineering/defects — tìm lại đúng lỗi vừa báo ở U130",
+    expected: "Thấy đúng lỗi vừa tạo, có nhãn '(từ kết quả kiểm thử)', trạng thái ban đầu NEW",
+    link: "/engineering/defects",
+  },
+  {
+    id: "U132",
+    group: "Phát triển & Chất lượng",
+    step: "Khung kiểm soát /engineering/controls — chọn PRD-XHUB rồi chọn 1 sản phẩm khác chưa được đánh giá",
+    expected: "PRD-XHUB: 16 kiểm soát hiện đủ, đa số 'Đã áp dụng' (IN_PLACE), riêng 2 mục về AI/bảo vệ dữ liệu hiện 'Một phần' (PARTIAL); sản phẩm chưa đánh giá hiện đúng 'Chưa đánh giá' (không để trống/lỗi)",
+    link: "/engineering/controls",
+  },
+  {
+    id: "U133",
+    group: "Phát triển & Chất lượng",
+    step: "Quản trị AI /engineering/ai-systems",
+    expected: "Thấy đúng 1 hệ thống AI đã đăng ký (X.Office Workflow AI Draft/Copilot), mức rủi ro 'Giới hạn' (LIMITED), có ghi chú giám sát con người rõ ràng — không phải danh sách rỗng hay số liệu bịa",
+    link: "/engineering/ai-systems",
+  },
+  {
+    id: "U134",
+    group: "Phát triển & Chất lượng",
+    step: "Bảo vệ dữ liệu /engineering/privacy",
+    expected: "Thấy đúng 2 hoạt động xử lý dữ liệu đã đăng ký (Danh bạ nhân sự; Chấm công & nghỉ phép), mỗi hoạt động có nhóm dữ liệu + căn cứ pháp lý + trạng thái đánh giá DPIA mới nhất (hoặc 'Chưa có' nếu chưa đánh giá)",
+    link: "/engineering/privacy",
+  },
+  {
+    id: "U135",
+    group: "Phát triển & Chất lượng",
+    step: "Phòng kiểm toán /engineering/audit-room — bấm lần lượt các thẻ số liệu",
+    expected: "6 thẻ tổng hợp đúng số (kiểm soát theo trạng thái; AI/hoạt động xử lý cần đánh giá); bấm mỗi thẻ nhảy đúng sang trang chi tiết tương ứng (Kiểm soát/Quản trị AI/Bảo vệ dữ liệu); có ghi chú rõ đây là bản rút gọn, CHƯA có sổ bằng chứng đầy đủ và chưa phân quyền riêng vai trò Auditor",
+    link: "/engineering/audit-room",
+  },
 ];
 
 // Phase 1.5 Stage D (2026-08-04) — /docs được nhân bản thành 2 bộ theo đúng
@@ -288,6 +467,7 @@ export const XOFFICE_TEST_GROUPS = [
   "Quản trị",
   "IOC — Bản sao số",
   "Nhân sự & Công",
+  "Kinh doanh",
   "Đa tenant",
 ];
 
@@ -304,6 +484,8 @@ export const USER_TEST_GROUPS = [
   "Đa tenant",
   "Nhân sự & Công",
   "IOC — Bản sao số",
+  "Kinh doanh",
+  "Phát triển & Chất lượng",
   "Console kỹ thuật",
   "Vận hành — Tách process",
 ] as const;

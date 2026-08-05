@@ -101,9 +101,99 @@ Next.js multi-zone hoặc 2 domain riêng; session vẫn 1 JWT/OIDC issuer (XHub
 
 > **Lưu ý quan trọng — đối chiếu với quyết định trước đây:** `TINH_HINH_DU_AN_XHUB.md` mục 9, nhật ký 2026-08-02, có ghi: *"XOffice Standalone SaaS — xác nhận X.Office KHÔNG tách deploy, mãi mãi 1 codebase/1 sản phẩm"*. Đó là kết luận từ bộ handoff CŨ (`XTECH_XHUB_XOFFICE_STANDALONE_SAAS_HANDOFF_20260729`, dùng chữ "standalone" theo nghĩa "chạy được khi connector ngoài chưa nối", KHÔNG phải nghĩa "tách deployment vật lý"). Phase 1.5 ở đây là một **mục tiêu mới, khác nghĩa**, do chủ đầu tư trực tiếp chọn ngày 2026-08-03 (tách deploy/DB thật). Cần bạn xác nhận đây đúng là muốn đảo ngược/làm rõ so với ghi chú 2026-08-02, không phải hiểu nhầm của Claude.
 
-## Phase 2 — Revenue & Contract MVP (G2, nhánh Business-Ops) — CHƯA BẮT ĐẦU
+## Phase 2 — Revenue & Contract MVP (G2, nhánh Business-Ops) — 🚧 SLICE 1 XONG (2026-08-05)
 
-Theo `data/IMPLEMENTATION_BACKLOG.csv` mục `BO-0201..0210`, exit gate "T001 lead-to-contract": Customer/Contact + 360 view → Opportunity pipeline → Commercial Catalog → Proposal/Quotation → Discount/margin approval → Contract/Contract Line → e-signature seam → contract obligation/alert engine → pipeline/contract KPI → seed T001. Mỗi slice đạt Definition of Done (`docs/17_DEFINITION_OF_DONE.md`): migration + RLS/negative test + API/event/idempotency + UI thật + seed thật + audit/retention + observability + UAT.
+Theo `data/IMPLEMENTATION_BACKLOG.csv` mục `BO-0201..0210` (nguồn:
+`handoff/Xhub/XOFFICE_BUSINESS_OPERATIONS_AI_CAMERA_AGENT_HANDOFF_20260803`
+— xác nhận vẫn còn trên đĩa 2026-08-05, trước đó tìm nhầm chỗ), exit gate
+"T001 lead-to-contract": Customer/Contact + 360 view → Opportunity pipeline
+→ Commercial Catalog → Proposal/Quotation → Discount/margin approval →
+Contract/Contract Line → e-signature seam → contract obligation/alert
+engine → pipeline/contract KPI → seed T001. Mỗi slice đạt Definition of
+Done (`docs/17_DEFINITION_OF_DONE.md`): migration + RLS/negative test +
+API/event/idempotency + UI thật + seed thật + audit/retention +
+observability + UAT.
+
+### Slice 1 — BO-0201 Customer/Contact account model + 360 — ✅ DONE 2026-08-05
+
+Field-faithful tới đúng contract gốc (`contracts/customer-account.schema.json`
++ `contact.schema.json`) — xem docblock trong `prisma-xoffice/schema.prisma`
+cho bảng đối chiếu field-by-field (một số field phía Prisma thêm ngoài
+contract gốc, ghi chú rõ từng field).
+
+- Model `Customer`/`Contact`/`CustomerEvent` (tenant-scoped, RLS) — migration
+  `prisma-xoffice/migrations/20260805170000_customer_contact/`.
+- `src/customers/` (service/controller/module) — `POST/GET /api/customers`,
+  `GET /api/customers/:id` (360: customer+contacts+events),
+  `PATCH /api/customers/:id/status`, `POST /api/customers/:id/contacts`.
+  Reads open; writes gated `customer.manage` (role mới `SALES_MANAGER`).
+  Idempotency-key hỗ trợ (mẫu giống Announcement). Duplicate-candidate
+  detection theo overlap từ khoá có nghĩa (không phải substring nguyên
+  chuỗi) — đáp ứng đúng acceptance "duplicate candidates" của BO-0201.
+- Seed `seed-data/customers/customers.seed.json` — ĐÚNG kịch bản T001 X-TECH
+  tham chiếu từ nguồn gốc (`seed/t001-reference-journey.seed.json` của gói
+  handoff): khách hàng CUS-T002 "Công ty Cổ phần Đầu tư Riverside". Contact
+  person là bổ sung của phiên này (nguồn gốc không có), ghi chú rõ trong
+  seed JSON.
+- Smoke `scripts/customers-smoke.mjs` (`test:customers`, 15 assertion: seed
+  thật, 360 view, idempotent create, duplicate-candidate, primary-contact
+  enforcement, status FSM đơn giản, **RLS tenant isolation (MUST_NOT_LEAK)**,
+  permission gating). Wired vào CI.
+- Frontend `xhub-web/src/app/(app)/office/customers/{page.tsx,[id]/page.tsx}`
+  — verify qua browser thật: đổi trạng thái + xem timeline hoạt động cập
+  nhật đúng.
+### Slice 2-8 — BO-0202..0209 (Opportunity → Contract → KPI) — ✅ DONE 2026-08-05
+
+Toàn bộ chuỗi "T001 lead-to-contract" đã build thật, field-faithful tới
+đúng contract gốc (`contracts/{opportunity,commercial-catalog-item,
+proposal,contract,contract-line,billing-request}.schema.json`).
+
+- **BO-0202 Opportunity** (`src/opportunities/`) — FSM LEAD→...→WON/LOST,
+  `lostReason` bắt buộc khi LOST, terminal states. Cố ý KHÔNG tự tạo bất kỳ
+  bản ghi doanh thu nào khi WON (T-REV-001 "Deal Won is not revenue").
+- **BO-0203 Commercial Catalog** (`src/commercial-catalog/`) — CRUD +
+  version tự tăng khi sửa (không đổi lịch sử Proposal/Contract đã tham
+  chiếu, vì các dòng đó lưu giá snapshot, không join sống).
+- **BO-0204/0205 Proposal** (`src/proposals/`) — versioned theo Opportunity
+  (mỗi bản là 1 dòng mới, không ghi đè), dòng đề xuất tự tính tổng, ngưỡng
+  giảm giá >15% tự đặt `requiresApproval=true`, duyệt bắt buộc có
+  `approverNote` (bằng chứng kiểm toán — BO-0205 "threshold rules
+  deny/approve with audit").
+- **BO-0206/0207/0208 Contract** (`src/contracts/`) — FSM đầy đủ, khoá
+  sửa dòng hợp đồng sau khi vào `SIGNING` (T-CON-001 "immutable after
+  signature"), `sourceOpportunityId` không unique (T-CON-002 "một deal
+  nhiều hợp đồng"). Chữ ký điện tử seam trung lập nhà cung cấp
+  (`ContractSignature`, provider MOCK — chưa nối DocuSign/HelloSign thật).
+  Nghĩa vụ/cảnh báo (`ContractObligation`) tự sinh từ dòng MILESTONE khi
+  hợp đồng EFFECTIVE, `alertStatus` tính runtime (PENDING/DUE_SOON/OVERDUE).
+  Cầu nối xuất hoá đơn (`BillingRequest`, `idempotencyKey` bắt buộc — rủi ro
+  tài chính thật nếu gửi trùng).
+- **BO-0209 KPI** (`src/revenue-kpi/`) — 6 KPI theo đúng
+  `data/KPI_CATALOG.csv`, mỗi KPI có `formula`+`source` hiển thị (không mù
+  mờ về doanh thu). KPI-FIN-002/KPI-LEAK-001 (cần FinERP) báo
+  `unavailable:true`, không giả lập số liệu.
+- **BO-0210 seed** — `seed-data/customers/revenue-contract-journey.seed.json`
+  + `scripts/revenue-contract-seed.mjs`: đúng kịch bản T001 X-TECH →
+  Riverside (cơ hội OPP 5B VND đàm phán 75%, đề xuất 4.9B cần duyệt giảm
+  giá, hợp đồng XTECH-RIVERSIDE-2026-001 EFFECTIVE 4.8B với 4 dòng + 1 chữ
+  ký + 4 mốc thanh toán MS-01..04, MS-01 đã hoàn thành sinh 1 yêu cầu xuất
+  hoá đơn READY 960M).
+- Role mới `CONTRACT_MANAGER` (`contract.*`); `SALES_MANAGER` mở rộng thêm
+  `opportunity.*`/`catalog.*`/`proposal.*`.
+- Smoke: `test:opportunities` (11), `test:commercial-catalog` (7),
+  `test:proposals` (14), `test:contracts` (25), `test:revenue-kpi` (8) — tất
+  cả PASS 2 lần liên tiếp (idempotent), không hồi quy smoke cũ. Wired vào CI.
+- Frontend: `/office/opportunities` (+`[id]`), `/office/catalog`,
+  `/office/contracts` (+`[id]`), `/office/revenue-kpi` — đã verify qua
+  browser thật (số liệu KPI khớp tay tính, click "Báo cáo trễ hạn" thật rồi
+  dọn sạch).
+
+**Chưa làm** (ngoài phạm vi BO-0201..0210, không phải thiếu sót): DocuSign/
+HelloSign thật (BO-0207 seam vẫn MOCK), FinERP thật (KPI-FIN-002/LEAK-001),
+ChangeRequest/amendment sau khi hợp đồng đã ký, CollectionCase, Subscription
+lifecycle riêng ngoài Contract, AI Agent/Camera track (khác backlog stream
+G5/G6), form tạo Proposal/Catalog trên UI (hiện tạo qua API/seed, xem qua
+UI).
 
 ## Hoãn lại / song song sau
 

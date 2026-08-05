@@ -28,6 +28,12 @@ import { WorkModule } from './work/work.module';
 import { ManageModule } from './manage/manage.module';
 import { IocModule } from './ioc/ioc.module';
 import { PeopleModule } from './people/people.module';
+import { CustomersModule } from './customers/customers.module';
+import { OpportunitiesModule } from './opportunities/opportunities.module';
+import { CommercialCatalogModule } from './commercial-catalog/commercial-catalog.module';
+import { ProposalsModule } from './proposals/proposals.module';
+import { ContractsModule } from './contracts/contracts.module';
+import { RevenueKpiModule } from './revenue-kpi/revenue-kpi.module';
 
 /**
  * "All-in-one" composition root (boots via `main.ts` / `npm start`).
@@ -54,7 +60,7 @@ import { PeopleModule } from './people/people.module';
  * do not rely on it for any X.Office flow.
  */
 @Module({
-  imports: [PrismaModule, AuthModule.forPlatform(), SeedModule, PreferencesModule, IdentityModule.forPlatform(), XofficeModule, ControlplaneModule, MdmModule, BackupModule, RecordsModule, WebhookModule, TestRunsModule, RequestsModule, DirectivesModule, TicketsModule, BookingsModule, AnnouncementsModule, PlatformModule, TenantLaunchModule, CatalogModule, OnboardingModule, DeliveryModule, TenantLifecycleModule, WorkModule, ManageModule, IocModule, PeopleModule],
+  imports: [PrismaModule, AuthModule.forPlatform(), SeedModule, PreferencesModule, IdentityModule.forPlatform(), XofficeModule, ControlplaneModule, MdmModule, BackupModule, RecordsModule, WebhookModule, TestRunsModule, RequestsModule, DirectivesModule, TicketsModule, BookingsModule, AnnouncementsModule, PlatformModule, TenantLaunchModule, CatalogModule, OnboardingModule, DeliveryModule, TenantLifecycleModule, WorkModule, ManageModule, IocModule, PeopleModule, CustomersModule, OpportunitiesModule, CommercialCatalogModule, ProposalsModule, ContractsModule, RevenueKpiModule],
   controllers: [AppController],
   providers: [AppService],
 })
