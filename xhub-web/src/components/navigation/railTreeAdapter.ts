@@ -1,26 +1,32 @@
 // Adapter: shared XNavItem tree -> the Tailux MainLayout NavigationTree shape,
 // so the existing rail + prime-panel components render the SAME model without
 // being modified (handoff: build an XHub adapter layer, don't edit Tailux parts).
+//
+// i18n (2026-08-06): `item.label` is now a translation KEY (see messages/*.json
+// "nav" namespace), not display text — the adapter takes the caller's `t()`
+// (from useTranslations('nav')) and resolves it into `title` here.
 import type { NavigationTree } from "@/@types/navigation";
 import type { XNavItem } from "@/xhub/nav/navigation.model";
+
+type TFunc = (key: string) => string;
 
 function base(item: XNavItem): string {
   return item.match?.[0] ?? item.href;
 }
 
-function mapChildren(items: XNavItem[]): NavigationTree[] {
+function mapChildren(items: XNavItem[], t: TFunc): NavigationTree[] {
   return items.map((child) => {
     if (child.children && child.children.length > 0) {
       return {
         id: child.id,
         type: "collapse",
         path: base(child),
-        title: child.label,
+        title: t(child.label),
         icon: child.icon,
-        childs: mapChildren(child.children),
+        childs: mapChildren(child.children, t),
       };
     }
-    return { id: child.id, type: "item", path: child.href, title: child.label, icon: child.icon };
+    return { id: child.id, type: "item", path: child.href, title: t(child.label), icon: child.icon };
   });
 }
 
@@ -33,14 +39,14 @@ export function platformGroupIds(items: XNavItem[]): Set<string> {
 }
 
 /** Convert the shared tree into rail (root) + context (childs) NavigationTree. */
-export function toRailTree(items: XNavItem[]): NavigationTree[] {
+export function toRailTree(items: XNavItem[], t: TFunc): NavigationTree[] {
   return items.map((item) => {
     if (item.placeholder) {
       return {
         id: item.id,
         type: "item",
         path: item.href,
-        title: item.label,
+        title: t(item.label),
         icon: item.icon,
       };
     }
@@ -49,16 +55,16 @@ export function toRailTree(items: XNavItem[]): NavigationTree[] {
         id: item.id,
         type: "root",
         path: base(item),
-        title: item.label,
+        title: t(item.label),
         icon: item.icon,
-        childs: mapChildren(item.children),
+        childs: mapChildren(item.children, t),
       };
     }
     return {
       id: item.id,
       type: "item",
       path: item.href,
-      title: item.label,
+      title: t(item.label),
       icon: item.icon,
     };
   });

@@ -40,6 +40,9 @@ export class DefectsController {
       severity?: string;
       standardsRefs?: string[];
       code?: string;
+      sourceSystem?: string;
+      sourceRef?: string;
+      correlationId?: string;
     },
     @Identity() id: RequestIdentity,
   ) {

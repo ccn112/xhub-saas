@@ -2242,6 +2242,7 @@ model Customer {
   events        CustomerEvent[]
   opportunities Opportunity[]
   contracts     Contract[]
+  supportCases  SupportCase[]
 
   @@unique([tenantId, code])
   @@unique([tenantId, idempotencyKey])
@@ -2594,4 +2595,84 @@ model ContractEvent {
   contract Contract @relation(fields: [contractId], references: [id])
 
   @@index([tenantId, contractId])
+}
+
+// ============================================================================
+// Product Customer Support (2026-08-06). A customer-facing support case for
+// an EXTERNAL product this company operates/supports (X2, X1, X.Space, ...)
+// — deliberately a NEW module, distinct from the internal Service Desk
+// Ticket above (employee raises a request, an internal agent works it) and
+// from the Customer/Contact sales-CRM pipeline. Support agents log cases
+// arriving from any channel (Zalo support group, phone, email, portal): data
+// fixes, operation/usage help, bug reports, feature/upgrade requests. A case
+// that turns out to need a real software change gets an explicit escalate
+// action that FILES a BacklogItem or Defect in the Engineering Governance
+// Hub (Platform DB, :4000, src/engineering/*) via EngineeringSupportClient —
+// an HTTP call across the process/DB boundary (Phase 1.5), the SAME pattern
+// as Delivery→Launch (src/delivery/launch-factory.client.ts). No dedicated
+// "ChangeRequest" entity is created here: ADR_GOVERNANCE_RECONCILIATION.md
+// (docs/implementation/engineering-hub/) already explicitly deferred
+// ChangeRequest as a first-class entity — escalation targets the two
+// entities that DO exist (BacklogItem for feature/upgrade work, Defect for
+// bugs), matching BacklogItem's own `type` enum (already has
+// UPGRADE_MIGRATION/FEATURE/TASK) rather than duplicating scope.
+// ============================================================================
+
+/// `productCode` (→ Product.code in the Platform DB, e.g. "PRD-X2") and
+/// `customerTenantRef` (→ Tenant.id in the Platform DB — which end-customer
+/// building/account this concerns) are plain strings with NO @relation —
+/// matches the established cross-DB convention (ExecutionProject.tenantLaunchId,
+/// Customer.canonicalCustomerId above). `customerId` IS a real same-DB FK to
+/// Customer (our own sales/CRM account), used when the case can be tied to a
+/// known account. `escalationType`/`escalatedItemId`/`escalatedItemCode` are
+/// set by the escalate action (see SupportCasesService.escalate); null until
+/// a case is actually escalated.
+model SupportCase {
+  id                String    @id @default(cuid())
+  tenantId          String
+  code              String // human code e.g. SUP-2026-0001
+  title             String
+  description       String?
+  productCode       String // → Product.code (Platform DB), e.g. "PRD-X2" — plain string, no FK (cross-DB)
+  customerId        String? // → Customer.id (same DB, real FK)
+  customerTenantRef String? // → Tenant.id (Platform DB) — which end-customer/building this concerns; plain string, no FK
+  requesterName     String? // external customer contact — not in our identity system
+  requesterContact  String? // phone / Zalo / email, free text
+  channel           String    @default("OTHER") // ZALO | EMAIL | PHONE | PORTAL | OTHER
+  category          String    @default("OTHER") // OPERATION_SUPPORT | DATA_FIX | USAGE_QUESTION | BUG_REPORT | FEATURE_REQUEST | OTHER
+  priority          String    @default("MEDIUM") // LOW | MEDIUM | HIGH | URGENT
+  status            String    @default("NEW")
+  assigneeId        String?
+  escalationType    String? // BACKLOG | DEFECT — null until escalated
+  escalatedItemId   String? // BacklogItem.id or Defect.id (Platform DB) — plain string, no FK
+  escalatedItemCode String? // BLG-.../DEF-... — cached for display without a cross-process round trip
+  idempotencyKey    String?
+  resolvedAt        DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  customer Customer?          @relation(fields: [customerId], references: [id])
+  events   SupportCaseEvent[]
+
+  @@unique([tenantId, code])
+  @@unique([tenantId, idempotencyKey])
+  @@index([tenantId, status])
+  @@index([tenantId, productCode])
+  @@index([tenantId, assigneeId])
+}
+
+/// Append-only timeline for a SupportCase: state transitions, comments
+/// (agent notes), and the escalate action — same idiom as TicketEvent.
+model SupportCaseEvent {
+  id            String   @id @default(cuid())
+  tenantId      String
+  supportCaseId String
+  type          String
+  actorId       String
+  data          Json     @default("{}")
+  createdAt     DateTime @default(now())
+
+  supportCase SupportCase @relation(fields: [supportCaseId], references: [id])
+
+  @@index([tenantId, supportCaseId])
 }

@@ -35,6 +35,11 @@ export interface CreateDefectInput {
   standardsRefs?: string[];
   code?: string;
   actorId?: string;
+  // Provenance (reserved columns, wired up 2026-08-06 for the Product
+  // Customer Support escalate action — first real writer of these fields).
+  sourceSystem?: string;
+  sourceRef?: string;
+  correlationId?: string;
 }
 
 /**
@@ -112,6 +117,9 @@ export class DefectsService {
           description: input.description,
           severity,
           standardsRefs: input.standardsRefs ?? [],
+          ...(input.sourceSystem ? { sourceSystem: input.sourceSystem } : {}),
+          ...(input.sourceRef ? { sourceRef: input.sourceRef } : {}),
+          ...(input.correlationId ? { correlationId: input.correlationId } : {}),
           createdBy: input.actorId,
           updatedBy: input.actorId,
         },

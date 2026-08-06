@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
 import { navigationIcons } from "@/navigation/icons";
@@ -36,6 +37,7 @@ function ExpandedItem({
   badges: Record<string, number>;
   depth: number;
 }) {
+  const t = useTranslations("nav");
   const hasChildren = Boolean(item.children && item.children.length > 0);
   const branchActive = isBranchActive(item, pathname);
   const leafActive = isLeafActive(item, pathname);
@@ -54,7 +56,7 @@ function ExpandedItem({
           className="flex h-11 cursor-default items-center gap-3 rounded-lg px-3 text-gray-400 dark:text-dark-300"
         >
           {Icon && <Icon className="size-5 shrink-0" />}
-          <span className="truncate">{item.label}</span>
+          <span className="truncate">{t(item.label)}</span>
           <span className="ml-auto text-tiny text-gray-400 dark:text-dark-300">
             sắp có
           </span>
@@ -85,7 +87,7 @@ function ExpandedItem({
           className={rowClass}
         >
           {Icon && <Icon className="size-5 shrink-0" />}
-          <span className="truncate">{item.label}</span>
+          <span className="truncate">{t(item.label)}</span>
           <Badge count={count} />
         </Link>
         {hasChildren && (

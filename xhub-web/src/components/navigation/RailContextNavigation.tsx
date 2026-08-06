@@ -4,6 +4,7 @@
 // MainPanel/PrimePanel, fed by the SHARED navigation tree via the adapter.
 import { useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { useBreakpointsContext } from "@/contexts/breakpoint/context";
 import { useSidebarContext } from "@/contexts/sidebar/context";
@@ -21,8 +22,9 @@ export function RailContextNavigation() {
   const { tree } = useNavigation();
   const { name, lgAndDown } = useBreakpointsContext();
   const { isExpanded, close } = useSidebarContext();
+  const t = useTranslations("nav");
 
-  const nav = useMemo(() => toRailTree(tree), [tree]);
+  const nav = useMemo(() => toRailTree(tree, t), [tree, t]);
   const platformIds = useMemo(() => platformGroupIds(tree), [tree]);
 
   // Resolve the active WORKSPACE from the shared tree using the full `match`

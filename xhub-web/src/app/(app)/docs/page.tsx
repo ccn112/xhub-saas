@@ -24,6 +24,13 @@ const SECTIONS = [
     source: "DEVELOPER_GUIDE.md",
   },
   {
+    href: "/docs/design-system",
+    icon: "🎨",
+    title: "Hệ thống thiết kế",
+    desc: "Bộ chữ/màu/component đang dùng (chốt 05/08/2026) + mô phỏng sống 6 dạng trang Tailux (dashboard, danh sách, chi tiết, popup form, wizard, form đơn giản).",
+    source: "design-system/TAILUX_PAGE_PATTERNS.md",
+  },
+  {
     href: "/docs/backlog",
     icon: "🗂️",
     title: "Backlog",

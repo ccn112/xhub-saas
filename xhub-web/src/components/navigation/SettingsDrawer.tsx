@@ -4,6 +4,9 @@
 //   • Kiểu điều hướng (navigation mode) — optimistic apply + PATCH, rollback+toast
 //   • Giao diện (theme mode + màu chủ đạo) — preserves the Customizer feature set
 //   • Mật độ (density)
+//   • Ngôn ngữ (2026-08-06) — cookie-based locale (see src/i18n/*), instant
+//     apply via a Server Action + router.refresh(), same "no reload" feel as
+//     the sections above. Only nav/home/Kinh doanh are translated so far.
 import {
   Dialog,
   DialogPanel,
@@ -15,9 +18,14 @@ import {
 } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
+import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 
 import { useThemeContext } from "@/contexts/theme/context";
 import { colors } from "@/constants/colors";
+import { setLocale } from "@/i18n/actions";
+import { LOCALES, LOCALE_LABELS, type Locale } from "@/i18n/locales";
 import { Button } from "@/components/ui";
 import { useNavigation } from "@/xhub/nav/NavigationProvider";
 import type { NavigationMode, DensityMode } from "@/xhub/nav/types";
@@ -77,6 +85,22 @@ export function SettingsDrawer() {
   const { isSettingsOpen, closeSettings, savedMode, setMode, allowedModes, pending, density, setDensity } =
     useNavigation();
   const theme = useThemeContext();
+
+  const locale = useLocale() as Locale;
+  const tSettings = useTranslations("settings");
+  const router = useRouter();
+  const [pendingLocale, setPendingLocale] = useState<Locale | null>(null);
+  const [, startLocaleTransition] = useTransition();
+
+  function handleLocaleChange(next: Locale) {
+    if (next === locale) return;
+    setPendingLocale(next);
+    startLocaleTransition(async () => {
+      await setLocale(next);
+      router.refresh();
+      setPendingLocale(null);
+    });
+  }
 
   return (
     <Transition show={isSettingsOpen}>
@@ -251,6 +275,39 @@ export function SettingsDrawer() {
                   </Radio>
                 ))}
               </div>
+            </RadioGroup>
+
+            {/* Language — cookie-based, no URL prefix; see src/i18n/*. */}
+            <RadioGroup
+              value={locale}
+              onChange={handleLocaleChange}
+              className="mt-5"
+            >
+              <Label className="font-medium text-gray-800 dark:text-dark-100">
+                {tSettings("language")}
+              </Label>
+              <div className="mt-2.5 grid grid-cols-2 gap-2">
+                {LOCALES.map((l) => (
+                  <Radio
+                    key={l}
+                    value={l}
+                    disabled={pendingLocale !== null}
+                    className={({ checked }) =>
+                      clsx(
+                        "cursor-pointer rounded-lg border py-2 text-center text-xs-plus outline-hidden disabled:cursor-not-allowed disabled:opacity-60",
+                        checked
+                          ? "border-primary-600 text-primary-600 dark:text-primary-400"
+                          : "border-gray-200 text-gray-600 dark:border-dark-500 dark:text-dark-200",
+                      )
+                    }
+                  >
+                    {pendingLocale === l ? "…" : LOCALE_LABELS[l]}
+                  </Radio>
+                ))}
+              </div>
+              <p className="mt-2 text-tiny-plus text-gray-400 dark:text-dark-400">
+                {tSettings("languageHint")}
+              </p>
             </RadioGroup>
           </div>
         </TransitionChild>

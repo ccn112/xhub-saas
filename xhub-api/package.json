@@ -46,6 +46,8 @@
     "seed:roles": "node scripts/role-registry-seed.mjs",
     "seed:roles-xoffice": "node scripts/role-registry-seed-xoffice.mjs",
     "seed:accounts": "node scripts/identity-accounts-seed.mjs",
+    "seed:support-cases": "node scripts/support-cases-seed.mjs",
+    "test:support-cases": "node scripts/support-cases-smoke.mjs",
     "seed:person-avatars": "node scripts/person-avatars-seed.mjs",
     "test:roles": "node scripts/role-registry-smoke.mjs",
     "test:webhook": "node scripts/webhook-reset.mjs && node scripts/webhook-smoke.mjs",

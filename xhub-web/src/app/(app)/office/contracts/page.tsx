@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Badge } from "@/xhub/ui/Badge";
 import { Card } from "@/xhub/ui/Card";
 import { listContracts, CONTRACT_STATUS_LABEL, CONTRACT_STATUS_TONE, formatMoney } from "@/xoffice/lib/revenue-data";
@@ -9,6 +10,7 @@ export const dynamic = "force-dynamic";
 const STATUS_FILTERS = ["", "DRAFT", "REVIEW", "NEGOTIATION", "APPROVED", "SIGNING", "EFFECTIVE", "SUSPENDED", "EXPIRED", "TERMINATED", "COMPLETED"];
 
 export default async function ContractsPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
+  const t = await getTranslations("sales");
   const sp = await searchParams;
   const status = sp.status ?? "";
   const { items, source } = await listContracts({ status: status || undefined });
@@ -17,25 +19,22 @@ export default async function ContractsPage({ searchParams }: { searchParams: Pr
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-heading text-xl font-semibold text-gray-800 dark:text-dark-50">Hợp đồng</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-dark-300">
-            Hợp đồng &amp; dòng hợp đồng (BO-0206) — bất biến sau khi ký (T-CON-001), có nghĩa vụ/mốc thanh toán
-            tự sinh khi hiệu lực (BO-0208).
-          </p>
+          <h1 className="font-heading text-xl font-semibold text-gray-800 dark:text-dark-50">{t("contractsTitle")}</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-dark-300">{t("contractsSubtitle")}</p>
         </div>
-        <Badge tone={source === "api" ? "success" : "warning"}>{source === "api" ? "Kết nối backend" : "Backend offline"}</Badge>
+        <Badge tone={source === "api" ? "success" : "warning"}>{source === "api" ? t("backendConnected") : t("backendOffline")}</Badge>
       </div>
 
       <Card className="p-3">
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="text-gray-500 dark:text-dark-300">Trạng thái:</span>
+          <span className="text-gray-500 dark:text-dark-300">{t("colStatus")}:</span>
           {STATUS_FILTERS.map((s) => (
             <Link
               key={s || "ALL"}
               href={`/office/contracts${s ? `?status=${s}` : ""}`}
               className={`rounded-full border px-3 py-1 ${s === status ? "border-primary-500 bg-primary-50 font-medium text-primary-700 dark:bg-primary-500/10 dark:text-primary-300" : "border-gray-200 text-gray-600 dark:border-dark-600 dark:text-dark-200"}`}
             >
-              {s ? CONTRACT_STATUS_LABEL[s] ?? s : "Tất cả"}
+              {s ? CONTRACT_STATUS_LABEL[s] ?? s : t("allFilter")}
             </Link>
           ))}
         </div>
@@ -45,11 +44,11 @@ export default async function ContractsPage({ searchParams }: { searchParams: Pr
         <table className="w-full min-w-[720px] text-sm">
           <thead>
             <tr className="border-b border-gray-200 text-left text-xs text-gray-500 dark:border-dark-600 dark:text-dark-300">
-              <th className="px-3 py-2 font-medium">Số hợp đồng</th>
-              <th className="px-3 py-2 font-medium">Khách hàng</th>
-              <th className="px-3 py-2 font-medium">Giá trị</th>
-              <th className="px-3 py-2 font-medium">Hiệu lực từ</th>
-              <th className="px-3 py-2 font-medium">Trạng thái</th>
+              <th className="px-3 py-2 font-medium">{t("colContractCode")}</th>
+              <th className="px-3 py-2 font-medium">{t("colContractCustomer")}</th>
+              <th className="px-3 py-2 font-medium">{t("colContractAmount")}</th>
+              <th className="px-3 py-2 font-medium">{t("colEffectiveFrom")}</th>
+              <th className="px-3 py-2 font-medium">{t("colContractStatus")}</th>
             </tr>
           </thead>
           <tbody>
@@ -71,7 +70,7 @@ export default async function ContractsPage({ searchParams }: { searchParams: Pr
             {items.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-3 py-6 text-center text-gray-400">
-                  {source === "offline" ? "Backend offline." : "Chưa có hợp đồng nào khớp bộ lọc."}
+                  {source === "offline" ? t("emptyOffline") : t("emptyContracts")}
                 </td>
               </tr>
             ) : null}

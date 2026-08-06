@@ -124,16 +124,16 @@ export interface XNavItem {
 export const XHUB_NAVIGATION: XNavItem[] = [
   {
     id: "home",
-    label: "Trang chủ",
+    label: "home",
     icon: "home",
     href: "/home/executive",
     match: ["/home", "/notifications"],
     // ALL authenticated users — no gate (dashboards + notifications open to all).
     children: [
-      { id: "home.executive", label: "Tổng quan điều hành", href: "/home/executive", icon: "chart" },
-      { id: "home.sales", label: "Bảng điều hành kinh doanh", href: "/home/sales", icon: "sales" },
-      { id: "home.me", label: "Không gian của tôi", href: "/home/me", icon: "me" },
-      { id: "notifications.all", label: "Thông báo", href: "/notifications", icon: "bell", match: ["/notifications"] },
+      { id: "home.executive", label: "home_executive", href: "/home/executive", icon: "chart" },
+      { id: "home.sales", label: "home_sales", href: "/home/sales", icon: "sales" },
+      { id: "home.me", label: "home_me", href: "/home/me", icon: "me" },
+      { id: "notifications.all", label: "notifications_all", href: "/notifications", icon: "bell", match: ["/notifications"] },
     ],
   },
   // ---------------------------------------------------------------------------
@@ -148,30 +148,30 @@ export const XHUB_NAVIGATION: XNavItem[] = [
   // ---------------------------------------------------------------------------
   {
     id: "manage",
-    label: "Điều hành",
+    label: "manage",
     icon: "chart",
     href: "/manage",
     match: ["/manage"],
     permission: "manage.objective.read",
     children: [
-      { id: "manage.home", label: "Tổng quan điều hành", href: "/manage", icon: "chart", match: ["/manage"], permission: "manage.objective.read" },
-      { id: "manage.objectives", label: "Mục tiêu chiến lược", href: "/manage/objectives", icon: "directive", match: ["/manage/objectives"], permission: "manage.objective.read" },
-      { id: "manage.metrics", label: "Chỉ số / KPI", href: "/manage/metrics", icon: "chart", match: ["/manage/metrics"], permission: "manage.metric.read" },
-      { id: "manage.reviews", label: "Rà soát (Business Review)", href: "/manage/reviews", icon: "calendar", match: ["/manage/reviews"], permission: "manage.review.read" },
-      { id: "manage.decisions", label: "Quyết định (RAPID)", href: "/manage/decisions", icon: "list", match: ["/manage/decisions"], permission: "manage.decision.read" },
+      { id: "manage.home", label: "manage_home", href: "/manage", icon: "chart", match: ["/manage"], permission: "manage.objective.read" },
+      { id: "manage.objectives", label: "manage_objectives", href: "/manage/objectives", icon: "directive", match: ["/manage/objectives"], permission: "manage.objective.read" },
+      { id: "manage.metrics", label: "manage_metrics", href: "/manage/metrics", icon: "chart", match: ["/manage/metrics"], permission: "manage.metric.read" },
+      { id: "manage.reviews", label: "manage_reviews", href: "/manage/reviews", icon: "calendar", match: ["/manage/reviews"], permission: "manage.review.read" },
+      { id: "manage.decisions", label: "manage_decisions", href: "/manage/decisions", icon: "list", match: ["/manage/decisions"], permission: "manage.decision.read" },
       // MG-03 — KPI/OKR/Scorecard, layered on the reference slice (#3/#9/#13: BSC/
       // OKR/KPI/task list stay distinct; no blended score may hide a red KPI, #5).
-      { id: "manage.scorecards", label: "Scorecard", href: "/manage/scorecards", icon: "chart", match: ["/manage/scorecards"], permission: "manage.scorecard.read" },
-      { id: "manage.okrs", label: "OKR", href: "/manage/okrs", icon: "directive", match: ["/manage/okrs"], permission: "manage.okr.read" },
+      { id: "manage.scorecards", label: "manage_scorecards", href: "/manage/scorecards", icon: "chart", match: ["/manage/scorecards"], permission: "manage.scorecard.read" },
+      { id: "manage.okrs", label: "manage_okrs", href: "/manage/okrs", icon: "directive", match: ["/manage/okrs"], permission: "manage.okr.read" },
       // MG-04 — Portfolio & Benefit. LINK layer over Initiative→ExecutionProject
       // (Work v2) — distinct from the existing /work/portfolio delivery rollup
       // (see MANAGEMENT_UI_ROUTE_PLAN §2 "một-portfolio-một-nguồn").
-      { id: "manage.portfolio", label: "Danh mục đầu tư", href: "/manage/portfolio", icon: "briefcase", match: ["/manage/portfolio"], permission: "manage.portfolio.read" },
+      { id: "manage.portfolio", label: "manage_portfolio", href: "/manage/portfolio", icon: "briefcase", match: ["/manage/portfolio"], permission: "manage.portfolio.read" },
     ],
   },
   {
     id: "work",
-    label: "Công việc",
+    label: "work",
     icon: "briefcase",
     href: "/inbox",
     match: ["/inbox", "/approvals", "/work", "/projects"],
@@ -180,85 +180,85 @@ export const XHUB_NAVIGATION: XNavItem[] = [
     children: [
       {
         id: "work.daily",
-        label: "Việc hằng ngày",
+        label: "work_daily",
         href: "/inbox",
         icon: "inbox",
         children: [
-          { id: "inbox.unified", label: "Hộp việc hợp nhất", href: "/inbox", icon: "inbox", match: ["/inbox"], badgeKey: "inbox.open" },
-          { id: "approvals.center", label: "Trung tâm phê duyệt", href: "/approvals", icon: "approvals", match: ["/approvals"], badgeKey: "approval.pending", permission: "request.approve" },
+          { id: "inbox.unified", label: "inbox_unified", href: "/inbox", icon: "inbox", match: ["/inbox"], badgeKey: "inbox.open" },
+          { id: "approvals.center", label: "approvals_center", href: "/approvals", icon: "approvals", match: ["/approvals"], badgeKey: "approval.pending", permission: "request.approve" },
           // X.Office Work & PM v2 — W1 (NativeWorkItem). Overview + My Work + Tôi giao.
           // No nav permission (open to all authenticated users); write actions are
           // gated server-side by work.item.* and the read path enforces the summary/
           // full visibility tier (owner requirement #1).
-          { id: "work.overview", label: "Tổng quan", href: "/work", icon: "chart", match: ["/work"] },
-          { id: "work.myTasks", label: "Việc của tôi", href: "/work/tasks", icon: "work", match: ["/work/tasks"] },
-          { id: "work.assignedByMe", label: "Tôi giao", href: "/work/tasks/assigned-by-me", icon: "approvals", match: ["/work/tasks/assigned-by-me"] },
+          { id: "work.overview", label: "work_overview", href: "/work", icon: "chart", match: ["/work"] },
+          { id: "work.myTasks", label: "work_myTasks", href: "/work/tasks", icon: "work", match: ["/work/tasks"] },
+          { id: "work.assignedByMe", label: "work_assignedByMe", href: "/work/tasks/assigned-by-me", icon: "approvals", match: ["/work/tasks/assigned-by-me"] },
         ],
       },
       {
         id: "work.projectsPortfolio",
-        label: "Dự án & Portfolio",
+        label: "work_projectsPortfolio",
         href: "/work/projects",
         icon: "projects",
         children: [
           // X.Office Work & PM v2 — W2 (ExecutionProject). Delivery projects with WBS
           // roll-up + baseline + coordination visibility. Open in nav; writes gated
           // server-side by work.project.*; detail read enforces FULL/SUMMARY per actor.
-          { id: "work.projects", label: "Dự án thực thi", href: "/work/projects", icon: "projects", match: ["/work/projects"] },
-          { id: "projects.list", label: "Dự án (MDM)", href: "/projects", icon: "projects", match: ["/projects"] },
+          { id: "work.projects", label: "work_projects", href: "/work/projects", icon: "projects", match: ["/work/projects"] },
+          { id: "projects.list", label: "projects_list", href: "/projects", icon: "projects", match: ["/projects"] },
           // X.Office Work & PM v2 — W3 (Management Views). Kanban / Calendar / Portfolio
           // / multi-dimensional reports. Gantt is reached from project detail
           // (/work/projects/[id]/gantt). Open in nav; portfolio + reports reads gated
           // server-side (work.portfolio.read / work.report.read) — soft unless AUTH_ENFORCE.
-          { id: "work.board", label: "Kanban", href: "/work/board", icon: "apps", match: ["/work/board"] },
-          { id: "work.calendar", label: "Lịch công việc", href: "/work/calendar", icon: "calendar", match: ["/work/calendar"] },
-          { id: "work.portfolio", label: "Portfolio", href: "/work/portfolio", icon: "chart", match: ["/work/portfolio"], permission: "work.portfolio.read" },
-          { id: "work.reports", label: "Báo cáo đa chiều", href: "/work/reports", icon: "list", match: ["/work/reports"], permission: "work.report.read" },
+          { id: "work.board", label: "work_board", href: "/work/board", icon: "apps", match: ["/work/board"] },
+          { id: "work.calendar", label: "work_calendar", href: "/work/calendar", icon: "calendar", match: ["/work/calendar"] },
+          { id: "work.portfolio", label: "work_portfolio", href: "/work/portfolio", icon: "chart", match: ["/work/portfolio"], permission: "work.portfolio.read" },
+          { id: "work.reports", label: "work_reports", href: "/work/reports", icon: "list", match: ["/work/reports"], permission: "work.report.read" },
         ],
       },
     ],
   },
   {
     id: "space",
-    label: "X.Space",
+    label: "space",
     icon: "space",
     href: "/space/home",
     match: ["/space"],
     // X.Space is collaboration — open to all authenticated users.
     badgeKey: "space.unread",
     children: [
-      { id: "space.home", label: "Trang chủ X.Space", href: "/space/home", icon: "space" },
+      { id: "space.home", label: "space_home", href: "/space/home", icon: "space" },
       {
         id: "space.channel",
-        label: "Channel triển khai FinERP",
+        label: "space_channel",
         href: "/space/channels/trien-khai-finerp-minh-phat",
         icon: "channel",
         match: ["/space/channels/trien-khai-finerp-minh-phat"],
         children: [
           {
             id: "space.channel.conversation",
-            label: "Hội thoại",
+            label: "space_channel_conversation",
             href: "/space/channels/trien-khai-finerp-minh-phat",
           },
           {
             id: "space.channel.overview",
-            label: "Tổng quan dự án",
+            label: "space_channel_overview",
             href: "/space/channels/trien-khai-finerp-minh-phat/overview",
           },
         ],
       },
       {
         id: "space.customer",
-        label: "Channel khách hàng (360)",
+        label: "space_customer",
         href: "/space/channels/kh-minh-phat/customer",
         icon: "customer",
       },
-      { id: "space.dm", label: "Tin nhắn trực tiếp", href: "/space/dm/user-thuha", icon: "dm" },
+      { id: "space.dm", label: "space_dm", href: "/space/dm/user-thuha", icon: "dm" },
     ],
   },
   {
     id: "office",
-    label: "X.Office",
+    label: "office",
     icon: "office",
     href: "/office/workflows",
     match: ["/office", "/ioc"],
@@ -266,30 +266,30 @@ export const XHUB_NAVIGATION: XNavItem[] = [
     children: [
       {
         id: "office.services",
-        label: "Dịch vụ nội bộ",
+        label: "office_services",
         href: "/office/requests",
         icon: "inbox",
         children: [
           // Request module (PH-02a — NX-020..024). Request Center is approver-facing
           // (gated by request.approve / workflow.*); My Requests is requester-facing
           // (open to request.create). Enforcement lives in the API guards.
-          { id: "office.requests", label: "Trung tâm yêu cầu", href: "/office/requests", icon: "inbox", match: ["/office/requests"], permission: "request.approve" },
-          { id: "office.my-requests", label: "Yêu cầu của tôi", href: "/office/my-requests", icon: "work", match: ["/office/my-requests"], permission: "request.create" },
+          { id: "office.requests", label: "office_requests", href: "/office/requests", icon: "inbox", match: ["/office/requests"], permission: "request.approve" },
+          { id: "office.my-requests", label: "office_my-requests", href: "/office/my-requests", icon: "work", match: ["/office/my-requests"], permission: "request.create" },
           // Directive / Decision / Commitment module (PH-02b — NX-025). No nav
           // permission so assignees (commitment holders) can reach directives given
           // to them; the issue/complete/cancel actions are gated server-side by
           // directive.issue (EXECUTIVE) in the API guards.
-          { id: "office.directives", label: "Chỉ đạo & cam kết", href: "/office/directives", icon: "directive", match: ["/office/directives"] },
+          { id: "office.directives", label: "office_directives", href: "/office/directives", icon: "directive", match: ["/office/directives"] },
           // No nav permission — anyone can raise a ticket; manage actions are guarded
           // server-side (ticket.manage / ticket.resolve).
-          { id: "office.service-desk", label: "Service Desk", href: "/office/service-desk", icon: "lifebuoy", match: ["/office/service-desk"] },
-          { id: "office.bookings", label: "Đặt phòng & tài nguyên", href: "/office/bookings", icon: "calendar", match: ["/office/bookings"] },
-          { id: "office.announcements", label: "Thông báo nội bộ", href: "/office/announcements", icon: "announce", match: ["/office/announcements"] },
+          { id: "office.service-desk", label: "office_service-desk", href: "/office/service-desk", icon: "lifebuoy", match: ["/office/service-desk"] },
+          { id: "office.bookings", label: "office_bookings", href: "/office/bookings", icon: "calendar", match: ["/office/bookings"] },
+          { id: "office.announcements", label: "office_announcements", href: "/office/announcements", icon: "announce", match: ["/office/announcements"] },
         ],
       },
       {
         id: "office.sales",
-        label: "Kinh doanh",
+        label: "office_sales",
         href: "/office/customers",
         icon: "customer",
         children: [
@@ -297,29 +297,42 @@ export const XHUB_NAVIGATION: XNavItem[] = [
           // (any tenant member browses); writes gated server-side by
           // customer.manage/opportunity.manage/catalog.manage/proposal.manage/
           // contract.manage (SALES_MANAGER/CONTRACT_MANAGER).
-          { id: "office.customers", label: "Khách hàng", href: "/office/customers", icon: "customer", match: ["/office/customers"] },
-          { id: "office.opportunities", label: "Cơ hội bán hàng", href: "/office/opportunities", icon: "chart", match: ["/office/opportunities"] },
-          { id: "office.catalog", label: "Danh mục thương mại", href: "/office/catalog", icon: "list", match: ["/office/catalog"] },
-          { id: "office.contracts", label: "Hợp đồng", href: "/office/contracts", icon: "docs", match: ["/office/contracts"] },
-          { id: "office.revenue-kpi", label: "KPI Kinh doanh", href: "/office/revenue-kpi", icon: "chart", match: ["/office/revenue-kpi"] },
+          { id: "office.customers", label: "office_customers", href: "/office/customers", icon: "customer", match: ["/office/customers"] },
+          { id: "office.opportunities", label: "office_opportunities", href: "/office/opportunities", icon: "chart", match: ["/office/opportunities"] },
+          { id: "office.catalog", label: "office_catalog", href: "/office/catalog", icon: "list", match: ["/office/catalog"] },
+          { id: "office.contracts", label: "office_contracts", href: "/office/contracts", icon: "docs", match: ["/office/contracts"] },
+          { id: "office.revenue-kpi", label: "office_revenue-kpi", href: "/office/revenue-kpi", icon: "chart", match: ["/office/revenue-kpi"] },
+        ],
+      },
+      {
+        id: "office.support",
+        label: "office_support",
+        href: "/office/support-cases",
+        icon: "lifebuoy",
+        children: [
+          // Product Customer Support (2026-08-06) — external customer support
+          // for X2/X1/FinERP/X.Space, distinct from the internal Service Desk
+          // above. No nav permission — any support agent browses; writes gated
+          // server-side by support-case.create/manage/resolve.
+          { id: "office.support-cases", label: "office_support-cases", href: "/office/support-cases", icon: "lifebuoy", match: ["/office/support-cases"] },
         ],
       },
       {
         id: "office.workflowAdmin",
-        label: "Quản trị quy trình",
+        label: "office_workflowAdmin",
         href: "/office/workflows",
         icon: "office",
         children: [
-          { id: "office.workflows", label: "Danh mục quy trình", href: "/office/workflows", icon: "office", match: ["/office/workflows"], permission: "workflow.*" },
-          { id: "office.instances", label: "Vận hành (Instances)", href: "/office/instances", icon: "work", match: ["/office/instances"], permission: "workflow.*" },
-          { id: "office.monitor", label: "Giám sát vận hành", href: "/office/monitor", icon: "chart", match: ["/office/monitor"], permission: "workflow.*" },
+          { id: "office.workflows", label: "office_workflows", href: "/office/workflows", icon: "office", match: ["/office/workflows"], permission: "workflow.*" },
+          { id: "office.instances", label: "office_instances", href: "/office/instances", icon: "work", match: ["/office/instances"], permission: "workflow.*" },
+          { id: "office.monitor", label: "office_monitor", href: "/office/monitor", icon: "chart", match: ["/office/monitor"], permission: "workflow.*" },
           // Bộ tài liệu kiểm thử RIÊNG của X.Office (Phase 1.5 Stage D, 2026-08-04)
           // — tách khỏi /docs/test chung, chỉ phủ các nhóm do process xoffice phục vụ.
-          { id: "office.docs.test", label: "Kiểm thử X.Office", href: "/office/docs/test", icon: "test", match: ["/office/docs/test"] },
+          { id: "office.docs.test", label: "office_docs_test", href: "/office/docs/test", icon: "test", match: ["/office/docs/test"] },
           // Tài liệu phát triển + backlog RIÊNG của X.Office (2026-08-04) — nhân
           // bản từ /docs/developer + /docs/backlog, đang chờ chuẩn hoá nội dung.
-          { id: "office.docs.developer", label: "Tài liệu phát triển", href: "/office/docs/developer", icon: "office", match: ["/office/docs/developer"] },
-          { id: "office.docs.backlog", label: "Backlog X.Office", href: "/office/docs/backlog", icon: "list", match: ["/office/docs/backlog"] },
+          { id: "office.docs.developer", label: "office_docs_developer", href: "/office/docs/developer", icon: "office", match: ["/office/docs/developer"] },
+          { id: "office.docs.backlog", label: "office_docs_backlog", href: "/office/docs/backlog", icon: "list", match: ["/office/docs/backlog"] },
         ],
       },
       // XHub Enterprise IOC — Digital Twin (DT-01..DT-03), module con của khối
@@ -329,25 +342,25 @@ export const XHUB_NAVIGATION: XNavItem[] = [
       // (ioc.studio.* / ioc.datalayer.manage) như trước khi dời.
       {
         id: "office.ioc",
-        label: "IOC — Bản sao số",
+        label: "office_ioc",
         href: "/ioc",
         icon: "chart",
         children: [
-          { id: "ioc.entry", label: "Trung tâm điều hành", href: "/ioc", icon: "chart", match: ["/ioc"], permission: "ioc.view" },
-          { id: "ioc.twin.office", label: "Bản sao số văn phòng", href: "/ioc/twin/office", icon: "business", match: ["/ioc/twin/office"], permission: "ioc.view" },
-          { id: "ioc.studio.templates", label: "Thư viện mẫu (nhân bản)", href: "/ioc/studio/templates", icon: "folder", match: ["/ioc/studio/templates"], permission: "ioc.studio.read" },
-          { id: "ioc.studio", label: "Twin Studio", href: "/ioc/studio", icon: "office", match: ["/ioc/studio"], permission: "ioc.studio.read" },
-          { id: "ioc.studio.dataLayers", label: "Lớp dữ liệu", href: "/ioc/studio/data-layers", icon: "list", match: ["/ioc/studio/data-layers"], permission: "ioc.datalayer.manage" },
-          { id: "ioc.studio.dashboards", label: "Bảng điều khiển twin", href: "/ioc/studio/dashboards", icon: "apps", match: ["/ioc/studio/dashboards"], permission: "ioc.studio.read" },
-          { id: "ioc.studio.assets", label: "Icon & asset", href: "/ioc/studio/assets", icon: "folder", match: ["/ioc/studio/assets"], permission: "ioc.asset.manage" },
-          { id: "ioc.studio.publish", label: "Rà soát & xuất bản", href: "/ioc/studio/publish", icon: "settings", match: ["/ioc/studio/publish"], permission: "ioc.studio.publish" },
+          { id: "ioc.entry", label: "ioc_entry", href: "/ioc", icon: "chart", match: ["/ioc"], permission: "ioc.view" },
+          { id: "ioc.twin.office", label: "ioc_twin_office", href: "/ioc/twin/office", icon: "business", match: ["/ioc/twin/office"], permission: "ioc.view" },
+          { id: "ioc.studio.templates", label: "ioc_studio_templates", href: "/ioc/studio/templates", icon: "folder", match: ["/ioc/studio/templates"], permission: "ioc.studio.read" },
+          { id: "ioc.studio", label: "ioc_studio", href: "/ioc/studio", icon: "office", match: ["/ioc/studio"], permission: "ioc.studio.read" },
+          { id: "ioc.studio.dataLayers", label: "ioc_studio_dataLayers", href: "/ioc/studio/data-layers", icon: "list", match: ["/ioc/studio/data-layers"], permission: "ioc.datalayer.manage" },
+          { id: "ioc.studio.dashboards", label: "ioc_studio_dashboards", href: "/ioc/studio/dashboards", icon: "apps", match: ["/ioc/studio/dashboards"], permission: "ioc.studio.read" },
+          { id: "ioc.studio.assets", label: "ioc_studio_assets", href: "/ioc/studio/assets", icon: "folder", match: ["/ioc/studio/assets"], permission: "ioc.asset.manage" },
+          { id: "ioc.studio.publish", label: "ioc_studio_publish", href: "/ioc/studio/publish", icon: "settings", match: ["/ioc/studio/publish"], permission: "ioc.studio.publish" },
         ],
       },
     ],
   },
   {
     id: "business",
-    label: "Doanh nghiệp",
+    label: "business",
     icon: "business",
     href: "/customers",
     match: ["/customers", "/documents", "/reports", "/apps", "/admin", "/docs"],
@@ -355,22 +368,22 @@ export const XHUB_NAVIGATION: XNavItem[] = [
     children: [
       {
         id: "customers",
-        label: "Khách hàng",
+        label: "customers",
         href: "/customers",
         icon: "customer",
         match: ["/customers"],
         permission: "mdm.*",
         children: [
-          { id: "customers.list", label: "Danh sách khách hàng", href: "/customers", icon: "customer" },
-          { id: "customers.c360", label: "Khách hàng Minh Phát (360)", href: "/customers/customer-minhphat", icon: "customer" },
+          { id: "customers.list", label: "customers_list", href: "/customers", icon: "customer" },
+          { id: "customers.c360", label: "customers_c360", href: "/customers/customer-minhphat", icon: "customer" },
         ],
       },
-      { id: "documents.library", label: "Tài liệu", href: "/documents", icon: "folder", match: ["/documents"], permission: "document.read" },
-      { id: "reports.summary", label: "Báo cáo", href: "/reports", icon: "chart", match: ["/reports"], permission: "dashboard.executive" },
-      { id: "apps.catalog", label: "Ứng dụng", href: "/apps", icon: "apps", match: ["/apps"], permission: "application.*" },
+      { id: "documents.library", label: "documents_library", href: "/documents", icon: "folder", match: ["/documents"], permission: "document.read" },
+      { id: "reports.summary", label: "reports_summary", href: "/reports", icon: "chart", match: ["/reports"], permission: "dashboard.executive" },
+      { id: "apps.catalog", label: "apps_catalog", href: "/apps", icon: "apps", match: ["/apps"], permission: "application.*" },
       {
         id: "admin.console",
-        label: "Quản trị hệ thống",
+        label: "admin_console",
         href: "/admin",
         icon: "settings",
         match: ["/admin"],
@@ -378,34 +391,34 @@ export const XHUB_NAVIGATION: XNavItem[] = [
         // ≥1 child (empty group pruned). Each child carries its own SECURITY /
         // ORG / TENANT / BACKUP / AUDIT gate so each admin sees only what they govern.
         children: [
-          { id: "admin.overview", label: "Tổng quan quản trị", href: "/admin", icon: "chart", match: ["/admin"], permission: "tenant.*" },
-          { id: "admin.users", label: "Người dùng & thành viên", href: "/admin/users", icon: "customer", match: ["/admin/users"], permission: "tenant.*" },
-          { id: "admin.organization", label: "Sơ đồ tổ chức", href: "/admin/organization", icon: "business", match: ["/admin/organization"], permission: "org.*" },
-          { id: "admin.positions", label: "Vị trí & người giữ", href: "/admin/positions", icon: "briefcase", match: ["/admin/positions"], permission: "org.*" },
-          { id: "admin.roles", label: "Vai trò & quyền", href: "/admin/roles", icon: "settings", match: ["/admin/roles"], permission: "role.*" },
-          { id: "admin.dataScopes", label: "Phạm vi dữ liệu", href: "/admin/data-scopes", icon: "folder", match: ["/admin/data-scopes"], permission: "scope.*" },
-          { id: "admin.delegations", label: "Uỷ quyền & người thay", href: "/admin/delegations", icon: "approvals", match: ["/admin/delegations"], permission: "delegation.*" },
-          { id: "admin.resolver", label: "Kiểm tra phân công", href: "/admin/assignment-resolver", icon: "work", match: ["/admin/assignment-resolver"], permission: "org.*" },
-          { id: "admin.backups", label: "Quản lý backup", href: "/admin/backups", icon: "folder", match: ["/admin/backups"], permission: "backup.*" },
-          { id: "admin.restores", label: "Khôi phục (restore)", href: "/admin/restores", icon: "office", match: ["/admin/restores"], permission: "backup.*" },
-          { id: "admin.audit", label: "Nhật ký kiểm toán", href: "/admin/audit", icon: "list", match: ["/admin/audit"], permission: "audit.read" },
-          { id: "admin.tenant", label: "Cấu hình tenant", href: "/admin/settings/tenant", icon: "settings", match: ["/admin/settings/tenant"], permission: "tenant.*" },
+          { id: "admin.overview", label: "admin_overview", href: "/admin", icon: "chart", match: ["/admin"], permission: "tenant.*" },
+          { id: "admin.users", label: "admin_users", href: "/admin/users", icon: "customer", match: ["/admin/users"], permission: "tenant.*" },
+          { id: "admin.organization", label: "admin_organization", href: "/admin/organization", icon: "business", match: ["/admin/organization"], permission: "org.*" },
+          { id: "admin.positions", label: "admin_positions", href: "/admin/positions", icon: "briefcase", match: ["/admin/positions"], permission: "org.*" },
+          { id: "admin.roles", label: "admin_roles", href: "/admin/roles", icon: "settings", match: ["/admin/roles"], permission: "role.*" },
+          { id: "admin.dataScopes", label: "admin_dataScopes", href: "/admin/data-scopes", icon: "folder", match: ["/admin/data-scopes"], permission: "scope.*" },
+          { id: "admin.delegations", label: "admin_delegations", href: "/admin/delegations", icon: "approvals", match: ["/admin/delegations"], permission: "delegation.*" },
+          { id: "admin.resolver", label: "admin_resolver", href: "/admin/assignment-resolver", icon: "work", match: ["/admin/assignment-resolver"], permission: "org.*" },
+          { id: "admin.backups", label: "admin_backups", href: "/admin/backups", icon: "folder", match: ["/admin/backups"], permission: "backup.*" },
+          { id: "admin.restores", label: "admin_restores", href: "/admin/restores", icon: "office", match: ["/admin/restores"], permission: "backup.*" },
+          { id: "admin.audit", label: "admin_audit", href: "/admin/audit", icon: "list", match: ["/admin/audit"], permission: "audit.read" },
+          { id: "admin.tenant", label: "admin_tenant", href: "/admin/settings/tenant", icon: "settings", match: ["/admin/settings/tenant"], permission: "tenant.*" },
         ],
       },
       {
         id: "docs",
-        label: "Tài liệu & Kiểm thử",
+        label: "docs",
         href: "/docs",
         icon: "docs",
         match: ["/docs"],
         children: [
-          { id: "docs.overview", label: "Tổng quan tài liệu", href: "/docs", icon: "docs", match: ["/docs"] },
-          { id: "docs.business", label: "Tài liệu nghiệp vụ", href: "/docs/business", icon: "briefcase", match: ["/docs/business"] },
-          { id: "docs.saas", label: "SaaS (Tenant 001–010)", href: "/docs/saas", icon: "business", match: ["/docs/saas"] },
-          { id: "docs.developer", label: "Tài liệu phát triển", href: "/docs/developer", icon: "office", match: ["/docs/developer"] },
-          { id: "docs.backlog", label: "Backlog phát triển", href: "/docs/backlog", icon: "list", match: ["/docs/backlog"] },
-          { id: "docs.user", label: "Hướng dẫn sử dụng", href: "/docs/user", icon: "guide", match: ["/docs/user"] },
-          { id: "docs.test", label: "Kiểm thử (bot + tick)", href: "/docs/test", icon: "test", match: ["/docs/test"] },
+          { id: "docs.overview", label: "docs_overview", href: "/docs", icon: "docs", match: ["/docs"] },
+          { id: "docs.business", label: "docs_business", href: "/docs/business", icon: "briefcase", match: ["/docs/business"] },
+          { id: "docs.saas", label: "docs_saas", href: "/docs/saas", icon: "business", match: ["/docs/saas"] },
+          { id: "docs.developer", label: "docs_developer", href: "/docs/developer", icon: "office", match: ["/docs/developer"] },
+          { id: "docs.backlog", label: "docs_backlog", href: "/docs/backlog", icon: "list", match: ["/docs/backlog"] },
+          { id: "docs.user", label: "docs_user", href: "/docs/user", icon: "guide", match: ["/docs/user"] },
+          { id: "docs.test", label: "docs_test", href: "/docs/test", icon: "test", match: ["/docs/test"] },
         ],
       },
     ],
@@ -420,16 +433,16 @@ export const XHUB_NAVIGATION: XNavItem[] = [
   // -----------------------------------------------------------------------------
   {
     id: "people",
-    label: "Nhân sự & Chấm công",
+    label: "people",
     icon: "customer",
     href: "/people",
     match: ["/people"],
     children: [
-      { id: "people.home", label: "Tổng quan của tôi", href: "/people", icon: "me", match: ["/people"] },
-      { id: "people.leave", label: "Nghỉ phép", href: "/people/leave", icon: "calendar", match: ["/people/leave"] },
+      { id: "people.home", label: "people_home", href: "/people", icon: "me", match: ["/people"] },
+      { id: "people.leave", label: "people_leave", href: "/people/leave", icon: "calendar", match: ["/people/leave"] },
       {
         id: "people.team.availability",
-        label: "Lịch hiện diện nhóm",
+        label: "people_team_availability",
         href: "/people/team/availability",
         icon: "customer",
         match: ["/people/team/availability"],
@@ -437,9 +450,9 @@ export const XHUB_NAVIGATION: XNavItem[] = [
       },
       // PE-02 — Attendance & Correction. Self-service view + "báo sai" — reuses
       // the same ApprovalTask queue as leave, no second approval mechanism.
-      { id: "people.attendance", label: "Chấm công", href: "/people/attendance", icon: "calendar", match: ["/people/attendance"], permission: "people.self.attendance.read" },
+      { id: "people.attendance", label: "people_attendance", href: "/people/attendance", icon: "calendar", match: ["/people/attendance"], permission: "people.self.attendance.read" },
       // HR-only: file import engine (SME Lite — attendanceMode=FILE_IMPORT).
-      { id: "people.admin.import", label: "Nhập chấm công (HR)", href: "/people/admin/import", icon: "office", match: ["/people/admin/import"], permission: "people.hr.import.manage" },
+      { id: "people.admin.import", label: "people_admin_import", href: "/people/admin/import", icon: "office", match: ["/people/admin/import"], permission: "people.hr.import.manage" },
     ],
   },
   // -----------------------------------------------------------------------------
@@ -452,21 +465,21 @@ export const XHUB_NAVIGATION: XNavItem[] = [
   // -----------------------------------------------------------------------------
   {
     id: "platform",
-    label: "Bảng điều khiển nền tảng",
+    label: "platform",
     icon: "business",
     href: "/platform",
     match: ["/platform"],
     permission: "platform.tenant.read",
     group: "platform",
     children: [
-      { id: "platform.overview", label: "Tổng quan SaaS", href: "/platform", icon: "chart", match: ["/platform"], permission: "platform.tenant.read" },
-      { id: "platform.tenants", label: "Sổ đăng ký tenant", href: "/platform/tenants", icon: "business", match: ["/platform/tenants"], permission: "platform.tenant.read" },
-      { id: "platform.plans", label: "Gói dịch vụ", href: "/platform/plans", icon: "apps", match: ["/platform/plans"], permission: "platform.tenant.read" },
-      { id: "platform.readiness", label: "Sẵn sàng v1.0", href: "/platform/readiness", icon: "chart", match: ["/platform/readiness"], permission: "platform.tenant.read" },
-      { id: "platform.launches", label: "Khởi chạy tenant", href: "/platform/launches", icon: "office", match: ["/platform/launches"], permission: "platform.launch.read" },
-      { id: "platform.blueprints", label: "Blueprint", href: "/platform/blueprints", icon: "office", match: ["/platform/blueprints"], permission: "platform.blueprint.read" },
-      { id: "platform.seed-packs", label: "Seed Pack", href: "/platform/seed-packs", icon: "office", match: ["/platform/seed-packs"], permission: "platform.blueprint.read" },
-      { id: "platform.backups", label: "Backup định kỳ", href: "/platform/backups", icon: "folder", match: ["/platform/backups"], permission: "platform.backup.read" },
+      { id: "platform.overview", label: "platform_overview", href: "/platform", icon: "chart", match: ["/platform"], permission: "platform.tenant.read" },
+      { id: "platform.tenants", label: "platform_tenants", href: "/platform/tenants", icon: "business", match: ["/platform/tenants"], permission: "platform.tenant.read" },
+      { id: "platform.plans", label: "platform_plans", href: "/platform/plans", icon: "apps", match: ["/platform/plans"], permission: "platform.tenant.read" },
+      { id: "platform.readiness", label: "platform_readiness", href: "/platform/readiness", icon: "chart", match: ["/platform/readiness"], permission: "platform.tenant.read" },
+      { id: "platform.launches", label: "platform_launches", href: "/platform/launches", icon: "office", match: ["/platform/launches"], permission: "platform.launch.read" },
+      { id: "platform.blueprints", label: "platform_blueprints", href: "/platform/blueprints", icon: "office", match: ["/platform/blueprints"], permission: "platform.blueprint.read" },
+      { id: "platform.seed-packs", label: "platform_seed-packs", href: "/platform/seed-packs", icon: "office", match: ["/platform/seed-packs"], permission: "platform.blueprint.read" },
+      { id: "platform.backups", label: "platform_backups", href: "/platform/backups", icon: "folder", match: ["/platform/backups"], permission: "platform.backup.read" },
     ],
   },
   // -----------------------------------------------------------------------------
@@ -480,15 +493,15 @@ export const XHUB_NAVIGATION: XNavItem[] = [
   // -----------------------------------------------------------------------------
   {
     id: "delivery",
-    label: "Triển khai giải pháp",
+    label: "delivery",
     icon: "briefcase",
     href: "/delivery",
     match: ["/delivery"],
     permission: "delivery.read",
     group: "platform",
     children: [
-      { id: "delivery.overview", label: "Tổng quan pipeline", href: "/delivery", icon: "chart", match: ["/delivery"], permission: "delivery.read" },
-      { id: "delivery.engagements", label: "Dự án triển khai", href: "/delivery/engagements", icon: "briefcase", match: ["/delivery/engagements"], permission: "delivery.read" },
+      { id: "delivery.overview", label: "delivery_overview", href: "/delivery", icon: "chart", match: ["/delivery"], permission: "delivery.read" },
+      { id: "delivery.engagements", label: "delivery_engagements", href: "/delivery/engagements", icon: "briefcase", match: ["/delivery/engagements"], permission: "delivery.read" },
     ],
   },
   // -----------------------------------------------------------------------------
@@ -503,24 +516,24 @@ export const XHUB_NAVIGATION: XNavItem[] = [
   // -----------------------------------------------------------------------------
   {
     id: "engineering",
-    label: "Phát triển & Chất lượng",
+    label: "engineering",
     icon: "office",
     href: "/engineering",
     match: ["/engineering"],
     permission: "engineering.product.read",
     group: "platform",
     children: [
-      { id: "engineering.overview", label: "Tổng quan", href: "/engineering", icon: "chart", match: ["/engineering"], permission: "engineering.product.read" },
-      { id: "engineering.products", label: "Sản phẩm & Repository", href: "/engineering/products", icon: "business", match: ["/engineering/products"], permission: "engineering.product.read" },
-      { id: "engineering.versions", label: "Phiên bản & Phát hành", href: "/engineering/versions", icon: "list", match: ["/engineering/versions"], permission: "engineering.product.read" },
-      { id: "engineering.backlog", label: "Backlog", href: "/engineering/backlog", icon: "list", match: ["/engineering/backlog"], permission: "engineering.product.read" },
-      { id: "engineering.docs", label: "Tài liệu", href: "/engineering/docs", icon: "docs", match: ["/engineering/docs"], permission: "engineering.product.read" },
-      { id: "engineering.tests", label: "Kiểm thử", href: "/engineering/tests", icon: "test", match: ["/engineering/tests"], permission: "engineering.product.read" },
-      { id: "engineering.defects", label: "Lỗi (Defect)", href: "/engineering/defects", icon: "alert", match: ["/engineering/defects"], permission: "engineering.product.read" },
-      { id: "engineering.controls", label: "Khung kiểm soát", href: "/engineering/controls", icon: "list", match: ["/engineering/controls"], permission: "engineering.product.read" },
-      { id: "engineering.ai-systems", label: "Quản trị AI", href: "/engineering/ai-systems", icon: "chart", match: ["/engineering/ai-systems"], permission: "engineering.product.read" },
-      { id: "engineering.privacy", label: "Bảo vệ dữ liệu", href: "/engineering/privacy", icon: "docs", match: ["/engineering/privacy"], permission: "engineering.product.read" },
-      { id: "engineering.audit-room", label: "Phòng kiểm toán", href: "/engineering/audit-room", icon: "briefcase", match: ["/engineering/audit-room"], permission: "engineering.product.read" },
+      { id: "engineering.overview", label: "engineering_overview", href: "/engineering", icon: "chart", match: ["/engineering"], permission: "engineering.product.read" },
+      { id: "engineering.products", label: "engineering_products", href: "/engineering/products", icon: "business", match: ["/engineering/products"], permission: "engineering.product.read" },
+      { id: "engineering.versions", label: "engineering_versions", href: "/engineering/versions", icon: "list", match: ["/engineering/versions"], permission: "engineering.product.read" },
+      { id: "engineering.backlog", label: "engineering_backlog", href: "/engineering/backlog", icon: "list", match: ["/engineering/backlog"], permission: "engineering.product.read" },
+      { id: "engineering.docs", label: "engineering_docs", href: "/engineering/docs", icon: "docs", match: ["/engineering/docs"], permission: "engineering.product.read" },
+      { id: "engineering.tests", label: "engineering_tests", href: "/engineering/tests", icon: "test", match: ["/engineering/tests"], permission: "engineering.product.read" },
+      { id: "engineering.defects", label: "engineering_defects", href: "/engineering/defects", icon: "alert", match: ["/engineering/defects"], permission: "engineering.product.read" },
+      { id: "engineering.controls", label: "engineering_controls", href: "/engineering/controls", icon: "list", match: ["/engineering/controls"], permission: "engineering.product.read" },
+      { id: "engineering.ai-systems", label: "engineering_ai-systems", href: "/engineering/ai-systems", icon: "chart", match: ["/engineering/ai-systems"], permission: "engineering.product.read" },
+      { id: "engineering.privacy", label: "engineering_privacy", href: "/engineering/privacy", icon: "docs", match: ["/engineering/privacy"], permission: "engineering.product.read" },
+      { id: "engineering.audit-room", label: "engineering_audit-room", href: "/engineering/audit-room", icon: "briefcase", match: ["/engineering/audit-room"], permission: "engineering.product.read" },
     ],
   },
 ];

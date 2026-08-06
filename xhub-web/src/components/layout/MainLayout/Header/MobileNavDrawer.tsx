@@ -9,6 +9,7 @@ import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
@@ -24,6 +25,7 @@ function Icon({ name, className }: { name?: string; className?: string }) {
 
 function Leaf({ item, pathname, onNavigate }: { item: XNavItem; pathname: string; onNavigate: () => void }) {
   const on = isItemActive(item, pathname);
+  const t = useTranslations("nav");
   return (
     <Link
       href={item.href}
@@ -37,7 +39,7 @@ function Leaf({ item, pathname, onNavigate }: { item: XNavItem; pathname: string
       )}
     >
       <Icon name={item.icon} className="size-4 shrink-0 text-gray-400 dark:text-dark-300" />
-      {item.label}
+      {t(item.label)}
     </Link>
   );
 }
@@ -45,6 +47,7 @@ function Leaf({ item, pathname, onNavigate }: { item: XNavItem; pathname: string
 export function MobileNavDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const pathname = usePathname() ?? "";
   const { tree } = useNavigation();
+  const t = useTranslations("nav");
 
   const activeWs = findActivePrimary(tree, pathname);
   const [selectedId, setSelectedId] = useState<string | undefined>(activeWs?.id);
@@ -102,7 +105,7 @@ export function MobileNavDrawer({ open, onClose }: { open: boolean; onClose: () 
                     )}
                   >
                     <Icon name={ws.icon} className="size-5" />
-                    <span className="max-w-[64px] truncate">{ws.label}</span>
+                    <span className="max-w-[64px] truncate">{t(ws.label)}</span>
                   </button>
                 );
               })}
@@ -113,7 +116,7 @@ export function MobileNavDrawer({ open, onClose }: { open: boolean; onClose: () 
               {(selected?.children ?? []).map((item) =>
                 item.children?.length ? (
                   <div key={item.id} className="pt-1">
-                    <p className="px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-dark-400">{item.label}</p>
+                    <p className="px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-dark-400">{t(item.label)}</p>
                     {item.children.map((leaf) => (
                       <div key={leaf.id} className="pl-2">
                         <Leaf item={leaf} pathname={pathname} onNavigate={onClose} />

@@ -26,7 +26,8 @@
     { "roleCode": "IOC_TWIN_ADMIN", "name": "Quản trị Twin Studio (IOC)", "permissions": ["ioc.view", "ioc.studio.read", "ioc.studio.write", "ioc.studio.review", "ioc.studio.publish", "ioc.asset.manage", "ioc.datalayer.manage", "ioc.template.manage"], "dataScope": "TENANT" },
     { "roleCode": "PLT_ENGINEERING_ADMIN", "name": "Quản trị Phát triển & Chất lượng", "permissions": ["engineering.*"], "dataScope": "ALL" },
     { "roleCode": "SALES_MANAGER", "name": "Quản lý Kinh doanh", "permissions": ["customer.*", "opportunity.*", "catalog.*", "proposal.*"], "dataScope": "TENANT" },
-    { "roleCode": "CONTRACT_MANAGER", "name": "Quản lý Hợp đồng", "permissions": ["contract.*"], "dataScope": "TENANT" }
+    { "roleCode": "CONTRACT_MANAGER", "name": "Quản lý Hợp đồng", "permissions": ["contract.*"], "dataScope": "TENANT" },
+    { "roleCode": "PRODUCT_SUPPORT_AGENT", "name": "Chuyên viên Hỗ trợ sản phẩm khách hàng", "permissions": ["support-case.create", "support-case.manage", "support-case.resolve", "engineering.backlog.manage"], "dataScope": "TENANT" }
   ],
   "_userBindings_note": "USER RoleBindings the seeder ensures so the test admin (user-nam -> usr-cfo) and CEO keep passing every gated endpoint under enforcement via PLATFORM_ADMIN ['*']. Canonical replacement for the legacy ROLE_PLATFORM_ADMIN USER bindings; both coexist this step.",
   "userBindings": [
@@ -34,6 +35,7 @@
     { "id": "rb-platform-admin-canonical-ceo", "subjectType": "USER", "subjectId": "usr-ceo", "roleCode": "PLATFORM_ADMIN", "scope": { "all": true } },
     { "id": "rb-service-desk-agent-infra", "subjectType": "USER", "subjectId": "usr-it-support", "roleCode": "SERVICE_DESK_AGENT", "scope": { "orgUnitId": "ou-tech" } },
     { "id": "rb-solution-delivery-mgr", "subjectType": "USER", "subjectId": "usr-delivery-mgr", "roleCode": "SOLUTION_DELIVERY_MANAGER", "scope": { "tenant": true } },
-    { "id": "rb-hr-manager-hr-head", "subjectType": "USER", "subjectId": "usr-hr-head", "roleCode": "HR_MANAGER", "scope": { "tenant": true } }
+    { "id": "rb-hr-manager-hr-head", "subjectType": "USER", "subjectId": "usr-hr-head", "roleCode": "HR_MANAGER", "scope": { "tenant": true } },
+    { "id": "rb-product-support-agent-support-head", "subjectType": "USER", "subjectId": "usr-support-head", "roleCode": "PRODUCT_SUPPORT_AGENT", "scope": { "orgUnitId": "ou-support" } }
   ]
 }

@@ -22,6 +22,7 @@
 8. [Auth & authz](#8-auth--authz)
 9. [Kiểm thử & gate](#9-kiểm-thử--gate)
 10. [Quy ước & cạm bẫy](#10-quy-ước--cạm-bẫy)
+    - [10.5 Hỗ trợ khách hàng sản phẩm](#105-hỗ-trợ-khách-hàng-sản-phẩm-product-customer-support--06082026)
 11. [Tài liệu liên quan](#11-tài-liệu-liên-quan)
 
 ---
@@ -152,7 +153,8 @@ npm run seed:records   # seed 6 tài liệu cho module Records/Documents
 ## 3. Design system Tailux
 
 FE dựng trên bộ theme Tailux (Tailwind v4) mua ngoài, nguồn demo tại
-`D:\Code\handoff\xhub\tailux\ts\demo`. Nguyên tắc port: **không sửa file Tailux gốc**;
+`D:\Chinh\tailux\ts\demo` *(sửa lại 05/08/2026 — đường dẫn cũ `D:\Code\handoff\xhub\tailux\...`
+không còn tồn tại trên máy hiện tại)*. Nguyên tắc port: **không sửa file Tailux gốc**;
 XHub tạo lớp adapter + kit riêng (`src/xhub/ui`) style theo Tailux, và override token
 thương hiệu ở `src/app/globals.css`.
 
@@ -189,7 +191,7 @@ thương hiệu ở `src/app/globals.css`.
 
 Kit XHub nằm ở `src/xhub/ui/*` (đọc/hiển thị) và `src/xhub/ui/form/*` (nhập liệu). Bảng
 dưới map từng component sang pattern Tailux tương ứng và doc gốc dưới
-`D:\Code\handoff\xhub\tailux\ts\demo\public\md\...`.
+`D:\Chinh\tailux\ts\demo\public\md\...`.
 
 | XHub component | File | Backed bởi (Tailux) | Doc gốc | Usage một dòng |
 |---|---|---|---|---|
@@ -204,6 +206,7 @@ dưới map từng component sang pattern Tailux tương ứng và doc gốc dư
 | `SwitchField` | `src/xhub/ui/form/Fields.tsx` | `Switch` (Headless UI) | `forms/switch` | `<SwitchField label="Bật" checked={v} onChange={setV}/>` |
 | `FormDrawer` | `src/xhub/ui/form/FormDrawer.tsx` | Drawer (Headless UI `Dialog`+`Transition`, slide phải) | `components/drawer/Right.md` | `<FormDrawer open title onSubmit>…</FormDrawer>` |
 | `FormSection` | `src/xhub/ui/form/FormSection.tsx` | nhóm field trong form demo | `forms/*` | `<FormSection title="Thông tin">…</FormSection>` |
+| `ConfirmDialog` | `src/xhub/ui/ConfirmDialog.tsx` | `ConfirmModal` (pending→confirming→error) | `components/modal/*` | `<ConfirmDialog open title description onConfirm/>` — mọi xoá đều bắt buộc qua đây (chốt 05/08/2026, xem `docs/design-system/TAILUX_PAGE_PATTERNS.md` quy tắc 3); thêm `typedConfirmation={{code}}` cho dữ liệu tài chính/nhạy cảm |
 
 > Kit form (`src/xhub/ui/form/index.ts`) export: `TextField, TextareaField, SelectField,
 > SwitchField, FormDrawer, FormSection`. `FormDrawer` mirror pattern của
@@ -218,7 +221,7 @@ w-full rounded-lg border bg-white px-3 py-2 text-sm ... focus:ring-2 focus:ring-
 ### 3.3 Pattern Tailux giàu hơn cho màn hình tương lai
 
 Demo Tailux còn nhiều pattern chưa port, tham khảo khi dựng màn mới
-(`D:\Code\handoff\xhub\tailux\ts\demo\src\app\pages\`):
+(`D:\Chinh\tailux\ts\demo\src\app\pages\`):
 
 - **tables/** — `advanced-table`, `*-datatable-*`, `react-table` (sort/filter/column).
 - **forms/** — `form-validation`, `add-product-form`, `KYCForm`, `datepicker`,
@@ -232,6 +235,68 @@ Demo Tailux còn nhiều pattern chưa port, tham khảo khi dựng màn mới
   popover, progress, skeleton, spinner, steps, tab, tag, timeline, tooltip, treeview`.
   Lưu ý một số là **markup thuần** (steps: `<ol class="steps"><li class="step">`),
   hoặc **attribute-driven** (tooltip: `data-tooltip data-tooltip-content="…"`).
+
+### 3.4 Content & UX pattern cấp-trang (không chỉ component)
+
+Mục 3.2/3.3 ở trên map **component**. Riêng cách Tailux **bố trí nội dung** và **trải nghiệm
+người dùng** ở cấp độ cả trang (thứ tự khối, hành vi loading/xoá/rỗng, câu chữ mẫu) cho 6 dạng
+trang hay gặp nhất — Trang chủ/Dashboard, Danh sách, Chi tiết, Form popup, Form điều hướng riêng
+trang (wizard), Form tạo mới đơn giản — được ghi riêng ở
+[`docs/design-system/TAILUX_PAGE_PATTERNS.md`](./design-system/TAILUX_PAGE_PATTERNS.md).
+**Đọc file đó trước khi dựng bất kỳ trang mới nào** — đây là phần Tailux đầu tư nhiều nhất, dễ bỏ
+sót nếu chỉ nhìn theo component đơn lẻ.
+
+### 3.5 Đa ngôn ngữ (i18n) — hạ tầng chuẩn, 05/08/2026
+
+Thư viện: [`next-intl`](https://next-intl.dev) v4. **Cố ý KHÔNG dùng URL prefix** (`/vi/...`,
+`/en/...`) — với ~150 route hiện có, thêm prefix nghĩa là viết lại toàn bộ route/link. Thay vào đó,
+ngôn ngữ đọc từ **cookie** `NEXT_LOCALE` (mặc định `vi`), mọi URL/link giữ nguyên y hệt.
+
+- `src/i18n/locales.ts` — danh sách locale hỗ trợ (`vi`, `en`), locale mặc định, nhãn hiển thị.
+- `src/i18n/request.ts` — `getRequestConfig` đọc cookie, nạp đúng `messages/<locale>.json`.
+- `src/i18n/actions.ts` — Server Action `setLocale()` ghi cookie (gọi từ Client Component, xong
+  `router.refresh()` — không cần tải lại trang, không đổi URL).
+- `messages/vi.json` / `messages/en.json` — namespace hiện có: `settings` (nhãn khu vực đổi ngôn
+  ngữ), `nav` (toàn bộ 123 nhãn menu), `home` (trang `/home/executive`), `sales` (cụm Kinh doanh:
+  Khách hàng/Cơ hội/Danh mục/Hợp đồng/KPI).
+- Đổi ngôn ngữ ở đâu: Cài đặt cá nhân (icon bánh răng trên header) → mục **Ngôn ngữ**
+  (`src/components/navigation/SettingsDrawer.tsx`) — cùng kiểu áp dụng ngay như Giao diện/Mật độ.
+
+**⚠️ Quy tắc đặt tên key bắt buộc — KHÔNG dùng dấu chấm trong key:** `next-intl` luôn hiểu dấu chấm
+trong key là **phân cấp namespace lồng nhau**, không phải ký tự literal. Nếu đặt 2 key
+`"office": "X.Office"` và `"office.customers": "Khách hàng"` trong CÙNG 1 namespace phẳng,
+`t("office.customers")` sẽ lỗi `MISSING_MESSAGE` (vì `office` đã là chuỗi lá, không thể đi tiếp vào
+`.customers`) — lỗi này ĐÃ xảy ra thật khi dựng `nav` namespace (123 key từ `id` của
+`navigation.model.ts`, nhiều id có dấu chấm như `office.customers`). Cách khắc phục đã dùng: đổi
+toàn bộ dấu `.` trong key thành `_` (`office_customers`), giữ dấu gạch ngang bình thường (`office_ai-systems` không sao vì `-` không có ý nghĩa đặc biệt). Khi thêm key mới, **không copy nguyên `id`
+có dấu chấm làm key** — luôn thay `.` bằng `_` trước.
+
+**Component nào là Server, component nào là Client:**
+- Server Component (trang `.tsx` không có `"use client"`, kể cả `async function`): dùng
+  `getTranslations(namespace)` từ `next-intl/server` — `const t = await getTranslations("sales")`.
+- Client Component (`"use client"`, ví dụ nav renderer, `SettingsDrawer`): dùng
+  `useTranslations(namespace)` từ `next-intl` — `const t = useTranslations("nav")`.
+
+**Phạm vi ĐÃ chuyển đổi** (chỉ phần này đổi ngôn ngữ khi bấm chuyển — phần còn lại của app vẫn hiển
+thị tiếng Việt cứng cho tới khi được chuyển đổi tiếp, đây là chủ đích, không phải thiếu sót):
+menu điều hướng (toàn bộ, 5 file render + `navigation.model.ts`), `/home/executive` (chữ giao diện
+— tiêu đề/nhãn/tên cột; **không** đụng tới dữ liệu mẫu/seed hiển thị bên trong, ví dụ tên chỉ đạo,
+nội dung X.AI tóm tắt — đó là dữ liệu nghiệp vụ, không phải chữ giao diện), 5 trang danh sách cụm
+Kinh doanh (`/office/customers`, `/office/opportunities`, `/office/catalog`, `/office/contracts`,
+`/office/revenue-kpi` — tiêu đề/mô tả/tên cột/nút/trạng thái rỗng).
+
+**Cố ý CHƯA chuyển đổi** (mở rộng dần ở các đợt sau, không phải lỗi):
+- Trang chi tiết của cụm Kinh doanh (`/office/customers/[id]`, `/office/opportunities/[id]`,
+  `/office/contracts/[id]`) và các client component hành động (`CustomerActions`, `ContractActions`,
+  `OpportunityActions`).
+- Nhãn enum trạng thái nằm trong các file `*-data.ts` (`CUSTOMER_STATUS_LABEL`,
+  `OPPORTUNITY_STAGE_LABEL`, `CONTRACT_STATUS_LABEL`) — hiện vẫn là chuỗi tiếng Việt cứng, chưa nối
+  vào `messages/*.json`.
+- 3 trang `/home/sales`, `/home/me` và toàn bộ ~140 trang còn lại của app.
+
+**Cách mở rộng cho trang mới:** thêm namespace/key vào CẢ `messages/vi.json` lẫn `messages/en.json`
+(giữ đúng key giống nhau ở cả 2 file — không có công cụ kiểm tra thiếu key tự động ở đợt này), rồi
+gọi `getTranslations`/`useTranslations` đúng theo loại component ở trên.
 
 ---
 
@@ -686,6 +751,51 @@ Các script `test:controlplane/mdm/backup/records/webhook` là **reset + smoke**
   rotate tại console.anthropic.com — không tự động được. Xem `SECURITY.md`.
 
 ---
+
+## 10.5 Hỗ trợ khách hàng sản phẩm (Product Customer Support) — 06/08/2026
+
+Module xử lý **ý kiến/hỗ trợ khách hàng cho các sản phẩm ngoài (X2, X1, FinERP, X.Space)** —
+thao tác, sửa dữ liệu, hướng dẫn sử dụng, báo lỗi, đề xuất nâng cấp — do đội nội bộ tiếp nhận
+(hiện tại từ nhóm Zalo hỗ trợ khách hàng) và ghi nhận chuẩn trên X.Office.
+
+**Vì sao là module MỚI, không dùng lại Service Desk (`office.service-desk`):** Service Desk
+(`src/tickets/*`) là helpdesk **nội bộ** — nhân viên tự yêu cầu, nhân viên khác xử lý (không có
+khái niệm khách hàng ngoài, sản phẩm, hay lỗi phần mềm). Product Customer Support (`src/support-
+cases/*`, model `SupportCase`/`SupportCaseEvent`, `prisma-xoffice/schema.prisma`) là khác đối
+tượng hoàn toàn: khách hàng bên ngoài, gắn với 1 sản phẩm (`productCode`, plain string tham
+chiếu `Product.code` ở Platform DB — không FK, đúng quy ước cross-DB đã dùng cho
+`tenantLaunchId`), có thể gắn với 1 `Customer` (CRM nội bộ, cùng DB, FK thật).
+
+**FSM** (`src/support-cases/support-cases.fsm.ts`): `NEW → TRIAGED → IN_PROGRESS ⇄
+WAITING_CUSTOMER → RESOLVED → CLOSED`, `CANCELLED` từ mọi trạng thái đang mở.
+
+**Action "Chuyển Backlog/Defect" — điểm mấu chốt của module:** một case cần nâng cấp phần mềm
+có nút chuyển thành `BacklogItem` (tính năng/nâng cấp) hoặc `Defect` (lỗi) trên **Engineering
+Governance Hub** (Platform DB, `:4000`). Đây là lời gọi HTTP THẬT qua process khác
+(`EngineeringSupportClient`, cùng khuôn với `LaunchFactoryClient` của Delivery→Launch) — không
+có bảng chung, không bypass. Ghi lại 2 chiều: `BacklogItem/Defect.sourceRef` = mã case,
+`.correlationId` = id case; `SupportCase.escalatedItemId/escalatedItemCode` = id/mã mục đã tạo.
+Idempotent: bấm lại không tạo mục thứ 2, trả về mục đã có (`replayed: true`).
+
+**⚠️ Không có entity "ChangeRequest" riêng.** `docs/implementation/engineering-hub/
+ADR_GOVERNANCE_RECONCILIATION.md` đã quyết định KHÔNG xây `ChangeRequest` như 1 entity riêng —
+action "chuyển change request" ở đây map vào `BacklogItem` (type `FEATURE`/`UPGRADE_MIGRATION`/
+`TECH_DEBT`/`TASK`) hoặc `Defect`, tái dùng đúng 2 entity đã có sẵn trong Engineering Hub, không
+xây thêm entity mới ngoài phạm vi đã chốt trước đó.
+
+**File chính:** backend `xhub-api/src/support-cases/{support-cases.fsm,.service,.controller,
+.module,engineering-support.client}.ts`; seed `scripts/support-cases-seed.mjs` (3 case mẫu theo
+đúng dạng hội thoại hỗ trợ X2 thật — đổi hotline, đối soát thu/chi, hướng dẫn sử dụng — không
+copy nguyên văn); smoke `scripts/support-cases-smoke.mjs` (`npm run test:support-cases`, cần cả
+2 process :4000+:4001). Frontend: `xhub-web/src/app/(app)/office/support-cases/{page,[id]/page}
+.tsx`, `xhub-web/src/xoffice/support-cases/{SupportCaseActions,SupportCaseCreateButton}.client
+.tsx`, lib `xhub-web/src/xoffice/lib/support-cases-data.ts`. Nav: nhóm mới `office.support`
+(cạnh `office.services`/`office.sales`).
+
+**Quyền:** role mới `PRODUCT_SUPPORT_AGENT` (`support-case.create/manage/resolve` +
+`engineering.backlog.manage` — cần quyền này để escalate-to-Backlog thành công qua guard thật
+của Platform, không bypass). Seed cả 2 DB (`npm run seed:roles` + `seed:roles-xoffice`) vì
+`role-registry.seed.json` là 1 nguồn, nhân ra cả Platform và X.Office.
 
 ## 11. Tài liệu liên quan
 

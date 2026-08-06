@@ -45,13 +45,18 @@ const ALLOWED_TRANSITIONS: Record<string, string[]> = {
 export interface CreateBacklogItemInput {
   productId: string;
   featureId?: string;
-  code: string;
+  code?: string;
   title: string;
   description?: string;
   type?: string;
   priority?: string;
   targetVersionId?: string;
   actorId?: string;
+  // Provenance (reserved columns, wired up 2026-08-06 for the Product
+  // Customer Support escalate action — first real writer of these fields).
+  sourceSystem?: string;
+  sourceRef?: string;
+  correlationId?: string;
 }
 
 /**
@@ -84,7 +89,6 @@ export class BacklogService {
   }
 
   async create(input: CreateBacklogItemInput) {
-    if (!input.code?.trim()) throw new BadRequestException('code is required');
     if (!input.title?.trim()) throw new BadRequestException('title is required');
     const type = input.type ?? 'TASK';
     if (!TYPES.includes(type)) throw new BadRequestException(`type must be one of ${TYPES.join(', ')}`);
@@ -94,26 +98,39 @@ export class BacklogService {
       this.prisma.db.product.findUnique({ where: { id: input.productId } }),
     );
     if (!product) throw new NotFoundException(`Unknown product: ${input.productId}`);
+
+    const code = input.code?.trim() || (await this.nextCode(product.code));
     const existing = await this.prisma.withBypass(() =>
-      this.prisma.db.backlogItem.findUnique({ where: { code: input.code } }),
+      this.prisma.db.backlogItem.findUnique({ where: { code } }),
     );
-    if (existing) throw new BadRequestException(`Backlog item code already exists: ${input.code}`);
+    if (existing) throw new BadRequestException(`Backlog item code already exists: ${code}`);
     return this.prisma.withBypass(() =>
       this.prisma.db.backlogItem.create({
         data: {
           productId: input.productId,
           featureId: input.featureId,
-          code: input.code,
+          code,
           title: input.title,
           description: input.description,
           type,
           priority,
           targetVersionId: input.targetVersionId,
+          ...(input.sourceSystem ? { sourceSystem: input.sourceSystem } : {}),
+          ...(input.sourceRef ? { sourceRef: input.sourceRef } : {}),
+          ...(input.correlationId ? { correlationId: input.correlationId } : {}),
           createdBy: input.actorId,
           updatedBy: input.actorId,
         },
       }),
     );
+  }
+
+  /** Auto-generated code when the caller doesn't supply one — same idiom as DefectsService.nextCode(). */
+  private async nextCode(productCode: string): Promise<string> {
+    const count = await this.prisma.withBypass(() =>
+      this.prisma.db.backlogItem.count({ where: { code: { startsWith: `BLG-${productCode}-` } } }),
+    );
+    return `BLG-${productCode}-${String(count + 1).padStart(4, '0')}`;
   }
 
   /** FSM transition — same guard style as VersionsService.transition(). */

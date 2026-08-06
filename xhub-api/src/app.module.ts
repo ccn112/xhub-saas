@@ -34,6 +34,7 @@ import { CommercialCatalogModule } from './commercial-catalog/commercial-catalog
 import { ProposalsModule } from './proposals/proposals.module';
 import { ContractsModule } from './contracts/contracts.module';
 import { RevenueKpiModule } from './revenue-kpi/revenue-kpi.module';
+import { SupportCasesModule } from './support-cases/support-cases.module';
 
 /**
  * "All-in-one" composition root (boots via `main.ts` / `npm start`).
@@ -60,7 +61,7 @@ import { RevenueKpiModule } from './revenue-kpi/revenue-kpi.module';
  * do not rely on it for any X.Office flow.
  */
 @Module({
-  imports: [PrismaModule, AuthModule.forPlatform(), SeedModule, PreferencesModule, IdentityModule.forPlatform(), XofficeModule, ControlplaneModule, MdmModule, BackupModule, RecordsModule, WebhookModule, TestRunsModule, RequestsModule, DirectivesModule, TicketsModule, BookingsModule, AnnouncementsModule, PlatformModule, TenantLaunchModule, CatalogModule, OnboardingModule, DeliveryModule, TenantLifecycleModule, WorkModule, ManageModule, IocModule, PeopleModule, CustomersModule, OpportunitiesModule, CommercialCatalogModule, ProposalsModule, ContractsModule, RevenueKpiModule],
+  imports: [PrismaModule, AuthModule.forPlatform(), SeedModule, PreferencesModule, IdentityModule.forPlatform(), XofficeModule, ControlplaneModule, MdmModule, BackupModule, RecordsModule, WebhookModule, TestRunsModule, RequestsModule, DirectivesModule, TicketsModule, BookingsModule, AnnouncementsModule, PlatformModule, TenantLaunchModule, CatalogModule, OnboardingModule, DeliveryModule, TenantLifecycleModule, WorkModule, ManageModule, IocModule, PeopleModule, CustomersModule, OpportunitiesModule, CommercialCatalogModule, ProposalsModule, ContractsModule, RevenueKpiModule, SupportCasesModule],
   controllers: [AppController],
   providers: [AppService],
 })

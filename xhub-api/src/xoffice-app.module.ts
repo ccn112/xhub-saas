@@ -25,6 +25,7 @@ import { CommercialCatalogModule } from './commercial-catalog/commercial-catalog
 import { ProposalsModule } from './proposals/proposals.module';
 import { ContractsModule } from './contracts/contracts.module';
 import { RevenueKpiModule } from './revenue-kpi/revenue-kpi.module';
+import { SupportCasesModule } from './support-cases/support-cases.module';
 
 /**
  * X.Office process — Phase 1.5 Stage B composition root. Carries the
@@ -65,6 +66,7 @@ import { RevenueKpiModule } from './revenue-kpi/revenue-kpi.module';
     ProposalsModule,
     ContractsModule,
     RevenueKpiModule,
+    SupportCasesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

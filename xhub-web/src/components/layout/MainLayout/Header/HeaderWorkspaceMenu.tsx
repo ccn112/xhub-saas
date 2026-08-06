@@ -9,6 +9,7 @@
 import Link from "next/link";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
@@ -31,6 +32,7 @@ const active = "bg-primary-600/10 text-primary-600 dark:text-primary-400";
 
 function TopLink({ item, pathname }: { item: XNavItem; pathname: string }) {
   const on = isItemActive(item, pathname);
+  const t = useTranslations("nav");
   return (
     <Link
       href={item.href}
@@ -38,7 +40,7 @@ function TopLink({ item, pathname }: { item: XNavItem; pathname: string }) {
       className={clsx(linkBase, on ? active : idle)}
     >
       <NavIcon name={item.icon} className="size-4 shrink-0" />
-      {item.label}
+      {t(item.label)}
     </Link>
   );
 }
@@ -46,11 +48,12 @@ function TopLink({ item, pathname }: { item: XNavItem; pathname: string }) {
 function GroupDropdown({ item, pathname }: { item: XNavItem; pathname: string }) {
   const on = isBranchActive(item, pathname);
   const children = item.children ?? [];
+  const t = useTranslations("nav");
   return (
     <Menu as="div" className="relative shrink-0">
       <MenuButton className={clsx(linkBase, on ? active : idle)}>
         <NavIcon name={item.icon} className="size-4 shrink-0" />
-        {item.label}
+        {t(item.label)}
         <ChevronDownIcon className="size-4 opacity-60" />
       </MenuButton>
       <MenuItems
@@ -74,7 +77,7 @@ function GroupDropdown({ item, pathname }: { item: XNavItem; pathname: string })
                   )}
                 >
                   <NavIcon name={leaf.icon} className="size-4 shrink-0 text-gray-400 dark:text-dark-300" />
-                  {leaf.label}
+                  {t(leaf.label)}
                 </Link>
               </MenuItem>
             );
@@ -89,6 +92,7 @@ export function HeaderWorkspaceMenu() {
   const { isExpanded } = useSidebarContext();
   const pathname = usePathname() ?? "";
   const { tree } = useNavigation();
+  const t = useTranslations("nav");
 
   // Only when the vertical panel is collapsed; the panel already shows these
   // items when expanded.
@@ -100,7 +104,7 @@ export function HeaderWorkspaceMenu() {
 
   return (
     <nav
-      aria-label={`Menu ${ws?.label ?? "workspace"}`}
+      aria-label={`Menu ${ws ? t(ws.label) : "workspace"}`}
       className="ml-1 hidden min-w-0 items-center gap-0.5 overflow-x-auto md:flex"
     >
       {children.map((item) =>

@@ -49,6 +49,8 @@ const TENANT_TABLES = [
   'Proposal', 'ProposalLine', 'ProposalEvent',
   'Contract', 'ContractLine', 'ContractSignature', 'ContractObligation',
   'BillingRequest', 'ContractEvent',
+  // Product Customer Support (2026-08-06).
+  'SupportCase', 'SupportCaseEvent',
 ];
 
 const PREDICATE =

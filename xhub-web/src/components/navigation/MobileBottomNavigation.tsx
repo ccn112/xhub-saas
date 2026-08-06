@@ -6,6 +6,7 @@ import { useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import { navigationIcons } from "@/navigation/icons";
@@ -50,6 +51,7 @@ function TabLink({
   onClick?: () => void;
 }) {
   const Icon = item.icon ? navigationIcons[item.icon] : undefined;
+  const t = useTranslations("nav");
   return (
     <Link
       href={item.placeholder ? "#" : item.href}
@@ -63,7 +65,7 @@ function TabLink({
       )}
     >
       {Icon && <Icon className="size-6" />}
-      <span className="max-w-full truncate px-1">{item.label}</span>
+      <span className="max-w-full truncate px-1">{t(item.label)}</span>
       {count > 0 && (
         <span className="absolute top-1 right-1/2 translate-x-4 rounded-full bg-primary-600 px-1 text-[10px] font-semibold text-white">
           {count > 9 ? "9+" : count}
@@ -77,6 +79,7 @@ export function MobileBottomNavigation() {
   const pathname = usePathname() ?? "";
   const { tree, badges } = useNavigation();
   const [moreOpen, setMoreOpen] = useState(false);
+  const t = useTranslations("nav");
 
   const { main, more } = pickPrimary(tree);
   const moreActive = more.some((i) => isBranchActive(i, pathname));
@@ -123,7 +126,7 @@ export function MobileBottomNavigation() {
                       )}
                     >
                       {Icon && <Icon className="size-6" />}
-                      <span className="truncate">{item.label}</span>
+                      <span className="truncate">{t(item.label)}</span>
                     </Link>
                   </li>
                 );

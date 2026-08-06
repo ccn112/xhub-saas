@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { SectionCard } from "@/xhub/ui/Card";
 import { StatCard } from "@/xhub/ui/StatCard";
 import { Badge } from "@/xhub/ui/Badge";
@@ -15,7 +16,8 @@ export const metadata = { title: "Tổng quan điều hành · XHub" };
 const monthLabel = (ym: string) => `T${ym.split("-")[1]}`;
 const prio: Record<string, "error" | "warning" | "neutral"> = { critical: "error", high: "error", medium: "warning", low: "neutral" };
 
-export default function ExecutiveHome() {
+export default async function ExecutiveHome() {
+  const t = await getTranslations("home");
   const kpi = byId<KpiSnapshot>("kpiSnapshots", "kpi-exec-202608");
   const m = kpi?.metrics ?? {};
   const revenue = collection<RevenuePoint>("revenueSeries");
@@ -31,36 +33,36 @@ export default function ExecutiveHome() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="font-heading text-xl font-bold text-gray-800 dark:text-dark-50">Tổng quan điều hành</h1>
-        <p className="text-sm text-gray-500 dark:text-dark-300">Sức khỏe doanh nghiệp, cảnh báo và việc cần quyết định</p>
+        <h1 className="font-heading text-xl font-bold text-gray-800 dark:text-dark-50">{t("title")}</h1>
+        <p className="text-sm text-gray-500 dark:text-dark-300">{t("subtitle")}</p>
       </div>
 
       {/* KPI row */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-        <StatCard label="Doanh thu tháng" value={vndShort(m.monthlyRevenue)} icon="💰" tone="success" />
-        <StatCard label="Công nợ phải thu" value={vndShort(m.receivables)} icon="🧾" tone="warning" />
-        <StatCard label="Chờ phê duyệt" value={num(m.pendingApprovals)} icon="🛡️" tone="primary" />
-        <StatCard label="Dự án đang chạy" value={num(m.activeProjects)} icon="📁" tone="info" />
-        <StatCard label="Việc quá hạn" value={num(m.overdueTasks)} icon="⏰" tone="error" />
-        <StatCard label="HĐ sắp hết hạn" value={num(m.contractsExpiring)} icon="📄" tone="neutral" />
+        <StatCard label={t("statRevenue")} value={vndShort(m.monthlyRevenue)} icon="💰" tone="success" />
+        <StatCard label={t("statReceivable")} value={vndShort(m.receivables)} icon="🧾" tone="warning" />
+        <StatCard label={t("statPendingApproval")} value={num(m.pendingApprovals)} icon="🛡️" tone="primary" />
+        <StatCard label={t("statActiveProjects")} value={num(m.activeProjects)} icon="📁" tone="info" />
+        <StatCard label={t("statOverdueWork")} value={num(m.overdueTasks)} icon="⏰" tone="error" />
+        <StatCard label={t("statExpiringContracts")} value={num(m.contractsExpiring)} icon="📄" tone="neutral" />
       </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         <div className="space-y-4 xl:col-span-2">
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <SectionCard accent="success" title="Doanh thu 6 tháng">
+            <SectionCard accent="success" title={t("chartRevenue6m")}>
               <AreaChart categories={revenue.map((r) => monthLabel(r.month))} values={revenue.map((r) => +(r.value / 1e9).toFixed(1))} />
             </SectionCard>
-            <SectionCard accent="success" title="Doanh thu theo sản phẩm">
+            <SectionCard accent="success" title={t("chartRevenueByProduct")}>
               <DonutChart labels={revByProduct.map((r) => productName(r.productId))} values={revByProduct.map((r) => +(r.value / 1e9).toFixed(2))} />
             </SectionCard>
           </div>
 
-          <SectionCard title="Chỉ đạo & watchlist" bodyClassName="p-0">
+          <SectionCard title={t("directivesWatchlist")} bodyClassName="p-0">
             <div className="overflow-x-auto">
             <table className="w-full min-w-[560px] text-sm">
               <thead className="border-b border-gray-200 text-left text-xs text-gray-400 uppercase dark:border-dark-600 dark:text-dark-300">
-                <tr><th className="px-4 py-3">Chỉ đạo</th><th className="px-4 py-3">Phụ trách</th><th className="px-4 py-3">Hạn</th><th className="px-4 py-3 w-40">Tiến độ</th></tr>
+                <tr><th className="px-4 py-3">{t("tableDirective")}</th><th className="px-4 py-3">{t("tableOwner")}</th><th className="px-4 py-3">{t("tableDue")}</th><th className="px-4 py-3 w-40">{t("tableProgress")}</th></tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-dark-600">
                 {directives.map((d) => (
@@ -79,13 +81,13 @@ export default function ExecutiveHome() {
             </div>
           </SectionCard>
 
-          <SectionCard accent="error" title="Cảnh báo rủi ro dự án">
+          <SectionCard accent="error" title={t("projectRiskAlerts")}>
             <div className="space-y-2">
               {risks.map((r) => (
                 <div key={r.id} className="flex items-center gap-2 rounded-lg border border-gray-200 p-2.5 dark:border-dark-600">
                   <Badge tone={r.severity === "high" ? "error" : "warning"}>{r.severity}</Badge>
                   <span className="flex-1 text-sm text-gray-700 dark:text-dark-100">{r.title}</span>
-                  <span className="text-xs text-gray-400">Hạn {dateVN(r.dueDate)}</span>
+                  <span className="text-xs text-gray-400">{t("dueLabel", { date: dateVN(r.dueDate) })}</span>
                 </div>
               ))}
             </div>
@@ -93,9 +95,9 @@ export default function ExecutiveHome() {
         </div>
 
         <div className="space-y-4">
-          {recap ? <AiRecap points={recap.bullets} footnote={`X.AI tạo lúc ${dateVN(recap.generatedAt)} · chỉ hỗ trợ đọc, không tự phê duyệt.`} /> : null}
+          {recap ? <AiRecap points={recap.bullets} footnote={t("aiFootnote", { date: dateVN(recap.generatedAt) })} /> : null}
 
-          <SectionCard accent="warning" title="Phê duyệt ưu tiên" action={<Link href="/approvals" className="text-sm text-primary-600 hover:underline">Xem tất cả</Link>}>
+          <SectionCard accent="warning" title={t("priorityApprovals")} action={<Link href="/approvals" className="text-sm text-primary-600 hover:underline">{t("viewAll")}</Link>}>
             <div className="space-y-2">
               {approvals.map((a) => (
                 <Link key={a.id} href="/inbox/wi-payment-mp-02" className="flex items-center gap-2 rounded-lg border border-gray-200 p-2.5 hover:border-primary-300 dark:border-dark-600">
@@ -109,7 +111,7 @@ export default function ExecutiveHome() {
             </div>
           </SectionCard>
 
-          <SectionCard accent="info" title="Lịch hôm nay">
+          <SectionCard accent="info" title={t("todaySchedule")}>
             <div className="space-y-3">
               {events.map((e) => (
                 <div key={e.id} className="flex items-center gap-3">
@@ -120,13 +122,13 @@ export default function ExecutiveHome() {
             </div>
           </SectionCard>
 
-          <SectionCard accent="success" title="Hiệu suất phòng ban">
+          <SectionCard accent="success" title={t("deptPerformance")}>
             <div className="space-y-3">
               {depts.map((d) => (
                 <div key={d.departmentId}>
                   <div className="mb-1 flex justify-between text-sm"><span className="text-gray-700 dark:text-dark-100">{orgName(d.departmentId)}</span><span className="font-medium">{d.kpiCompletion}%</span></div>
                   <div className="h-1.5 w-full rounded-full bg-gray-150 dark:bg-dark-500"><div className={`h-1.5 rounded-full ${d.kpiCompletion >= 90 ? "bg-success" : d.kpiCompletion >= 75 ? "bg-primary-600" : "bg-warning"}`} style={{ width: `${d.kpiCompletion}%` }} /></div>
-                  <p className="mt-0.5 text-xs text-gray-400">{d.overdueTasks} việc quá hạn · {d.alerts} cảnh báo</p>
+                  <p className="mt-0.5 text-xs text-gray-400">{t("deptFooter", { overdue: d.overdueTasks, alerts: d.alerts })}</p>
                 </div>
               ))}
             </div>

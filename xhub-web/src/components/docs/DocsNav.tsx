@@ -9,6 +9,7 @@ const TABS = [
   { href: "/docs/business", label: "Nghiệp vụ" },
   { href: "/docs/saas", label: "SaaS" },
   { href: "/docs/developer", label: "Phát triển" },
+  { href: "/docs/design-system", label: "Hệ thống thiết kế" },
   { href: "/docs/backlog", label: "Backlog" },
   { href: "/docs/user", label: "Hướng dẫn sử dụng" },
   { href: "/docs/test", label: "Kiểm thử" },

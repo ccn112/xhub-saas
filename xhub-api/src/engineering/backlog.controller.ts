@@ -26,12 +26,15 @@ export class BacklogController {
     body: {
       productId: string;
       featureId?: string;
-      code: string;
+      code?: string;
       title: string;
       description?: string;
       type?: string;
       priority?: string;
       targetVersionId?: string;
+      sourceSystem?: string;
+      sourceRef?: string;
+      correlationId?: string;
     },
     @Identity() id: RequestIdentity,
   ) {

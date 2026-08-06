@@ -23,6 +23,7 @@
     "elkjs": "^0.12.0",
     "konva": "^9.3.22",
     "next": "16.2.12",
+    "next-intl": "^4.13.5",
     "react": "19.2.4",
     "react-apexcharts": "^2.1.1",
     "react-dom": "19.2.4",
