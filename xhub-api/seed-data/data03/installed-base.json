@@ -1,0 +1,62 @@
+[
+  {
+    "Relation ID": "IB-D03-001",
+    "Project": "Khai Sơn City",
+    "Location": "Hà Nội",
+    "Supplier/Installer": "Mitsubishi Elevator Vietnam",
+    "Category": "ELEVATOR",
+    "Product/Model": "NEXIEZ-MR",
+    "Quantity/Scope": "12 thang máy",
+    "Status": "VERIFIED",
+    "Source": "https://mitsubishi-electric.vn/vn/thang-may/cong-trinh-tham-khao/khai-son-city",
+    "Notes": "First-party project case."
+  },
+  {
+    "Relation ID": "IB-D03-002",
+    "Project": "Khai Sơn City",
+    "Location": "Hà Nội",
+    "Supplier/Installer": "Mitsubishi Elevator Vietnam",
+    "Category": "ESCALATOR",
+    "Product/Model": "U Series",
+    "Quantity/Scope": "4 thang cuốn",
+    "Status": "VERIFIED",
+    "Source": "https://mitsubishi-electric.vn/vn/thang-may/cong-trinh-tham-khao/khai-son-city",
+    "Notes": "First-party project case."
+  },
+  {
+    "Relation ID": "IB-D03-003",
+    "Project": "Times City - Hà Nội",
+    "Location": "Hà Nội",
+    "Supplier/Installer": "Mitsubishi Elevator Vietnam",
+    "Category": "ELEVATOR",
+    "Product/Model": null,
+    "Quantity/Scope": "Reference project",
+    "Status": "DISCOVERED_FIRST_PARTY",
+    "Source": "https://mitsubishi-electric.vn/vn/thang-may/",
+    "Notes": "Listed in Mitsubishi Vietnam reference projects; model/count needs project-detail enrichment."
+  },
+  {
+    "Relation ID": "IB-D03-004",
+    "Project": "Nhà ga T3 - Cảng HKQT Tân Sơn Nhất",
+    "Location": "TP.HCM",
+    "Supplier/Installer": "Mitsubishi Elevator Vietnam",
+    "Category": "ELEVATOR;ESCALATOR",
+    "Product/Model": null,
+    "Quantity/Scope": "Reference project",
+    "Status": "DISCOVERED_FIRST_PARTY",
+    "Source": "https://mitsubishi-electric.vn/vn/thang-may/",
+    "Notes": "Model/count needs detail enrichment."
+  },
+  {
+    "Relation ID": "IB-D03-005",
+    "Project": "Kim Đô PoliCity",
+    "Location": null,
+    "Supplier/Installer": "Panasonic",
+    "Category": "HVAC_VRF",
+    "Product/Model": null,
+    "Quantity/Scope": "Customer/project reference",
+    "Status": "DISCOVERED_FIRST_PARTY",
+    "Source": "https://www.panasonic.com/vn/air-solutions/product-top/air-conditioner.html",
+    "Notes": "Panasonic page mentions project/customer experience; exact equipment needs enrichment."
+  }
+]

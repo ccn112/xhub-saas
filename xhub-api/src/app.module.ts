@@ -35,6 +35,11 @@ import { ProposalsModule } from './proposals/proposals.module';
 import { ContractsModule } from './contracts/contracts.module';
 import { RevenueKpiModule } from './revenue-kpi/revenue-kpi.module';
 import { SupportCasesModule } from './support-cases/support-cases.module';
+import { ProjectCatalogModule } from './project-catalog/project-catalog.module';
+import { ProvidersModule } from './providers/providers.module';
+import { DiscoveryModule } from './discovery/discovery.module';
+import { OrganizationsModule } from './organizations/organizations.module';
+import { ProductsModule } from './products/products.module';
 
 /**
  * "All-in-one" composition root (boots via `main.ts` / `npm start`).
@@ -61,7 +66,47 @@ import { SupportCasesModule } from './support-cases/support-cases.module';
  * do not rely on it for any X.Office flow.
  */
 @Module({
-  imports: [PrismaModule, AuthModule.forPlatform(), SeedModule, PreferencesModule, IdentityModule.forPlatform(), XofficeModule, ControlplaneModule, MdmModule, BackupModule, RecordsModule, WebhookModule, TestRunsModule, RequestsModule, DirectivesModule, TicketsModule, BookingsModule, AnnouncementsModule, PlatformModule, TenantLaunchModule, CatalogModule, OnboardingModule, DeliveryModule, TenantLifecycleModule, WorkModule, ManageModule, IocModule, PeopleModule, CustomersModule, OpportunitiesModule, CommercialCatalogModule, ProposalsModule, ContractsModule, RevenueKpiModule, SupportCasesModule],
+  imports: [
+    PrismaModule,
+    AuthModule.forPlatform(),
+    SeedModule,
+    PreferencesModule,
+    IdentityModule.forPlatform(),
+    XofficeModule,
+    ControlplaneModule,
+    MdmModule,
+    BackupModule,
+    RecordsModule,
+    WebhookModule,
+    TestRunsModule,
+    RequestsModule,
+    DirectivesModule,
+    TicketsModule,
+    BookingsModule,
+    AnnouncementsModule,
+    PlatformModule,
+    TenantLaunchModule,
+    CatalogModule,
+    OnboardingModule,
+    DeliveryModule,
+    TenantLifecycleModule,
+    WorkModule,
+    ManageModule,
+    IocModule,
+    PeopleModule,
+    CustomersModule,
+    OpportunitiesModule,
+    CommercialCatalogModule,
+    ProposalsModule,
+    ContractsModule,
+    RevenueKpiModule,
+    SupportCasesModule,
+    ProjectCatalogModule,
+    ProvidersModule,
+    DiscoveryModule,
+    OrganizationsModule,
+    ProductsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

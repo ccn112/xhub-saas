@@ -1,0 +1,9 @@
+{
+  "_comment": "Read-only extract of DATA02_OFFICIAL_AGENT_RESEARCH_PACKAGE_20260808/01_DATA02_MASTER_AGENT_RESEARCH.xlsx (sheets 01_Provider Master, 12_All Provider Universe), taken 2026-08-08 for DATA-02 Wave A. Verbatim column-name-keyed JSON. Data acquisition owner: ChatGPT Research Agent (not Claude/XHub) — see docs/data02/.",
+  "sourceFile": "01_DATA02_MASTER_AGENT_RESEARCH.xlsx",
+  "extractedAt": "2026-08-08",
+  "sheets": {
+    "provider-master.json": { "sheet": "01_Provider Master", "rows": 18, "note": "richly enriched seed — address/phone/email/website/MST" },
+    "all-provider-universe.json": { "sheet": "12_All Provider Universe", "rows": 153, "note": "full staging universe incl. the 18 seeds + 135 research candidates" }
+  }
+}

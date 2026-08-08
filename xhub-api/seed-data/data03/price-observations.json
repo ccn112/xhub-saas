@@ -1,0 +1,86 @@
+[
+  {
+    "Price ID": "PR-D03-001",
+    "Product ID": "P-D03-0080",
+    "Observed item": "Hikvision DS-K1T105AE",
+    "Price": 3830000,
+    "Currency": "VND",
+    "Scope": "PUBLIC_RETAIL",
+    "Source vintage": "CURRENT_PAGE",
+    "Source URL": "https://hikvision.net.vn/may-kiem-soat-ra-vao-the-tu-hikvision-ds-k1t105ae",
+    "Observed at": "2026-08-08",
+    "Notes": "Retail listing; verify VAT/install scope."
+  },
+  {
+    "Price ID": "PR-D03-002",
+    "Product ID": "P-D03-0090",
+    "Observed item": "ABB Terra AC Wallbox",
+    "Price": 22500000,
+    "Currency": "VND",
+    "Scope": "PUBLIC_RETAIL",
+    "Source vintage": "CURRENT_PAGE",
+    "Source URL": "https://vcharge.vn/sac-abb-terra-ac-wallbox/",
+    "Observed at": "2026-08-08",
+    "Notes": "Displayed discounted price; variant must be resolved before procurement."
+  },
+  {
+    "Price ID": "PR-D03-003",
+    "Product ID": "P-D03-0074",
+    "Observed item": "Hochiki HCV2-UK",
+    "Price": 5370000,
+    "Currency": "VND",
+    "Scope": "REFERENCE",
+    "Source vintage": "PRICE_LIST_2025",
+    "Source URL": "https://tigersteel.vn/en/fire-alarm-system-costs-2025-latest-equipment-price-list/",
+    "Observed at": "2026-08-08",
+    "Notes": "2025 reference; stale for contracting, useful benchmark only."
+  },
+  {
+    "Price ID": "PR-D03-004",
+    "Product ID": "P-D03-0074",
+    "Observed item": "Hochiki HCV4-UK",
+    "Price": 5784000,
+    "Currency": "VND",
+    "Scope": "REFERENCE",
+    "Source vintage": "PRICE_LIST_2025",
+    "Source URL": "https://tigersteel.vn/en/fire-alarm-system-costs-2025-latest-equipment-price-list/",
+    "Observed at": "2026-08-08",
+    "Notes": "2025 reference."
+  },
+  {
+    "Price ID": "PR-D03-005",
+    "Product ID": "P-D03-0074",
+    "Observed item": "Hochiki HCV8-UK",
+    "Price": 6854400,
+    "Currency": "VND",
+    "Scope": "REFERENCE",
+    "Source vintage": "PRICE_LIST_2025",
+    "Source URL": "https://tigersteel.vn/en/fire-alarm-system-costs-2025-latest-equipment-price-list/",
+    "Observed at": "2026-08-08",
+    "Notes": "2025 reference."
+  },
+  {
+    "Price ID": "PR-D03-006",
+    "Product ID": "P-D03-0076",
+    "Observed item": "Hochiki SLV-E optical smoke detector",
+    "Price": 504000,
+    "Currency": "VND",
+    "Scope": "REFERENCE",
+    "Source vintage": "PRICE_LIST_2025",
+    "Source URL": "https://tigersteel.vn/en/fire-alarm-system-costs-2025-latest-equipment-price-list/",
+    "Observed at": "2026-08-08",
+    "Notes": "Model differs from ALO-V catalog row; keep as separate observed SKU candidate in production."
+  },
+  {
+    "Price ID": "PR-D03-007",
+    "Product ID": null,
+    "Observed item": "Hochiki DFE-135 heat detector",
+    "Price": 246000,
+    "Currency": "VND",
+    "Scope": "REFERENCE",
+    "Source vintage": "PRICE_LIST_2025",
+    "Source URL": "https://tigersteel.vn/en/fire-alarm-system-costs-2025-latest-equipment-price-list/",
+    "Observed at": "2026-08-08",
+    "Notes": "Create product candidate if matched to current catalog."
+  }
+]

@@ -150,6 +150,12 @@ const TENANT_TABLES = [
   'AttendanceEvent',
   'AttendanceDay',
   'AttendanceCorrectionRequest',
+  // Geo/Global Project Catalog/Provider Master (Wave A) — GlobalProject/Place/
+  // Provider/... are GLOBAL PUBLIC data (like MasterRecord/ApplicationDefinition)
+  // so intentionally NOT listed. ProviderProjectOverlay is the one exception:
+  // it carries tenantId (per-tenant recommend/featured/booking flags) and MUST
+  // be RLS-protected like any other tenant table.
+  'ProviderProjectOverlay',
 ];
 
 const PREDICATE =

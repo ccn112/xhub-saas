@@ -1,0 +1,92 @@
+[
+  {
+    "Project": "Hope Garden - Phúc Yên 3",
+    "Gap category": "CCTV_VIDEO",
+    "Known fact / gap": "Camera 24/24 present, brand/provider unknown",
+    "Evidence": "https://bee-home.com.vn/doi-tac-du-an/hope-garden-phuc-yen-3.html",
+    "Research action": "Find brand/model, installer and maintainer from BQL/project evidence",
+    "Priority": "A",
+    "Status": "OPEN"
+  },
+  {
+    "Project": "Hope Garden - Phúc Yên 3",
+    "Gap category": "FIRE_ALARM",
+    "Known fact / gap": "Automatic fire alarm present, brand/provider unknown",
+    "Evidence": "https://bee-home.com.vn/doi-tac-du-an/hope-garden-phuc-yen-3.html",
+    "Research action": "Find panel/detector brand, contractor and maintenance provider",
+    "Priority": "A",
+    "Status": "OPEN"
+  },
+  {
+    "Project": "Hope Garden - Phúc Yên 3",
+    "Gap category": "GENERATOR",
+    "Known fact / gap": "Backup generator present, brand/provider unknown",
+    "Evidence": "https://bee-home.com.vn/doi-tac-du-an/hope-garden-phuc-yen-3.html",
+    "Research action": "Find genset brand/model/capacity/maintainer",
+    "Priority": "A",
+    "Status": "OPEN"
+  },
+  {
+    "Project": "Nhà ở xã hội Becamex khu Định Hòa",
+    "Gap category": "ELEVATOR",
+    "Known fact / gap": "Operator states elevators maintained; brand/provider unknown",
+    "Evidence": "https://longduonggroup.com/chuong-trinh-tuyen-truyen-tap-huan-dien-tap-pccc-va-cnch-chung-cu-noasxh-becamex-khu-dinh-hoa/",
+    "Research action": "Collect nameplate/BQL maintenance contract",
+    "Priority": "A",
+    "Status": "OPEN"
+  },
+  {
+    "Project": "Nhà ở xã hội Becamex khu Định Hòa",
+    "Gap category": "PUMP_WATER",
+    "Known fact / gap": "Operator states pump systems maintained; brand/provider unknown",
+    "Evidence": "https://longduonggroup.com/chuong-trinh-tuyen-truyen-tap-huan-dien-tap-pccc-va-cnch-chung-cu-noasxh-becamex-khu-dinh-hoa/",
+    "Research action": "Collect pump schedule/nameplate/contract",
+    "Priority": "B",
+    "Status": "OPEN"
+  },
+  {
+    "Project": "Nhà ở xã hội Becamex khu Định Hòa",
+    "Gap category": "GENERATOR",
+    "Known fact / gap": "Operator states generator maintained; brand/provider unknown",
+    "Evidence": "https://longduonggroup.com/chuong-trinh-tuyen-truyen-tap-huan-dien-tap-pccc-va-cnch-chung-cu-noasxh-becamex-khu-dinh-hoa/",
+    "Research action": "Collect brand/model/service contract",
+    "Priority": "B",
+    "Status": "OPEN"
+  },
+  {
+    "Project": "Nhà ở xã hội Becamex khu Định Hòa",
+    "Gap category": "FIRE_SAFETY",
+    "Known fact / gap": "PCCC system operated; equipment/contractor unknown",
+    "Evidence": "https://longduonggroup.com/chuong-trinh-tuyen-truyen-tap-huan-dien-tap-pccc-va-cnch-chung-cu-noasxh-becamex-khu-dinh-hoa/",
+    "Research action": "Collect fire panel/pump/sprinkler brands and maintenance evidence",
+    "Priority": "A",
+    "Status": "OPEN"
+  },
+  {
+    "Project": "Vinhomes Ocean Park 1",
+    "Gap category": "PROPERTY_MANAGEMENT",
+    "Known fact / gap": "Project-level operator for each subproject not resolved in this DATA-04 snapshot",
+    "Evidence": null,
+    "Research action": "Resolve current operator by subproject/tower from DATA-01 + project/BQL sources",
+    "Priority": "A",
+    "Status": "OPEN"
+  },
+  {
+    "Project": "Vinhomes Smart City",
+    "Gap category": "PROPERTY_MANAGEMENT",
+    "Known fact / gap": "Project-level operator for Masteri/Lumiere vs township not resolved",
+    "Evidence": null,
+    "Research action": "Resolve operator hierarchy/current contracts",
+    "Priority": "A",
+    "Status": "OPEN"
+  },
+  {
+    "Project": "Landmark 81",
+    "Gap category": "ELEVATOR_MAINTENANCE",
+    "Known fact / gap": "Installed Schindler equipment verified; current maintainer contract not separately evidenced",
+    "Evidence": "URL_SCHINDLER",
+    "Research action": "Verify current service/maintenance provider and SLA",
+    "Priority": "A",
+    "Status": "OPEN"
+  }
+]

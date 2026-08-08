@@ -1,0 +1,23 @@
+{
+  "source": "/Users/vanchien/Downloads/DATA04_OFFICIAL_AGENT_RESEARCH_PACKAGE_20260808/DATA04_OFFICIAL_AGENT_RESEARCH_PACKAGE_20260808/01_DATA04_MASTER.xlsx",
+  "extractedAt": "2026-08-08",
+  "sheets": {
+    "01_Project Supply Graph": {
+      "file": "project-supply-graph.json",
+      "rows": 85
+    },
+    "02_Project Candidates": {
+      "file": "project-candidates.json",
+      "rows": 81
+    },
+    "03_Project Hierarchy": {
+      "file": "project-hierarchy.json",
+      "rows": 14
+    },
+    "08_Gap Queue": {
+      "file": "gap-queue.json",
+      "rows": 10
+    }
+  },
+  "sourceSha256": "03e47e302803e27bc8e8612687431dbb8199be383f63018f79f2cdf6d81e51b7"
+}

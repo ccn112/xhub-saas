@@ -1,0 +1,114 @@
+[
+  {
+    "Org ID": "ORG-D03-001",
+    "Brand": "KONE",
+    "Categories": "ELEVATOR",
+    "Relation type": "MANUFACTURER_INSTALLER_MAINTAINER",
+    "Scope/Notes": "Vietnam direct",
+    "Evidence": "https://www.kone.vn/"
+  },
+  {
+    "Org ID": "ORG-D03-002",
+    "Brand": "Schindler",
+    "Categories": "ELEVATOR",
+    "Relation type": "MANUFACTURER_INSTALLER_MAINTAINER",
+    "Scope/Notes": "Vietnam direct",
+    "Evidence": "https://www.schindler.vn/"
+  },
+  {
+    "Org ID": "ORG-D03-003",
+    "Brand": "TK Elevator",
+    "Categories": "ELEVATOR",
+    "Relation type": "MANUFACTURER_INSTALLER_MAINTAINER",
+    "Scope/Notes": "Vietnam direct",
+    "Evidence": "https://www.tkelevator.com/vn-en/"
+  },
+  {
+    "Org ID": "ORG-D03-004",
+    "Brand": "Mitsubishi",
+    "Categories": "ELEVATOR;ESCALATOR",
+    "Relation type": "MANUFACTURER_CHANNEL",
+    "Scope/Notes": "Vietnam manufacturer + elevator subsidiary/service ecosystem",
+    "Evidence": "https://mitsubishi-electric.vn/vn/thang-may/"
+  },
+  {
+    "Org ID": "ORG-D03-005",
+    "Brand": "Daikin",
+    "Categories": "HVAC_VRF;HVAC_CHILLER",
+    "Relation type": "MANUFACTURER_SERVICE_NETWORK",
+    "Scope/Notes": "Nationwide service/authorized dealer network",
+    "Evidence": "https://www.daikin.com.vn/dich-vu/lien-he-daikin"
+  },
+  {
+    "Org ID": "ORG-D03-016",
+    "Brand": "Daikin",
+    "Categories": "HVAC_VRF",
+    "Relation type": "DISTRIBUTOR_INSTALLER_MAINTAINER",
+    "Scope/Notes": "Claims Top 10 Daikin contractor Hanoi; verify authorization current",
+    "Evidence": "https://www.yellowpages.vn/lgs/1188023760/dieu-hoa-vrv-cong-ty-co-phan-dieu-hoa-vrv.html"
+  },
+  {
+    "Org ID": "ORG-D03-008",
+    "Brand": "Schneider Electric",
+    "Categories": "UPS_POWER;POWER_METER;BMS_AUTOMATION;EV_CHARGER",
+    "Relation type": "MANUFACTURER_CHANNEL",
+    "Scope/Notes": "Manufacturer + distributor locator",
+    "Evidence": "https://www.se.com/vn/en/about-us/contact/"
+  },
+  {
+    "Org ID": "ORG-D03-010",
+    "Brand": "Wilo",
+    "Categories": "PUMP_WATER;PUMP_FIRE;SPARE_PART",
+    "Relation type": "MANUFACTURER_SERVICE",
+    "Scope/Notes": "Direct Vietnam office/service",
+    "Evidence": "https://wilo.com/vn/en/"
+  },
+  {
+    "Org ID": "ORG-D03-011",
+    "Brand": "Grundfos",
+    "Categories": "PUMP_WATER;PUMP_FIRE;SPARE_PART",
+    "Relation type": "MANUFACTURER_SERVICE_AUTHORIZED_DEALER_NETWORK",
+    "Scope/Notes": "Vietnam office + authorized dealer network",
+    "Evidence": "https://www.grundfos.com/vn/contact"
+  },
+  {
+    "Org ID": "ORG-D03-013",
+    "Brand": "Hochiki",
+    "Categories": "FIRE_ALARM;SPARE_PART",
+    "Relation type": "DISTRIBUTOR",
+    "Scope/Notes": "Nhat Nam purchase contacts shown on Hochiki Vietnam site",
+    "Evidence": "https://www.hochiki-fire.vn/en/"
+  },
+  {
+    "Org ID": "ORG-D03-014",
+    "Brand": "Hikvision",
+    "Categories": "ACCESS_CONTROL;CCTV_VIDEO;PARKING",
+    "Relation type": "DISTRIBUTOR_RETAIL",
+    "Scope/Notes": "Local distributor product listing",
+    "Evidence": "https://hikvision.net.vn/"
+  },
+  {
+    "Org ID": "ORG-D03-012",
+    "Brand": "Dahua",
+    "Categories": "CCTV_VIDEO;ACCESS_CONTROL;VIDEO_INTERCOM;PARKING",
+    "Relation type": "MANUFACTURER_CHANNEL_SERVICE",
+    "Scope/Notes": "Vietnam offices + warranty centers",
+    "Evidence": "https://www.dahuasecurity.com/vi/aboutUs/contactUs"
+  },
+  {
+    "Org ID": "ORG-D03-021",
+    "Brand": "ABB",
+    "Categories": "EV_CHARGER",
+    "Relation type": "DISTRIBUTOR_INSTALLER",
+    "Scope/Notes": "Public retail/distributor offer",
+    "Evidence": "https://vcharge.vn/sac-abb-terra-ac-wallbox/"
+  },
+  {
+    "Org ID": "ORG-D03-022",
+    "Brand": "Hochiki",
+    "Categories": "FIRE_ALARM",
+    "Relation type": "DISTRIBUTOR_INTEGRATOR",
+    "Scope/Notes": "Product listings/quote required",
+    "Evidence": "https://conda.com.vn/en/product/82/fire-alarm-control-panels.html"
+  }
+]

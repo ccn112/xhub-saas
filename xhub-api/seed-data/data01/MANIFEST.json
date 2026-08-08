@@ -1,0 +1,11 @@
+{
+  "_comment": "Read-only extract of DATA01_OFFICIAL_XHUB_XOFFICE_PACKAGE_20260808/01_DATA01_MASTER_PRODUCTION.xlsx (sheets 01_Official Registry, 02_Company Master, 03_Enriched Accounts), taken 2026-08-08 for DATA-01 Wave A. Verbatim column-name-keyed JSON, no field renaming/reshaping at extraction time — mapping to Organization/OrganizationQualificationEvent happens in scripts/data01-baseline-seed.mjs. Do not hand-edit; re-extract from source if the package is updated.",
+  "sourceFile": "01_DATA01_MASTER_PRODUCTION.xlsx",
+  "sourceSha256": "1c1ef8124d9e8121e5f02945ec0bb7eea0f31f0b4109dd8c8ec3599ed2677550",
+  "extractedAt": "2026-08-08",
+  "sheets": {
+    "company-master.json": { "sheet": "02_Company Master", "rows": 205 },
+    "official-registry.json": { "sheet": "01_Official Registry", "rows": 206 },
+    "enriched-accounts.json": { "sheet": "03_Enriched Accounts", "rows": 12 }
+  }
+}

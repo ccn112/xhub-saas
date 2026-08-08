@@ -1,0 +1,100 @@
+[
+  {
+    "Child project": "Park Hill - Times City",
+    "Parent project": "Times City",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "Landmark 81",
+    "Parent project": "Vinhomes Central Park",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "Vincom Central Park",
+    "Parent project": "Vinhomes Central Park",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "The Central & Phase 2 - Vinhomes Central Park",
+    "Parent project": "Vinhomes Central Park",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "Park Hill 2 - Times City",
+    "Parent project": "Times City",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "Masteri Waterfront",
+    "Parent project": "Vinhomes Ocean Park 1",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "Masteri Centre Point",
+    "Parent project": "Vinhomes Grand Park",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "Lumière Evergreen",
+    "Parent project": "Vinhomes Smart City",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "CT1 Kim Chung - Di Trạch",
+    "Parent project": "Kim Chung - Di Trạch Urban Area",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "Rừng Cọ Apartments - Towers 4 & 5",
+    "Parent project": "Ecopark",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "The Senique Hanoi",
+    "Parent project": "Vinhomes Ocean Park 1",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "Masteri West Heights",
+    "Parent project": "Vinhomes Smart City",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "Sunshine Crystal River",
+    "Parent project": "Ciputra / Nam Thang Long",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  },
+  {
+    "Child project": "The Marc 88",
+    "Parent project": "Cầu Giấy New Urban Area",
+    "Relation": "CHILD_OF",
+    "Status": "CANDIDATE",
+    "Rule/Note": "Project/phase relation inferred from first-party naming/context; verify against XHub hierarchy."
+  }
+]

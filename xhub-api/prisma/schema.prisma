@@ -788,6 +788,1145 @@ model DuplicatePair {
 }
 
 // ===========================================================================
+// GEO / GLOBAL PROJECT CATALOG / PROVIDER MASTER  (modules src/catalog, src/geo,
+// src/providers, src/discovery) — XHub Geo/Project/Provider Master, Wave A
+// (Hapulico golden slice). See docs/geo-migration/*.md for the full plan.
+// ---------------------------------------------------------------------------
+// XHub is the System of Record for the public Global Project Catalog + the
+// Geo/Place/Provider/Catalog/Price master. This is federation, not a DB merge:
+// X2 keeps owning managed property/apartment/resident/billing; it only stores
+// an immutable `xhub_project_id` pointer (see X2_PROJECT_CATALOG_AUDIT.md §8).
+//
+// GlobalProject/Place/Provider/... are GLOBAL PUBLIC data (like MasterRecord /
+// ApplicationDefinition) — intentionally NOT force-RLS, intentionally NOT in
+// scripts/rls-setup.mjs TENANT_TABLES. ProviderProjectOverlay is the ONE
+// exception: it carries tenantId (per-tenant recommend/featured/booking flags
+// layered on the global Provider, never mutating the canonical record) and
+// MUST be in scripts/rls-setup.mjs + rls-test.mjs like any other tenant table.
+//
+// Ingestion pipeline (GeoImportJob/GeoSourceRecord/GeoDuplicatePair) mirrors
+// the MDM staging→normalize→match→duplicate-review→commit pattern above, but
+// is deliberately a SEPARATE set of tables rather than a literal reuse of
+// ImportJob/SourceRecord/DuplicatePair: those MDM tables require a non-null
+// tenantId and are wired as tenant-scoped RLS tables, which doesn't fit
+// Place/Provider ingestion that has no tenant context at all. Same shape,
+// same "never auto-merge" rule, just tenant-free.
+//
+// Spatial columns use PostGIS `geography(Point,4326)` (see
+// XHUB_GEO_READINESS_AUDIT.md §9 — first PostGIS/raw-SQL usage in this repo).
+// Prisma models them as `Unsupported(...)` (write via $executeRaw after the
+// row exists; plain `latitude`/`longitude` floats stay the source of truth for
+// non-spatial reads). Nearby queries use $queryRaw + ST_DWithin.
+// ===========================================================================
+
+/// Public real-estate project catalog entry (~6.000 target, Wave C). System of
+/// Record: XHub. NOT the X2 operational `projects` table — see audit doc §8
+/// for why the link target is X2's `public_projects.id`, not `projects.id`.
+model GlobalProject {
+  id                 String    @id @default(cuid())
+  code               String    @unique // canonical code (Wave A: X2 public_projects.code, e.g. BDS-PJ158)
+  slug               String    @unique
+  name               String
+  normalizedName     String
+  projectType        String?
+  status             String    @default("ACTIVE") // record lifecycle: ACTIVE | ARCHIVED | MERGED
+  projectStatus      String? // real-estate lifecycle: planning | selling | handover | operating | archived
+  description        String?
+  addressText        String?
+  provinceCode       String?
+  districtCode       String?
+  wardCode           String?
+  latitude           Float?
+  longitude          Float?
+  geom               Unsupported("geography(Point,4326)")?
+  boundaryGeom       Unsupported("geography(MultiPolygon,4326)")?
+  developerName      String?
+  website            String?
+  sourceQualityScore Float?
+  dataConfidence     Float?
+  freshnessScore     Float?
+  lastVerifiedAt     DateTime?
+  isPublic           Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  sources    GlobalProjectSource[]
+  placeEdges ProjectPlaceEdge[]
+  overlays   ProviderProjectOverlay[]
+  operatorRelations ProjectOrganizationRelation[]
+  installedProducts ProjectInstalledProduct[]
+  matchedCandidates ProjectCandidate[]
+
+  @@index([status])
+  @@index([provinceCode, districtCode])
+}
+
+/// Lineage for a GlobalProject: which external system/record it came from.
+/// isCurrent marks the latest snapshot; older rows are kept for audit.
+model GlobalProjectSource {
+  id              String    @id @default(cuid())
+  globalProjectId String
+  sourceType      String // x2_seed | batdongsan | manual | partner | other
+  sourceSystem    String?
+  sourceRecordId  String?
+  sourceUrl       String?
+  sourcePayload   Json?
+  sourceHash      String?
+  observedAt      DateTime?
+  importJobId     String?
+  isCurrent       Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+
+  globalProject GlobalProject @relation(fields: [globalProjectId], references: [id])
+
+  @@index([globalProjectId])
+}
+
+/// Generic immutable external-id → canonical-id mapping (e.g. X2 public_projects
+/// row ↔ GlobalProject). `system`/`entityType` keep this reusable beyond projects.
+model ExternalEntityLink {
+  id          String   @id @default(cuid())
+  system      String // e.g. "X2"
+  entityType  String // e.g. "project"
+  externalId  String
+  canonicalId String // e.g. GlobalProject.id
+  status      String   @default("ACTIVE") // ACTIVE | RETIRED
+  linkedAt    DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([system, entityType, externalId])
+  @@index([canonicalId])
+}
+
+/// A real-world place (business/amenity/POI). NOT automatically a Provider —
+/// see Provider below. Canonical, deduped across OSM/Overture/FSQ/manual.
+model Place {
+  id                String    @id @default(cuid())
+  canonicalName     String
+  normalizedName    String
+  primaryCategoryId String? // ExternalCategoryMapping.xhubCategoryId
+  latitude          Float
+  longitude         Float
+  geom              Unsupported("geography(Point,4326)")?
+  addressText       String?
+  provinceCode      String?
+  districtCode      String?
+  wardCode          String?
+  phonePrimary      String?
+  websitePrimary    String?
+  emailPrimary      String?
+  operatingStatus   String    @default("OPEN") // OPEN | CLOSED | UNKNOWN
+  dateOpened        DateTime?
+  dateClosed        DateTime?
+  dataConfidence    Float?
+  freshnessScore    Float?
+  lastObservedAt    DateTime?
+  lastVerifiedAt    DateTime?
+  isPublic          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  sources           PlaceSource[]
+  providerLocations ProviderLocation[]
+  projectEdges      ProjectPlaceEdge[]
+
+  @@index([primaryCategoryId])
+}
+
+/// Per-place source lineage/evidence. Multiple sources can back one Place —
+/// never overwritten, kept side by side with confidence per source.
+model PlaceSource {
+  id                String    @id @default(cuid())
+  placeId           String
+  source            String // fsq_os | overture | osm | official_website | official_social | merchant_claim | bql_verified | manual
+  sourcePlaceId     String?
+  sourceUrl         String?
+  sourcePayload     Json?
+  sourceHash        String?
+  sourceObservedAt  DateTime?
+  sourceRefreshedAt DateTime?
+  licenseCode       String?
+  confidence        Float?
+  status            String    @default("ACTIVE")
+  createdAt         DateTime  @default(now())
+
+  place Place @relation(fields: [placeId], references: [id])
+
+  @@unique([placeId, source, sourcePlaceId])
+  @@index([placeId])
+}
+
+/// A business/merchant. verificationStatus lifecycle: DISCOVERED (public data
+/// only) -> VERIFIED -> CLAIMED -> PARTNER (only PARTNER unlocks booking/
+/// payment/voucher/commission in ProviderProjectOverlay).
+model Provider {
+  id                 String    @id @default(cuid())
+  legalName          String?
+  displayName        String
+  normalizedName     String
+  providerType       String?
+  verificationStatus String    @default("DISCOVERED") // DISCOVERED | VERIFIED | CLAIMED | PARTNER
+  claimStatus        String    @default("NONE")
+  partnerStatus      String    @default("NONE")
+  taxCode            String?
+  website            String?
+  email              String?
+  phone              String?
+  description        String?
+  logoAssetId        String?
+  dataConfidence     Float?
+  lastVerifiedAt     DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  locations    ProviderLocation[]
+  contacts     ProviderContact[]
+  catalogItems CatalogItem[]
+  overlays     ProviderProjectOverlay[]
+
+  @@index([verificationStatus])
+}
+
+/// One physical location of a Provider (a chain has many; not a different
+/// Provider per branch once entity matching confirms same chain).
+model ProviderLocation {
+  id           String    @id @default(cuid())
+  providerId   String
+  placeId      String?
+  locationName String?
+  address      String?
+  latitude     Float?
+  longitude    Float?
+  geom         Unsupported("geography(Point,4326)")?
+  phone        String?
+  openingHours Json?
+  isPrimary    Boolean   @default(false)
+  status       String    @default("ACTIVE")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  provider Provider @relation(fields: [providerId], references: [id])
+  place    Place?   @relation(fields: [placeId], references: [id])
+
+  @@index([providerId])
+  @@index([placeId])
+}
+
+/// One contact channel for a Provider. Conflicting values from different
+/// sources are kept side by side (never overwritten) — see PlaceSource.
+model ProviderContact {
+  id         String    @id @default(cuid())
+  providerId String
+  locationId String?
+  type       String // phone | email | website | facebook | zalo | instagram | tiktok | youtube
+  value      String
+  sourceId   String?
+  observedAt DateTime?
+  verifiedAt DateTime?
+  confidence Float?
+  isPrimary  Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  provider Provider @relation(fields: [providerId], references: [id])
+
+  @@index([providerId])
+  @@index([providerId, type])
+}
+
+/// A product or service offered by a Provider. Created only when there's a
+/// confirmed provider match + source URL + name + observed date (no guessing).
+model CatalogItem {
+  id          String   @id @default(cuid())
+  providerId  String
+  itemType    String // product | service
+  categoryId  String?
+  name        String
+  description String?
+  brand       String?
+  skuExternal String?
+  unit        String?
+  image       String?
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  provider Provider                  @relation(fields: [providerId], references: [id])
+  prices   CatalogPriceObservation[]
+
+  @@index([providerId])
+}
+
+/// A single price observation, NEVER a mutated `price` column — history is
+/// kept so the app can tell fresh vs stale vs reference-only pricing.
+model CatalogPriceObservation {
+  id                      String    @id @default(cuid())
+  catalogItemId           String
+  providerLocationId      String?
+  priceVndInteger         Int
+  originalPriceVndInteger Int?
+  unit                    String?
+  currency                String    @default("VND")
+  validFrom               DateTime?
+  validUntil              DateTime?
+  sourceId                String?
+  sourceUrl               String?
+  observedAt              DateTime  @default(now())
+  confidence              Float?
+  isPromotional           Boolean   @default(false)
+  createdAt               DateTime  @default(now())
+
+  catalogItem CatalogItem @relation(fields: [catalogItemId], references: [id])
+
+  @@index([catalogItemId])
+  @@index([catalogItemId, observedAt])
+}
+
+/// Maps an external taxonomy (OSM/Overture/FSQ category) to XHub's own
+/// versioned, shared taxonomy — the app never depends on a source's raw
+/// category id/name directly.
+model ExternalCategoryMapping {
+  id                   String   @id @default(cuid())
+  source               String // osm | overture | fsq_os
+  externalCategoryId   String
+  externalCategoryName String?
+  xhubCategoryId       String // fixed taxonomy code, e.g. "beauty_hair"
+  confidence           Float?   @default(1.0)
+  mappingVersion       Int      @default(1)
+  createdAt            DateTime @default(now())
+
+  @@unique([source, externalCategoryId, mappingVersion])
+}
+
+/// Spatial join result: one Place within radius of one GlobalProject, with a
+/// computed zone bucket and rank. Recomputed per spatialVersion, never edited
+/// in place, so history of AOI recomputes is preserved.
+model ProjectPlaceEdge {
+  id              String   @id @default(cuid())
+  globalProjectId String
+  placeId         String
+  relationType    String   @default("NEARBY") // INSIDE | NEARBY
+  distanceM       Float
+  insideProject   Boolean  @default(false)
+  walkDistanceM   Float?
+  walkDurationS   Int?
+  rankScore       Float?
+  categoryId      String?
+  zone            String // inside | gate | walkable | nearby | extended
+  spatialVersion  Int      @default(1)
+  generatedAt     DateTime @default(now())
+
+  globalProject GlobalProject @relation(fields: [globalProjectId], references: [id])
+  place         Place         @relation(fields: [placeId], references: [id])
+
+  @@unique([globalProjectId, placeId, spatialVersion])
+  @@index([globalProjectId, zone])
+}
+
+/// TENANT-SCOPED (the one exception in this block — MUST be in
+/// scripts/rls-setup.mjs + rls-test.mjs). A tenant's recommend/featured/
+/// booking overlay on a global Provider, for one GlobalProject. Never mutates
+/// the canonical Provider — tenant A's overlay is invisible to tenant B.
+model ProviderProjectOverlay {
+  id              String    @id @default(cuid())
+  tenantId        String
+  globalProjectId String
+  providerId      String
+  relationship    String?
+  recommended     Boolean   @default(false)
+  featured        Boolean   @default(false)
+  bookingEnabled  Boolean   @default(false)
+  paymentEnabled  Boolean   @default(false)
+  voucherEnabled  Boolean   @default(false)
+  validFrom       DateTime?
+  validUntil      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  globalProject GlobalProject @relation(fields: [globalProjectId], references: [id])
+  provider      Provider      @relation(fields: [providerId], references: [id])
+
+  @@unique([tenantId, globalProjectId, providerId])
+  @@index([tenantId])
+}
+
+/// Manual-review queue item for any subject in this block (phone/address
+/// conflict, duplicate candidate, impossible location, stale data, price
+/// outlier, ...). Nothing here is silently auto-resolved.
+model DataQualityIssue {
+  id          String    @id @default(cuid())
+  subjectType String // GlobalProject | Place | Provider | CatalogPriceObservation
+  subjectId   String
+  issueType   String // phone_conflict | address_conflict | duplicate_candidate | impossible_location | stale | status_conflict | price_outlier
+  detail      Json?
+  status      String    @default("OPEN") // OPEN | RESOLVED | IGNORED
+  resolvedBy  String?
+  resolvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([subjectType, subjectId])
+  @@index([status])
+}
+
+/// One ingestion run for Place/Provider raw sources (OSM/Overture/FSQ). Global
+/// (no tenant) analog of MDM's ImportJob — see block comment above for why
+/// this is a separate table rather than a literal reuse.
+model GeoImportJob {
+  id           String   @id @default(cuid())
+  sourceSystem String // osm | overture | fsq_os
+  domain       String   @default("PLACE") // PLACE | PROVIDER
+  stage        String   @default("staging") // staging | normalized | matched | reviewed | committed
+  aoiLabel     String? // e.g. "hapulico-3km"
+  counts       Json     @default("{}")
+  createdBy    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sourceRecords GeoSourceRecord[]
+}
+
+/// Immutable raw record from one source, pre-commit. Global analog of MDM's
+/// SourceRecord. placeId is set once normalize+dedupe commits it to a Place.
+model GeoSourceRecord {
+  id           String   @id @default(cuid())
+  importJobId  String
+  sourceSystem String // osm | overture
+  sourceId     String // e.g. OSM node id, Overture GERS id
+  domain       String   @default("PLACE")
+  raw          Json
+  rawHash      String?
+  normalized   Json?
+  matchStatus  String   @default("unmatched") // unmatched | matched | duplicate
+  matchScore   Float?
+  placeId      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  importJob GeoImportJob @relation(fields: [importJobId], references: [id])
+
+  @@unique([sourceSystem, sourceId])
+  @@index([importJobId])
+  @@index([matchStatus])
+}
+
+/// Suspected-duplicate proposal for Place matching. Global analog of MDM's
+/// DuplicatePair — NEVER auto-merged, a human/script decision resolves it.
+model GeoDuplicatePair {
+  id               String    @id @default(cuid())
+  sourceRecordId   String
+  candidatePlaceId String?
+  importJobId      String?
+  score            Float
+  reason           String?
+  decision         String    @default("pending") // pending | merge | keep_separate
+  resolvedBy       String?
+  resolvedAt       DateTime?
+  createdAt        DateTime  @default(now())
+
+  @@index([decision])
+}
+
+// ===========================================================================
+// DATA-01 — VN PROPERTY MANAGEMENT COMPANY MASTER  (module src/organizations)
+// Wave A. See docs/data01/*.md for the full plan; source package
+// DATA01_OFFICIAL_XHUB_XOFFICE_PACKAGE_20260808 (not in this repo).
+// ---------------------------------------------------------------------------
+// XHub is the System of Record for the canonical property-management operator
+// master (organization + qualification history + contacts + person↔company
+// roles + project↔operator graph). XOffice is a CRM projection only — its
+// Customer.canonicalCustomerId (prisma-xoffice/schema.prisma) is the intended
+// soft-reference seam to Organization.id, same cross-DB-string-reference
+// pattern as X2's xhub_project_id for GlobalProject.
+//
+// GLOBAL PUBLIC DATA (like GlobalProject/Place/Provider above) — intentionally
+// NOT force-RLS, intentionally NOT in scripts/rls-setup.mjs TENANT_TABLES.
+// No tenant-scoped exception exists in this block (unlike Geo's
+// ProviderProjectOverlay) — nothing here is tenant-private in Wave A.
+//
+// Wave A explicitly does NOT implement person_identity_key/HMAC or any
+// identity vault: the current data source (Bộ Xây dựng qualification notices)
+// exposes only PUBLIC representative names, never CCCD/CMND numbers. Person/
+// PersonCompanyRole below track public names only. Do not add a raw
+// identifier column to Person without first building the vault infrastructure
+// the source package specifies (KMS/HSM, envelope encryption, break-glass
+// audit) — none of that exists in this repo yet (see
+// docs/data01/XHUB_ORG_READINESS_AUDIT.md §4).
+//
+// Ingestion (OrgImportJob/OrgSourceRecord/OrgDuplicatePair) mirrors the Geo
+// block's pattern above, not literal reuse (same tenantId-NOT-NULL problem
+// with MDM's ImportJob/SourceRecord/DuplicatePair applies here too).
+// ===========================================================================
+
+/// Canonical property-management operator. organizationType is a string (not
+/// an enum) so DATA-02+ (contractors/vendors) can reuse this table later.
+model Organization {
+  id                   String    @id @default(cuid())
+  organizationType     String    @default("PROPERTY_OPERATOR")
+  legalName            String
+  normalizedName       String
+  shortName            String?
+  taxCode              String?   @unique
+  legalForm            String?
+  companyStatus        String?
+  legalAddress         String? // convenience copy; source of truth is OrganizationLocation(HQ_LEGAL)
+  officeAddress        String?
+  provinceCode         String?
+  districtCode         String?
+  website              String?
+  generalEmail         String?
+  salesEmail           String?
+  companyPhone         String?
+  hotline              String?
+  corporateSocials     Json? // { facebook, linkedin, zaloOa, ... }
+  operatorType         String? // INDEPENDENT | IN_HOUSE | UNKNOWN
+  serviceRegions       Json?
+  observedProjectCount Int?
+  dataConfidence       Float?
+  freshnessScore       Float?
+  // DATA-02 research-status vocabulary — deliberately separate from
+  // OrganizationQualification.status (that's the LICENSE state; this is the
+  // RESEARCH/vetting state — a security company can be QUALIFIED on ANTT and
+  // still DISCOVERED/unvetted here). Nullable: DATA-01 orgs never set this.
+  researchStatus       String? // VERIFIED_SEED | FIRST_PARTY_VERIFIED | DIRECTORY_VERIFIED | DISCOVERED | NEED_ENTITY_RESOLUTION | NEED_COMPLIANCE_VERIFY | STALE | REJECTED_NOT_RELEVANT
+  firstObservedAt      DateTime  @default(now())
+  lastObservedAt       DateTime  @default(now())
+  lastVerifiedAt       DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  aliases             OrganizationAlias[]
+  qualificationEvents OrganizationQualificationEvent[]
+  qualification       OrganizationQualification?
+  fieldObservations   OrganizationFieldObservation[]
+  locations           OrganizationLocation[]
+  personRoles         PersonCompanyRole[]
+  projectRelations    ProjectOrganizationRelation[]
+  // DATA-02/03/04 (Wave A) — all reuse this same canonical Organization,
+  // never a duplicate company-identity table (see docs/data02/, docs/data03/).
+  serviceCapabilities      ServiceCapability[]
+  media                    OrganizationMedia[]
+  manufacturedProducts     EquipmentProduct[]
+  productRelations         OrganizationProductRelation[]
+  spareParts               SparePart[]
+  priceObservations        ProductPriceObservation[]
+  installedAsSupplier      ProjectInstalledProduct[]     @relation("InstalledProductSupplier")
+  installedAsInstaller     ProjectInstalledProduct[]     @relation("InstalledProductInstaller")
+  installedAsMaintainer    ProjectInstalledProduct[]     @relation("InstalledProductMaintainer")
+  graphEdges               ProjectGraphEdge[]
+
+  @@index([normalizedName])
+  @@index([organizationType])
+}
+
+/// Previous names/brands/abbreviations/source-name-variants. Needed for
+/// rename/correction handling (doc §6.3) — never delete an old name, append.
+model OrganizationAlias {
+  id               String    @id @default(cuid())
+  organizationId   String
+  alias            String
+  aliasType        String // PREVIOUS_NAME | BRAND | ABBREVIATION | SOURCE_VARIANT
+  validFrom        DateTime?
+  validUntil       DateTime?
+  sourceEvidenceId String?
+  createdAt        DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+}
+
+/// Append-only official qualification event (doc §5/§5.4). Never overwritten
+/// or deleted — OrganizationQualification below is the only derived/mutable
+/// projection. organizationId is nullable because a freshly-crawled event may
+/// not be resolved to a canonical org yet (pre-entity-resolution).
+model OrganizationQualificationEvent {
+  id                     String    @id @default(cuid())
+  organizationId         String?
+  eventType              String // QUALIFIED | CORRECTED | UPDATED | RENAMED | REPRESENTATIVE_CHANGED | REVOKED | EXPIRED | SUPERSEDED | UNKNOWN
+  authority              String?
+  documentNo             String?
+  documentDate           DateTime?
+  effectiveDate          DateTime?
+  expiryDate             DateTime?
+  qualificationStatus    String?
+  rawLegalName           String?
+  rawTaxCode             String?
+  rawAddress             String?
+  rawRepresentativeName  String?
+  rawRepresentativeTitle String?
+  sourceEvidenceId       String?
+  sourceUrl              String?
+  observedAt             DateTime  @default(now())
+  parserVersion          String?
+  confidence             Float?
+  createdAt              DateTime  @default(now())
+
+  organization Organization? @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+  @@index([eventType])
+}
+
+/// Derived CURRENT qualification state — one row per organization, always
+/// re-derived from OrganizationQualificationEvent history, never hand-edited.
+/// Revocation always overrides a computed expiry (doc §11/§2 rule).
+model OrganizationQualification {
+  id                 String    @id @default(cuid())
+  organizationId     String    @unique
+  qualificationType  String    @default("CONDOMINIUM_OPERATION_MANAGEMENT")
+  authority          String?
+  documentNo         String?
+  effectiveDate      DateTime?
+  expiryDate         DateTime?
+  status             String    @default("UNKNOWN") // QUALIFIED | UPDATED | REVOKED | EXPIRED | NEEDS_RECHECK | UNKNOWN
+  daysToExpiry       Int?
+  renewalStatus      String?
+  lastReverifiedAt   DateTime?
+  sourceEvidenceId   String?
+  derivedFromEventId String?
+  updatedAt          DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+}
+
+/// Field-level evidence (doc §14/§7 organization_field_observations). Every
+/// enrichment field gets one of these — "not found" is a valid, explicit
+/// result, never a silent blank.
+model OrganizationFieldObservation {
+  id             String   @id @default(cuid())
+  organizationId String
+  fieldName      String
+  value          String?
+  sourceType     String? // TIER_1_OFFICIAL | TIER_2_FIRST_PARTY | TIER_3_COUNTERPARTY | TIER_4_CORPORATE_REGISTRY | TIER_5_SECONDARY
+  sourceUrl      String?
+  sourceHash     String?
+  observedAt     DateTime @default(now())
+  confidence     Float?
+  status         String   @default("NOT_FOUND") // VERIFIED | PARTIAL | CONFLICT | NOT_FOUND | NEED_VERIFY | STALE
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId, fieldName])
+}
+
+/// Legal vs office vs branch address (doc §2/§6) — never conflate a legal
+/// registered address with a public office address.
+model OrganizationLocation {
+  id                String    @id @default(cuid())
+  organizationId    String
+  locationType      String // HQ_LEGAL | OFFICE | BRANCH | REPRESENTATIVE_OFFICE | OPERATION_CENTER
+  addressRaw        String?
+  addressNormalized String?
+  provinceCode      String?
+  wardCode          String?
+  latitude          Float?
+  longitude         Float?
+  sourceEvidenceId  String?
+  observedAt        DateTime  @default(now())
+  validFrom         DateTime?
+  validUntil        DateTime?
+  isCurrent         Boolean   @default(true)
+  confidence        Float?
+  createdAt         DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId, locationType])
+}
+
+/// A person observed as a public representative/director/chairperson of one
+/// or more organizations. `personIdentityKey` is reserved for a future
+/// HMAC-derived value — NOT populated in Wave A (see block comment above; no
+/// raw CCCD in the current source). Matching in Wave A is by normalizedName
+/// only, which is why auto-merge across different name spellings never
+/// happens — see PersonCompanyRole, always append, never merge blind.
+model Person {
+  id                 String   @id @default(cuid())
+  fullName           String
+  normalizedName     String
+  personIdentityKey  String?  @unique
+  identityConfidence Float?
+  firstObservedAt    DateTime @default(now())
+  lastObservedAt     DateTime @default(now())
+
+  companyRoles PersonCompanyRole[]
+
+  @@index([normalizedName])
+}
+
+/// Temporal person↔company role (doc §8.4/§292 person-company-roles).
+/// validFrom/validUntil stay null with status=OBSERVED when the source only
+/// gives a single observation date — never infer a start/end date.
+model PersonCompanyRole {
+  id               String    @id @default(cuid())
+  personId         String
+  organizationId   String
+  roleType         String // LEGAL_REPRESENTATIVE | GENERAL_DIRECTOR | DIRECTOR | CHAIRPERSON | BOARD_MEMBER | AUTHORIZED_REPRESENTATIVE | OTHER
+  roleTitleRaw     String?
+  validFrom        DateTime?
+  validUntil       DateTime?
+  status           String    @default("OBSERVED") // OBSERVED | CURRENT | HISTORICAL
+  sourceEvidenceId String?
+  observedAt       DateTime  @default(now())
+  confidence       Float?
+  createdAt        DateTime  @default(now())
+
+  person       Person       @relation(fields: [personId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([personId])
+  @@index([organizationId])
+}
+
+/// Operator ↔ GlobalProject relation (doc §12/§8, the highest-value asset per
+/// the source package). relationshipStatus UNKNOWN is the honest default —
+/// Wave A only has Hapulico seeded in GlobalProject, so real matches are rare
+/// until Wave C (6.000-project migration) runs; see
+/// docs/data01/XHUB_ORG_READINESS_AUDIT.md §6.
+model ProjectOrganizationRelation {
+  id                 String    @id @default(cuid())
+  globalProjectId    String
+  organizationId     String
+  relationshipType   String    @default("PROPERTY_MANAGER")
+  relationshipStatus String    @default("UNKNOWN") // CURRENT | HISTORICAL | UNKNOWN
+  validFrom          DateTime?
+  validUntil         DateTime?
+  evidenceType       String?
+  sourceEvidenceId   String?
+  observedAt         DateTime  @default(now())
+  confidence         Float?
+  createdAt          DateTime  @default(now())
+
+  globalProject GlobalProject @relation(fields: [globalProjectId], references: [id])
+  organization  Organization  @relation(fields: [organizationId], references: [id])
+
+  @@unique([globalProjectId, organizationId, relationshipType])
+  @@index([organizationId])
+}
+
+/// One ingestion run (Excel baseline import, or one MOC crawl run). Global
+/// (no tenant) analog of MDM's ImportJob — see block comment above.
+model OrgImportJob {
+  id           String   @id @default(cuid())
+  sourceSystem String // excel_baseline | moc_gov_vn
+  domain       String   @default("ORGANIZATION")
+  stage        String   @default("staging") // staging | normalized | matched | reviewed | committed
+  runLabel     String? // e.g. "moc-page-1", "excel-baseline-20260808"
+  counts       Json     @default("{}")
+  createdBy    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sourceRecords OrgSourceRecord[]
+}
+
+/// Immutable raw record from one source, pre-commit. Global analog of MDM's
+/// SourceRecord. organizationId is set once normalize+dedupe commits it.
+model OrgSourceRecord {
+  id             String   @id @default(cuid())
+  importJobId    String
+  sourceSystem   String // excel_baseline | moc_gov_vn
+  sourceId       String // e.g. "OPR-0187" (excel) or MOC notice id
+  domain         String   @default("ORGANIZATION")
+  raw            Json
+  rawHash        String?
+  normalized     Json?
+  matchStatus    String   @default("unmatched") // unmatched | matched | duplicate
+  matchScore     Float?
+  organizationId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  importJob OrgImportJob @relation(fields: [importJobId], references: [id])
+
+  @@unique([sourceSystem, sourceId])
+  @@index([importJobId])
+  @@index([matchStatus])
+}
+
+/// Suspected-duplicate proposal for organization matching. Global analog of
+/// MDM's DuplicatePair — NEVER auto-merged (doc §7 "never blind name-only
+/// merge"), a human/script decision resolves it.
+model OrgDuplicatePair {
+  id                      String    @id @default(cuid())
+  sourceRecordId          String
+  candidateOrganizationId String?
+  importJobId             String?
+  score                   Float
+  reason                  String?
+  decision                String    @default("pending") // pending | merge | keep_separate
+  resolvedBy              String?
+  resolvedAt              DateTime?
+  createdAt               DateTime  @default(now())
+
+  @@index([decision])
+}
+
+// ===========================================================================
+// DATA-02 — BUILDING SERVICE CONTRACTOR MASTER  (module src/organizations)
+// Wave A. See docs/data02/*.md. Source package
+// DATA02_OFFICIAL_AGENT_RESEARCH_PACKAGE_20260808 (not in this repo).
+// ---------------------------------------------------------------------------
+// Deliberately NO new company-identity table — DATA-02 contractors ARE
+// Organization rows (organizationType='BUILDING_SERVICE_CONTRACTOR'), same
+// canonical master as DATA-01. Only new piece: which service categories one
+// org covers (an org can have several).
+// GLOBAL PUBLIC DATA — not in scripts/rls-setup.mjs TENANT_TABLES.
+// ===========================================================================
+
+/// One (organization, category) capability claim (doc §2 Service Taxonomy —
+/// SECURITY/CLEANING/ELEVATOR/FIRE_SAFETY/...). An org can have several.
+model ServiceCapability {
+  id               String   @id @default(cuid())
+  organizationId   String
+  categoryCode     String
+  sourceEvidenceId String?
+  confidence       Float?
+  createdAt        DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([organizationId, categoryCode])
+  @@index([categoryCode])
+}
+
+// ===========================================================================
+// DATA-03 — EQUIPMENT / MATERIAL / SPARE-PART MASTER  (module src/products)
+// Wave A. See docs/data03/*.md. Source package
+// DATA03_OFFICIAL_AGENT_RESEARCH_PACKAGE_20260808_v2_MEDIA (not in this repo).
+// ---------------------------------------------------------------------------
+// Manufacturer/distributor/installer/maintainer are Organization rows
+// (organizationType='MANUFACTURER'|'DISTRIBUTOR') — same rule as DATA-02,
+// never a duplicate company table. EquipmentProduct/spec/spare-part/price/installed-
+// base are the genuinely new domain here.
+// GLOBAL PUBLIC DATA — not in scripts/rls-setup.mjs TENANT_TABLES.
+// ===========================================================================
+
+/// A model/SKU. `manufacturerOrgId` is the Organization row with
+/// organizationType='MANUFACTURER' (never a separate Manufacturer table —
+/// see block comment). Lifecycle is evidence-driven, never inferred from one
+/// distributor page disappearing (doc §4).
+model EquipmentProduct {
+  id                    String    @id @default(cuid())
+  manufacturerOrgId     String?
+  categoryCode          String // ELEVATOR | HVAC_VRF | PUMP_WATER | GENERATOR | UPS_POWER | BMS_AUTOMATION | CCTV_VIDEO | FIRE_ALARM | EV_CHARGER | SPARE_PART | ...
+  familyName            String?
+  modelCode             String?
+  sku                   String?
+  productType           String?
+  lifecycleStatus       String    @default("UNKNOWN") // CURRENT | LEGACY_SUPPORTED | DISCONTINUED | EOL | SUPERSEDED | UNKNOWN
+  launchDate            DateTime?
+  eolDate               DateTime?
+  replacementProductId  String?
+  officialProductUrl    String?
+  lastVerifiedAt        DateTime?
+  dataConfidence        Float?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  manufacturer        Organization?             @relation(fields: [manufacturerOrgId], references: [id])
+  replacementProduct  EquipmentProduct?                  @relation("ProductReplacement", fields: [replacementProductId], references: [id])
+  supersededBy        EquipmentProduct[]                 @relation("ProductReplacement")
+  specs               ProductSpec[]
+  organizationRelations OrganizationProductRelation[]
+  spareCompatibility  SparePartCompatibility[]
+  priceObservations   ProductPriceObservation[]
+  installedInstances  ProjectInstalledProduct[]
+  graphEdges          ProjectGraphEdge[]
+
+  @@index([categoryCode])
+  @@index([manufacturerOrgId])
+}
+
+/// Key-value spec, NOT hardcoded columns per category (doc §5 — elevator
+/// max_travel_m, HVAC cooling_kw, pump flow_m3h, etc. all use this).
+model ProductSpec {
+  id               String   @id @default(cuid())
+  productId        String
+  specKey          String
+  valueText        String?
+  valueNumber      Float?
+  unit             String?
+  sourceEvidenceId String?
+  observedAt       DateTime @default(now())
+
+  product EquipmentProduct @relation(fields: [productId], references: [id])
+
+  @@index([productId])
+  @@unique([productId, specKey])
+}
+
+/// Channel relation: an Organization's role re: a brand/product (doc §6).
+/// `authorizationStatus` matters — "sells brand X" != "authorized distributor".
+model OrganizationProductRelation {
+  id                 String    @id @default(cuid())
+  organizationId     String
+  productId          String?
+  categoryCode       String?
+  relationType       String // MANUFACTURER | MASTER_DISTRIBUTOR | AUTHORIZED_DISTRIBUTOR | DEALER | RESELLER | INSTALLER | SYSTEM_INTEGRATOR | MAINTAINER | SERVICE_CENTER | SPARE_PART_SUPPLIER
+  authorizationStatus String   @default("UNKNOWN") // OFFICIAL_VERIFIED | FIRST_PARTY_CLAIM | DIRECTORY_CLAIM | UNKNOWN | EXPIRED | REVOKED
+  regionScope        String?
+  validFrom          DateTime?
+  validUntil         DateTime?
+  sourceEvidenceId   String?
+  confidence         Float?
+  createdAt          DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  product      EquipmentProduct?     @relation(fields: [productId], references: [id])
+
+  @@index([organizationId])
+  @@index([productId])
+}
+
+/// Spare part / accessory, brand-owned (via Organization, not a raw brand
+/// string). Compatibility is by model/serial (see SparePartCompatibility),
+/// never inferred by brand alone (doc §8).
+model SparePart {
+  id              String   @id @default(cuid())
+  brandOrgId      String?
+  partNumber      String?
+  partName        String
+  componentType   String?
+  lifecycleStatus String   @default("UNKNOWN")
+  officialUrl     String?
+  createdAt       DateTime @default(now())
+
+  brand         Organization?              @relation(fields: [brandOrgId], references: [id])
+  compatibility SparePartCompatibility[]
+
+  @@index([brandOrgId])
+}
+
+model SparePartCompatibility {
+  id               String    @id @default(cuid())
+  sparePartId      String
+  productId        String
+  modelVariant     String?
+  serialFrom       String?
+  serialTo         String?
+  sourceEvidenceId String?
+  confidence       Float?
+  createdAt        DateTime  @default(now())
+
+  sparePart SparePart @relation(fields: [sparePartId], references: [id])
+  product   EquipmentProduct   @relation(fields: [productId], references: [id])
+
+  @@index([sparePartId])
+  @@index([productId])
+}
+
+/// Temporal price observation — NEVER a static `EquipmentProduct.price` column (doc
+/// §7's explicit rule). Two prices are only comparable with matching model/
+/// variant/VAT/installation scope; this table keeps that context, not just
+/// a number.
+model ProductPriceObservation {
+  id                      String    @id @default(cuid())
+  productId                String
+  organizationId           String?
+  amount                   Float
+  currency                 String    @default("VND")
+  priceScope               String // PUBLIC_RETAIL | PUBLIC_REFERENCE | DISTRIBUTOR_PRICE | PROJECT_QUOTE | CONTRACT_PRICE | FRAME_AGREEMENT | QUOTE_REQUIRED
+  vatIncluded              Boolean?
+  installationIncluded     Boolean?
+  shippingIncluded         Boolean?
+  minimumQuantity          Int?
+  sourceUrl                String?
+  sourceVintage            String?
+  observedAt               DateTime  @default(now())
+  expiresAt                DateTime?
+  confidence               Float?
+  createdAt                DateTime  @default(now())
+
+  product      EquipmentProduct       @relation(fields: [productId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id])
+
+  @@index([productId])
+  @@index([productId, observedAt])
+}
+
+/// The highest-value DATA-03 graph (doc §10): what's actually installed at a
+/// GlobalProject. Same "only Hapulico seeded so far" caveat as
+/// ProjectOrganizationRelation — this table only gets rows on a REAL match.
+model ProjectInstalledProduct {
+  id               String    @id @default(cuid())
+  globalProjectId  String
+  productId        String
+  supplierOrgId    String?
+  installerOrgId   String?
+  maintainerOrgId  String?
+  tower            String?
+  system           String?
+  quantity         Int?
+  installedAt      DateTime?
+  commissionedAt   DateTime?
+  sourceEvidenceId String?
+  observedAt       DateTime  @default(now())
+  confidence       Float?
+  createdAt        DateTime  @default(now())
+
+  globalProject GlobalProject @relation(fields: [globalProjectId], references: [id])
+  product       EquipmentProduct       @relation(fields: [productId], references: [id])
+  supplier      Organization? @relation("InstalledProductSupplier", fields: [supplierOrgId], references: [id])
+  installer     Organization? @relation("InstalledProductInstaller", fields: [installerOrgId], references: [id])
+  maintainer    Organization? @relation("InstalledProductMaintainer", fields: [maintainerOrgId], references: [id])
+
+  @@index([globalProjectId])
+  @@index([productId])
+}
+
+/// Doc §04_SUPPLIER_MEDIA_LOGO_HANDOFF.md `supplier_media` contract. One org
+/// can have several candidates over time; the latest ACTIVE one wins for UI.
+model OrganizationMedia {
+  id              String    @id @default(cuid())
+  organizationId  String
+  sourceWebsite   String?
+  logoSourcePage  String?
+  remoteImageUrl  String?
+  imageType       String // OFFICIAL_LOGO | OFFICIAL_SITE_LOGO | FAVICON | REPRESENTATIVE | PRODUCT_BRAND_IMAGE | DIRECTORY_LOGO | GENERATED_INITIALS
+  sourceTier      String?
+  retrievedAt     DateTime?
+  contentHash     String?
+  mimeType        String?
+  width           Int?
+  height          Int?
+  localMediaPath  String?
+  attribution     String?
+  status          String    @default("PENDING") // PENDING | FETCH_READY | CACHED | REJECTED
+  createdAt       DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+}
+
+// ===========================================================================
+// DATA-04 — PROJECT SUPPLY & VENDOR GRAPH  (module src/organizations /
+// src/products, read-only for Wave A) — see docs/data04/*.md. Source package
+// DATA04_OFFICIAL_AGENT_RESEARCH_PACKAGE_20260808 (not in this repo).
+// ---------------------------------------------------------------------------
+// Ties DATA-01+02+03 to actual projects. The package's own rule: "does NOT
+// invent XHub project IDs" — every candidate starts PENDING_XHUB_MATCH.
+// Verified directly: 0 of the 81 supplied candidates is Hapulico (the only
+// real GlobalProject seeded so far) — so this pass legitimately resolves 0
+// real matches. ProjectOrganizationRelation/ProjectInstalledProduct require a
+// NON-NULL globalProjectId (correct — they only ever hold CONFIRMED matches),
+// so unresolved candidates need a place to live: everything here hangs off
+// ProjectCandidate, which optionally points to a real GlobalProject once
+// matched. A later-wave matcher script re-runs against ProjectCandidate once
+// Wave C (6.000-project migration) lands, and materializes confirmed matches
+// into ProjectOrganizationRelation/ProjectInstalledProduct.
+// GLOBAL PUBLIC DATA — not in scripts/rls-setup.mjs TENANT_TABLES.
+// ===========================================================================
+
+/// One of the 81 supplied candidate projects, pre-XHub-match.
+model ProjectCandidate {
+  id                    String    @id @default(cuid())
+  candidateCode         String    @unique // e.g. "D04-P-0001"
+  projectNameRaw        String
+  projectNormalized     String
+  parentCandidateId     String?
+  province              String?
+  developer             String?
+  projectType           String?
+  primaryEvidenceUrl    String?
+  matchStatus           String    @default("PENDING_XHUB_MATCH") // PENDING_XHUB_MATCH | MATCHED | REVIEW | REJECTED
+  matchedGlobalProjectId String?
+  edgeCount             Int       @default(0)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  parent              ProjectCandidate?           @relation("ProjectCandidateHierarchy", fields: [parentCandidateId], references: [id])
+  children            ProjectCandidate[]          @relation("ProjectCandidateHierarchy")
+  matchedGlobalProject GlobalProject?             @relation(fields: [matchedGlobalProjectId], references: [id])
+  edges               ProjectGraphEdge[]
+  gaps                ProjectSupplyGap[]
+  hierarchyAsParent   ProjectHierarchyRelation[]  @relation("HierarchyParent")
+  hierarchyAsChild    ProjectHierarchyRelation[]  @relation("HierarchyChild")
+
+  @@index([matchStatus])
+  @@index([projectNormalized])
+}
+
+/// One of the 85 supplied edges (doc §4 project_supply_edges). Always hangs
+/// off a ProjectCandidate, not a GlobalProject directly (see block comment).
+/// organizationId/productId are set when name-resolved against DATA-01/02/03
+/// canonical records; rawProviderName is the fallback when not yet resolved.
+model ProjectGraphEdge {
+  id                      String    @id @default(cuid())
+  projectCandidateId      String
+  organizationId          String?
+  productId               String?
+  rawProviderName         String?
+  originData              String? // DATA-01 | DATA-02 | DATA-03
+  relationshipType        String // PROPERTY_MANAGER | MEP_CONTRACTOR | LANDSCAPE_CONTRACTOR | WASTEWATER_CONTRACTOR | SECURITY_CONTRACTOR | CLEANING_CONTRACTOR | MAINTENANCE_PROVIDER | SUPPLIER | INSTALLER | SUPPLIER_INSTALLER | SUPPLIER_INSTALLER_MAINTAINER | INSTALLED_PRODUCT_REFERENCE | PROJECT_REFERENCE | TENDER_BIDDER | CONTRACT_AWARDEE | OTHER
+  serviceCategory         String?
+  brand                   String?
+  modelProduct             String?
+  quantity                 Float?
+  unit                     String?
+  scopeText                String?
+  contractFrom             DateTime?
+  contractTo               DateTime?
+  relationshipStatus       String    @default("UNKNOWN") // CURRENT | HISTORICAL | UNKNOWN | HISTORICAL_OR_CURRENT | CURRENT_OR_HISTORICAL
+  contractValue            Float?
+  contractValueCurrency    String?
+  valueQualifier           String? // EXACT_PUBLIC | APPROX | GT | LT | UNKNOWN
+  evidenceTier             String?
+  evidenceUrl              String?
+  observedAt               DateTime  @default(now())
+  confidence               Float?
+  notes                    String?
+  createdAt                DateTime  @default(now())
+
+  projectCandidate ProjectCandidate @relation(fields: [projectCandidateId], references: [id])
+  organization     Organization?    @relation(fields: [organizationId], references: [id])
+  product          EquipmentProduct?         @relation(fields: [productId], references: [id])
+
+  @@index([projectCandidateId])
+  @@index([organizationId])
+}
+
+/// 14 supplied hierarchy candidates (doc §7) — e.g. Vinhomes Ocean Park 1 →
+/// Masteri Waterfront. Both ends are ProjectCandidate until matched, so a
+/// parent/child relationship can be recorded before either side has a real
+/// XHub project ID.
+model ProjectHierarchyRelation {
+  id               String    @id @default(cuid())
+  parentCandidateId String
+  childCandidateId  String
+  relationType      String // PHASE_OF | SUBPROJECT_OF | BUILDING_OF | TOWER_OF | COMPOUND_OF | ALIAS_OF
+  validFrom         DateTime?
+  validUntil        DateTime?
+  sourceEvidenceId  String?
+  confidence        Float?
+  createdAt         DateTime  @default(now())
+
+  parent ProjectCandidate @relation("HierarchyParent", fields: [parentCandidateId], references: [id])
+  child  ProjectCandidate @relation("HierarchyChild", fields: [childCandidateId], references: [id])
+
+  @@unique([parentCandidateId, childCandidateId])
+}
+
+/// 10 supplied "known unknown" rows (doc §13) — a known unknown is better
+/// than a guessed vendor. E.g. Hope Garden: CCTV exists, brand unknown.
+model ProjectSupplyGap {
+  id                String    @id @default(cuid())
+  projectCandidateId String
+  category           String?
+  knownFact          String?
+  missingEntityType  String?
+  researchPriority   String?
+  status             String    @default("OPEN") // OPEN | RESEARCHING | RESOLVED | REJECTED
+  evidenceUrl        String?
+  createdAt          DateTime  @default(now())
+
+  projectCandidate ProjectCandidate @relation(fields: [projectCandidateId], references: [id])
+
+  @@index([status])
+}
+
+// ===========================================================================
 // PER-TENANT LOGICAL BACKUP / RESTORE  (module src/backup)  — Mục 6
 // ---------------------------------------------------------------------------
 // One tenant's logical data is exported to an encrypted bundle (AES-256-GCM)

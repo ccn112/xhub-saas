@@ -1,0 +1,13 @@
+{
+  "_comment": "Read-only extract of DATA03_OFFICIAL_AGENT_RESEARCH_PACKAGE_20260808_v2_MEDIA/01_DATA03_MASTER.xlsx, taken 2026-08-08 for DATA-03 Wave A. Verbatim column-name-keyed JSON. Data acquisition owner: ChatGPT Research Agent (not Claude/XHub) — see docs/data03/.",
+  "sourceFile": "01_DATA03_MASTER.xlsx",
+  "extractedAt": "2026-08-08",
+  "sheets": {
+    "supplier-master.json": { "sheet": "02_Supplier Master", "rows": 25 },
+    "product-catalog.json": { "sheet": "03_Product Catalog", "rows": 61 },
+    "channel-relations.json": { "sheet": "04_Channel Relations", "rows": 14 },
+    "price-observations.json": { "sheet": "05_Price Observations", "rows": 7 },
+    "installed-base.json": { "sheet": "06_Installed Base", "rows": 5 },
+    "agent-discovery.json": { "sheet": "07_Agent Discovery", "rows": 14, "note": "additional supplier candidates, not promoted without evidence" }
+  }
+}

@@ -15,6 +15,11 @@ import { CatalogModule } from './platform/catalog/catalog.module';
 import { OnboardingModule } from './platform/onboarding/onboarding.module';
 import { TenantLifecycleModule } from './platform/lifecycle/tenant-lifecycle.module';
 import { EngineeringModule } from './engineering/engineering.module';
+import { ProjectCatalogModule } from './project-catalog/project-catalog.module';
+import { ProvidersModule } from './providers/providers.module';
+import { DiscoveryModule } from './discovery/discovery.module';
+import { OrganizationsModule } from './organizations/organizations.module';
+import { ProductsModule } from './products/products.module';
 
 /**
  * XHub Platform process — Phase 1.5 Stage B composition root. Carries the
@@ -41,6 +46,11 @@ import { EngineeringModule } from './engineering/engineering.module';
     OnboardingModule,
     TenantLifecycleModule,
     EngineeringModule,
+    ProjectCatalogModule,
+    ProvidersModule,
+    DiscoveryModule,
+    OrganizationsModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
